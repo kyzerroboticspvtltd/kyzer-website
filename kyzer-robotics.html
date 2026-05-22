@@ -7,15 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --orange: #FF6B00;
-    --orange-dim: #CC5500;
-    --bg: #0f0f0f;
-    --bg2: #151515;
-    --bg3: #1c1c1c;
-    --border: rgba(255,255,255,0.07);
-    --text: #f0f0f0;
-    --muted: #666;
-    --faint: #2a2a2a;
+    --orange: #FF8C35;
+    --orange-dim: #E07020;
+    --bg: #f8f8f6;
+    --bg2: #f0f0ee;
+    --bg3: #e6e6e4;
+    --border: rgba(0,0,0,0.09);
+    --text: #111111;
+    --muted: #777777;
+    --faint: #e2e2e0;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -57,7 +57,7 @@
     z-index: 1000;
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.1rem 3rem;
-    background: rgba(15,15,15,0.85);
+    background: rgba(248,248,246,0.92);
     backdrop-filter: blur(16px);
     border-bottom: 0.5px solid var(--border);
     transition: background 0.3s;
@@ -74,7 +74,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 20px; color: #111;
   }
-  .nav-logo-text { font-size: 15px; font-weight: 500; color: #f0f0f0; }
+  .nav-logo-text { font-size: 15px; font-weight: 500; color: #111111; }
   .nav-logo-sub { font-size: 11px; color: var(--muted); }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
   .nav-links a {
@@ -99,7 +99,7 @@
     cursor: none; transition: transform 0.15s, background 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
-  .nav-cta:hover { background: #FF8C00; transform: scale(1.03); }
+  .nav-cta:hover { background: #FFa050; transform: scale(1.03); }
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; }
   .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); transition: all 0.3s; }
 
@@ -114,15 +114,15 @@
   .hero-grid-bg {
     position: absolute; inset: 0;
     background-image:
-      linear-gradient(rgba(255,107,0,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,107,0,0.04) 1px, transparent 1px);
+      linear-gradient(rgba(255,140,53,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,140,53,0.07) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none;
   }
   .hero-glow {
     position: absolute; top: -200px; right: -100px;
     width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(255,107,0,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,140,53,0.14) 0%, transparent 70%);
     pointer-events: none;
   }
   .hero-tag {
@@ -160,10 +160,10 @@
     font-family: 'DM Sans', sans-serif;
     display: inline-flex; align-items: center; gap: 8px;
   }
-  .btn-primary:hover { background: #FF8C00; transform: translateY(-2px); }
+  .btn-primary:hover { background: #FFa050; transform: translateY(-2px); }
   .btn-outline {
     background: transparent; color: var(--text);
-    border: 0.5px solid rgba(255,255,255,0.2); padding: 13px 30px;
+    border: 0.5px solid rgba(0,0,0,0.2); padding: 13px 30px;
     border-radius: 8px; font-size: 14px;
     cursor: none; transition: border-color 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif;
@@ -260,11 +260,11 @@
   }
   .sv-inner {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 100px; color: rgba(255,107,0,0.1);
+    font-size: 100px; color: rgba(255,140,53,0.1);
     user-select: none;
     transition: font-size 0.4s, color 0.4s;
   }
-  .service-visual:hover .sv-inner { font-size: 120px; color: rgba(255,107,0,0.18); }
+  .service-visual:hover .sv-inner { font-size: 120px; color: rgba(255,140,53,0.18); }
   .sv-tag {
     position: absolute; bottom: 1.5rem; left: 1.5rem;
     font-family: 'JetBrains Mono', monospace;
@@ -301,14 +301,14 @@
     transition: border-color 0.2s, transform 0.25s;
     cursor: none;
   }
-  .prod-card:hover { border-color: rgba(255,107,0,0.4); transform: translateY(-4px); }
+  .prod-card:hover { border-color: rgba(255,140,53,0.4); transform: translateY(-4px); }
   .prod-img {
     height: 140px; background: var(--bg3);
     display: flex; align-items: center; justify-content: center;
     font-size: 56px; border-bottom: 0.5px solid var(--border);
     transition: background 0.3s;
   }
-  .prod-card:hover .prod-img { background: #1f0a00; }
+  .prod-card:hover .prod-img { background: #fff3e8; }
   .prod-body { padding: 1.1rem; }
   .prod-badge {
     font-size: 10px; font-family: 'JetBrains Mono', monospace;
@@ -316,7 +316,7 @@
     padding: 3px 8px; border-radius: 4px;
     display: inline-block; margin-bottom: 8px;
   }
-  .prod-badge.new { background: #1f0a00; color: #FF6B00; }
+  .prod-badge.new { background: #fff3e8; color: #FF8C35; }
   .prod-body h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
   .prod-body p { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
   .prod-footer { display: flex; justify-content: space-between; align-items: center; }
@@ -348,11 +348,11 @@
   .step:hover { background: var(--bg3); }
   .step-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px; color: rgba(255,107,0,0.12);
+    font-size: 48px; color: rgba(255,140,53,0.12);
     line-height: 1; margin-bottom: 1rem;
     transition: color 0.3s;
   }
-  .step:hover .step-num { color: rgba(255,107,0,0.25); }
+  .step:hover .step-num { color: rgba(255,140,53,0.25); }
   .step h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
   .step p { font-size: 12px; color: var(--muted); line-height: 1.6; }
   .step-arrow {
@@ -380,10 +380,10 @@
     background: var(--bg2);
     transition: border-color 0.2s, transform 0.2s;
   }
-  .why-card:hover { border-color: rgba(255,107,0,0.3); transform: translateY(-3px); }
+  .why-card:hover { border-color: rgba(255,140,53,0.3); transform: translateY(-3px); }
   .why-icon {
     width: 42px; height: 42px;
-    background: #1f0a00; border: 0.5px solid #3a1a00;
+    background: #fff3e8; border: 0.5px solid rgba(255,140,53,0.2);
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-size: 20px; margin-bottom: 1.25rem;
@@ -404,10 +404,12 @@
   .contact-info p { font-size: 14px; color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
   .ci-row {
     display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px; font-size: 13px; color: #bbb;
+    margin-bottom: 14px; font-size: 13px; color: var(--text);
   }
+  .ci-row a { color: var(--text); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+  .ci-row a:hover { color: var(--orange); }
   .ci-icon {
-    width: 32px; height: 32px; background: #1f0a00;
+    width: 32px; height: 32px; background: #fff3e8;
     border-radius: 8px; display: flex; align-items: center;
     justify-content: center; font-size: 15px; flex-shrink: 0;
   }
@@ -425,7 +427,7 @@
     outline: none; border-color: var(--orange);
   }
   .form input::placeholder, .form textarea::placeholder { color: var(--muted); }
-  .form select option { background: #1c1c1c; }
+  .form select option { background: #f0f0ee; }
   .form textarea { height: 110px; resize: none; }
   .form-submit {
     background: var(--orange); color: #111;
@@ -435,17 +437,17 @@
     font-family: 'DM Sans', sans-serif;
     width: 100%;
   }
-  .form-submit:hover { background: #FF8C00; transform: translateY(-2px); }
+  .form-submit:hover { background: #FFa050; transform: translateY(-2px); }
   .form-success {
-    background: #0a1f0a; border: 0.5px solid #2a5a2a;
-    color: #7fcc7f; border-radius: 10px;
+    background: #e8f5e9; border: 0.5px solid rgba(76,175,80,0.4);
+    color: #2e7d32; border-radius: 10px;
     padding: 14px; font-size: 14px; text-align: center;
     display: none;
   }
 
   /* FOOTER */
   footer {
-    background: #0a0a0a; padding: 2rem 3rem;
+    background: #e0e0de; padding: 2rem 3rem;
     border-top: 0.5px solid var(--border);
     display: flex; justify-content: space-between;
     align-items: center; flex-wrap: wrap; gap: 1rem;
@@ -500,7 +502,7 @@
     font-size: clamp(40px, 7vw, 80px);
     line-height: 0.95; color: var(--text);
   }
-  .quote-header h1 span { color: #FF6B00; }
+  .quote-header h1 span { color: #FF8C35; }
   .quote-header p { font-size: 15px; color: var(--muted); margin-top: 1rem; }
 
   .quote-layout {
@@ -524,9 +526,9 @@
   }
   .panel-badge {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; background: #1f0a00;
-    color: #FF6B00; padding: 3px 8px;
-    border-radius: 4px; border: 0.5px solid #3a1500;
+    font-size: 10px; background: #fff3e8;
+    color: #FF8C35; padding: 3px 8px;
+    border-radius: 4px; border: 0.5px solid rgba(255,140,53,0.25);
   }
 
   /* Upload zone */
@@ -541,8 +543,8 @@
     position: relative;
   }
   .upload-zone:hover, .upload-zone.drag-over {
-    border-color: #FF6B00;
-    background: #1a0900;
+    border-color: #FF8C35;
+    background: #fff0e0;
   }
   .upload-zone input[type="file"] {
     position: absolute; inset: 0;
@@ -550,17 +552,17 @@
   }
   .upload-icon { font-size: 36px; margin-bottom: 0.75rem; }
   .upload-zone p { font-size: 13px; color: var(--muted); }
-  .upload-zone span { color: #FF6B00; font-weight: 500; }
+  .upload-zone span { color: #FF8C35; font-weight: 500; }
   .upload-zone .file-types {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px; color: #444; margin-top: 6px;
   }
   .file-preview {
     display: none;
-    background: #1f0a00; border: 0.5px solid #3a1500;
+    background: #fff3e8; border: 0.5px solid rgba(255,140,53,0.25);
     border-radius: 10px; padding: 12px 14px;
     margin-bottom: 1.5rem;
-    font-size: 13px; color: #FF6B00;
+    font-size: 13px; color: #CC5500;
     align-items: center; gap: 10px;
   }
   .file-preview.show { display: flex; }
@@ -597,7 +599,7 @@
     font-family: 'DM Sans', sans-serif;
     transition: border-color 0.2s;
   }
-  .qf-input:focus { outline: none; border-color: #FF6B00; }
+  .qf-input:focus { outline: none; border-color: #FF8C35; }
   .qf-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .qf-row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -617,10 +619,10 @@
   }
   .mat-btn span { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #444; }
   .mat-btn.selected {
-    background: #1f0a00; border-color: #FF6B00;
+    background: #fff3e8; border-color: #FF8C35;
     color: var(--text);
   }
-  .mat-btn.selected span { color: #FF6B00; }
+  .mat-btn.selected span { color: #FF8C35; }
 
   /* Quality selector */
   .quality-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
@@ -632,17 +634,17 @@
     font-family: 'DM Sans', sans-serif;
     text-align: center;
   }
-  .qual-btn.selected { background: #1f0a00; border-color: #FF6B00; color: var(--text); }
+  .qual-btn.selected { background: #fff3e8; border-color: #FF8C35; color: var(--text); }
 
   /* Infill slider */
   .slider-wrap { margin-bottom: 14px; }
   .slider-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .slider-val {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; color: #FF6B00;
+    font-size: 13px; color: #FF8C35;
   }
   input[type="range"] {
-    width: 100%; accent-color: #FF6B00;
+    width: 100%; accent-color: #FF8C35;
     height: 4px; border-radius: 2px;
     background: var(--border); cursor: none;
   }
@@ -660,7 +662,7 @@
     display: flex; align-items: center; justify-content: center;
     font-family: 'DM Sans', sans-serif;
   }
-  .qty-btn:hover { background: #1f0a00; border-color: #FF6B00; color: #FF6B00; }
+  .qty-btn:hover { background: #fff3e8; border-color: #FF8C35; color: #FF8C35; }
   .qty-display {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 28px; color: var(--text);
@@ -684,7 +686,7 @@
   }
   .price-amount {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 64px; color: #FF6B00;
+    font-size: 64px; color: #FF8C35;
     line-height: 1;
     transition: all 0.3s;
   }
@@ -698,23 +700,23 @@
   }
   .pb-row:last-child { border-bottom: none; }
   .pb-row span:last-child { color: var(--text); font-weight: 500; }
-  .pb-row.total span { color: #FF6B00 !important; font-weight: 500; font-size: 15px; }
+  .pb-row.total span { color: #FF8C35 !important; font-weight: 500; font-size: 15px; }
   .turnaround-bar {
-    background: #1f0a00; border: 0.5px solid #3a1500;
+    background: #fff3e8; border: 0.5px solid rgba(255,140,53,0.25);
     border-radius: 10px; padding: 12px 14px;
     display: flex; align-items: center; gap: 10px;
     margin-bottom: 1.5rem;
-    font-size: 13px; color: #FF6B00;
+    font-size: 13px; color: #CC5500;
   }
   .quote-actions { display: flex; flex-direction: column; gap: 10px; }
   .btn-quote-order {
-    width: 100%; background: #FF6B00; color: #111;
+    width: 100%; background: #FF8C35; color: #111;
     border: none; padding: 14px;
     border-radius: 10px; font-size: 14px; font-weight: 500;
     cursor: none; transition: background 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif;
   }
-  .btn-quote-order:hover { background: #FF8C00; transform: translateY(-2px); }
+  .btn-quote-order:hover { background: #FFa050; transform: translateY(-2px); }
   .btn-quote-save {
     width: 100%; background: transparent;
     border: 0.5px solid var(--border); color: var(--muted);
@@ -722,7 +724,7 @@
     cursor: none; transition: border-color 0.2s, color 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
-  .btn-quote-save:hover { border-color: #FF6B00; color: #FF6B00; }
+  .btn-quote-save:hover { border-color: #FF8C35; color: #FF8C35; }
   .quote-note { font-size: 11px; color: #444; text-align: center; margin-top: 10px; line-height: 1.5; }
 
   /* 3D model viewer placeholder */
@@ -760,7 +762,7 @@
     margin-bottom: 2rem;
     display: inline-flex; align-items: center; gap: 6px;
   }
-  .back-btn:hover { border-color: #FF6B00; color: #FF6B00; }
+  .back-btn:hover { border-color: #FF8C35; color: #FF8C35; }
 
   /* ── TABLET ── */
   @media (max-width: 1024px) {
@@ -781,7 +783,7 @@
     .nav-links.open {
       display: flex; flex-direction: column;
       position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
-      background: rgba(10,10,10,0.98);
+      background: rgba(248,248,246,0.98);
       backdrop-filter: blur(16px);
       padding: 2.5rem 2rem;
       border-bottom: 0.5px solid var(--border);
@@ -873,7 +875,7 @@
     <a href="#process">Process</a>
     <a href="#why">Why us</a>
     <a href="#contact">Contact</a>
-    <a href="#" onclick="showPage('quote'); return false;" style="color:#FF6B00;font-weight:500;">3D Quote ⚡</a>
+    <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
   <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
   <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -1185,9 +1187,9 @@
       <h3>Get in touch</h3>
       <p>Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours.</p>
       <div class="ci-row"><div class="ci-icon">📍</div> Pune, Maharashtra, India</div>
-      <div class="ci-row"><div class="ci-icon">✉️</div> hello@kyzerrobotics.in</div>
-      <div class="ci-row"><div class="ci-icon">📞</div> +91 98765 43210</div>
-      <div class="ci-row"><div class="ci-icon">📸</div> @kyzerrobotics</div>
+      <div class="ci-row"><div class="ci-icon">✉️</div> <a href="mailto:hello@kyzerrobotics.in">hello@kyzerrobotics.in</a></div>
+      <div class="ci-row"><div class="ci-icon">📞</div> <a href="tel:+919876543210">+91 98765 43210</a></div>
+      <div class="ci-row"><div class="ci-icon">📸</div> <a href="https://instagram.com/kyzerrobotics" target="_blank" rel="noopener">@kyzerrobotics</a></div>
     </div>
     <div>
       <form class="form" id="contactForm">
@@ -1321,7 +1323,7 @@
             Draft<br><span style="font-size:10px;color:#444">0.3mm</span>
           </button>
           <button class="qual-btn selected" data-quality="Standard" data-qmult="1.0" onclick="selectQual(this)">
-            Standard<br><span style="font-size:10px;color:#FF6B00">0.2mm</span>
+            Standard<br><span style="font-size:10px;color:#FF8C35">0.2mm</span>
           </button>
           <button class="qual-btn" data-quality="Fine" data-qmult="1.4" onclick="selectQual(this)">
             Fine<br><span style="font-size:10px;color:#444">0.1mm</span>
@@ -1371,7 +1373,7 @@
         <label class="qf-label">DELIVERY</label>
         <div class="qf-row3">
           <button class="qual-btn selected" id="delSameDay" onclick="selectDelivery('sameday', this)">
-            Same Day<br><span style="font-size:10px;color:#FF6B00">+₹200</span>
+            Same Day<br><span style="font-size:10px;color:#FF8C35">+₹200</span>
           </button>
           <button class="qual-btn" id="del7d" onclick="selectDelivery('7day', this)">
             7 Days<br><span style="font-size:10px;color:#444">+₹150</span>
@@ -1434,7 +1436,7 @@
       </div>
       <textarea class="qf-input" style="height:90px;resize:none;margin-bottom:14px;" placeholder="Additional notes or requirements..." id="qfNotes"></textarea>
       <button class="btn-quote-order" id="qfSubmitBtn" onclick="submitQuoteForm()">Send quote request →</button>
-      <div id="qfSuccess" style="display:none;margin-top:14px;background:#0a1f0a;border:0.5px solid #2a5a2a;color:#7fcc7f;border-radius:10px;padding:14px;font-size:14px;text-align:center;">
+      <div id="qfSuccess" style="display:none;margin-top:14px;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:14px;text-align:center;">
         ✓ Quote request sent! We'll confirm your pricing within a few hours.
       </div>
       <div class="quote-note" style="margin-top:10px;">Or email us directly at hello@kyzerrobotics.in</div>
@@ -1536,7 +1538,7 @@
   // Navbar scroll effect
   window.addEventListener('scroll', () => {
     document.getElementById('navbar').style.background =
-      window.scrollY > 60 ? 'rgba(10,10,10,0.95)' : 'rgba(15,15,15,0.85)';
+      window.scrollY > 60 ? 'rgba(248,248,246,0.97)' : 'rgba(248,248,246,0.92)';
   });
 
   // Product enquire buttons — event delegation so dynamic products work too
@@ -1768,7 +1770,7 @@
     const h = container.clientHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1c1c1c);
+    scene.background = new THREE.Color(0xf0f0ee);
     const camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100000);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -1916,12 +1918,34 @@
     const ci = ld('kyzer_contact', null);
     if (ci) {
       const rows = document.querySelectorAll('.ci-row');
-      if (rows[0] && ci.loc)    rows[0].lastChild.textContent = ' ' + ci.loc;
-      if (rows[1] && ci.email)  rows[1].lastChild.textContent = ' ' + ci.email;
-      if (rows[2] && ci.phone)  rows[2].lastChild.textContent = ' ' + ci.phone;
-      if (rows[3] && ci.social) rows[3].lastChild.textContent = ' ' + ci.social;
+      const icon = r => r.querySelector('.ci-icon').outerHTML;
+      if (rows[0] && ci.loc)  rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
       const descEl = document.querySelector('.contact-info p');
       if (descEl && ci.desc) descEl.textContent = ci.desc;
+    }
+
+    // Links (from Links tab in admin)
+    const lk = ld('kyzer_links', null);
+    const ciRows = document.querySelectorAll('.ci-row');
+    const ciIcon = r => r.querySelector('.ci-icon').outerHTML;
+    if (lk) {
+      const ph = (lk.phone || '').replace(/\D/g,'');
+      const em = lk.email || '';
+      if (ciRows[1] && em)  ciRows[1].innerHTML = ciIcon(ciRows[1]) + ' <a href="mailto:' + em + '">' + em + '</a>';
+      if (ciRows[2] && ph)  ciRows[2].innerHTML = ciIcon(ciRows[2]) + ' <a href="tel:+' + ph + '">' + lk.phone + '</a>';
+      // rebuild social rows from the socials array
+      const socialWrap = document.querySelector('.contact-info');
+      if (socialWrap && lk.socials) {
+        const existing = socialWrap.querySelectorAll('.ci-row');
+        // remove rows beyond index 2 (keep loc, email, phone)
+        for (let i = existing.length - 1; i >= 3; i--) existing[i].remove();
+        lk.socials.filter(s => s.visible).forEach(s => {
+          const row = document.createElement('div');
+          row.className = 'ci-row';
+          row.innerHTML = '<div class="ci-icon">' + s.icon + '</div> <a href="' + s.url + '" target="_blank" rel="noopener">' + s.label + '</a>';
+          socialWrap.appendChild(row);
+        });
+      }
     }
 
     // Quote settings
