@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyzer Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF6B00; --bg: #0f0f0f; --bg2: #151515; --bg3: #1c1c1c;
+    --border: rgba(255,255,255,0.07); --text: #f0f0f0; --muted: #666;
+    --faint: #2a2a2a; --red: #ff4444; --green: #44cc88;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; }
+
+  /* LOGIN */
+  #loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .login-box {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 16px; padding: 2.5rem; width: 360px; text-align: center;
+  }
+  .login-logo {
+    width: 52px; height: 52px; background: var(--orange); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #111;
+    margin: 0 auto 1.25rem;
+  }
+  .login-box h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 4px; }
+  .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 2rem; }
+  .login-input {
+    width: 100%; background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 12px 16px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; margin-bottom: 12px; transition: border-color 0.2s;
+  }
+  .login-input:focus { outline: none; border-color: var(--orange); }
+  .login-btn {
+    width: 100%; background: var(--orange); color: #111; border: none;
+    padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+  }
+  .login-btn:hover { background: #FF8C00; }
+  .login-error { color: #ff4444; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* LAYOUT */
+  #adminPanel { display: none; height: 100vh; flex-direction: column; }
+  .admin-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 2rem; background: var(--bg2);
+    border-bottom: 0.5px solid var(--border); flex-shrink: 0;
+  }
+  .admin-topbar-left { display: flex; align-items: center; gap: 12px; }
+  .admin-logo {
+    width: 32px; height: 32px; background: var(--orange); border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: #111;
+  }
+  .admin-topbar h1 { font-size: 15px; font-weight: 500; }
+  .admin-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    background: #1f0a00; color: var(--orange); padding: 3px 8px;
+    border-radius: 4px; border: 0.5px solid #3a1500;
+  }
+  .admin-topbar-right { display: flex; gap: 10px; }
+  .topbar-btn {
+    background: var(--bg3); color: var(--muted); border: 0.5px solid var(--border);
+    padding: 7px 14px; border-radius: 7px; font-size: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .topbar-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .topbar-btn.danger:hover { border-color: var(--red); color: var(--red); }
+  .admin-body { display: flex; flex: 1; overflow: hidden; }
+
+  /* SIDEBAR */
+  .admin-sidebar {
+    width: 200px; background: var(--bg2); border-right: 0.5px solid var(--border);
+    padding: 1.5rem 0; flex-shrink: 0; overflow-y: auto;
+  }
+  .sidebar-section {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #444;
+    padding: 0 1.25rem; margin-bottom: 0.5rem; letter-spacing: 0.1em;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px; padding: 0.65rem 1.25rem;
+    font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .sidebar-link:hover { color: var(--text); background: var(--bg3); }
+  .sidebar-link.active { color: var(--orange); border-left-color: var(--orange); background: #1a0800; }
+
+  /* MAIN */
+  .admin-main { flex: 1; overflow-y: auto; padding: 2rem; }
+  .admin-tab { display: none; }
+  .admin-tab.active { display: block; }
+  .tab-header { margin-bottom: 2rem; }
+  .tab-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; }
+  .tab-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* PANEL */
+  .panel {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  .panel-title {
+    font-size: 13px; font-weight: 500; margin-bottom: 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title .sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 400; }
+
+  /* FORMS */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em;
+  }
+  .form-input {
+    width: 100%; background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 13px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--orange); }
+  .form-input::placeholder { color: var(--muted); }
+  .form-textarea { height: 80px; resize: vertical; }
+  .form-select { appearance: none; cursor: pointer; }
+  .form-select option { background: #1c1c1c; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; border: none; transition: all 0.15s;
+  }
+  .btn-primary { background: var(--orange); color: #111; }
+  .btn-primary:hover { background: #FF8C00; }
+  .btn-ghost { background: var(--bg3); color: var(--text); border: 0.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+  .btn-danger { background: #2a0a0a; color: var(--red); border: 0.5px solid #4a1a1a; }
+  .btn-danger:hover { background: #3a0a0a; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-icon { padding: 5px 8px; }
+
+  /* PRODUCT LIST */
+  .product-list { display: flex; flex-direction: column; gap: 8px; }
+  .product-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    background: var(--bg3); border: 0.5px solid var(--border);
+    border-radius: 10px; transition: border-color 0.2s;
+  }
+  .product-item:hover { border-color: rgba(255,107,0,0.2); }
+  .pi-emoji { font-size: 22px; width: 30px; text-align: center; flex-shrink: 0; }
+  .pi-info { flex: 1; min-width: 0; }
+  .pi-name { font-size: 14px; font-weight: 500; }
+  .pi-meta { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cat-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 2px 7px; border-radius: 4px; background: var(--faint); color: var(--orange); flex-shrink: 0;
+  }
+  .toggle-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .toggle-wrap label { font-size: 11px; color: var(--muted); }
+  .toggle {
+    width: 38px; height: 20px; background: #333; border: none; border-radius: 10px;
+    cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--orange); }
+  .toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: left 0.2s;
+  }
+  .toggle.on::after { left: 20px; }
+  .pi-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    display: none; align-items: center; justify-content: center;
+    z-index: 9000; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 16px; padding: 2rem; width: 520px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .modal-header h3 { font-size: 17px; font-weight: 500; }
+  .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; }
+  .modal-close:hover { color: var(--text); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 0.5px solid var(--border); }
+
+  /* MATERIALS TABLE */
+  .mat-table { width: 100%; border-collapse: collapse; }
+  .mat-table th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
+    text-align: left; padding: 0 8px 10px; letter-spacing: 0.05em;
+  }
+  .mat-table td { padding: 5px 8px; vertical-align: middle; border-bottom: 0.5px solid var(--border); }
+  .mat-table tr:last-child td { border-bottom: none; }
+
+  /* STAT ROWS */
+  .stat-editor-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; margin-bottom: 10px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: #0a1f0a; border: 0.5px solid #2a5a2a; color: #7fcc7f;
+    border-radius: 10px; padding: 12px 18px; font-size: 14px;
+    z-index: 9999; opacity: 0; transform: translateY(10px);
+    transition: all 0.3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { background: #1f0a0a; border-color: #5a2a2a; color: #ff7777; }
+
+  @media (max-width: 900px) {
+    .form-row-3 { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    #adminPanel { height: auto; min-height: 100vh; }
+    .admin-body { flex-direction: column; overflow: visible; }
+    .admin-sidebar {
+      width: 100%; border-right: none;
+      border-bottom: 0.5px solid var(--border);
+      padding: 0.5rem 0;
+      display: flex; flex-direction: row; flex-wrap: wrap;
+      gap: 2px; overflow-x: auto;
+    }
+    .sidebar-section { display: none; }
+    .sidebar-link {
+      padding: 0.55rem 1rem; font-size: 12px;
+      border-left: none; border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .sidebar-link.active { border-bottom-color: var(--orange); border-left: none; background: #1a0800; }
+    .admin-main { padding: 1.25rem; overflow-y: visible; }
+    .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+    .modal { padding: 1.25rem; }
+    .admin-topbar { padding: 0.75rem 1rem; }
+    .admin-topbar h1 { font-size: 14px; }
+    .product-item { flex-wrap: wrap; gap: 8px; }
+    .pi-actions { margin-left: auto; }
+  }
+
+  @media (max-width: 420px) {
+    .toggle-wrap label { display: none; }
+    .login-box { padding: 1.75rem; width: 100%; margin: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">K</div>
+    <h1>Admin Panel</h1>
+    <p>Kyzer Robotics · Manager Access</p>
+    <input class="login-input" type="password" id="loginPass" placeholder="Password"
+      onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-error" id="loginErr">Incorrect password.</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="admin-topbar">
+    <div class="admin-topbar-left">
+      <div class="admin-logo">K</div>
+      <h1>Kyzer Admin</h1>
+      <span class="admin-badge">MANAGER</span>
+    </div>
+    <div class="admin-topbar-right">
+      <a href="kyzer-robotics.html" target="_blank" class="topbar-btn">View site ↗</a>
+      <button class="topbar-btn danger" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section">CONTENT</div>
+      <div class="sidebar-link active" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
+      <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero & Stats</div>
+      <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
+      <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📍</span> Contact Info</div>
+      <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
+      <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
+      <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- PRODUCTS -->
+      <div class="admin-tab active" id="tab-products">
+        <div class="tab-header">
+          <h2>Products</h2>
+          <p>Manage what appears in the shop section. Toggle visibility without deleting.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-title">
+            All products
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="resetProducts()">Reset defaults</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ Add product</button>
+            </div>
+          </div>
+          <div class="product-list" id="productList"></div>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="admin-tab" id="tab-hero">
+        <div class="tab-header"><h2>Hero & Stats</h2><p>Edit the main headline and stats strip.</p></div>
+        <div class="panel">
+          <div class="panel-title">Headline</div>
+          <div class="form-group">
+            <label class="form-label">SMALL TAG (monospace above headline)</label>
+            <input class="form-input" type="text" id="heroTag" />
+          </div>
+          <div class="form-row-3" style="margin-bottom:14px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">LINE 1</label>
+              <input class="form-input" type="text" id="heroL1" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">LINE 2</label>
+              <input class="form-input" type="text" id="heroL2" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">LINE 3 (orange)</label>
+              <input class="form-input" type="text" id="heroL3" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">SUBTITLE</label>
+            <textarea class="form-input form-textarea" id="heroSub"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="saveHero()">Save hero →</button>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Stats bar</div>
+          <div id="statsEditor"></div>
+          <button class="btn btn-primary" style="margin-top:4px;" onclick="saveHero()">Save stats →</button>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="admin-tab" id="tab-services">
+        <div class="tab-header"><h2>Services</h2><p>Edit the four service listings.</p></div>
+        <div id="servicesEditor"></div>
+        <button class="btn btn-primary" onclick="saveServices()">Save services →</button>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="admin-tab" id="tab-contact">
+        <div class="tab-header"><h2>Contact Info</h2><p>Update what's shown in the contact section.</p></div>
+        <div class="panel">
+          <div class="form-group">
+            <label class="form-label">LOCATION</label>
+            <input class="form-input" type="text" id="ciLoc" />
+          </div>
+          <div class="form-row-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">EMAIL</label>
+              <input class="form-input" type="email" id="ciEmail" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">PHONE</label>
+              <input class="form-input" type="text" id="ciPhone" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">SOCIAL HANDLE</label>
+            <input class="form-input" type="text" id="ciSocial" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">CONTACT SECTION DESCRIPTION</label>
+            <textarea class="form-input form-textarea" id="ciDesc"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="saveContact()">Save contact →</button>
+        </div>
+      </div>
+
+      <!-- QUOTE PRICING -->
+      <div class="admin-tab" id="tab-quote">
+        <div class="tab-header"><h2>Quote Pricing</h2><p>Control material rates and fees in the live quote calculator.</p></div>
+        <div class="panel">
+          <div class="panel-title">Materials <span class="sub">₹ per gram</span></div>
+          <table class="mat-table">
+            <thead><tr><th>NAME</th><th>DESCRIPTION</th><th>₹/g</th><th></th></tr></thead>
+            <tbody id="matBody"></tbody>
+          </table>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="addMat()">+ Add material</button>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Fees</div>
+          <div class="form-row-3" style="margin-bottom:14px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">MACHINE RATE (₹/hr)</label>
+              <input class="form-input" type="number" id="qMachine" min="1" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">SAME-DAY FEE (₹)</label>
+              <input class="form-input" type="number" id="qSameDay" min="0" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">7-DAY FEE (₹)</label>
+              <input class="form-input" type="number" id="q7Day" min="0" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveQuote()">Save pricing →</button>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="admin-tab" id="tab-security">
+        <div class="tab-header"><h2>Security</h2><p>Change the admin password.</p></div>
+        <div class="panel" style="max-width:380px;">
+          <div class="form-group">
+            <label class="form-label">CURRENT PASSWORD</label>
+            <input class="form-input" type="password" id="secCur" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">NEW PASSWORD</label>
+            <input class="form-input" type="password" id="secNew" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">CONFIRM NEW PASSWORD</label>
+            <input class="form-input" type="password" id="secConf" />
+          </div>
+          <button class="btn btn-primary" onclick="changePass()">Update password →</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="prodModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add product</h3>
+      <button class="modal-close" onclick="closeProdModal()">✕</button>
+    </div>
+    <div class="form-row-2" style="margin-bottom:14px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">EMOJI</label>
+        <input class="form-input" type="text" id="mEmoji" placeholder="🚁" maxlength="4" />
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">CATEGORY</label>
+        <select class="form-input form-select" id="mCat">
+          <option value="drone">Drone</option>
+          <option value="print">3D Print</option>
+          <option value="proto">Prototyping</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">PRODUCT NAME</label>
+      <input class="form-input" type="text" id="mName" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">DESCRIPTION</label>
+      <textarea class="form-input" id="mDesc" style="height:70px;resize:none;"></textarea>
+    </div>
+    <div class="form-row-2" style="margin-bottom:14px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">PRICE</label>
+        <input class="form-input" type="text" id="mPrice" placeholder="₹42,000" />
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">BUTTON TEXT</label>
+        <input class="form-input" type="text" id="mBtn" placeholder="Enquire" />
+      </div>
+    </div>
+    <div class="form-row-2" style="margin-bottom:14px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">BADGE TEXT</label>
+        <input class="form-input" type="text" id="mBadge" placeholder="NEW" />
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">BADGE STYLE</label>
+        <select class="form-input form-select" id="mBadgeType">
+          <option value="">Standard (grey)</option>
+          <option value="new">Highlight (orange glow)</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+      <span class="form-label" style="margin:0;">VISIBLE ON SITE</span>
+      <button class="toggle on" id="mVisible" onclick="this.classList.toggle('on')"></button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeProdModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()">Save →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASS_KEY = 'kyzer_admin_pass';
+const DEFAULT_PASS = 'kyzer2024';
+
+// ── AUTH ──
+function doLogin() {
+  const pass = document.getElementById('loginPass').value;
+  const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+  if (pass === stored) {
+    document.getElementById('loginScreen').style.display = 'none';
+    const p = document.getElementById('adminPanel');
+    p.style.display = 'flex';
+    p.style.flexDirection = 'column';
+    initAdmin();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('loginPass').value = '';
+  }
+}
+function doLogout() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+// ── DEFAULTS ──
+const D_PRODUCTS = [
+  { id:'1', name:'KZ-Recon X1', category:'drone', emoji:'🚁', price:'₹42,000', description:'4K aerial survey drone, 35-min flight, GPS hold', badge:'NEW', badgeType:'new', btnText:'Enquire', visible:true },
+  { id:'2', name:'FPV Racing Kit', category:'drone', emoji:'✈️', price:'₹18,500', description:'Full 5" freestyle frame kit with motor mounts and ESC', badge:'POPULAR', badgeType:'', btnText:'Enquire', visible:true },
+  { id:'3', name:'KZ-Agri Sprayer', category:'drone', emoji:'🛸', price:'₹1,20,000', description:'Agricultural spray drone, 10L tank, 15m spray width', badge:'IN STOCK', badgeType:'', btnText:'Enquire', visible:true },
+  { id:'4', name:'Nylon enclosure print', category:'print', emoji:'🖨️', price:'From ₹800', description:'High-strength engineering nylon housing, any spec', badge:'CUSTOM', badgeType:'', btnText:'Order', visible:true },
+  { id:'5', name:'Functional gear print', category:'print', emoji:'⚙️', price:'From ₹500', description:'PETG/ABS mechanical gears, brackets, and fixtures', badge:'CUSTOM', badgeType:'', btnText:'Order', visible:true },
+  { id:'6', name:'Rapid prototype pack', category:'proto', emoji:'💡', price:'From ₹3,500', description:'Design + print + assembly, delivered within 48 hours', badge:'48HR', badgeType:'new', btnText:'Book', visible:true },
+  { id:'7', name:'Product dev sprint', category:'proto', emoji:'🔬', price:'From ₹15,000', description:'3-day iterative design and prototyping sprint for startups', badge:'R&D', badgeType:'', btnText:'Book', visible:true },
+  { id:'8', name:'Beginner Micro Drone', category:'drone', emoji:'🎮', price:'₹4,500', description:'Indoor mini drone, perfect for learning and hobby flying', badge:'IN STOCK', badgeType:'', btnText:'Buy', visible:true },
+];
+const D_HERO = {
+  tag:'// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA',
+  l1:'Build.', l2:'Fly.', l3:'Innovate.',
+  sub:'Precision drones, custom 3D-printed parts, and rapid prototyping solutions — engineered for hobbyists, startups, and industrial teams.',
+  stats:[{num:'150+',lbl:'Projects delivered'},{num:'48hr',lbl:'Prototype turnaround'},{num:'100%',lbl:'Custom builds'},{num:'50+',lbl:'Happy clients'}]
+};
+const D_SERVICES = [
+  {num:'01', title:'Drone sales', desc:'Ready-to-fly consumer and professional drones for aerial photography, surveying, agriculture, and FPV racing.'},
+  {num:'02', title:'Custom drone builds', desc:'Bespoke drones built to your exact payload, range, and performance specs. We design, assemble, and test.'},
+  {num:'03', title:'3D printing', desc:'FDM and resin printing across a wide material library — PLA, ABS, PETG, TPU, nylon, and engineering-grade filaments.'},
+  {num:'04', title:'Rapid prototyping', desc:'Concept to physical prototype in 48 hours. Ideal for startups, R&D teams, and product designers.'},
+];
+const D_CONTACT = {
+  loc:'Pune, Maharashtra, India', email:'hello@kyzerrobotics.in',
+  phone:'+91 98765 43210', social:'@kyzerrobotics',
+  desc:"Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours."
+};
+const D_QUOTE = {
+  materials:[
+    {name:'PLA', desc:'Standard', rate:4},
+    {name:'ABS', desc:'Durable', rate:3},
+    {name:'PETG', desc:'Chemical resistant', rate:4},
+    {name:'TPU', desc:'Flexible', rate:5},
+    {name:'Nylon', desc:'Engineering grade', rate:5},
+  ],
+  machineRate:80, sameDayFee:200, sevenDayFee:150
+};
+
+// ── STATE ──
+let products=[], hero={}, services=[], contact={}, quote={};
+let editId = null;
+
+function load(key, def) { return JSON.parse(localStorage.getItem(key) || 'null') || JSON.parse(JSON.stringify(def)); }
+function loadAll() {
+  products = load('kyzer_products', D_PRODUCTS);
+  hero     = load('kyzer_hero', D_HERO);
+  services = load('kyzer_services', D_SERVICES);
+  contact  = load('kyzer_contact', D_CONTACT);
+  quote    = load('kyzer_quote', D_QUOTE);
+}
+
+function initAdmin() {
+  loadAll();
+  renderProducts();
+  fillHero();
+  renderServices();
+  fillContact();
+  renderMats();
+  fillQuoteFees();
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tl-' + name).classList.add('active');
+}
+
+// ── TOAST ──
+function toast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (err ? ' err' : '');
+  setTimeout(() => el.className = 'toast', 2800);
+}
+
+// ── PRODUCTS ──
+function renderProducts() {
+  document.getElementById('productList').innerHTML = products.map(p => `
+    <div class="product-item">
+      <div class="pi-emoji">${p.emoji}</div>
+      <div class="pi-info">
+        <div class="pi-name">${p.name}</div>
+        <div class="pi-meta">${p.price} · ${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
+      </div>
+      <span class="cat-badge">${p.category}</span>
+      <div class="toggle-wrap">
+        <label>${p.visible?'Live':'Hidden'}</label>
+        <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
+      </div>
+      <div class="pi-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="delProduct('${p.id}')" title="Delete">🗑</button>
+      </div>
+    </div>
+  `).join('') || '<p style="color:var(--muted);font-size:13px;">No products yet.</p>';
+}
+
+function toggleVis(id) {
+  const p = products.find(x => x.id === id);
+  if (p) { p.visible = !p.visible; saveP(); renderProducts(); }
+}
+function delProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  products = products.filter(x => x.id !== id);
+  saveP(); renderProducts(); toast('Product deleted.');
+}
+function resetProducts() {
+  if (!confirm('Reset all products to defaults?')) return;
+  products = JSON.parse(JSON.stringify(D_PRODUCTS));
+  saveP(); renderProducts(); toast('Reset to defaults.');
+}
+function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); }
+
+// ── PRODUCT MODAL ──
+function openAddProduct() {
+  editId = null;
+  document.getElementById('modalTitle').textContent = 'Add product';
+  ['mEmoji','mName','mDesc','mPrice','mBadge'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mCat').value = 'drone';
+  document.getElementById('mBtn').value = 'Enquire';
+  document.getElementById('mBadgeType').value = '';
+  document.getElementById('mVisible').className = 'toggle on';
+  document.getElementById('prodModal').classList.add('open');
+}
+function openEdit(id) {
+  editId = id;
+  const p = products.find(x => x.id === id);
+  document.getElementById('modalTitle').textContent = 'Edit product';
+  document.getElementById('mEmoji').value = p.emoji;
+  document.getElementById('mCat').value = p.category;
+  document.getElementById('mName').value = p.name;
+  document.getElementById('mDesc').value = p.description;
+  document.getElementById('mPrice').value = p.price;
+  document.getElementById('mBtn').value = p.btnText;
+  document.getElementById('mBadge').value = p.badge;
+  document.getElementById('mBadgeType').value = p.badgeType;
+  document.getElementById('mVisible').className = 'toggle' + (p.visible ? ' on' : '');
+  document.getElementById('prodModal').classList.add('open');
+}
+function closeProdModal() { document.getElementById('prodModal').classList.remove('open'); }
+function saveProduct() {
+  const name = document.getElementById('mName').value.trim();
+  if (!name) { toast('Product name is required.', true); return; }
+  const prod = {
+    id: editId || Date.now().toString(),
+    emoji: document.getElementById('mEmoji').value || '📦',
+    category: document.getElementById('mCat').value,
+    name,
+    description: document.getElementById('mDesc').value.trim(),
+    price: document.getElementById('mPrice').value.trim() || 'Contact us',
+    btnText: document.getElementById('mBtn').value.trim() || 'Enquire',
+    badge: document.getElementById('mBadge').value.trim(),
+    badgeType: document.getElementById('mBadgeType').value,
+    visible: document.getElementById('mVisible').classList.contains('on'),
+  };
+  if (editId) { products[products.findIndex(x => x.id === editId)] = prod; }
+  else { products.push(prod); }
+  saveP(); renderProducts(); closeProdModal();
+  toast(editId ? 'Product updated.' : 'Product added.');
+}
+
+// ── HERO ──
+function fillHero() {
+  document.getElementById('heroTag').value = hero.tag || '';
+  document.getElementById('heroL1').value = hero.l1 || '';
+  document.getElementById('heroL2').value = hero.l2 || '';
+  document.getElementById('heroL3').value = hero.l3 || '';
+  document.getElementById('heroSub').value = hero.sub || '';
+  document.getElementById('statsEditor').innerHTML = (hero.stats||[]).map((s,i) => `
+    <div class="stat-editor-row">
+      <div><label class="form-label">STAT ${i+1} VALUE</label>
+        <input class="form-input" type="text" id="sn${i}" value="${s.num}" /></div>
+      <div><label class="form-label">LABEL</label>
+        <input class="form-input" type="text" id="sl${i}" value="${s.lbl}" /></div>
+    </div>
+  `).join('');
+}
+function saveHero() {
+  hero.tag = document.getElementById('heroTag').value.trim();
+  hero.l1  = document.getElementById('heroL1').value.trim();
+  hero.l2  = document.getElementById('heroL2').value.trim();
+  hero.l3  = document.getElementById('heroL3').value.trim();
+  hero.sub = document.getElementById('heroSub').value.trim();
+  hero.stats = (hero.stats||[]).map((_,i) => ({
+    num: document.getElementById('sn'+i).value.trim(),
+    lbl: document.getElementById('sl'+i).value.trim(),
+  }));
+  localStorage.setItem('kyzer_hero', JSON.stringify(hero));
+  toast('Hero saved.');
+}
+
+// ── SERVICES ──
+function renderServices() {
+  document.getElementById('servicesEditor').innerHTML = services.map((s,i) => `
+    <div class="panel" style="margin-bottom:1rem;">
+      <div class="panel-title">Service ${s.num}</div>
+      <div class="form-group">
+        <label class="form-label">TITLE</label>
+        <input class="form-input" type="text" id="st${i}" value="${s.title}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIPTION</label>
+        <textarea class="form-input" id="sd${i}" style="height:70px;resize:none;">${s.desc}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+function saveServices() {
+  services = services.map((s,i) => ({...s,
+    title: document.getElementById('st'+i).value.trim(),
+    desc:  document.getElementById('sd'+i).value.trim(),
+  }));
+  localStorage.setItem('kyzer_services', JSON.stringify(services));
+  toast('Services saved.');
+}
+
+// ── CONTACT ──
+function fillContact() {
+  document.getElementById('ciLoc').value   = contact.loc   || '';
+  document.getElementById('ciEmail').value = contact.email || '';
+  document.getElementById('ciPhone').value = contact.phone || '';
+  document.getElementById('ciSocial').value= contact.social|| '';
+  document.getElementById('ciDesc').value  = contact.desc  || '';
+}
+function saveContact() {
+  contact = {
+    loc:   document.getElementById('ciLoc').value.trim(),
+    email: document.getElementById('ciEmail').value.trim(),
+    phone: document.getElementById('ciPhone').value.trim(),
+    social:document.getElementById('ciSocial').value.trim(),
+    desc:  document.getElementById('ciDesc').value.trim(),
+  };
+  localStorage.setItem('kyzer_contact', JSON.stringify(contact));
+  toast('Contact info saved.');
+}
+
+// ── QUOTE ──
+function renderMats() {
+  document.getElementById('matBody').innerHTML = quote.materials.map((m,i) => `
+    <tr>
+      <td><input class="form-input" type="text" id="mn${i}" value="${m.name}" style="width:80px;" /></td>
+      <td><input class="form-input" type="text" id="md${i}" value="${m.desc}" /></td>
+      <td><input class="form-input" type="number" id="mr${i}" value="${m.rate}" min="0" step="0.5" style="width:75px;" /></td>
+      <td><button class="btn btn-danger btn-icon btn-sm" onclick="removeMat(${i})">✕</button></td>
+    </tr>
+  `).join('');
+}
+function addMat() {
+  quote.materials.push({name:'New', desc:'', rate:3});
+  renderMats();
+}
+function removeMat(i) {
+  if (quote.materials.length <= 1) { toast('Need at least one material.', true); return; }
+  quote.materials.splice(i, 1);
+  renderMats();
+}
+function fillQuoteFees() {
+  document.getElementById('qMachine').value = quote.machineRate  || 80;
+  document.getElementById('qSameDay').value = quote.sameDayFee  || 200;
+  document.getElementById('q7Day').value    = quote.sevenDayFee || 150;
+}
+function saveQuote() {
+  quote.materials = quote.materials.map((_,i) => ({
+    name: document.getElementById('mn'+i).value.trim(),
+    desc: document.getElementById('md'+i).value.trim(),
+    rate: parseFloat(document.getElementById('mr'+i).value) || 1,
+  }));
+  quote.machineRate  = parseFloat(document.getElementById('qMachine').value) || 80;
+  quote.sameDayFee   = parseFloat(document.getElementById('qSameDay').value) || 200;
+  quote.sevenDayFee  = parseFloat(document.getElementById('q7Day').value)    || 150;
+  localStorage.setItem('kyzer_quote', JSON.stringify(quote));
+  toast('Pricing saved — refresh the main site to apply.');
+}
+
+// ── SECURITY ──
+function changePass() {
+  const cur  = document.getElementById('secCur').value;
+  const nw   = document.getElementById('secNew').value;
+  const conf = document.getElementById('secConf').value;
+  const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+  if (cur !== stored) { toast('Current password is wrong.', true); return; }
+  if (!nw)            { toast('New password cannot be empty.', true); return; }
+  if (nw !== conf)    { toast('Passwords do not match.', true); return; }
+  localStorage.setItem(PASS_KEY, nw);
+  ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
+  toast('Password updated.');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyzer Robotics Pvt. Ltd. — Drones · 3D Printing · Prototyping</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF6B00;
+    --orange-dim: #CC5500;
+    --bg: #0f0f0f;
+    --bg2: #151515;
+    --bg3: #1c1c1c;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f0;
+    --muted: #666;
+    --faint: #2a2a2a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.5;
+    transition: transform 0.18s ease, opacity 0.2s;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(15,15,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.3s;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--orange);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; color: #111;
+  }
+  .nav-logo-text { font-size: 15px; font-weight: 500; color: #f0f0f0; }
+  .nav-logo-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.03em;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--orange);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    background: var(--orange); color: #111;
+    border: none; padding: 9px 22px;
+    border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: none; transition: transform 0.15s, background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-cta:hover { background: #FF8C00; transform: scale(1.03); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; }
+  .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); transition: all 0.3s; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative; overflow: hidden;
+    background: var(--bg);
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute; top: -200px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,107,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--orange);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 9vw, 110px);
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    max-width: 800px;
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 .accent { color: var(--orange); }
+  .hero-sub {
+    font-size: 16px; color: var(--muted);
+    max-width: 480px; margin: 2rem 0 3rem;
+    line-height: 1.7;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .btn-primary {
+    background: var(--orange); color: #111;
+    border: none; padding: 13px 30px;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+    cursor: none; transition: transform 0.15s, background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #FF8C00; transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 0.5px solid rgba(255,255,255,0.2); padding: 13px 30px;
+    border-radius: 8px; font-size: 14px;
+    cursor: none; transition: border-color 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 5rem;
+    padding-top: 2.5rem; border-top: 0.5px solid var(--border);
+    opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+  }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px; color: var(--orange); line-height: 1;
+  }
+  .hero-stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.1em;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px; height: 40px; background: linear-gradient(var(--orange), transparent);
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--orange); color: #111;
+    padding: 10px 0; overflow: hidden;
+  }
+  .ticker-inner {
+    display: flex; gap: 0;
+    animation: ticker 25s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500;
+    padding: 0 2.5rem;
+    letter-spacing: 0.05em;
+  }
+  .ticker-dot {
+    margin-right: 2.5rem;
+    opacity: 0.5;
+  }
+
+  /* SECTIONS */
+  section { padding: 6rem 3rem; }
+  .sec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--orange);
+    letter-spacing: 0.15em; margin-bottom: 0.75rem;
+  }
+  .sec-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 0.95; color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .sec-sub { font-size: 15px; color: var(--muted); max-width: 480px; line-height: 1.7; }
+
+  /* SERVICES */
+  #services { background: var(--bg2); }
+  .services-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: start; margin-top: 4rem;
+  }
+  .service-list { display: flex; flex-direction: column; gap: 0; }
+  .service-item {
+    padding: 1.75rem 0;
+    border-bottom: 0.5px solid var(--border);
+    cursor: none;
+    transition: padding-left 0.3s;
+    display: flex; gap: 1.5rem; align-items: flex-start;
+  }
+  .service-item:first-child { border-top: 0.5px solid var(--border); }
+  .service-item:hover { padding-left: 1rem; }
+  .service-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--orange);
+    min-width: 28px; margin-top: 4px;
+  }
+  .service-item h3 { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+  .service-item p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .service-visual {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .sv-inner {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px; color: rgba(255,107,0,0.1);
+    user-select: none;
+    transition: font-size 0.4s, color 0.4s;
+  }
+  .service-visual:hover .sv-inner { font-size: 120px; color: rgba(255,107,0,0.18); }
+  .sv-tag {
+    position: absolute; bottom: 1.5rem; left: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* PRODUCTS */
+  #products { background: var(--bg); }
+  .products-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3rem;
+  }
+  .filter-tabs { display: flex; gap: 8px; }
+  .tab {
+    background: transparent; border: 0.5px solid var(--border);
+    color: var(--muted); padding: 7px 16px;
+    border-radius: 999px; font-size: 12px;
+    cursor: none; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab.active, .tab:hover {
+    background: var(--orange); color: #111;
+    border-color: var(--orange); font-weight: 500;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .prod-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    transition: border-color 0.2s, transform 0.25s;
+    cursor: none;
+  }
+  .prod-card:hover { border-color: rgba(255,107,0,0.4); transform: translateY(-4px); }
+  .prod-img {
+    height: 140px; background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px; border-bottom: 0.5px solid var(--border);
+    transition: background 0.3s;
+  }
+  .prod-card:hover .prod-img { background: #1f0a00; }
+  .prod-body { padding: 1.1rem; }
+  .prod-badge {
+    font-size: 10px; font-family: 'JetBrains Mono', monospace;
+    background: var(--faint); color: var(--orange);
+    padding: 3px 8px; border-radius: 4px;
+    display: inline-block; margin-bottom: 8px;
+  }
+  .prod-badge.new { background: #1f0a00; color: #FF6B00; }
+  .prod-body h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .prod-body p { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .prod-footer { display: flex; justify-content: space-between; align-items: center; }
+  .prod-price { font-size: 15px; font-weight: 500; color: var(--orange); }
+  .prod-btn {
+    background: var(--faint); color: var(--text);
+    border: none; padding: 6px 14px;
+    border-radius: 6px; font-size: 12px;
+    cursor: none; transition: background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .prod-btn:hover { background: var(--orange); color: #111; }
+  .hidden { display: none; }
+
+  /* PROTOTYPING PROCESS */
+  #process { background: var(--bg2); }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0; margin-top: 4rem;
+    border: 0.5px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .step {
+    padding: 2rem 1.5rem;
+    border-right: 0.5px solid var(--border);
+    position: relative; transition: background 0.3s;
+  }
+  .step:last-child { border-right: none; }
+  .step:hover { background: var(--bg3); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; color: rgba(255,107,0,0.12);
+    line-height: 1; margin-bottom: 1rem;
+    transition: color 0.3s;
+  }
+  .step:hover .step-num { color: rgba(255,107,0,0.25); }
+  .step h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .step p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .step-arrow {
+    position: absolute; right: -12px; top: 50%;
+    transform: translateY(-50%);
+    width: 24px; height: 24px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--orange);
+    z-index: 1;
+  }
+  .step:last-child .step-arrow { display: none; }
+
+  /* WHY US */
+  #why { background: var(--bg); }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-top: 3.5rem;
+  }
+  .why-card {
+    padding: 1.75rem;
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg2);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .why-card:hover { border-color: rgba(255,107,0,0.3); transform: translateY(-3px); }
+  .why-icon {
+    width: 42px; height: 42px;
+    background: #1f0a00; border: 0.5px solid #3a1a00;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 1.25rem;
+  }
+  .why-card h4 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .why-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* CONTACT */
+  #contact {
+    background: var(--bg2);
+    border-top: 0.5px solid var(--border);
+  }
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1.3fr;
+    gap: 5rem; margin-top: 4rem;
+  }
+  .contact-info h3 { font-size: 18px; font-weight: 500; margin-bottom: 1rem; }
+  .contact-info p { font-size: 14px; color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
+  .ci-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px; font-size: 13px; color: #bbb;
+  }
+  .ci-icon {
+    width: 32px; height: 32px; background: #1f0a00;
+    border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .form { display: flex; flex-direction: column; gap: 14px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form input, .form select, .form textarea {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form input:focus, .form select:focus, .form textarea:focus {
+    outline: none; border-color: var(--orange);
+  }
+  .form input::placeholder, .form textarea::placeholder { color: var(--muted); }
+  .form select option { background: #1c1c1c; }
+  .form textarea { height: 110px; resize: none; }
+  .form-submit {
+    background: var(--orange); color: #111;
+    border: none; padding: 14px;
+    border-radius: 10px; font-size: 14px; font-weight: 500;
+    cursor: none; transition: background 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+  .form-submit:hover { background: #FF8C00; transform: translateY(-2px); }
+  .form-success {
+    background: #0a1f0a; border: 0.5px solid #2a5a2a;
+    color: #7fcc7f; border-radius: 10px;
+    padding: 14px; font-size: 14px; text-align: center;
+    display: none;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #0a0a0a; padding: 2rem 3rem;
+    border-top: 0.5px solid var(--border);
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-left { display: flex; align-items: center; gap: 12px; }
+  .footer-logo {
+    width: 30px; height: 30px; background: var(--orange);
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: #111;
+  }
+  .footer-left p { font-size: 13px; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--orange); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* PAGE SWITCHER */
+  #mainSite { transition: opacity 0.3s; }
+  #quotePage {
+    display: none; opacity: 0;
+    transition: opacity 0.3s;
+    min-height: 100vh;
+    background: var(--bg);
+    padding: 7rem 3rem 4rem;
+  }
+  #quotePage.active { display: block; animation: fadeIn 0.4s forwards; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  /* QUOTE PAGE */
+  .quote-header { text-align: center; margin-bottom: 3.5rem; }
+  .quote-header .sec-label { justify-content: center; display: block; }
+  .quote-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 7vw, 80px);
+    line-height: 0.95; color: var(--text);
+  }
+  .quote-header h1 span { color: #FF6B00; }
+  .quote-header p { font-size: 15px; color: var(--muted); margin-top: 1rem; }
+
+  .quote-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .quote-panel {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+  .quote-panel h3 {
+    font-size: 15px; font-weight: 500;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; background: #1f0a00;
+    color: #FF6B00; padding: 3px 8px;
+    border-radius: 4px; border: 0.5px solid #3a1500;
+  }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: none;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: #FF6B00;
+    background: #1a0900;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: none; width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 36px; margin-bottom: 0.75rem; }
+  .upload-zone p { font-size: 13px; color: var(--muted); }
+  .upload-zone span { color: #FF6B00; font-weight: 500; }
+  .upload-zone .file-types {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #444; margin-top: 6px;
+  }
+  .file-preview {
+    display: none;
+    background: #1f0a00; border: 0.5px solid #3a1500;
+    border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 1.5rem;
+    font-size: 13px; color: #FF6B00;
+    align-items: center; gap: 10px;
+  }
+  .file-preview.show { display: flex; }
+  .file-preview-name { flex: 1; }
+  .file-remove {
+    background: none; border: none;
+    color: var(--muted); cursor: none; font-size: 16px;
+    transition: color 0.2s;
+  }
+  .file-remove:hover { color: #ff4444; }
+
+  /* OR divider */
+  .or-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 1.5rem 0; color: var(--muted); font-size: 12px;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1; height: 0.5px; background: var(--border);
+  }
+
+  /* Form fields */
+  .qf-group { margin-bottom: 14px; }
+  .qf-label {
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 6px; display: block;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .qf-input {
+    width: 100%; background: var(--bg3);
+    border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 10px;
+    padding: 11px 14px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .qf-input:focus { outline: none; border-color: #FF6B00; }
+  .qf-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .qf-row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Material selector */
+  .material-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 8px; margin-bottom: 14px;
+  }
+  .mat-btn {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--muted); padding: 10px 12px;
+    border-radius: 10px; font-size: 13px;
+    cursor: none; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .mat-btn span { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #444; }
+  .mat-btn.selected {
+    background: #1f0a00; border-color: #FF6B00;
+    color: var(--text);
+  }
+  .mat-btn.selected span { color: #FF6B00; }
+
+  /* Quality selector */
+  .quality-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+  .qual-btn {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--muted); padding: 10px 8px;
+    border-radius: 10px; font-size: 12px;
+    cursor: none; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    text-align: center;
+  }
+  .qual-btn.selected { background: #1f0a00; border-color: #FF6B00; color: var(--text); }
+
+  /* Infill slider */
+  .slider-wrap { margin-bottom: 14px; }
+  .slider-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .slider-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: #FF6B00;
+  }
+  input[type="range"] {
+    width: 100%; accent-color: #FF6B00;
+    height: 4px; border-radius: 2px;
+    background: var(--border); cursor: none;
+  }
+
+  /* Quantity */
+  .qty-wrap {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .qty-btn {
+    width: 36px; height: 36px;
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 8px; font-size: 18px;
+    cursor: none; transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .qty-btn:hover { background: #1f0a00; border-color: #FF6B00; color: #FF6B00; }
+  .qty-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; color: var(--text);
+    min-width: 40px; text-align: center;
+  }
+
+  /* Quote result panel */
+  .quote-result {
+    position: sticky; top: 90px;
+  }
+  .price-display {
+    text-align: center;
+    padding: 2rem;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .price-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1em; margin-bottom: 0.5rem;
+  }
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px; color: #FF6B00;
+    line-height: 1;
+    transition: all 0.3s;
+  }
+  .price-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .price-breakdown { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .pb-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: var(--muted);
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .pb-row:last-child { border-bottom: none; }
+  .pb-row span:last-child { color: var(--text); font-weight: 500; }
+  .pb-row.total span { color: #FF6B00 !important; font-weight: 500; font-size: 15px; }
+  .turnaround-bar {
+    background: #1f0a00; border: 0.5px solid #3a1500;
+    border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1.5rem;
+    font-size: 13px; color: #FF6B00;
+  }
+  .quote-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-quote-order {
+    width: 100%; background: #FF6B00; color: #111;
+    border: none; padding: 14px;
+    border-radius: 10px; font-size: 14px; font-weight: 500;
+    cursor: none; transition: background 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-quote-order:hover { background: #FF8C00; transform: translateY(-2px); }
+  .btn-quote-save {
+    width: 100%; background: transparent;
+    border: 0.5px solid var(--border); color: var(--muted);
+    padding: 12px; border-radius: 10px; font-size: 13px;
+    cursor: none; transition: border-color 0.2s, color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-quote-save:hover { border-color: #FF6B00; color: #FF6B00; }
+  .quote-note { font-size: 11px; color: #444; text-align: center; margin-top: 10px; line-height: 1.5; }
+
+  /* 3D model viewer placeholder */
+  .model-viewer {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    height: 260px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  #threeCanvas { cursor: grab; }
+  #threeCanvas:active { cursor: grabbing; }
+  .model-viewer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    position: absolute; top: 12px; left: 14px;
+  }
+  .model-placeholder { font-size: 52px; animation: rotate3d 8s linear infinite; }
+  @keyframes rotate3d {
+    0% { transform: rotateY(0deg) rotateX(10deg); }
+    100% { transform: rotateY(360deg) rotateX(10deg); }
+  }
+  .model-filename { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  /* Back button */
+  .back-btn {
+    background: none; border: 0.5px solid var(--border);
+    color: var(--muted); padding: 8px 18px;
+    border-radius: 8px; font-size: 13px;
+    cursor: none; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 2rem;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back-btn:hover { border-color: #FF6B00; color: #FF6B00; }
+
+  /* ── TABLET ── */
+  @media (max-width: 1024px) {
+    .services-layout { gap: 3rem; }
+    .contact-layout { gap: 3rem; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .why-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+
+    /* Nav */
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+      background: rgba(10,10,10,0.98);
+      backdrop-filter: blur(16px);
+      padding: 2.5rem 2rem;
+      border-bottom: 0.5px solid var(--border);
+      gap: 1.75rem; z-index: 999;
+      overflow-y: auto;
+    }
+    .nav-links.open a { font-size: 18px; color: var(--text); }
+    .hamburger { display: flex; }
+    .nav-cta { display: none; }
+
+    /* Hero */
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+
+    /* Sections */
+    section { padding: 4rem 1.5rem; }
+
+    /* Services */
+    .services-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .service-visual { aspect-ratio: 16/9; }
+
+    /* Products */
+    .products-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .filter-tabs { flex-wrap: wrap; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    /* Process */
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .step { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-arrow { display: none; }
+
+    /* Why */
+    .why-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Contact */
+    .contact-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+
+    /* Footer */
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+    .footer-links { justify-content: center; flex-wrap: wrap; gap: 1rem; }
+
+    /* Quote page */
+    .quote-layout { grid-template-columns: 1fr; }
+    .quote-result { position: static; }
+    #quotePage { padding: 6rem 1.5rem 3rem; }
+    .qf-row { grid-template-columns: 1fr 1fr; }
+    #quoteContactSection { margin: 1.5rem 0 0; }
+  }
+
+  /* ── SMALL PHONES ── */
+  @media (max-width: 480px) {
+    .products-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+    .step { border-bottom: 0.5px solid var(--border); }
+    .hero-stat-num { font-size: 32px; }
+    .qf-row { grid-template-columns: 1fr; }
+    .material-grid { grid-template-columns: 1fr 1fr; }
+    .quality-grid { grid-template-columns: repeat(3, 1fr); }
+    .qf-row3 { grid-template-columns: 1fr 1fr; }
+    .quote-panel { padding: 1.25rem; }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="mainSite">
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">K</div>
+    <div>
+      <div class="nav-logo-text">Kyzer Robotics</div>
+      <div class="nav-logo-sub">Pvt. Ltd.</div>
+    </div>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <a href="#services">Services</a>
+    <a href="#products">Products</a>
+    <a href="#process">Process</a>
+    <a href="#why">Why us</a>
+    <a href="#contact">Contact</a>
+    <a href="#" onclick="showPage('quote'); return false;" style="color:#FF6B00;font-weight:500;">3D Quote ⚡</a>
+  </ul>
+  <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA</div>
+  <h1>Build.<br>Fly.<br><span class="accent">Innovate.</span></h1>
+  <p class="hero-sub">Precision drones, custom 3D-printed parts, and rapid prototyping solutions — engineered for hobbyists, startups, and industrial teams.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">
+      Shop products <span>→</span>
+    </button>
+    <button class="btn-outline" onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+      Request a prototype
+    </button>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num" data-count="150">0</div>
+      <div class="hero-stat-label">Projects delivered</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">48hr</div>
+      <div class="hero-stat-label">Prototype turnaround</div>
+    </div>
+    <div>
+      <div class="hero-stat-num" data-count="100">0</div>
+      <div class="hero-stat-label">% custom builds</div>
+    </div>
+    <div>
+      <div class="hero-stat-num" data-count="50">0</div>
+      <div class="hero-stat-label">Happy clients</div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">DRONES</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">3D PRINTING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">RAPID PROTOTYPING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">CUSTOM BUILDS</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">PUNE · INDIA</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FPV RACING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">INDUSTRIAL PARTS</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">NYLON · PLA · RESIN</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">DRONES</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">3D PRINTING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">RAPID PROTOTYPING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">CUSTOM BUILDS</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">PUNE · INDIA</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FPV RACING</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">INDUSTRIAL PARTS</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">NYLON · PLA · RESIN</span><span class="ticker-dot">·</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="reveal">
+    <div class="sec-label">// 01 — SERVICES</div>
+    <div class="sec-title">What we build</div>
+    <div class="sec-sub">From ready-to-fly drones to precision 3D-printed parts — all under one roof in Pune.</div>
+  </div>
+  <div class="services-layout reveal">
+    <div class="service-list">
+      <div class="service-item">
+        <span class="service-num">01</span>
+        <div>
+          <h3>Drone sales</h3>
+          <p>Ready-to-fly consumer and professional drones for aerial photography, surveying, agriculture, and FPV racing.</p>
+        </div>
+      </div>
+      <div class="service-item">
+        <span class="service-num">02</span>
+        <div>
+          <h3>Custom drone builds</h3>
+          <p>Bespoke drones built to your exact payload, range, and performance specs. We design, assemble, and test.</p>
+        </div>
+      </div>
+      <div class="service-item">
+        <span class="service-num">03</span>
+        <div>
+          <h3>3D printing</h3>
+          <p>FDM and resin printing across a wide material library — PLA, ABS, PETG, TPU, nylon, and engineering-grade filaments.</p>
+        </div>
+      </div>
+      <div class="service-item">
+        <span class="service-num">04</span>
+        <div>
+          <h3>Rapid prototyping</h3>
+          <p>Concept to physical prototype in 48 hours. Ideal for startups, R&D teams, and product designers.</p>
+        </div>
+      </div>
+    </div>
+    <div class="service-visual">
+      <div class="sv-inner">KR</div>
+      <div class="sv-tag">// EST. 2023 · PUNE</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header reveal">
+    <div>
+      <div class="sec-label">// 02 — PRODUCTS</div>
+      <div class="sec-title">Shop</div>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="drone">Drones</button>
+      <button class="tab" data-filter="print">3D Prints</button>
+      <button class="tab" data-filter="proto">Prototyping</button>
+    </div>
+  </div>
+  <div class="products-grid reveal" id="productsGrid">
+    <div class="prod-card" data-cat="drone">
+      <div class="prod-img">🚁</div>
+      <div class="prod-body">
+        <span class="prod-badge new">NEW</span>
+        <h4>KZ-Recon X1</h4>
+        <p>4K aerial survey drone, 35-min flight, GPS hold</p>
+        <div class="prod-footer">
+          <span class="prod-price">₹42,000</span>
+          <button class="prod-btn">Enquire</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="drone">
+      <div class="prod-img">✈️</div>
+      <div class="prod-body">
+        <span class="prod-badge">POPULAR</span>
+        <h4>FPV Racing Kit</h4>
+        <p>Full 5" freestyle frame kit with motor mounts and ESC</p>
+        <div class="prod-footer">
+          <span class="prod-price">₹18,500</span>
+          <button class="prod-btn">Enquire</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="drone">
+      <div class="prod-img">🛸</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>KZ-Agri Sprayer</h4>
+        <p>Agricultural spray drone, 10L tank, 15m spray width</p>
+        <div class="prod-footer">
+          <span class="prod-price">₹1,20,000</span>
+          <button class="prod-btn">Enquire</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="print">
+      <div class="prod-img">🖨️</div>
+      <div class="prod-body">
+        <span class="prod-badge">CUSTOM</span>
+        <h4>Nylon enclosure print</h4>
+        <p>High-strength engineering nylon housing, any spec</p>
+        <div class="prod-footer">
+          <span class="prod-price">From ₹800</span>
+          <button class="prod-btn">Order</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="print">
+      <div class="prod-img">⚙️</div>
+      <div class="prod-body">
+        <span class="prod-badge">CUSTOM</span>
+        <h4>Functional gear print</h4>
+        <p>PETG/ABS mechanical gears, brackets, and fixtures</p>
+        <div class="prod-footer">
+          <span class="prod-price">From ₹500</span>
+          <button class="prod-btn">Order</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="proto">
+      <div class="prod-img">💡</div>
+      <div class="prod-body">
+        <span class="prod-badge new">48HR</span>
+        <h4>Rapid prototype pack</h4>
+        <p>Design + print + assembly, delivered within 48 hours</p>
+        <div class="prod-footer">
+          <span class="prod-price">From ₹3,500</span>
+          <button class="prod-btn">Book</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="proto">
+      <div class="prod-img">🔬</div>
+      <div class="prod-body">
+        <span class="prod-badge">R&D</span>
+        <h4>Product dev sprint</h4>
+        <p>3-day iterative design and prototyping sprint for startups</p>
+        <div class="prod-footer">
+          <span class="prod-price">From ₹15,000</span>
+          <button class="prod-btn">Book</button>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="drone">
+      <div class="prod-img">🎮</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>Beginner Micro Drone</h4>
+        <p>Indoor mini drone, perfect for learning and hobby flying</p>
+        <div class="prod-footer">
+          <span class="prod-price">₹4,500</span>
+          <button class="prod-btn">Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="reveal">
+    <div class="sec-label">// 03 — PROTOTYPING PROCESS</div>
+    <div class="sec-title">From idea to object</div>
+    <div class="sec-sub">Our 4-step process gets your concept into your hands — fast.</div>
+  </div>
+  <div class="process-steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Brief</h3>
+      <p>Share your concept, drawings, or CAD files. We scope the build and confirm specs.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Design</h3>
+      <p>Our team models the part in CAD or prepares your files for printing.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Print & build</h3>
+      <p>We print, assemble, and test. You get real-time updates throughout.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Deliver</h3>
+      <p>Shipped to you or picked up from our Pune workshop within 48 hours.</p>
+      <div class="step-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="reveal">
+    <div class="sec-label">// 04 — WHY KYZER</div>
+    <div class="sec-title">Built different</div>
+    <div class="sec-sub">We're a team of engineers and makers who build the things we sell.</div>
+  </div>
+  <div class="why-grid reveal">
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <h4>48hr turnaround</h4>
+      <p>Prototype orders dispatched within two working days, every time.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🏭</div>
+      <h4>In-house manufacturing</h4>
+      <p>Everything is built at our Pune facility — no outsourcing, full quality control.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">👥</div>
+      <h4>For everyone</h4>
+      <p>Hobbyist or startup, we scale our service to your needs and budget.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">✅</div>
+      <h4>Quality assured</h4>
+      <p>Every product is tested before it leaves our workshop. No exceptions.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🎯</div>
+      <h4>Custom everything</h4>
+      <p>We don't do off-the-shelf thinking. Every order can be customised to your specs.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📍</div>
+      <h4>Local, fast shipping</h4>
+      <p>Based in Pune — faster delivery across Maharashtra and pan-India shipping available.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="sec-label">// 05 — CONTACT</div>
+    <div class="sec-title">Let's build<br>something.</div>
+  </div>
+  <div class="contact-layout reveal">
+    <div class="contact-info">
+      <h3>Get in touch</h3>
+      <p>Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours.</p>
+      <div class="ci-row"><div class="ci-icon">📍</div> Pune, Maharashtra, India</div>
+      <div class="ci-row"><div class="ci-icon">✉️</div> hello@kyzerrobotics.in</div>
+      <div class="ci-row"><div class="ci-icon">📞</div> +91 98765 43210</div>
+      <div class="ci-row"><div class="ci-icon">📸</div> @kyzerrobotics</div>
+    </div>
+    <div>
+      <form class="form" id="contactForm">
+        <div class="form-row">
+          <input type="text" placeholder="Your name" required />
+          <input type="email" placeholder="Email address" required />
+        </div>
+        <input type="text" placeholder="Company / Business (optional)" />
+        <select required>
+          <option value="">What are you looking for?</option>
+          <option>Drone purchase</option>
+          <option>Custom drone build</option>
+          <option>3D printing order</option>
+          <option>Rapid prototyping</option>
+          <option>Product development sprint</option>
+          <option>Other</option>
+        </select>
+        <textarea placeholder="Tell us about your project..."></textarea>
+        <button type="submit" class="form-submit">Send message →</button>
+        <div class="form-success" id="formSuccess">
+          ✓ Message sent! We'll get back to you within 24 hours.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">K</div>
+    <p>© 2026 Kyzer Robotics Pvt. Ltd. · Pune, India</p>
+  </div>
+  <div class="footer-links">
+    <a href="#home">Home</a>
+    <a href="#services">Services</a>
+    <a href="#products">Products</a>
+    <a href="#contact">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
+</div><!-- end #mainSite -->
+
+<!-- 3D PRINT QUOTE PAGE -->
+<div id="quotePage">
+  <button class="back-btn" onclick="showPage('main')">← Back to site</button>
+
+  <div class="quote-header">
+    <div class="sec-label">// INSTANT QUOTE CALCULATOR</div>
+    <h1>3D Print <span>Quote</span></h1>
+    <p>Upload your model or enter dimensions — get a live price instantly.</p>
+  </div>
+
+  <div class="quote-layout">
+    <!-- LEFT: Config panel -->
+    <div>
+      <div class="quote-panel" style="margin-bottom:1.5rem;">
+        <h3>📁 Your model <span class="panel-badge">STEP 1</span></h3>
+
+        <!-- Upload zone -->
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".stl,.obj,.step,.stp,.3mf,.iges" />
+          <div class="upload-icon">📐</div>
+          <p>Drag & drop your file here or <span>browse</span></p>
+          <div class="file-types">STL · OBJ · STEP · 3MF · IGES</div>
+        </div>
+
+        <div class="file-preview" id="filePreview">
+          <span>📄</span>
+          <span class="file-preview-name" id="filePreviewName">filename.stl</span>
+          <button class="file-remove" id="fileRemove">✕</button>
+        </div>
+
+        <!-- Model viewer -->
+        <div class="model-viewer" id="modelViewer">
+          <div class="model-viewer-label">// MODEL PREVIEW</div>
+          <canvas id="threeCanvas" style="display:none;width:100%;height:100%;"></canvas>
+          <div id="modelPlaceholderWrap" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div class="model-placeholder" id="modelEmoji">📦</div>
+            <div class="model-filename" id="modelViewerLabel">No file uploaded</div>
+          </div>
+          <div id="modelViewerHint" style="display:none;position:absolute;bottom:10px;right:12px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#444;">drag to rotate · scroll to zoom</div>
+        </div>
+
+        <div class="or-divider">OR ENTER DIMENSIONS MANUALLY</div>
+
+        <label class="qf-label">DIMENSIONS (mm)</label>
+        <div class="qf-row" style="margin-bottom:14px;">
+          <div>
+            <label class="qf-label">LENGTH</label>
+            <input class="qf-input" type="number" id="dimL" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
+          </div>
+          <div>
+            <label class="qf-label">WIDTH</label>
+            <input class="qf-input" type="number" id="dimW" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
+          </div>
+          <div>
+            <label class="qf-label">HEIGHT</label>
+            <input class="qf-input" type="number" id="dimH" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="quote-panel" style="margin-bottom:1.5rem;">
+        <h3>🧪 Material <span class="panel-badge">STEP 2</span></h3>
+        <div class="material-grid">
+          <button class="mat-btn selected" data-mat="PLA" data-rate="4" onclick="selectMat(this)">
+            PLA <span>₹4/g · Standard</span>
+          </button>
+          <button class="mat-btn" data-mat="ABS" data-rate="3" onclick="selectMat(this)">
+            ABS <span>₹3/g · Durable</span>
+          </button>
+          <button class="mat-btn" data-mat="PETG" data-rate="4" onclick="selectMat(this)">
+            PETG <span>₹4/g · Chemical resistant</span>
+          </button>
+          <button class="mat-btn" data-mat="TPU" data-rate="5" onclick="selectMat(this)">
+            TPU <span>₹5/g · Flexible</span>
+          </button>
+          <button class="mat-btn" data-mat="Nylon" data-rate="5" onclick="selectMat(this)" style="grid-column: span 2;">
+            Nylon <span>₹5/g · Engineering grade</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="quote-panel" style="margin-bottom:1.5rem;">
+        <h3>⚙️ Print settings <span class="panel-badge">STEP 3</span></h3>
+
+        <label class="qf-label">PRINT QUALITY</label>
+        <div class="quality-grid" style="margin-bottom:20px;">
+          <button class="qual-btn" data-quality="Draft" data-qmult="0.8" onclick="selectQual(this)">
+            Draft<br><span style="font-size:10px;color:#444">0.3mm</span>
+          </button>
+          <button class="qual-btn selected" data-quality="Standard" data-qmult="1.0" onclick="selectQual(this)">
+            Standard<br><span style="font-size:10px;color:#FF6B00">0.2mm</span>
+          </button>
+          <button class="qual-btn" data-quality="Fine" data-qmult="1.4" onclick="selectQual(this)">
+            Fine<br><span style="font-size:10px;color:#444">0.1mm</span>
+          </button>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-top">
+            <label class="qf-label" style="margin:0;">INFILL DENSITY</label>
+            <span class="slider-val" id="infillVal">20%</span>
+          </div>
+          <input type="range" id="infillSlider" min="10" max="100" step="5" value="20"
+            oninput="document.getElementById('infillVal').textContent=this.value+'%'; calculateQuote()" />
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#444;margin-top:4px;font-family:'JetBrains Mono',monospace;">
+            <span>10% light</span><span>50% medium</span><span>100% solid</span>
+          </div>
+        </div>
+
+        <div class="qf-group">
+          <label class="qf-label">COLOUR / FINISH</label>
+          <select class="qf-input" id="colorSelect" onchange="calculateQuote()">
+            <option value="0">Standard white / black (no extra charge)</option>
+            <option value="50">Custom colour (+₹50)</option>
+            <option value="150">Painted / post-processed (+₹150)</option>
+          </select>
+        </div>
+
+        <div class="qf-group">
+          <label class="qf-label">SUPPORT STRUCTURES</label>
+          <select class="qf-input" id="supportSelect" onchange="calculateQuote()">
+            <option value="0">None needed</option>
+            <option value="1">Standard supports (+10%)</option>
+            <option value="2">Heavy supports (+20%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="quote-panel">
+        <h3>📦 Quantity & delivery <span class="panel-badge">STEP 4</span></h3>
+        <label class="qf-label" style="margin-bottom:10px;display:block;">QUANTITY</label>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-display" id="qtyDisplay">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+          <span style="font-size:12px;color:var(--muted);margin-left:4px;">(bulk discount applies at 5+)</span>
+        </div>
+        <label class="qf-label">DELIVERY</label>
+        <div class="qf-row3">
+          <button class="qual-btn selected" id="delSameDay" onclick="selectDelivery('sameday', this)">
+            Same Day<br><span style="font-size:10px;color:#FF6B00">+₹200</span>
+          </button>
+          <button class="qual-btn" id="del7d" onclick="selectDelivery('7day', this)">
+            7 Days<br><span style="font-size:10px;color:#444">+₹150</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Quote result -->
+    <div class="quote-result">
+      <div class="quote-panel">
+        <h3>💰 Your quote <span class="panel-badge">LIVE</span></h3>
+
+        <div class="price-display">
+          <div class="price-label">ESTIMATED TOTAL</div>
+          <div class="price-amount" id="priceAmount">₹—</div>
+          <div class="price-sub" id="priceSub">Enter dimensions to get a quote</div>
+        </div>
+
+        <div class="price-breakdown" id="breakdown">
+          <div class="pb-row"><span>Material cost</span><span id="bMat">—</span></div>
+          <div class="pb-row"><span>Print time</span><span id="bTime">—</span></div>
+          <div class="pb-row"><span>Quality multiplier</span><span id="bQual">—</span></div>
+          <div class="pb-row"><span>Infill</span><span id="bInfill">—</span></div>
+          <div class="pb-row"><span>Finish / colour</span><span id="bColor">—</span></div>
+          <div class="pb-row"><span>Support</span><span id="bSupport">—</span></div>
+          <div class="pb-row"><span>Quantity</span><span id="bQty">—</span></div>
+          <div class="pb-row"><span>Delivery</span><span id="bDelivery">—</span></div>
+          <div class="pb-row total"><span>TOTAL</span><span id="bTotal">—</span></div>
+        </div>
+
+        <div class="turnaround-bar" id="turnaroundBar">
+          ⚡ <span id="turnaroundText">Enter dimensions to see turnaround</span>
+        </div>
+
+        <div class="quote-actions">
+          <button class="btn-quote-order" onclick="orderNow()">Place order →</button>
+          <button class="btn-quote-save" onclick="saveQuote()">💾 Save / download quote</button>
+        </div>
+        <div class="quote-note">
+          Prices are estimates. Final quote confirmed after file review.<br>
+          GST applicable as per government norms.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quote Contact Form -->
+  <div id="quoteContactSection" style="max-width:1100px;margin:2.5rem auto 0;">
+    <div class="quote-panel">
+      <h3>📬 Submit your quote <span class="panel-badge">GET CONFIRMED PRICING</span></h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">Send us your details and we'll confirm the final price within a few hours.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <input class="qf-input" type="text" placeholder="Your name" id="qfName" />
+        <input class="qf-input" type="email" placeholder="Email address" id="qfEmail" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <input class="qf-input" type="tel" placeholder="Phone number" id="qfPhone" />
+        <input class="qf-input" type="text" placeholder="Company (optional)" id="qfCompany" />
+      </div>
+      <textarea class="qf-input" style="height:90px;resize:none;margin-bottom:14px;" placeholder="Additional notes or requirements..." id="qfNotes"></textarea>
+      <button class="btn-quote-order" id="qfSubmitBtn" onclick="submitQuoteForm()">Send quote request →</button>
+      <div id="qfSuccess" style="display:none;margin-top:14px;background:#0a1f0a;border:0.5px solid #2a5a2a;color:#7fcc7f;border-radius:10px;padding:14px;font-size:14px;text-align:center;">
+        ✓ Quote request sent! We'll confirm your pricing within a few hours.
+      </div>
+      <div class="quote-note" style="margin-top:10px;">Or email us directly at hello@kyzerrobotics.in</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+  function animateRing() {
+    rx += (mx - rx - 18) * 0.12;
+    ry += (my - ry - 18) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('button, a').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform += ' scale(2)');
+    el.addEventListener('mouseleave', () => {});
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+      navLinks.classList.remove('open');
+    });
+  });
+  function scrollTo(sel) { document.querySelector(sel).scrollIntoView({ behavior: 'smooth' }); }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Counter animation
+  const counters = document.querySelectorAll('[data-count]');
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseInt(el.dataset.count);
+        let current = 0;
+        const step = target / 60;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) { el.textContent = target + '+'; clearInterval(timer); }
+          else { el.textContent = Math.floor(current); }
+        }, 16);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => counterObserver.observe(c));
+
+  // Product filter
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      document.querySelectorAll('.prod-card').forEach(card => {
+        if (filter === 'all' || card.dataset.cat === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Contact form
+  document.getElementById('contactForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Sending...';
+    setTimeout(() => {
+      btn.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    }, 1200);
+  });
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.background =
+      window.scrollY > 60 ? 'rgba(10,10,10,0.95)' : 'rgba(15,15,15,0.85)';
+  });
+
+  // Product enquire buttons — event delegation so dynamic products work too
+  document.getElementById('productsGrid').addEventListener('click', e => {
+    if (e.target.classList.contains('prod-btn')) {
+      document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // ====== PAGE SWITCHER ======
+  function showPage(page) {
+    const main = document.getElementById('mainSite');
+    const quote = document.getElementById('quotePage');
+    if (page === 'quote') {
+      main.style.display = 'none';
+      quote.classList.add('active');
+      window.scrollTo(0, 0);
+    } else {
+      main.style.display = 'block';
+      quote.classList.remove('active');
+      window.scrollTo(0, 0);
+    }
+  }
+
+  // ====== QUOTE STATE ======
+  let quoteState = {
+    matRate: 4, matName: 'PLA',
+    qualMult: 1.0, qualName: 'Standard',
+    infill: 20,
+    colorExtra: 0,
+    supportMult: 0,
+    qty: 1,
+    delivery: 'sameday',
+    hasFile: false, fileName: '',
+    L: 0, W: 0, H: 0
+  };
+
+  // Material select
+  function selectMat(btn) {
+    document.querySelectorAll('.mat-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    quoteState.matRate = parseFloat(btn.dataset.rate);
+    quoteState.matName = btn.dataset.mat;
+    calculateQuote();
+  }
+
+  // Quality select
+  function selectQual(btn) {
+    document.querySelectorAll('.qual-btn[data-quality]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    quoteState.qualMult = parseFloat(btn.dataset.qmult);
+    quoteState.qualName = btn.dataset.quality;
+    calculateQuote();
+  }
+
+  // Delivery select
+  function selectDelivery(type, btn) {
+    document.querySelectorAll('#delSameDay, #del7d').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    quoteState.delivery = type;
+    calculateQuote();
+  }
+
+  // Quantity
+  function changeQty(delta) {
+    quoteState.qty = Math.max(1, Math.min(100, quoteState.qty + delta));
+    document.getElementById('qtyDisplay').textContent = quoteState.qty;
+    calculateQuote();
+  }
+
+  // ====== CALCULATE ======
+  function calculateQuote() {
+    const L = parseFloat(document.getElementById('dimL').value) || quoteState.L;
+    const W = parseFloat(document.getElementById('dimW').value) || quoteState.W;
+    const H = parseFloat(document.getElementById('dimH').value) || quoteState.H;
+    quoteState.L = L; quoteState.W = W; quoteState.H = H;
+    quoteState.infill = parseInt(document.getElementById('infillSlider').value);
+    quoteState.colorExtra = parseInt(document.getElementById('colorSelect').value);
+    const suppVal = document.getElementById('supportSelect').value;
+    quoteState.supportMult = suppVal === '1' ? 0.10 : suppVal === '2' ? 0.20 : 0;
+
+    if (!L || !W || !H) {
+      document.getElementById('priceAmount').textContent = '₹—';
+      document.getElementById('priceSub').textContent = 'Enter dimensions to get a quote';
+      ['bMat','bTime','bQual','bInfill','bColor','bSupport','bQty','bDelivery','bTotal'].forEach(id => {
+        document.getElementById(id).textContent = '—';
+      });
+      document.getElementById('turnaroundText').textContent = 'Enter dimensions to see turnaround';
+      return;
+    }
+
+    // Volume in cm³, density ~1.2 g/cm³ average, weight estimation
+    const volumeMm3 = L * W * H * 0.6; // 0.6 fill factor for typical shape
+    const volumeCm3 = volumeMm3 / 1000;
+    const infillFactor = quoteState.infill / 100;
+    const estimatedGrams = Math.max(5, volumeCm3 * 1.2 * infillFactor);
+
+    const matCost = estimatedGrams * quoteState.matRate;
+    const printHours = Math.max(0.5, estimatedGrams / 15); // ~15g/hr rough estimate
+    const printTimeCost = printHours * (window._MACHINE_RATE || 80);
+    const qualityCost = (matCost + printTimeCost) * (quoteState.qualMult - 1);
+    const infillDisplay = quoteState.infill + '%';
+    let subtotal = matCost + printTimeCost + qualityCost + quoteState.colorExtra;
+    const supportExtra = subtotal * quoteState.supportMult;
+    subtotal += supportExtra;
+
+    // Bulk discount
+    let qtyMultiplier = 1;
+    if (quoteState.qty >= 10) qtyMultiplier = 0.75;
+    else if (quoteState.qty >= 5) qtyMultiplier = 0.85;
+    const qtyTotal = subtotal * quoteState.qty * qtyMultiplier;
+
+    // Delivery
+    const deliveryCost = quoteState.delivery === 'sameday'
+      ? (window._DELIVERY?.sameday ?? 200)
+      : (window._DELIVERY?.sevenDay ?? 150);
+    const finalTotal = Math.round(qtyTotal + deliveryCost);
+
+    // Update UI
+    const priceEl = document.getElementById('priceAmount');
+    priceEl.textContent = '₹' + finalTotal.toLocaleString('en-IN');
+    document.getElementById('priceSub').textContent =
+      `${estimatedGrams.toFixed(0)}g · ${quoteState.matName} · ${quoteState.qualName} · Qty ${quoteState.qty}`;
+
+    document.getElementById('bMat').textContent = `₹${matCost.toFixed(0)} (${estimatedGrams.toFixed(0)}g × ₹${quoteState.matRate})`;
+    document.getElementById('bTime').textContent = `₹${printTimeCost.toFixed(0)} (${printHours.toFixed(1)} hrs)`;
+    document.getElementById('bQual').textContent = quoteState.qualMult === 1 ? 'Standard (×1.0)' : `${quoteState.qualName} (×${quoteState.qualMult})`;
+    document.getElementById('bInfill').textContent = infillDisplay;
+    document.getElementById('bColor').textContent = quoteState.colorExtra > 0 ? `+₹${quoteState.colorExtra}` : 'Included';
+    document.getElementById('bSupport').textContent = quoteState.supportMult > 0 ? `+${(quoteState.supportMult*100).toFixed(0)}%` : 'None';
+    document.getElementById('bQty').textContent = `×${quoteState.qty}` + (qtyMultiplier < 1 ? ` (${((1-qtyMultiplier)*100).toFixed(0)}% bulk discount)` : '');
+    document.getElementById('bDelivery').textContent = quoteState.delivery === 'sameday' ? `₹${deliveryCost} (Same Day)` : `₹${deliveryCost} (7 Days)`;
+    document.getElementById('bTotal').textContent = '₹' + finalTotal.toLocaleString('en-IN');
+
+    // Turnaround
+    const days = quoteState.delivery === 'sameday' ? 'same day' : '7 working days';
+    document.getElementById('turnaroundText').textContent = `Estimated delivery: ${days} · ${estimatedGrams.toFixed(0)}g part`;
+
+    // Animate price
+    priceEl.style.transform = 'scale(1.08)';
+    setTimeout(() => priceEl.style.transform = 'scale(1)', 200);
+  }
+
+  // ====== FILE UPLOAD ======
+  const fileInput = document.getElementById('fileInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const filePreview = document.getElementById('filePreview');
+  const filePreviewName = document.getElementById('filePreviewName');
+  const modelEmoji = document.getElementById('modelEmoji');
+  const modelViewerLabel = document.getElementById('modelViewerLabel');
+
+  function handleFile(file) {
+    if (!file) return;
+    quoteState.hasFile = true;
+    quoteState.fileName = file.name;
+    filePreviewName.textContent = file.name;
+    filePreview.classList.add('show');
+    uploadZone.style.display = 'none';
+    modelViewerLabel.textContent = file.name;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'stl') {
+      loadSTLFile(file);
+    } else if (ext === 'obj') {
+      loadOBJFile(file);
+    } else {
+      modelEmoji.textContent = '📐';
+      document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
+    }
+
+    const estimatedGrams = Math.max(5, Math.round(file.size / 5000));
+    document.getElementById('dimL').value = '';
+    document.getElementById('dimW').value = '';
+    document.getElementById('dimH').value = '';
+    quoteState.L = Math.cbrt(estimatedGrams / 1.2 * 1000) * 1.5;
+    quoteState.W = quoteState.L * 0.8;
+    quoteState.H = quoteState.L * 0.6;
+    calculateQuote();
+  }
+
+  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  document.getElementById('fileRemove').addEventListener('click', () => {
+    clearThreeViewer();
+    filePreview.classList.remove('show');
+    uploadZone.style.display = '';
+    fileInput.value = '';
+    quoteState.hasFile = false;
+    quoteState.L = quoteState.W = quoteState.H = 0;
+    modelEmoji.textContent = '📦';
+    modelViewerLabel.textContent = 'No file uploaded';
+    calculateQuote();
+  });
+
+  // ====== ORDER / SAVE ======
+  function orderNow() {
+    if (!quoteState.L && !quoteState.hasFile) {
+      alert('Please enter dimensions or upload a file first!');
+      return;
+    }
+    document.getElementById('quoteContactSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ====== THREE.JS MODEL VIEWER ======
+  let _threeRenderer = null, _threeAnimId = null, _threeControls = null;
+
+  function clearThreeViewer() {
+    if (_threeAnimId) { cancelAnimationFrame(_threeAnimId); _threeAnimId = null; }
+    if (_threeControls) { _threeControls.dispose(); _threeControls = null; }
+    if (_threeRenderer) { _threeRenderer.dispose(); _threeRenderer = null; }
+    document.getElementById('threeCanvas').style.display = 'none';
+    document.getElementById('modelPlaceholderWrap').style.display = 'flex';
+    document.getElementById('modelViewerHint').style.display = 'none';
+  }
+
+  function showThreeModel(object) {
+    const container = document.getElementById('modelViewer');
+    const canvas = document.getElementById('threeCanvas');
+    clearThreeViewer();
+
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1c1c1c);
+    const camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100000);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    _threeRenderer = renderer;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const key = new THREE.DirectionalLight(0xffffff, 0.9);
+    key.position.set(5, 10, 7);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xFF6B00, 0.35);
+    fill.position.set(-5, -4, -5);
+    scene.add(fill);
+
+    const box = new THREE.Box3().setFromObject(object);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    object.position.sub(center);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    object.scale.setScalar(4 / maxDim);
+    scene.add(object);
+
+    camera.position.set(0, 0, 7);
+    camera.lookAt(0, 0, 0);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.5;
+    _threeControls = controls;
+
+    canvas.style.display = 'block';
+    document.getElementById('modelPlaceholderWrap').style.display = 'none';
+    document.getElementById('modelViewerHint').style.display = 'block';
+
+    function animate() {
+      _threeAnimId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  function loadSTLFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const geometry = new THREE.STLLoader().parse(e.target.result);
+        const mat = new THREE.MeshPhongMaterial({ color: 0xFF6B00, specular: 0x222222, shininess: 40 });
+        showThreeModel(new THREE.Mesh(geometry, mat));
+      } catch { showUnsupportedPreview('stl'); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function loadOBJFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const obj = new THREE.OBJLoader().parse(e.target.result);
+        obj.traverse(c => {
+          if (c.isMesh) c.material = new THREE.MeshPhongMaterial({ color: 0xFF6B00, specular: 0x222222, shininess: 40 });
+        });
+        showThreeModel(obj);
+      } catch { showUnsupportedPreview('obj'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function showUnsupportedPreview(ext) {
+    document.getElementById('modelEmoji').textContent = '📐';
+    document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
+  }
+
+  function submitQuoteForm() {
+    const name = document.getElementById('qfName').value.trim();
+    const email = document.getElementById('qfEmail').value.trim();
+    if (!name || !email) { alert('Please enter your name and email.'); return; }
+    const btn = document.getElementById('qfSubmitBtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.style.display = 'none';
+      document.getElementById('qfSuccess').style.display = 'block';
+    }, 1000);
+  }
+
+  // ====== LOAD FROM ADMIN STORAGE ======
+  function applyAdminStorage() {
+    const ld = (key, def) => JSON.parse(localStorage.getItem(key) || 'null') || def;
+
+    // Products
+    const savedProducts = localStorage.getItem('kyzer_products');
+    if (savedProducts) {
+      const arr = JSON.parse(savedProducts).filter(p => p.visible);
+      document.getElementById('productsGrid').innerHTML = arr.map(p => `
+        <div class="prod-card" data-cat="${p.category}">
+          <div class="prod-img">${p.emoji}</div>
+          <div class="prod-body">
+            <span class="prod-badge ${p.badgeType}">${p.badge}</span>
+            <h4>${p.name}</h4>
+            <p>${p.description}</p>
+            <div class="prod-footer">
+              <span class="prod-price">${p.price}</span>
+              <button class="prod-btn">${p.btnText}</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Hero
+    const hero = ld('kyzer_hero', null);
+    if (hero) {
+      if (hero.tag) document.querySelector('.hero-tag').textContent = hero.tag;
+      if (hero.l1 || hero.l2 || hero.l3) {
+        document.querySelector('.hero h1').innerHTML =
+          `${hero.l1 || 'Build.'}<br>${hero.l2 || 'Fly.'}<br><span class="accent">${hero.l3 || 'Innovate.'}</span>`;
+      }
+      if (hero.sub) document.querySelector('.hero-sub').textContent = hero.sub;
+      if (hero.stats) {
+        const nums = document.querySelectorAll('.hero-stat-num');
+        const lbls = document.querySelectorAll('.hero-stat-label');
+        hero.stats.forEach((s, i) => {
+          if (nums[i]) { nums[i].textContent = s.num; nums[i].removeAttribute('data-count'); }
+          if (lbls[i]) lbls[i].textContent = s.lbl;
+        });
+      }
+    }
+
+    // Services
+    const svcs = ld('kyzer_services', null);
+    if (svcs) {
+      const items = document.querySelectorAll('.service-item');
+      svcs.forEach((s, i) => {
+        if (!items[i]) return;
+        items[i].querySelector('h3').textContent = s.title;
+        items[i].querySelector('p').textContent = s.desc;
+      });
+    }
+
+    // Contact
+    const ci = ld('kyzer_contact', null);
+    if (ci) {
+      const rows = document.querySelectorAll('.ci-row');
+      if (rows[0] && ci.loc)    rows[0].lastChild.textContent = ' ' + ci.loc;
+      if (rows[1] && ci.email)  rows[1].lastChild.textContent = ' ' + ci.email;
+      if (rows[2] && ci.phone)  rows[2].lastChild.textContent = ' ' + ci.phone;
+      if (rows[3] && ci.social) rows[3].lastChild.textContent = ' ' + ci.social;
+      const descEl = document.querySelector('.contact-info p');
+      if (descEl && ci.desc) descEl.textContent = ci.desc;
+    }
+
+    // Quote settings
+    const q = ld('kyzer_quote', null);
+    if (q) {
+      window._MACHINE_RATE = q.machineRate || 80;
+      window._DELIVERY = { sameday: q.sameDayFee || 200, sevenDay: q.sevenDayFee || 150 };
+      // Rebuild material buttons
+      if (q.materials && q.materials.length) {
+        const grid = document.querySelector('.material-grid');
+        if (grid) {
+          grid.innerHTML = q.materials.map((m, i) => `
+            <button class="mat-btn ${i===0?'selected':''}" data-mat="${m.name}" data-rate="${m.rate}" onclick="selectMat(this)"
+              ${i === q.materials.length - 1 && q.materials.length % 2 !== 0 ? 'style="grid-column:span 2;"' : ''}>
+              ${m.name} <span>₹${m.rate}/g · ${m.desc}</span>
+            </button>
+          `).join('');
+          quoteState.matRate = q.materials[0].rate;
+          quoteState.matName = q.materials[0].name;
+        }
+      }
+    }
+  }
+
+  applyAdminStorage();
+
+  function saveQuote() {
+    const total = document.getElementById('bTotal').textContent;
+    const text = `KYZER ROBOTICS — 3D PRINT QUOTE
+================================
+Material: ${quoteState.matName}
+Quality: ${quoteState.qualName}
+Infill: ${quoteState.infill}%
+Dimensions: ${quoteState.L.toFixed(0)}×${quoteState.W.toFixed(0)}×${quoteState.H.toFixed(0)} mm
+Quantity: ${quoteState.qty}
+Delivery: ${quoteState.delivery === 'sameday' ? 'Same Day' : '7 Working Days'}
+TOTAL: ${total}
+================================
+Valid for 7 days. Contact: hello@kyzerrobotics.in`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kyzer-3d-quote.txt';
+    a.click();
+  }
+</script>
+</body>
+</html>
