@@ -493,43 +493,238 @@
   }
   #quotePage.active { display: block; animation: fadeIn 0.4s forwards; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* QUOTE PAGE */
-  .quote-header { text-align: center; margin-bottom: 3.5rem; }
-  .quote-header .sec-label { justify-content: center; display: block; }
-  .quote-header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 7vw, 80px);
-    line-height: 0.95; color: var(--text);
-  }
-  .quote-header h1 span { color: #FF8C35; }
-  .quote-header p { font-size: 15px; color: var(--muted); margin-top: 1rem; }
-
-  .quote-layout {
+  /* QUOTE PAGE v2 */
+  .quote-v2-layout {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 2.5rem;
-    max-width: 1100px;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
     margin: 0 auto;
+    align-items: start;
   }
 
-  .quote-panel {
-    background: var(--bg2);
+  /* LEFT panel */
+  .qv2-left { display: flex; flex-direction: column; gap: 0; }
+  .qv2-upload-btn {
+    width: 100%; background: var(--bg2);
     border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
+    color: var(--text); padding: 13px;
+    border-radius: 0 0 12px 12px;
+    font-size: 14px; font-weight: 500;
+    cursor: none; transition: background 0.2s, border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative;
   }
-  .quote-panel h3 {
-    font-size: 15px; font-weight: 500;
-    margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 8px;
+  .qv2-upload-btn:hover { background: #fff3e8; border-color: #FF8C35; color: #FF8C35; }
+  .qv2-upload-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: none; }
+  .qv2-meta {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-top: none; border-radius: 0 0 12px 12px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+    margin-top: 8px; border-radius: 12px;
   }
-  .panel-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; background: #fff3e8;
-    color: #FF8C35; padding: 3px 8px;
-    border-radius: 4px; border: 0.5px solid rgba(255,140,53,0.25);
+  .qv2-meta-row {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 13px; color: var(--muted);
   }
+  .qv2-meta-row label { font-weight: 500; min-width: 70px; }
+  .qv2-meta-row .unit-opts { display: flex; gap: 10px; }
+  .qv2-meta-row .unit-opts label {
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer; font-weight: 400; min-width: auto;
+    color: var(--text);
+  }
+  .qv2-meta-row input[type="radio"] { accent-color: #FF8C35; cursor: pointer; }
+  .qv2-meta-row input[type="number"] {
+    width: 60px; background: var(--bg3);
+    border: 0.5px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 5px 8px; font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .qv2-apply-btn {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--muted); padding: 6px 14px; border-radius: 6px;
+    font-size: 12px; cursor: none; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .qv2-apply-btn:hover { border-color: #FF8C35; color: #FF8C35; }
+  .qv2-divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; color: var(--muted); margin: 10px 0;
+  }
+  .qv2-divider::before, .qv2-divider::after { content:''; flex:1; height:0.5px; background: var(--border); }
+  .qv2-dim-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .qv2-dim-row > div { display: flex; flex-direction: column; gap: 4px; }
+  .qv2-dim-label { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+  .qv2-dim-input {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 8px;
+    padding: 9px 12px; font-size: 13px;
+    font-family: 'DM Sans', sans-serif; width: 100%;
+    transition: border-color 0.2s;
+  }
+  .qv2-dim-input:focus { outline: none; border-color: #FF8C35; }
+  .qv2-stats {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+    margin-top: 8px; display: none; gap: 10px; flex-direction: column;
+  }
+  .qv2-stats.show { display: flex; }
+  .qv2-stat-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted);
+    padding-bottom: 8px; border-bottom: 0.5px solid var(--border);
+  }
+  .qv2-stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .qv2-stat-row span:last-child { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; }
+  .analysing-bar {
+    background: #fff3e8; border: 0.5px solid rgba(255,140,53,0.25);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; color: #CC5500;
+    display: none; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .analysing-bar.show { display: flex; }
+
+  /* RIGHT: Accordion */
+  .qv2-right { display: flex; flex-direction: column; }
+  .qv2-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .qv2-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+
+  .accord-section {
+    border: 0.5px solid var(--border);
+    border-radius: 12px; margin-bottom: 10px;
+    overflow: hidden; background: var(--bg2);
+  }
+  .accord-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px; cursor: none;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .accord-header:hover { background: var(--bg3); }
+  .acc-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #FF8C35; color: #111;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; flex-shrink: 0;
+  }
+  .accord-section:not(.open) .acc-num { background: var(--bg3); color: var(--muted); border: 0.5px solid var(--border); }
+  .acc-title { font-size: 15px; font-weight: 500; flex: 1; }
+  .acc-arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .accord-section.open .acc-arrow { transform: rotate(180deg); }
+  .accord-body { display: none; padding: 0 18px 18px; }
+  .accord-section.open .accord-body { display: block; }
+
+  /* Radio list inside accordion */
+  .acc-radio-list { display: flex; flex-direction: column; gap: 6px; }
+  .acc-radio-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 8px;
+    border: 0.5px solid var(--border);
+    cursor: pointer; transition: all 0.2s;
+    background: var(--bg3);
+  }
+  .acc-radio-item:hover { border-color: #FF8C35; }
+  .acc-radio-item.selected { background: #fff3e8; border-color: #FF8C35; }
+  .acc-radio-item input[type="radio"] { accent-color: #FF8C35; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .acc-radio-name { font-size: 14px; font-weight: 500; }
+  .acc-radio-sub { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .acc-radio-price { margin-left: auto; font-size: 13px; color: #FF8C35; font-weight: 500; font-family: 'JetBrains Mono', monospace; }
+
+  /* Finalize panel */
+  .qv2-price-big {
+    text-align: center; padding: 1.25rem;
+    border-bottom: 0.5px solid var(--border); margin-bottom: 1rem;
+  }
+  .qv2-price-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+  .qv2-price-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 56px;
+    color: #FF8C35; line-height: 1; transition: all 0.3s;
+  }
+  .qv2-breakdown { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .qv2-pb-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted);
+    padding-bottom: 8px; border-bottom: 0.5px solid var(--border);
+  }
+  .qv2-pb-row:last-child { border-bottom: none; }
+  .qv2-pb-row span:last-child { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; }
+  .qv2-pb-row.total span { color: #FF8C35 !important; font-size: 14px; }
+  .qv2-order-btn {
+    width: 100%; background: #FF8C35; color: #111;
+    border: none; padding: 14px;
+    border-radius: 10px; font-size: 14px; font-weight: 500;
+    cursor: none; transition: background 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif; margin-bottom: 8px;
+  }
+  .qv2-order-btn:hover { background: #FFa050; transform: translateY(-2px); }
+  .qv2-save-btn {
+    width: 100%; background: transparent;
+    border: 0.5px solid var(--border); color: var(--muted);
+    padding: 11px; border-radius: 10px; font-size: 13px;
+    cursor: none; transition: border-color 0.2s, color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .qv2-save-btn:hover { border-color: #FF8C35; color: #FF8C35; }
+  .qv2-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+  /* Settings inside accord */
+  .acc-slider-wrap { margin-bottom: 14px; }
+  .acc-slider-top { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
+  .acc-slider-val { color: #FF8C35; font-family: 'JetBrains Mono', monospace; }
+  .acc-select {
+    width: 100%; background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 12px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .acc-select:focus { outline: none; border-color: #FF8C35; }
+  .acc-qty-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .acc-qty-btn {
+    width: 34px; height: 34px; background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 8px; font-size: 18px; cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .acc-qty-btn:hover { background: #fff3e8; border-color: #FF8C35; color: #FF8C35; }
+  .acc-qty-num { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text); min-width: 36px; text-align: center; }
+  .acc-delivery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .acc-del-btn {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--muted); padding: 10px 12px; border-radius: 8px;
+    font-size: 13px; cursor: none; font-family: 'DM Sans', sans-serif;
+    text-align: center; transition: all 0.2s;
+  }
+  .acc-del-btn.selected { background: #fff3e8; border-color: #FF8C35; color: var(--text); }
+  .acc-del-btn span { display: block; font-size: 11px; color: #FF8C35; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+
+  /* Quote contact form */
+  .quote-contact-panel {
+    max-width: 1200px; margin: 1.5rem auto 0;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+  }
+  .qcp-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+  .qcp-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+  .qcp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .qcp-input {
+    width: 100%; background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 11px 14px;
+    font-size: 14px; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+  }
+  .qcp-input:focus { outline: none; border-color: #FF8C35; }
+  .qcp-input::placeholder { color: var(--muted); }
+
+  /* Old panel/quote classes - keep for compat */
+  .quote-panel { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 2rem; }
+  .panel-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: #fff3e8; color: #FF8C35; padding: 3px 8px; border-radius: 4px; border: 0.5px solid rgba(255,140,53,0.25); }
+  .qf-input { width: 100%; background: var(--bg3); border: 0.5px solid var(--border); color: var(--text); border-radius: 10px; padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; }
+  .qf-input:focus { outline: none; border-color: #FF8C35; }
+  .qf-input::placeholder { color: var(--muted); }
 
   /* Upload zone */
   .upload-zone {
@@ -831,6 +1026,8 @@
     .quote-layout { grid-template-columns: 1fr; }
     .quote-result { position: static; }
     #quotePage { padding: 6rem 1.5rem 3rem; }
+    .quote-v2-layout { grid-template-columns: 1fr; }
+    .qv2-right { margin-top: 1rem; }
     .qf-row { grid-template-columns: 1fr 1fr; }
     #quoteContactSection { margin: 1.5rem 0 0; }
   }
@@ -1194,11 +1391,11 @@
     <div>
       <form class="form" id="contactForm">
         <div class="form-row">
-          <input type="text" placeholder="Your name" required />
-          <input type="email" placeholder="Email address" required />
+          <input id="contactName" type="text" placeholder="Your name" required />
+          <input id="contactEmail" type="email" placeholder="Email address" required />
         </div>
-        <input type="text" placeholder="Company / Business (optional)" />
-        <select required>
+        <input id="contactPhone" type="text" placeholder="Phone number (optional)" />
+        <select id="contactSubject" required>
           <option value="">What are you looking for?</option>
           <option>Drone purchase</option>
           <option>Custom drone build</option>
@@ -1207,7 +1404,7 @@
           <option>Product development sprint</option>
           <option>Other</option>
         </select>
-        <textarea placeholder="Tell us about your project..."></textarea>
+        <textarea id="contactMessage" placeholder="Tell us about your project..."></textarea>
         <button type="submit" class="form-submit">Send message →</button>
         <div class="form-success" id="formSuccess">
           ✓ Message sent! We'll get back to you within 24 hours.
@@ -1237,209 +1434,276 @@
 <div id="quotePage">
   <button class="back-btn" onclick="showPage('main')">← Back to site</button>
 
-  <div class="quote-header">
-    <div class="sec-label">// INSTANT QUOTE CALCULATOR</div>
-    <h1>3D Print <span>Quote</span></h1>
-    <p>Upload your model or enter dimensions — get a live price instantly.</p>
-  </div>
-
-  <div class="quote-layout">
-    <!-- LEFT: Config panel -->
-    <div>
-      <div class="quote-panel" style="margin-bottom:1.5rem;">
-        <h3>📁 Your model <span class="panel-badge">STEP 1</span></h3>
-
-        <!-- Upload zone -->
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="fileInput" accept=".stl,.obj,.step,.stp,.3mf,.iges" />
-          <div class="upload-icon">📐</div>
-          <p>Drag & drop your file here or <span>browse</span></p>
-          <div class="file-types">STL · OBJ · STEP · 3MF · IGES</div>
+  <div class="quote-v2-layout">
+    <!-- LEFT: Model viewer -->
+    <div class="qv2-left">
+      <!-- 3D Viewer -->
+      <div class="model-viewer" id="modelViewer" style="border-radius:12px 12px 0 0;margin-bottom:0;height:380px;">
+        <div class="model-viewer-label">// MODEL PREVIEW</div>
+        <canvas id="threeCanvas" style="display:none;width:100%;height:100%;"></canvas>
+        <div id="modelPlaceholderWrap" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <div class="model-placeholder" id="modelEmoji">📦</div>
+          <div class="model-filename" id="modelViewerLabel">No file uploaded</div>
         </div>
+        <div id="modelViewerHint" style="display:none;position:absolute;bottom:10px;right:12px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#888;">drag to rotate · scroll to zoom</div>
+      </div>
 
-        <div class="file-preview" id="filePreview">
-          <span>📄</span>
-          <span class="file-preview-name" id="filePreviewName">filename.stl</span>
-          <button class="file-remove" id="fileRemove">✕</button>
+      <!-- Upload button -->
+      <button class="qv2-upload-btn" id="uploadZone">
+        <input type="file" id="fileInput" accept=".stl,.obj,.step,.stp,.3mf,.iges" />
+        ⬆ Upload Model
+      </button>
+
+      <!-- File name bar -->
+      <div id="filePreview" style="display:none;align-items:center;gap:10px;background:var(--bg2);border:0.5px solid var(--border);border-top:none;padding:10px 14px;font-size:13px;color:#CC5500;border-radius:0 0 10px 10px;margin-bottom:8px;">
+        <span>📄</span>
+        <span id="filePreviewName" style="flex:1;">filename.stl</span>
+        <button id="fileRemove" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;">✕</button>
+      </div>
+
+      <!-- Analysing bar -->
+      <div class="analysing-bar" id="analysingBar">
+        <span style="animation:spin 1s linear infinite;display:inline-block;">⟳</span>
+        Analysing model... calculating volume
+      </div>
+
+      <!-- Meta: file unit + rotation -->
+      <div class="qv2-meta">
+        <div class="qv2-meta-row">
+          <label>File Unit</label>
+          <div class="unit-opts">
+            <label><input type="radio" name="fileUnit" value="mm" checked> MM</label>
+            <label><input type="radio" name="fileUnit" value="inch"> Inch</label>
+          </div>
         </div>
-
-        <!-- Model viewer -->
-        <div class="model-viewer" id="modelViewer">
-          <div class="model-viewer-label">// MODEL PREVIEW</div>
-          <canvas id="threeCanvas" style="display:none;width:100%;height:100%;"></canvas>
-          <div id="modelPlaceholderWrap" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-            <div class="model-placeholder" id="modelEmoji">📦</div>
-            <div class="model-filename" id="modelViewerLabel">No file uploaded</div>
-          </div>
-          <div id="modelViewerHint" style="display:none;position:absolute;bottom:10px;right:12px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#444;">drag to rotate · scroll to zoom</div>
+        <div class="qv2-meta-row">
+          <label>Rotation</label>
+          <span style="font-size:12px;">X</span>
+          <input type="number" id="rotX" value="0" style="width:60px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:13px;font-family:'DM Sans',sans-serif;" />
+          <span style="font-size:12px;">Y</span>
+          <input type="number" id="rotY" value="0" style="width:60px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:13px;font-family:'DM Sans',sans-serif;" />
+          <button class="qv2-apply-btn" onclick="applyRotation()">Apply</button>
         </div>
+      </div>
 
-        <div class="or-divider">OR ENTER DIMENSIONS MANUALLY</div>
+      <!-- OR divider -->
+      <div class="qv2-divider" style="margin:12px 0;">OR ENTER DIMENSIONS MANUALLY</div>
 
-        <label class="qf-label">DIMENSIONS (mm)</label>
-        <div class="qf-row" style="margin-bottom:14px;">
-          <div>
-            <label class="qf-label">LENGTH</label>
-            <input class="qf-input" type="number" id="dimL" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
-          </div>
-          <div>
-            <label class="qf-label">WIDTH</label>
-            <input class="qf-input" type="number" id="dimW" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
-          </div>
-          <div>
-            <label class="qf-label">HEIGHT</label>
-            <input class="qf-input" type="number" id="dimH" placeholder="mm" min="1" value="" oninput="calculateQuote()" />
+      <!-- Manual dimensions -->
+      <div class="qv2-dim-row">
+        <div>
+          <div class="qv2-dim-label">LENGTH (mm)</div>
+          <input class="qv2-dim-input" type="number" id="dimL" placeholder="0" min="1" oninput="calculateQuote()" />
+        </div>
+        <div>
+          <div class="qv2-dim-label">WIDTH (mm)</div>
+          <input class="qv2-dim-input" type="number" id="dimW" placeholder="0" min="1" oninput="calculateQuote()" />
+        </div>
+        <div>
+          <div class="qv2-dim-label">HEIGHT (mm)</div>
+          <input class="qv2-dim-input" type="number" id="dimH" placeholder="0" min="1" oninput="calculateQuote()" />
+        </div>
+      </div>
+
+      <!-- Model stats (shown after upload) -->
+      <div class="qv2-stats" id="modelStats">
+        <div class="qv2-stat-row"><span>Material Volume</span><span id="statVol">—</span></div>
+        <div class="qv2-stat-row"><span>Dimensions</span><span id="statDims">—</span></div>
+        <div class="qv2-stat-row"><span>Est. Weight</span><span id="statWeight">—</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Accordion -->
+    <div class="qv2-right">
+      <div class="qv2-title">Kyzer 3D Print Service</div>
+      <div class="qv2-subtitle">FDM printing · PLA · ABS · PETG · TPU · Nylon · Same-day available</div>
+
+      <!-- Step 1: Quality -->
+      <div class="accord-section open" id="acc-quality">
+        <div class="accord-header" onclick="toggleAccord('quality')">
+          <span class="acc-num">1</span>
+          <span class="acc-title">Print Quality</span>
+          <span class="acc-arrow">▲</span>
+        </div>
+        <div class="accord-body">
+          <div class="acc-radio-list">
+            <label class="acc-radio-item" onclick="setQuality('Draft',0.8,this)">
+              <input type="radio" name="quality" value="Draft">
+              <div style="flex:1;">
+                <div class="acc-radio-name">Draft · 0.3mm</div>
+                <div class="acc-radio-sub">Fastest print, visible layer lines</div>
+              </div>
+              <span class="acc-radio-price">−20%</span>
+            </label>
+            <label class="acc-radio-item selected" onclick="setQuality('Standard',1.0,this)">
+              <input type="radio" name="quality" value="Standard" checked>
+              <div style="flex:1;">
+                <div class="acc-radio-name">Standard · 0.2mm</div>
+                <div class="acc-radio-sub">Best value, smooth finish</div>
+              </div>
+              <span class="acc-radio-price">Base</span>
+            </label>
+            <label class="acc-radio-item" onclick="setQuality('Fine',1.4,this)">
+              <input type="radio" name="quality" value="Fine">
+              <div style="flex:1;">
+                <div class="acc-radio-name">Fine · 0.1mm</div>
+                <div class="acc-radio-sub">High detail, longer print time</div>
+              </div>
+              <span class="acc-radio-price">+40%</span>
+            </label>
           </div>
         </div>
       </div>
 
-      <div class="quote-panel" style="margin-bottom:1.5rem;">
-        <h3>🧪 Material <span class="panel-badge">STEP 2</span></h3>
-        <div class="material-grid">
-          <button class="mat-btn selected" data-mat="PLA" data-rate="4" onclick="selectMat(this)">
-            PLA <span>₹4/g · Standard</span>
-          </button>
-          <button class="mat-btn" data-mat="ABS" data-rate="3" onclick="selectMat(this)">
-            ABS <span>₹3/g · Durable</span>
-          </button>
-          <button class="mat-btn" data-mat="PETG" data-rate="4" onclick="selectMat(this)">
-            PETG <span>₹4/g · Chemical resistant</span>
-          </button>
-          <button class="mat-btn" data-mat="TPU" data-rate="5" onclick="selectMat(this)">
-            TPU <span>₹5/g · Flexible</span>
-          </button>
-          <button class="mat-btn" data-mat="Nylon" data-rate="5" onclick="selectMat(this)" style="grid-column: span 2;">
-            Nylon <span>₹5/g · Engineering grade</span>
-          </button>
+      <!-- Step 2: Material -->
+      <div class="accord-section" id="acc-material">
+        <div class="accord-header" onclick="toggleAccord('material')">
+          <span class="acc-num">2</span>
+          <span class="acc-title">Material</span>
+          <span class="acc-arrow">▲</span>
+        </div>
+        <div class="accord-body">
+          <div class="acc-radio-list" id="materialAccordList">
+            <label class="acc-radio-item selected" onclick="setMat('PLA',4,this)">
+              <input type="radio" name="material" value="PLA" checked>
+              <div style="flex:1;"><div class="acc-radio-name">PLA</div><div class="acc-radio-sub">Standard · biodegradable</div></div>
+              <span class="acc-radio-price">₹4/g</span>
+            </label>
+            <label class="acc-radio-item" onclick="setMat('ABS',3,this)">
+              <input type="radio" name="material" value="ABS">
+              <div style="flex:1;"><div class="acc-radio-name">ABS</div><div class="acc-radio-sub">Durable · heat resistant</div></div>
+              <span class="acc-radio-price">₹3/g</span>
+            </label>
+            <label class="acc-radio-item" onclick="setMat('PETG',4,this)">
+              <input type="radio" name="material" value="PETG">
+              <div style="flex:1;"><div class="acc-radio-name">PETG</div><div class="acc-radio-sub">Chemical resistant</div></div>
+              <span class="acc-radio-price">₹4/g</span>
+            </label>
+            <label class="acc-radio-item" onclick="setMat('TPU',5,this)">
+              <input type="radio" name="material" value="TPU">
+              <div style="flex:1;"><div class="acc-radio-name">TPU</div><div class="acc-radio-sub">Flexible · rubber-like</div></div>
+              <span class="acc-radio-price">₹5/g</span>
+            </label>
+            <label class="acc-radio-item" onclick="setMat('Nylon',5,this)">
+              <input type="radio" name="material" value="Nylon">
+              <div style="flex:1;"><div class="acc-radio-name">Nylon</div><div class="acc-radio-sub">Engineering grade</div></div>
+              <span class="acc-radio-price">₹5/g</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <div class="quote-panel" style="margin-bottom:1.5rem;">
-        <h3>⚙️ Print settings <span class="panel-badge">STEP 3</span></h3>
-
-        <label class="qf-label">PRINT QUALITY</label>
-        <div class="quality-grid" style="margin-bottom:20px;">
-          <button class="qual-btn" data-quality="Draft" data-qmult="0.8" onclick="selectQual(this)">
-            Draft<br><span style="font-size:10px;color:#444">0.3mm</span>
-          </button>
-          <button class="qual-btn selected" data-quality="Standard" data-qmult="1.0" onclick="selectQual(this)">
-            Standard<br><span style="font-size:10px;color:#FF8C35">0.2mm</span>
-          </button>
-          <button class="qual-btn" data-quality="Fine" data-qmult="1.4" onclick="selectQual(this)">
-            Fine<br><span style="font-size:10px;color:#444">0.1mm</span>
-          </button>
+      <!-- Step 3: Settings -->
+      <div class="accord-section" id="acc-settings">
+        <div class="accord-header" onclick="toggleAccord('settings')">
+          <span class="acc-num">3</span>
+          <span class="acc-title">Infill, Finish & Quantity</span>
+          <span class="acc-arrow">▲</span>
         </div>
-
-        <div class="slider-wrap">
-          <div class="slider-top">
-            <label class="qf-label" style="margin:0;">INFILL DENSITY</label>
-            <span class="slider-val" id="infillVal">20%</span>
+        <div class="accord-body">
+          <div class="acc-slider-wrap">
+            <div class="acc-slider-top">
+              <span>Infill Density</span>
+              <span class="acc-slider-val" id="infillVal">20%</span>
+            </div>
+            <input type="range" id="infillSlider" min="10" max="100" step="5" value="20"
+              oninput="document.getElementById('infillVal').textContent=this.value+'%'; calculateQuote()" />
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;">
+              <span>10% light</span><span>50% medium</span><span>100% solid</span>
+            </div>
           </div>
-          <input type="range" id="infillSlider" min="10" max="100" step="5" value="20"
-            oninput="document.getElementById('infillVal').textContent=this.value+'%'; calculateQuote()" />
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:#444;margin-top:4px;font-family:'JetBrains Mono',monospace;">
-            <span>10% light</span><span>50% medium</span><span>100% solid</span>
-          </div>
-        </div>
 
-        <div class="qf-group">
-          <label class="qf-label">COLOUR / FINISH</label>
-          <select class="qf-input" id="colorSelect" onchange="calculateQuote()">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">COLOUR / FINISH</div>
+          <select class="acc-select" id="colorSelect" onchange="calculateQuote()">
             <option value="0">Standard white / black (no extra charge)</option>
             <option value="50">Custom colour (+₹50)</option>
             <option value="150">Painted / post-processed (+₹150)</option>
           </select>
-        </div>
 
-        <div class="qf-group">
-          <label class="qf-label">SUPPORT STRUCTURES</label>
-          <select class="qf-input" id="supportSelect" onchange="calculateQuote()">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">SUPPORT STRUCTURES</div>
+          <select class="acc-select" id="supportSelect" onchange="calculateQuote()">
             <option value="0">None needed</option>
             <option value="1">Standard supports (+10%)</option>
             <option value="2">Heavy supports (+20%)</option>
           </select>
+
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">QUANTITY</div>
+          <div class="acc-qty-wrap">
+            <button class="acc-qty-btn" onclick="changeQty(-1)">−</button>
+            <div class="acc-qty-num" id="qtyDisplay">1</div>
+            <button class="acc-qty-btn" onclick="changeQty(1)">+</button>
+            <span style="font-size:11px;color:var(--muted);">bulk discount at 5+</span>
+          </div>
+
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">DELIVERY</div>
+          <div class="acc-delivery-grid">
+            <button class="acc-del-btn selected" id="delSameDay" onclick="selectDelivery('sameday',this)">
+              Same Day<span>+₹200</span>
+            </button>
+            <button class="acc-del-btn" id="del7d" onclick="selectDelivery('7day',this)">
+              7 Days<span>+₹150</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="quote-panel">
-        <h3>📦 Quantity & delivery <span class="panel-badge">STEP 4</span></h3>
-        <label class="qf-label" style="margin-bottom:10px;display:block;">QUANTITY</label>
-        <div class="qty-wrap">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <div class="qty-display" id="qtyDisplay">1</div>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-          <span style="font-size:12px;color:var(--muted);margin-left:4px;">(bulk discount applies at 5+)</span>
+      <!-- Step 4: Finalize -->
+      <div class="accord-section" id="acc-finalize">
+        <div class="accord-header" onclick="toggleAccord('finalize')">
+          <span class="acc-num">4</span>
+          <span class="acc-title">Finalize & Order</span>
+          <span class="acc-arrow">▲</span>
         </div>
-        <label class="qf-label">DELIVERY</label>
-        <div class="qf-row3">
-          <button class="qual-btn selected" id="delSameDay" onclick="selectDelivery('sameday', this)">
-            Same Day<br><span style="font-size:10px;color:#FF8C35">+₹200</span>
-          </button>
-          <button class="qual-btn" id="del7d" onclick="selectDelivery('7day', this)">
-            7 Days<br><span style="font-size:10px;color:#444">+₹150</span>
-          </button>
-        </div>
-      </div>
-    </div>
+        <div class="accord-body">
+          <div class="qv2-price-big">
+            <div class="qv2-price-label">ESTIMATED TOTAL</div>
+            <div class="qv2-price-num" id="priceAmount">₹—</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;" id="priceSub">Enter dimensions to get a quote</div>
+          </div>
 
-    <!-- RIGHT: Quote result -->
-    <div class="quote-result">
-      <div class="quote-panel">
-        <h3>💰 Your quote <span class="panel-badge">LIVE</span></h3>
+          <div class="qv2-breakdown">
+            <div class="qv2-pb-row"><span>Material</span><span id="bMat">—</span></div>
+            <div class="qv2-pb-row"><span>Print time</span><span id="bTime">—</span></div>
+            <div class="qv2-pb-row"><span>Quality</span><span id="bQual">—</span></div>
+            <div class="qv2-pb-row"><span>Infill</span><span id="bInfill">—</span></div>
+            <div class="qv2-pb-row"><span>Finish</span><span id="bColor">—</span></div>
+            <div class="qv2-pb-row"><span>Support</span><span id="bSupport">—</span></div>
+            <div class="qv2-pb-row"><span>Quantity</span><span id="bQty">—</span></div>
+            <div class="qv2-pb-row"><span>Delivery</span><span id="bDelivery">—</span></div>
+            <div class="qv2-pb-row total"><span>TOTAL</span><span id="bTotal">—</span></div>
+          </div>
 
-        <div class="price-display">
-          <div class="price-label">ESTIMATED TOTAL</div>
-          <div class="price-amount" id="priceAmount">₹—</div>
-          <div class="price-sub" id="priceSub">Enter dimensions to get a quote</div>
-        </div>
+          <div style="background:#fff3e8;border:0.5px solid rgba(255,140,53,0.25);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:12px;color:#CC5500;" id="turnaroundBar">
+            ⚡ <span id="turnaroundText">Enter dimensions to see turnaround</span>
+          </div>
 
-        <div class="price-breakdown" id="breakdown">
-          <div class="pb-row"><span>Material cost</span><span id="bMat">—</span></div>
-          <div class="pb-row"><span>Print time</span><span id="bTime">—</span></div>
-          <div class="pb-row"><span>Quality multiplier</span><span id="bQual">—</span></div>
-          <div class="pb-row"><span>Infill</span><span id="bInfill">—</span></div>
-          <div class="pb-row"><span>Finish / colour</span><span id="bColor">—</span></div>
-          <div class="pb-row"><span>Support</span><span id="bSupport">—</span></div>
-          <div class="pb-row"><span>Quantity</span><span id="bQty">—</span></div>
-          <div class="pb-row"><span>Delivery</span><span id="bDelivery">—</span></div>
-          <div class="pb-row total"><span>TOTAL</span><span id="bTotal">—</span></div>
-        </div>
-
-        <div class="turnaround-bar" id="turnaroundBar">
-          ⚡ <span id="turnaroundText">Enter dimensions to see turnaround</span>
-        </div>
-
-        <div class="quote-actions">
-          <button class="btn-quote-order" onclick="orderNow()">Place order →</button>
-          <button class="btn-quote-save" onclick="saveQuote()">💾 Save / download quote</button>
-        </div>
-        <div class="quote-note">
-          Prices are estimates. Final quote confirmed after file review.<br>
-          GST applicable as per government norms.
+          <button class="qv2-order-btn" onclick="orderNow()">Place order →</button>
+          <button class="qv2-save-btn" onclick="saveQuote()">💾 Save / download quote</button>
+          <div class="qv2-note">Prices are estimates. Final quote confirmed after file review.<br>GST applicable as per government norms.</div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Quote Contact Form -->
-  <div id="quoteContactSection" style="max-width:1100px;margin:2.5rem auto 0;">
-    <div class="quote-panel">
-      <h3>📬 Submit your quote <span class="panel-badge">GET CONFIRMED PRICING</span></h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">Send us your details and we'll confirm the final price within a few hours.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-        <input class="qf-input" type="text" placeholder="Your name" id="qfName" />
-        <input class="qf-input" type="email" placeholder="Email address" id="qfEmail" />
+  <div id="quoteContactSection" style="max-width:1200px;margin:1.5rem auto 0;display:none;">
+    <div class="quote-contact-panel">
+      <div class="qcp-title">📬 Submit your quote request</div>
+      <div class="qcp-sub">Send us your details and we'll confirm the final price within a few hours.</div>
+      <div class="qcp-grid-2">
+        <input class="qcp-input" type="text" placeholder="Your name" id="qfName" />
+        <input class="qcp-input" type="email" placeholder="Email address" id="qfEmail" />
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-        <input class="qf-input" type="tel" placeholder="Phone number" id="qfPhone" />
-        <input class="qf-input" type="text" placeholder="Company (optional)" id="qfCompany" />
+      <div class="qcp-grid-2">
+        <input class="qcp-input" type="tel" placeholder="Phone number" id="qfPhone" />
+        <input class="qcp-input" type="text" placeholder="Company (optional)" id="qfCompany" />
       </div>
-      <textarea class="qf-input" style="height:90px;resize:none;margin-bottom:14px;" placeholder="Additional notes or requirements..." id="qfNotes"></textarea>
-      <button class="btn-quote-order" id="qfSubmitBtn" onclick="submitQuoteForm()">Send quote request →</button>
+      <textarea class="qcp-input" style="height:90px;resize:none;margin-bottom:12px;display:block;" placeholder="Additional notes or requirements..." id="qfNotes"></textarea>
+      <button class="qv2-order-btn" id="qfSubmitBtn" onclick="submitQuoteForm()">Send quote request →</button>
       <div id="qfSuccess" style="display:none;margin-top:14px;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:14px;text-align:center;">
         ✓ Quote request sent! We'll confirm your pricing within a few hours.
       </div>
-      <div class="quote-note" style="margin-top:10px;">Or email us directly at hello@kyzerrobotics.in</div>
+      <div class="qv2-note" style="margin-top:10px;">Or email us directly at <a href="mailto:hello@kyzerrobotics.in" style="color:#FF8C35;">hello@kyzerrobotics.in</a></div>
     </div>
   </div>
 </div>
@@ -1524,15 +1788,41 @@
     });
   });
 
-  // Contact form
-  document.getElementById('contactForm').addEventListener('submit', e => {
+  // Contact form — Web3Forms (no activation email needed)
+  // Get your free access key at: https://web3forms.com → enter kyzerroboticspvtltd@gmail.com
+  const W3F_KEY = 'REPLACE_WITH_YOUR_WEB3FORMS_ACCESS_KEY';
+
+  document.getElementById('contactForm').addEventListener('submit', async e => {
     e.preventDefault();
     const btn = e.target.querySelector('.form-submit');
     btn.textContent = 'Sending...';
-    setTimeout(() => {
-      btn.style.display = 'none';
-      document.getElementById('formSuccess').style.display = 'block';
-    }, 1200);
+    btn.disabled = true;
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: W3F_KEY,
+          subject:    'New contact message — Kyzer Robotics',
+          name:       document.getElementById('contactName').value.trim(),
+          email:      document.getElementById('contactEmail').value.trim(),
+          phone:      document.getElementById('contactPhone').value.trim(),
+          inquiry:    document.getElementById('contactSubject').value,
+          message:    document.getElementById('contactMessage').value.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        throw new Error(data.message || 'failed');
+      }
+    } catch {
+      btn.textContent = 'Send message →';
+      btn.disabled = false;
+      alert('Could not send. Please email us directly at hello@kyzerrobotics.in');
+    }
   });
 
   // Navbar scroll effect
@@ -1577,18 +1867,35 @@
   };
 
   // Material select
+  // Accordion toggle
+  function toggleAccord(name) {
+    const sec = document.getElementById('acc-' + name);
+    sec.classList.toggle('open');
+  }
+
+  // New accordion-style setters
+  function setQuality(name, mult, label) {
+    document.querySelectorAll('#acc-quality .acc-radio-item').forEach(el => el.classList.remove('selected'));
+    label.classList.add('selected');
+    quoteState.qualMult = mult;
+    quoteState.qualName = name;
+    calculateQuote();
+  }
+  function setMat(name, rate, label) {
+    document.querySelectorAll('#acc-material .acc-radio-item').forEach(el => el.classList.remove('selected'));
+    label.classList.add('selected');
+    quoteState.matRate = rate;
+    quoteState.matName = name;
+    calculateQuote();
+  }
+
+  // Legacy compat (used by applyAdminStorage material rebuild)
   function selectMat(btn) {
-    document.querySelectorAll('.mat-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
     quoteState.matRate = parseFloat(btn.dataset.rate);
     quoteState.matName = btn.dataset.mat;
     calculateQuote();
   }
-
-  // Quality select
   function selectQual(btn) {
-    document.querySelectorAll('.qual-btn[data-quality]').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
     quoteState.qualMult = parseFloat(btn.dataset.qmult);
     quoteState.qualName = btn.dataset.quality;
     calculateQuote();
@@ -1600,6 +1907,16 @@
     btn.classList.add('selected');
     quoteState.delivery = type;
     calculateQuote();
+  }
+
+  // Rotation apply (stub — orients Three.js model if loaded)
+  function applyRotation() {
+    const rx = parseFloat(document.getElementById('rotX').value) || 0;
+    const ry = parseFloat(document.getElementById('rotY').value) || 0;
+    if (window._threeModel) {
+      window._threeModel.rotation.x = rx * Math.PI / 180;
+      window._threeModel.rotation.y = ry * Math.PI / 180;
+    }
   }
 
   // Quantity
@@ -1695,8 +2012,9 @@
     quoteState.hasFile = true;
     quoteState.fileName = file.name;
     filePreviewName.textContent = file.name;
-    filePreview.classList.add('show');
+    filePreview.style.display = 'flex';
     uploadZone.style.display = 'none';
+    document.getElementById('analysingBar').classList.add('show');
     modelViewerLabel.textContent = file.name;
 
     const ext = file.name.split('.').pop().toLowerCase();
@@ -1707,6 +2025,7 @@
     } else {
       modelEmoji.textContent = '📐';
       document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
+      document.getElementById('analysingBar').classList.remove('show');
     }
 
     const estimatedGrams = Math.max(5, Math.round(file.size / 5000));
@@ -1730,7 +2049,8 @@
 
   document.getElementById('fileRemove').addEventListener('click', () => {
     clearThreeViewer();
-    filePreview.classList.remove('show');
+    filePreview.style.display = 'none';
+    document.getElementById('analysingBar').classList.remove('show');
     uploadZone.style.display = '';
     fileInput.value = '';
     quoteState.hasFile = false;
@@ -1746,7 +2066,9 @@
       alert('Please enter dimensions or upload a file first!');
       return;
     }
-    document.getElementById('quoteContactSection').scrollIntoView({ behavior: 'smooth' });
+    const sec = document.getElementById('quoteContactSection');
+    sec.style.display = 'block';
+    sec.scrollIntoView({ behavior: 'smooth' });
   }
 
   // ====== THREE.JS MODEL VIEWER ======
@@ -1770,7 +2092,7 @@
     const h = container.clientHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf0f0ee);
+    scene.background = new THREE.Color(0x2a2a2a);
     const camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100000);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -1778,13 +2100,16 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     _threeRenderer = renderer;
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-    const key = new THREE.DirectionalLight(0xffffff, 0.9);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const key = new THREE.DirectionalLight(0xffffff, 1.4);
     key.position.set(5, 10, 7);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xFF6B00, 0.35);
+    const fill = new THREE.DirectionalLight(0xffeedd, 0.6);
     fill.position.set(-5, -4, -5);
     scene.add(fill);
+    const back = new THREE.DirectionalLight(0xffffff, 0.3);
+    back.position.set(0, -10, -5);
+    scene.add(back);
 
     const box = new THREE.Box3().setFromObject(object);
     const center = box.getCenter(new THREE.Vector3());
@@ -1793,6 +2118,7 @@
     const maxDim = Math.max(size.x, size.y, size.z);
     object.scale.setScalar(4 / maxDim);
     scene.add(object);
+    window._threeModel = object;
 
     camera.position.set(0, 0, 7);
     camera.lookAt(0, 0, 0);
@@ -1807,6 +2133,12 @@
     canvas.style.display = 'block';
     document.getElementById('modelPlaceholderWrap').style.display = 'none';
     document.getElementById('modelViewerHint').style.display = 'block';
+    document.getElementById('analysingBar').classList.remove('show');
+    document.getElementById('modelStats').classList.add('show');
+    document.getElementById('statDims').textContent = size.x.toFixed(1)+'×'+size.y.toFixed(1)+'×'+size.z.toFixed(1)+' mm';
+    const vol = (size.x * size.y * size.z * 0.2).toFixed(1);
+    document.getElementById('statVol').textContent = vol + ' cm³';
+    document.getElementById('statWeight').textContent = (vol * 1.24).toFixed(1) + ' g (PLA est.)';
 
     function animate() {
       _threeAnimId = requestAnimationFrame(animate);
@@ -1821,7 +2153,8 @@
     reader.onload = e => {
       try {
         const geometry = new THREE.STLLoader().parse(e.target.result);
-        const mat = new THREE.MeshPhongMaterial({ color: 0xFF6B00, specular: 0x222222, shininess: 40 });
+        geometry.computeVertexNormals();
+        const mat = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 });
         showThreeModel(new THREE.Mesh(geometry, mat));
       } catch { showUnsupportedPreview('stl'); }
     };
@@ -1834,7 +2167,7 @@
       try {
         const obj = new THREE.OBJLoader().parse(e.target.result);
         obj.traverse(c => {
-          if (c.isMesh) c.material = new THREE.MeshPhongMaterial({ color: 0xFF6B00, specular: 0x222222, shininess: 40 });
+          if (c.isMesh) { c.geometry.computeVertexNormals(); c.material = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 }); }
         });
         showThreeModel(obj);
       } catch { showUnsupportedPreview('obj'); }
@@ -1847,17 +2180,51 @@
     document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
   }
 
-  function submitQuoteForm() {
-    const name = document.getElementById('qfName').value.trim();
+  async function submitQuoteForm() {
+    const name  = document.getElementById('qfName').value.trim();
     const email = document.getElementById('qfEmail').value.trim();
     if (!name || !email) { alert('Please enter your name and email.'); return; }
     const btn = document.getElementById('qfSubmitBtn');
     btn.textContent = 'Sending...';
     btn.disabled = true;
-    setTimeout(() => {
-      btn.style.display = 'none';
-      document.getElementById('qfSuccess').style.display = 'block';
-    }, 1000);
+    const colourEl  = document.getElementById('colorSelect');
+    const supportEl = document.getElementById('supportSelect');
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: W3F_KEY,
+          subject:    '3D Print Quote Request — Kyzer Robotics',
+          name,
+          email,
+          phone:      document.getElementById('qfPhone').value.trim(),
+          company:    document.getElementById('qfCompany').value.trim(),
+          material:   quoteState.matName,
+          quality:    quoteState.qualName,
+          infill:     document.getElementById('infillVal').textContent,
+          colour:     colourEl.options[colourEl.selectedIndex].text,
+          support:    supportEl.options[supportEl.selectedIndex].text,
+          quantity:   quoteState.qty,
+          delivery:   quoteState.delivery,
+          file:       quoteState.fileName || 'Manual dimensions',
+          dimensions: quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—',
+          estimated_total: document.getElementById('bTotal').textContent,
+          notes:      document.getElementById('qfNotes').value.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.style.display = 'none';
+        document.getElementById('qfSuccess').style.display = 'block';
+      } else {
+        throw new Error(data.message || 'failed');
+      }
+    } catch {
+      btn.textContent = 'Send quote request →';
+      btn.disabled = false;
+      alert('Could not send. Please email us at hello@kyzerrobotics.in');
+    }
   }
 
   // ====== LOAD FROM ADMIN STORAGE ======
