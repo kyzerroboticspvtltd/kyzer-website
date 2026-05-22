@@ -2419,6 +2419,22 @@
       }
     }
 
+    // Hero photos
+    const heroPhotos = JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]');
+    if (heroPhotos.length >= 2) {
+      const colA = document.querySelector('.photo-col-a');
+      const colB = document.querySelector('.photo-col-b');
+      if (colA && colB) {
+        const half = Math.ceil(heroPhotos.length / 2);
+        const buildCol = (col, imgs) => {
+          const looped = [...imgs, ...imgs];
+          col.innerHTML = looped.map(src => `<img src="${src}" alt="">`).join('');
+        };
+        buildCol(colA, heroPhotos.slice(0, half));
+        buildCol(colB, heroPhotos.slice(half).length ? heroPhotos.slice(half) : heroPhotos.slice(0, half));
+      }
+    }
+
     // Quote settings
     const q = ld('kyzer_quote', null);
     if (q) {

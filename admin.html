@@ -8,7 +8,7 @@
 <style>
   :root {
     --orange: #FF8C35; --bg: #f4f2ee; --bg2: #eceae6; --bg3: #e2e0dc;
-    --border: rgba(0,0,0,0.09); --text: #1a1a1a; --muted: #888;
+    --border: rgba(0,0,0,0.18); --text: #1a1a1a; --muted: #888;
     --faint: #d8d6d2; --red: #cc2200; --green: #2e7d32;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -215,6 +215,44 @@
   .link-row-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 4px; transition: color 0.2s; flex-shrink: 0; }
   .link-row-del:hover { color: var(--red); }
 
+  /* PHOTO UPLOAD */
+  .photo-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px; padding: 2rem;
+    text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1rem;
+  }
+  .photo-upload-zone:hover, .photo-upload-zone.drag-over {
+    border-color: var(--orange); background: #fff3e8;
+  }
+  .photo-upload-zone input { display: none; }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px; margin-top: 1rem;
+  }
+  .photo-thumb {
+    position: relative; aspect-ratio: 3/4;
+    border-radius: 8px; overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-thumb-del {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,0.55); color: #fff;
+    border: none; width: 22px; height: 22px;
+    border-radius: 50%; cursor: pointer; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .photo-thumb-del:hover { background: #cc2200; }
+  .photo-thumb-num {
+    position: absolute; bottom: 4px; left: 6px;
+    font-size: 10px; color: rgba(255,255,255,0.8);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   /* TOAST */
   .toast {
     position: fixed; bottom: 2rem; right: 2rem;
@@ -299,6 +337,7 @@
       <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
       <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📍</span> Contact Info</div>
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
+      <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
       <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
@@ -417,6 +456,31 @@
           <div id="socialLinksList"></div>
         </div>
         <button class="btn btn-primary" onclick="saveLinks()">Save links →</button>
+      </div>
+
+      <!-- PHOTOS -->
+      <div class="admin-tab" id="tab-photos">
+        <div class="tab-header">
+          <h2>Hero Photos</h2>
+          <p>Photos shown in the scrolling gallery on the right side of the homepage. Upload your own drone &amp; 3D print shots to replace the placeholders.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-title">
+            Upload Photos
+            <span class="sub">JPEG · PNG · WEBP · auto-compressed</span>
+          </div>
+          <label class="photo-upload-zone" id="photoDropZone">
+            <div style="font-size:36px;margin-bottom:10px;">📷</div>
+            <div style="font-weight:500;margin-bottom:6px;">Click to upload photos</div>
+            <div style="font-size:12px;color:var(--muted);">Supports multiple files at once. Images are resized to max 800 px and compressed automatically.</div>
+            <input type="file" id="photoFileInput" accept="image/*" multiple>
+          </label>
+          <div class="photo-grid" id="photoGrid"></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:0.5rem;">
+          <button class="btn btn-danger btn-sm" onclick="clearAllPhotos()">Clear all photos</button>
+          <span style="font-size:12px;color:var(--muted);">Changes apply instantly on the live site — no save button needed.</span>
+        </div>
       </div>
 
       <!-- QUOTE PRICING -->
@@ -637,6 +701,8 @@ function initAdmin() {
   renderMats();
   fillQuoteFees();
   fillLinks();
+  initPhotoUpload();
+  renderPhotoGrid();
 }
 
 // ── TABS ──
@@ -902,6 +968,91 @@ function saveLinks() {
   links.email = document.getElementById('lkEmail').value.trim();
   localStorage.setItem('kyzer_links', JSON.stringify(links));
   toast('Links saved.');
+}
+
+// ── PHOTOS ──
+const PHOTOS_KEY = 'kyzer_hero_photos';
+
+function initPhotoUpload() {
+  const input = document.getElementById('photoFileInput');
+  const zone  = document.getElementById('photoDropZone');
+
+  input.addEventListener('change', () => handlePhotoUpload(input.files));
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    handlePhotoUpload(e.dataTransfer.files);
+  });
+}
+
+function renderPhotoGrid() {
+  const photos = JSON.parse(localStorage.getItem(PHOTOS_KEY) || '[]');
+  const grid = document.getElementById('photoGrid');
+  if (!grid) return;
+  if (!photos.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:0.5rem 0;">No photos yet — upload some above.</p>';
+    return;
+  }
+  grid.innerHTML = photos.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}" alt="Photo ${i + 1}">
+      <span class="photo-thumb-num">${i + 1}</span>
+      <button class="photo-thumb-del" onclick="deletePhoto(${i})" title="Remove">✕</button>
+    </div>
+  `).join('');
+}
+
+function handlePhotoUpload(files) {
+  if (!files || !files.length) return;
+  const photos = JSON.parse(localStorage.getItem(PHOTOS_KEY) || '[]');
+  let remaining = files.length;
+
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          const scale = MAX / Math.max(w, h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        photos.push(canvas.toDataURL('image/jpeg', 0.82));
+        remaining--;
+        if (remaining === 0) {
+          localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos));
+          renderPhotoGrid();
+          toast(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded.`);
+        }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('photoFileInput').value = '';
+}
+
+function deletePhoto(i) {
+  const photos = JSON.parse(localStorage.getItem(PHOTOS_KEY) || '[]');
+  photos.splice(i, 1);
+  localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos));
+  renderPhotoGrid();
+  toast('Photo removed.');
+}
+
+function clearAllPhotos() {
+  if (!confirm('Remove all uploaded photos? The site will revert to placeholder images.')) return;
+  localStorage.removeItem(PHOTOS_KEY);
+  renderPhotoGrid();
+  toast('All photos cleared.');
 }
 
 // ── SECURITY ──
