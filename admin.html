@@ -335,7 +335,7 @@
       <div class="sidebar-link active" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
       <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero & Stats</div>
       <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
-      <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📍</span> Contact Info</div>
+      <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📬</span> Contact Us</div>
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
       <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
@@ -406,10 +406,40 @@
         <button class="btn btn-primary" onclick="saveServices()">Save services →</button>
       </div>
 
-      <!-- CONTACT -->
+      <!-- CONTACT US -->
       <div class="admin-tab" id="tab-contact">
-        <div class="tab-header"><h2>Contact Info</h2><p>Update what's shown in the contact section.</p></div>
+        <div class="tab-header"><h2>Contact Us</h2><p>Edit everything in the Contact section — titles, details, and form options.</p></div>
+
+        <!-- Section Title -->
         <div class="panel">
+          <div class="panel-title">Section Title</div>
+          <div class="form-group">
+            <label class="form-label">SECTION LABEL (small tag above title)</label>
+            <input class="form-input" type="text" id="ciSecLabel" placeholder="// 05 — CONTACT" />
+          </div>
+          <div class="form-row-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">TITLE LINE 1</label>
+              <input class="form-input" type="text" id="ciTitle1" placeholder="Let's build" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">TITLE LINE 2</label>
+              <input class="form-input" type="text" id="ciTitle2" placeholder="something." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="panel">
+          <div class="panel-title">Contact Details</div>
+          <div class="form-group">
+            <label class="form-label">HEADING (above contact rows)</label>
+            <input class="form-input" type="text" id="ciHeading" placeholder="Get in touch" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">DESCRIPTION TEXT</label>
+            <textarea class="form-input form-textarea" id="ciDesc"></textarea>
+          </div>
           <div class="form-group">
             <label class="form-label">LOCATION</label>
             <input class="form-input" type="text" id="ciLoc" />
@@ -425,15 +455,22 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">SOCIAL HANDLE</label>
+            <label class="form-label">SOCIAL HANDLE (e.g. @kyzerrobotics)</label>
             <input class="form-input" type="text" id="ciSocial" />
           </div>
-          <div class="form-group">
-            <label class="form-label">CONTACT SECTION DESCRIPTION</label>
-            <textarea class="form-input form-textarea" id="ciDesc"></textarea>
-          </div>
-          <button class="btn btn-primary" onclick="saveContact()">Save contact →</button>
         </div>
+
+        <!-- Form Subjects -->
+        <div class="panel">
+          <div class="panel-title">
+            Form Subjects
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="addSubject()">+ Add option</button>
+          </div>
+          <div id="subjectList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px;"></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:8px;">These are the options in the "What are you looking for?" dropdown on the contact form.</div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveContact()">Save contact →</button>
       </div>
 
       <!-- LINKS -->
@@ -653,9 +690,15 @@ const D_SERVICES = [
   {num:'04', title:'Rapid prototyping', desc:'Concept to physical prototype in 48 hours. Ideal for startups, R&D teams, and product designers.'},
 ];
 const D_CONTACT = {
-  loc:'Pune, Maharashtra, India', email:'hello@kyzerrobotics.in',
-  phone:'+91 98765 43210', social:'@kyzerrobotics',
-  desc:"Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours."
+  secLabel: '// 05 — CONTACT',
+  title1: "Let's build", title2: 'something.',
+  heading: 'Get in touch',
+  desc: "Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours.",
+  loc: 'Pune, Maharashtra, India',
+  email: 'hello@kyzerrobotics.in',
+  phone: '+91 98765 43210',
+  social: '@kyzerrobotics',
+  subjects: ['Drone purchase','Custom drone build','3D printing order','Rapid prototyping','Product development sprint','Other'],
 };
 const D_LINKS = {
   phone: '+91 98765 43210',
@@ -864,22 +907,53 @@ function saveServices() {
 
 // ── CONTACT ──
 function fillContact() {
-  document.getElementById('ciLoc').value   = contact.loc   || '';
-  document.getElementById('ciEmail').value = contact.email || '';
-  document.getElementById('ciPhone').value = contact.phone || '';
-  document.getElementById('ciSocial').value= contact.social|| '';
-  document.getElementById('ciDesc').value  = contact.desc  || '';
+  document.getElementById('ciSecLabel').value = contact.secLabel || '';
+  document.getElementById('ciTitle1').value   = contact.title1  || '';
+  document.getElementById('ciTitle2').value   = contact.title2  || '';
+  document.getElementById('ciHeading').value  = contact.heading || '';
+  document.getElementById('ciDesc').value     = contact.desc    || '';
+  document.getElementById('ciLoc').value      = contact.loc     || '';
+  document.getElementById('ciEmail').value    = contact.email   || '';
+  document.getElementById('ciPhone').value    = contact.phone   || '';
+  document.getElementById('ciSocial').value   = contact.social  || '';
+  renderSubjects();
+}
+function renderSubjects() {
+  const subs = contact.subjects || D_CONTACT.subjects;
+  document.getElementById('subjectList').innerHTML = subs.map((s, i) => `
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input class="form-input" type="text" id="subj${i}" value="${s}" style="flex:1;" />
+      <button class="btn btn-danger btn-icon btn-sm" onclick="removeSubject(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addSubject() {
+  contact.subjects = contact.subjects || [...D_CONTACT.subjects];
+  contact.subjects.push('New option');
+  renderSubjects();
+}
+function removeSubject(i) {
+  contact.subjects = contact.subjects || [...D_CONTACT.subjects];
+  if (contact.subjects.length <= 1) { toast('Need at least one option.', true); return; }
+  contact.subjects.splice(i, 1);
+  renderSubjects();
 }
 function saveContact() {
+  const subs = contact.subjects || [...D_CONTACT.subjects];
   contact = {
-    loc:   document.getElementById('ciLoc').value.trim(),
-    email: document.getElementById('ciEmail').value.trim(),
-    phone: document.getElementById('ciPhone').value.trim(),
-    social:document.getElementById('ciSocial').value.trim(),
-    desc:  document.getElementById('ciDesc').value.trim(),
+    secLabel: document.getElementById('ciSecLabel').value.trim(),
+    title1:   document.getElementById('ciTitle1').value.trim(),
+    title2:   document.getElementById('ciTitle2').value.trim(),
+    heading:  document.getElementById('ciHeading').value.trim(),
+    desc:     document.getElementById('ciDesc').value.trim(),
+    loc:      document.getElementById('ciLoc').value.trim(),
+    email:    document.getElementById('ciEmail').value.trim(),
+    phone:    document.getElementById('ciPhone').value.trim(),
+    social:   document.getElementById('ciSocial').value.trim(),
+    subjects: subs.map((_, i) => document.getElementById('subj' + i).value.trim()).filter(Boolean),
   };
   localStorage.setItem('kyzer_contact', JSON.stringify(contact));
-  toast('Contact info saved.');
+  toast('Contact section saved.');
 }
 
 // ── QUOTE ──

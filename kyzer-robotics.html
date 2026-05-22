@@ -2388,11 +2388,35 @@
     // Contact
     const ci = ld('kyzer_contact', null);
     if (ci) {
+      // Section label & title
+      const secLbl = document.querySelector('#contact .sec-label');
+      const secTitle = document.querySelector('#contact .sec-title');
+      if (secLbl  && ci.secLabel) secLbl.textContent = ci.secLabel;
+      if (secTitle && (ci.title1 || ci.title2))
+        secTitle.innerHTML = (ci.title1 || "Let's build") + '<br>' + (ci.title2 || 'something.');
+      // Heading & description
+      const ciH3 = document.querySelector('.contact-info h3');
+      const descEl = document.querySelector('.contact-info p');
+      if (ciH3  && ci.heading) ciH3.textContent = ci.heading;
+      if (descEl && ci.desc)   descEl.textContent = ci.desc;
+      // Location row
       const rows = document.querySelectorAll('.ci-row');
       const icon = r => r.querySelector('.ci-icon').outerHTML;
-      if (rows[0] && ci.loc)  rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
-      const descEl = document.querySelector('.contact-info p');
-      if (descEl && ci.desc) descEl.textContent = ci.desc;
+      if (rows[0] && ci.loc) rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
+      // Form subjects dropdown
+      if (ci.subjects && ci.subjects.length) {
+        const sel = document.getElementById('contactSubject');
+        if (sel) {
+          const placeholder = sel.options[0];
+          sel.innerHTML = '';
+          sel.appendChild(placeholder);
+          ci.subjects.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s; opt.textContent = s;
+            sel.appendChild(opt);
+          });
+        }
+      }
     }
 
     // Links (from Links tab in admin)
