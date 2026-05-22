@@ -106,10 +106,17 @@
   /* HERO */
   .hero {
     min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 4rem;
+    align-items: center;
     padding: 8rem 3rem 4rem;
     position: relative; overflow: hidden;
     background: var(--bg);
+  }
+  .hero-left {
+    display: flex; flex-direction: column;
+    position: relative; z-index: 1;
   }
   .hero-grid-bg {
     position: absolute; inset: 0;
@@ -124,6 +131,59 @@
     width: 600px; height: 600px;
     background: radial-gradient(circle, rgba(255,140,53,0.14) 0%, transparent 70%);
     pointer-events: none;
+  }
+
+  /* Hero photo scroll */
+  .hero-photos {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    gap: 10px;
+    align-self: stretch;
+    padding: 0;
+    z-index: 1;
+  }
+  .hero-photos::before,
+  .hero-photos::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 160px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hero-photos::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+  }
+  .hero-photos::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+  }
+  .photo-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .photo-col-a { animation: photoScrollUp 28s linear infinite; }
+  .photo-col-b { animation: photoScrollDown 32s linear infinite; }
+  .photo-col img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  @keyframes photoScrollUp {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  @keyframes photoScrollDown {
+    0%   { transform: translateY(-50%); }
+    100% { transform: translateY(0); }
   }
   .hero-tag {
     font-family: 'JetBrains Mono', monospace;
@@ -990,7 +1050,11 @@
     .nav-cta { display: none; }
 
     /* Hero */
-    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 7rem 1.5rem 3rem;
+    }
+    .hero-photos { display: none; }
     .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
 
     /* Sections */
@@ -1084,35 +1148,75 @@
 <section class="hero" id="home">
   <div class="hero-grid-bg"></div>
   <div class="hero-glow"></div>
-  <div class="hero-tag">// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA</div>
-  <h1>Build.<br>Fly.<br><span class="accent">Innovate.</span></h1>
-  <p class="hero-sub">Precision drones, custom 3D-printed parts, and rapid prototyping solutions — engineered for hobbyists, startups, and industrial teams.</p>
-  <div class="hero-btns">
-    <button class="btn-primary" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">
-      Shop products <span>→</span>
-    </button>
-    <button class="btn-outline" onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
-      Request a prototype
-    </button>
+
+  <!-- Left: text content -->
+  <div class="hero-left">
+    <div class="hero-tag">// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA</div>
+    <h1>Build.<br>Fly.<br><span class="accent">Innovate.</span></h1>
+    <p class="hero-sub">Precision drones, custom 3D-printed parts, and rapid prototyping solutions — engineered for hobbyists, startups, and industrial teams.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">
+        Shop products <span>→</span>
+      </button>
+      <button class="btn-outline" onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+        Request a prototype
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num" data-count="150">0</div>
+        <div class="hero-stat-label">Projects delivered</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">48hr</div>
+        <div class="hero-stat-label">Prototype turnaround</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="100">0</div>
+        <div class="hero-stat-label">% custom builds</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="50">0</div>
+        <div class="hero-stat-label">Happy clients</div>
+      </div>
+    </div>
   </div>
-  <div class="hero-stats">
-    <div>
-      <div class="hero-stat-num" data-count="150">0</div>
-      <div class="hero-stat-label">Projects delivered</div>
+
+  <!-- Right: auto-scrolling photo montage -->
+  <!-- Replace these picsum placeholders with your own drone/3D print photos -->
+  <div class="hero-photos">
+    <div class="photo-col photo-col-a">
+      <img src="https://picsum.photos/seed/kyz1/180/220" alt="Drone build">
+      <img src="https://picsum.photos/seed/kyz2/180/160" alt="3D print">
+      <img src="https://picsum.photos/seed/kyz3/180/200" alt="Prototype">
+      <img src="https://picsum.photos/seed/kyz4/180/240" alt="FPV racing">
+      <img src="https://picsum.photos/seed/kyz5/180/180" alt="Industrial part">
+      <img src="https://picsum.photos/seed/kyz6/180/220" alt="Custom build">
+      <!-- duplicated for seamless loop -->
+      <img src="https://picsum.photos/seed/kyz1/180/220" alt="">
+      <img src="https://picsum.photos/seed/kyz2/180/160" alt="">
+      <img src="https://picsum.photos/seed/kyz3/180/200" alt="">
+      <img src="https://picsum.photos/seed/kyz4/180/240" alt="">
+      <img src="https://picsum.photos/seed/kyz5/180/180" alt="">
+      <img src="https://picsum.photos/seed/kyz6/180/220" alt="">
     </div>
-    <div>
-      <div class="hero-stat-num">48hr</div>
-      <div class="hero-stat-label">Prototype turnaround</div>
-    </div>
-    <div>
-      <div class="hero-stat-num" data-count="100">0</div>
-      <div class="hero-stat-label">% custom builds</div>
-    </div>
-    <div>
-      <div class="hero-stat-num" data-count="50">0</div>
-      <div class="hero-stat-label">Happy clients</div>
+    <div class="photo-col photo-col-b">
+      <img src="https://picsum.photos/seed/kyz7/180/200" alt="Resin print">
+      <img src="https://picsum.photos/seed/kyz8/180/240" alt="Drone frame">
+      <img src="https://picsum.photos/seed/kyz9/180/180" alt="Nylon part">
+      <img src="https://picsum.photos/seed/kyz10/180/220" alt="Workshop">
+      <img src="https://picsum.photos/seed/kyz11/180/160" alt="Assembly">
+      <img src="https://picsum.photos/seed/kyz12/180/200" alt="Testing">
+      <!-- duplicated for seamless loop -->
+      <img src="https://picsum.photos/seed/kyz7/180/200" alt="">
+      <img src="https://picsum.photos/seed/kyz8/180/240" alt="">
+      <img src="https://picsum.photos/seed/kyz9/180/180" alt="">
+      <img src="https://picsum.photos/seed/kyz10/180/220" alt="">
+      <img src="https://picsum.photos/seed/kyz11/180/160" alt="">
+      <img src="https://picsum.photos/seed/kyz12/180/200" alt="">
     </div>
   </div>
+
   <div class="scroll-hint">SCROLL</div>
 </section>
 
