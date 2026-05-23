@@ -370,6 +370,8 @@
     transition: background 0.3s;
   }
   .prod-card:hover .prod-img { background: #fff3e8; }
+  .prod-img img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+  .pdp-img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 20px; display: block; }
   .prod-body { padding: 1.1rem; }
   .prod-badge {
     font-size: 10px; font-family: 'JetBrains Mono', monospace;
@@ -2029,7 +2031,18 @@
   // ====== PRODUCT DETAIL PAGE ======
   function openProduct(card) {
     const d = JSON.parse(card.dataset.product);
-    document.getElementById('pdpEmoji').textContent  = d.emoji;
+    const pdpBox = document.getElementById('pdpEmoji');
+    if (d.id) {
+      const allProds = JSON.parse(localStorage.getItem('kyzer_products') || '[]');
+      const full = allProds.find(p => p.id === d.id);
+      if (full && full.photo) {
+        pdpBox.innerHTML = `<img src="${full.photo}" alt="${d.name}">`;
+      } else {
+        pdpBox.textContent = d.emoji;
+      }
+    } else {
+      pdpBox.textContent = d.emoji;
+    }
     const badge = document.getElementById('pdpBadge');
     badge.textContent  = d.badge;
     badge.className    = 'prod-badge' + (d.badgeType ? ' ' + d.badgeType : '');
@@ -2431,13 +2444,16 @@
       const arr = JSON.parse(savedProducts).filter(p => p.visible);
       document.getElementById('productsGrid').innerHTML = arr.map(p => {
         const pd = JSON.stringify({
-          emoji: p.emoji, badge: p.badge, badgeType: p.badgeType || '',
+          id: p.id, emoji: p.emoji, badge: p.badge, badgeType: p.badgeType || '',
           name: p.name, price: p.price, description: p.description,
           details: p.details || '', specs: p.specs || [],
         }).replace(/'/g, '&#39;');
+        const cardImg = p.photo
+          ? `<img src="${p.photo}" alt="${p.name}">`
+          : p.emoji;
         return `
         <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
-          <div class="prod-img">${p.emoji}</div>
+          <div class="prod-img">${cardImg}</div>
           <div class="prod-body">
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>
             <h4>${p.name}</h4>
