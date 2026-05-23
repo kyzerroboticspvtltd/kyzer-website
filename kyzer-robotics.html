@@ -403,8 +403,26 @@
     padding: 3px 10px; border-radius: 999px;
     border: 0.5px solid rgba(255,140,53,0.25);
   }
-  @media (max-width: 768px) { .cat-tiles { grid-template-columns: repeat(3, 1fr); gap: 10px; } .cat-tile { padding: 1.2rem 0.8rem; } .cat-tile-icon { font-size: 36px; } .cat-tile-photo { width: calc(100% + 1.6rem); margin: -1.2rem -0.8rem 0.8rem; height: 120px; } .cat-tile-name { font-size: 14px; } .cat-tile-desc { display: none; } }
-  @media (max-width: 480px) { .cat-tiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) {
+    .cat-tiles {
+      display: flex; flex-direction: row;
+      overflow-x: auto; gap: 12px;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .cat-tiles::-webkit-scrollbar { display: none; }
+    .cat-tile {
+      min-width: 52vw; flex-shrink: 0;
+      padding: 1.2rem 1rem;
+      scroll-snap-align: start;
+    }
+    .cat-tile-photo { width: calc(100% + 2rem); margin: -1.2rem -1rem 0.8rem; height: 130px; }
+    .cat-tile-icon { font-size: 36px; }
+    .cat-tile-name { font-size: 15px; }
+    .cat-tile-desc { font-size: 11px; }
+  }
 
   .products-grid {
     display: grid;
