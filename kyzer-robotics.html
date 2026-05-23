@@ -63,19 +63,16 @@
     transition: background 0.3s;
   }
   .nav-logo {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center;
     text-decoration: none;
   }
-  .nav-logo-icon {
-    width: 36px; height: 36px;
-    background: var(--orange);
+  .nav-logo-img {
+    height: 44px;
+    width: auto;
     border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px; color: #111;
+    display: block;
+    object-fit: contain;
   }
-  .nav-logo-text { font-size: 15px; font-weight: 500; color: #111111; }
-  .nav-logo-sub { font-size: 11px; color: var(--muted); }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
   .nav-links a {
     font-size: 13px; color: var(--muted);
@@ -517,9 +514,7 @@
   }
   .footer-left { display: flex; align-items: center; gap: 12px; }
   .footer-logo {
-    width: 30px; height: 30px; background: var(--orange);
-    border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: #111;
+    height: 32px; width: auto; border-radius: 5px; display: block; object-fit: contain;
   }
   .footer-left p { font-size: 13px; color: var(--muted); }
   .footer-links { display: flex; gap: 1.5rem; }
@@ -1172,11 +1167,7 @@
 <!-- NAV -->
 <nav id="navbar">
   <a class="nav-logo" href="#">
-    <div class="nav-logo-icon">K</div>
-    <div>
-      <div class="nav-logo-text">Kyzer Robotics</div>
-      <div class="nav-logo-sub">Pvt. Ltd.</div>
-    </div>
+    <img src="logo.png" alt="Kyzer Robotics Pvt. Ltd." class="nav-logo-img">
   </a>
   <ul class="nav-links" id="navLinks">
     <a href="#services">Services</a>
@@ -1569,7 +1560,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-left">
-    <div class="footer-logo">K</div>
+    <img src="logo.png" alt="Kyzer Robotics" class="footer-logo">
     <p>© 2026 Kyzer Robotics Pvt. Ltd. · Pune, India</p>
   </div>
   <div class="footer-links">

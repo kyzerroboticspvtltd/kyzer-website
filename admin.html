@@ -22,10 +22,8 @@
     border-radius: 16px; padding: 2.5rem; width: 360px; text-align: center;
   }
   .login-logo {
-    width: 52px; height: 52px; background: var(--orange); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #111;
-    margin: 0 auto 1.25rem;
+    height: 60px; width: auto; border-radius: 10px;
+    display: block; object-fit: contain; margin: 0 auto 1.25rem;
   }
   .login-box h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 4px; }
   .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 2rem; }
@@ -52,9 +50,8 @@
   }
   .admin-topbar-left { display: flex; align-items: center; gap: 12px; }
   .admin-logo {
-    width: 32px; height: 32px; background: var(--orange); border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: #111;
+    height: 34px; width: auto; border-radius: 6px;
+    display: block; object-fit: contain;
   }
   .admin-topbar h1 { font-size: 15px; font-weight: 500; }
   .admin-badge {
@@ -305,7 +302,7 @@
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-logo">K</div>
+    <img src="logo.png" alt="Kyzer Robotics" class="login-logo">
     <h1>Admin Panel</h1>
     <p>Kyzer Robotics · Manager Access</p>
     <input class="login-input" type="password" id="loginPass" placeholder="Password"
@@ -319,7 +316,7 @@
 <div id="adminPanel">
   <div class="admin-topbar">
     <div class="admin-topbar-left">
-      <div class="admin-logo">K</div>
+      <img src="logo.png" alt="Kyzer Robotics" class="admin-logo">
       <h1>Kyzer Admin</h1>
       <span class="admin-badge">MANAGER</span>
     </div>
