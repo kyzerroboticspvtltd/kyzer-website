@@ -373,6 +373,8 @@
   .cat-tile:hover::before { opacity: 1; }
   .cat-tile.active-cat { border-color: var(--orange); background: #fff3e8; }
   .cat-tile-icon { font-size: 52px; margin-bottom: 1rem; line-height: 1; }
+  .cat-tile-icon img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+  .cat-tile-photo { width: 120px; height: 120px; border-radius: 14px; overflow: hidden; margin: 0 auto 1rem; border: 0.5px solid var(--border); }
   .cat-tile-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
   .cat-tile-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .cat-tile-count {
@@ -2547,7 +2549,11 @@
       savedCats.forEach(cat => {
         const tile = document.querySelector(`[data-cat-tile="${cat.id}"]`);
         if (!tile) return;
-        tile.querySelector('.cat-tile-icon').textContent = cat.emoji;
+        const iconEl = tile.querySelector('.cat-tile-icon');
+        if (cat.photo) {
+          iconEl.className = 'cat-tile-photo';
+          iconEl.innerHTML = `<img src="${cat.photo}" alt="${cat.name}">`;
+        }
         tile.querySelector('.cat-tile-name').textContent = cat.name;
         tile.querySelector('.cat-tile-desc').textContent = cat.desc;
       });

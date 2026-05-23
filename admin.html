@@ -942,15 +942,22 @@ function fillCategories() {
   document.getElementById('catEditor').innerHTML = categories.map((cat, i) => `
     <div class="panel" style="margin-bottom:14px;">
       <div class="panel-title" style="text-transform:uppercase;font-size:11px;letter-spacing:0.08em;">${cat.name}</div>
-      <div class="form-row-2" style="margin-bottom:14px;">
-        <div class="form-group" style="margin:0;">
-          <label class="form-label">EMOJI / ICON</label>
-          <input class="form-input" type="text" id="catEmoji${i}" value="${cat.emoji}" maxlength="4" style="font-size:22px;text-align:center;" />
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label">CATEGORY PHOTO</label>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div id="catPhotoBox${i}" style="width:90px;height:90px;border-radius:12px;overflow:hidden;border:0.5px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            ${cat.photo ? `<img src="${cat.photo}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:28px;color:var(--muted);">📷</span>'}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('catPhotoFile${i}').click()">Upload photo</button>
+            ${cat.photo ? `<button type="button" class="btn btn-danger btn-sm btn-icon" onclick="removeCatPhoto(${i})">Remove</button>` : ''}
+            <input type="file" id="catPhotoFile${i}" accept="image/*" style="display:none;" onchange="handleCatPhoto(${i},this.files[0])">
+          </div>
         </div>
-        <div class="form-group" style="margin:0;">
-          <label class="form-label">CATEGORY NAME</label>
-          <input class="form-input" type="text" id="catName${i}" value="${cat.name}" />
-        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label">CATEGORY NAME</label>
+        <input class="form-input" type="text" id="catName${i}" value="${cat.name}" />
       </div>
       <div class="form-group">
         <label class="form-label">SHORT DESCRIPTION</label>
@@ -959,12 +966,23 @@ function fillCategories() {
     </div>
   `).join('');
 }
+function handleCatPhoto(i, file) {
+  if (!file) return;
+  compressImage(file, src => {
+    categories[i].photo = src;
+    fillCategories();
+  });
+}
+function removeCatPhoto(i) {
+  categories[i].photo = null;
+  fillCategories();
+}
 function saveCategories() {
   categories = categories.map((cat, i) => ({
     id:    cat.id,
-    emoji: document.getElementById('catEmoji' + i).value.trim() || cat.emoji,
-    name:  document.getElementById('catName'  + i).value.trim() || cat.name,
-    desc:  document.getElementById('catDesc'  + i).value.trim(),
+    photo: cat.photo || null,
+    name:  document.getElementById('catName' + i).value.trim() || cat.name,
+    desc:  document.getElementById('catDesc' + i).value.trim(),
   }));
   localStorage.setItem('kyzer_categories', JSON.stringify(categories));
   fillCategories();
