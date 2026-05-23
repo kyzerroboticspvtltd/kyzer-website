@@ -2755,7 +2755,16 @@
     }
   }
 
+  // Apply local data first (instant), then fetch remote published data
   applyAdminStorage();
+  fetch('kyzer-data.json?_=' + Date.now())
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !Object.keys(data).length) return;
+      Object.keys(data).forEach(k => localStorage.setItem(k, JSON.stringify(data[k])));
+      applyAdminStorage();
+    })
+    .catch(() => {});
 
   function saveQuote() {
     const total = document.getElementById('bTotal').textContent;

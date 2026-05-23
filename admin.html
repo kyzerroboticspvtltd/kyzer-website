@@ -323,6 +323,7 @@
       <span class="admin-badge">MANAGER</span>
     </div>
     <div class="admin-topbar-right">
+      <button class="topbar-btn" id="publishBtn" onclick="publishToSite()" style="background:var(--orange);color:#111;font-weight:600;border-color:var(--orange);">🚀 Publish to site</button>
       <a href="kyzer-robotics.html" target="_blank" class="topbar-btn">View site ↗</a>
       <button class="topbar-btn danger" onclick="doLogout()">Logout</button>
     </div>
@@ -563,8 +564,21 @@
 
       <!-- SECURITY -->
       <div class="admin-tab" id="tab-security">
-        <div class="tab-header"><h2>Security</h2><p>Change the admin password.</p></div>
+        <div class="tab-header"><h2>Security</h2><p>Change the admin password and set up site publishing.</p></div>
+
+        <div class="panel" style="max-width:480px;margin-bottom:20px;">
+          <div class="panel-title">🚀 Publish to site (GitHub sync)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Changes made in admin are saved on this device only. To make them visible on mobile and all other devices, paste a GitHub token and click <strong>Publish to site</strong>.</p>
+          <div class="form-group">
+            <label class="form-label">GITHUB PERSONAL ACCESS TOKEN</label>
+            <input class="form-input" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Go to github.com → Settings → Developer settings → Personal access tokens → Fine-grained → New token → select repo <strong>kyzer-website</strong> → Contents: Read & Write → Generate.</div>
+          </div>
+          <button class="btn btn-primary" onclick="saveGhToken()">Save token →</button>
+        </div>
+
         <div class="panel" style="max-width:380px;">
+          <div class="panel-title">🔒 Change password</div>
           <div class="form-group">
             <label class="form-label">CURRENT PASSWORD</label>
             <input class="form-input" type="password" id="secCur" />
@@ -785,6 +799,7 @@ function switchTab(name) {
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tl-' + name).classList.add('active');
+  if (name === 'security') initSecurity();
 }
 
 // ── TOAST ──
@@ -1266,6 +1281,63 @@ function clearAllPhotos() {
   localStorage.removeItem(PHOTOS_KEY);
   renderPhotoGrid();
   toast('All photos cleared.');
+}
+
+// ── PUBLISH TO GITHUB ──
+const GH_OWNER = 'kyzerroboticspvtltd';
+const GH_REPO  = 'kyzer-website';
+const GH_FILE  = 'kyzer-data.json';
+const GH_BRANCH = 'master';
+
+function saveGhToken() {
+  const t = document.getElementById('ghToken').value.trim();
+  if (!t) { toast('Token cannot be empty.', true); return; }
+  localStorage.setItem('kyzer_gh_token', t);
+  document.getElementById('ghToken').value = '';
+  toast('Token saved (on this device only).');
+}
+
+async function publishToSite() {
+  const token = localStorage.getItem('kyzer_gh_token');
+  if (!token) {
+    toast('Set your GitHub token in Settings → Security first.', true);
+    switchTab('security');
+    return;
+  }
+  const btn = document.getElementById('publishBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Publishing…'; btn.disabled = true;
+  try {
+    const keys = ['kyzer_products','kyzer_hero','kyzer_services','kyzer_contact',
+                  'kyzer_quote','kyzer_links','kyzer_categories','kyzer_hero_photos'];
+    const data = {};
+    keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = JSON.parse(v); });
+
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const headers = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' };
+
+    // Get current SHA (needed to update existing file)
+    let sha = null;
+    const shaRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, { headers });
+    if (shaRes.ok) sha = (await shaRes.json()).sha;
+
+    const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, {
+      method: 'PUT', headers,
+      body: JSON.stringify({ message: 'Admin: publish site data', content: encoded, branch: GH_BRANCH, ...(sha ? { sha } : {}) })
+    });
+    if (!putRes.ok) throw new Error((await putRes.json()).message);
+    toast('✓ Published! Changes live on all devices in ~1 min.');
+  } catch (e) {
+    toast('Publish failed: ' + e.message, true);
+  } finally {
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+
+// Load saved token into field on Security tab open
+function initSecurity() {
+  const t = localStorage.getItem('kyzer_gh_token');
+  if (t) document.getElementById('ghToken').placeholder = 'Token saved ✓ (paste new to replace)';
 }
 
 // ── SECURITY ──
