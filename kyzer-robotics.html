@@ -1395,7 +1395,7 @@
       <div class="sec-label">// 02 — PRODUCTS</div>
       <div class="sec-title">Shop</div>
     </div>
-    <div class="filter-tabs">
+    <div class="filter-tabs" style="display:none;">
       <button class="tab active" data-filter="all">All</button>
       <button class="tab" data-filter="drone">Drones</button>
       <button class="tab" data-filter="print">3D Prints</button>
@@ -1423,7 +1423,7 @@
     </div>
   </div>
 
-  <div class="products-grid reveal" id="productsGrid">
+  <div class="products-grid reveal" id="productsGrid" style="display:none;">
     <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"🚁","badge":"NEW","badgeType":"new","name":"KZ-Recon X1","price":"₹42,000","description":"4K aerial survey drone, 35-min flight, GPS hold","details":"The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform. Engineered for precision mapping and inspection, it features a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time on a single charge, and onboard GPS with return-to-home safety. Ideal for land surveys, construction site monitoring, and infrastructure inspection.","specs":["4K camera with 3-axis gimbal stabilization","35-min flight time per charge","GPS hold and return-to-home","500m control range","Foldable compact design","Hard carrying case included"]}'>
       <div class="prod-img">🚁</div>
       <div class="prod-body">
@@ -2032,8 +2032,10 @@
   }
 
   function filterCat(cat) {
+    const grid = document.getElementById('productsGrid');
+    grid.style.display = '';
     applyFilter(cat);
-    document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
   document.querySelectorAll('.tab').forEach(tab => {
