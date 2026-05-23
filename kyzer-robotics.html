@@ -2541,6 +2541,18 @@
   function applyAdminStorage() {
     const ld = (key, def) => JSON.parse(localStorage.getItem(key) || 'null') || def;
 
+    // Categories
+    const savedCats = JSON.parse(localStorage.getItem('kyzer_categories') || 'null');
+    if (savedCats) {
+      savedCats.forEach(cat => {
+        const tile = document.querySelector(`[data-cat-tile="${cat.id}"]`);
+        if (!tile) return;
+        tile.querySelector('.cat-tile-icon').textContent = cat.emoji;
+        tile.querySelector('.cat-tile-name').textContent = cat.name;
+        tile.querySelector('.cat-tile-desc').textContent = cat.desc;
+      });
+    }
+
     // Products
     const savedProducts = localStorage.getItem('kyzer_products');
     if (savedProducts) {

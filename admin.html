@@ -332,6 +332,7 @@
     <aside class="admin-sidebar">
       <div class="sidebar-section">CONTENT</div>
       <div class="sidebar-link active" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
+      <div class="sidebar-link" onclick="switchTab('categories')" id="tl-categories"><span>🗂️</span> Categories</div>
       <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero & Stats</div>
       <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
       <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📬</span> Contact Us</div>
@@ -360,6 +361,16 @@
           </div>
           <div class="product-list" id="productList"></div>
         </div>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="admin-tab" id="tab-categories">
+        <div class="tab-header">
+          <h2>Categories</h2>
+          <p>Edit the category tiles shown in the shop section. Each tile filters products by its type.</p>
+        </div>
+        <div id="catEditor"></div>
+        <button class="btn btn-primary" onclick="saveCategories()" style="margin-top:8px;">Save categories →</button>
       </div>
 
       <!-- HERO -->
@@ -690,6 +701,11 @@ const D_PRODUCTS = [
   { id:'7', name:'Product dev sprint', category:'proto', emoji:'🔬', price:'From ₹15,000', description:'3-day iterative design and prototyping sprint for startups', details:'A structured 3-day sprint: Day 1 requirements and CAD, Day 2 print, test and iterate, Day 3 final prototype and documentation. Delivered with build report, BOM, and manufacture-ready files.', specs:['3-day structured sprint','Full CAD design included','Minimum 2 prototype iterations','Build report and BOM delivered','Manufacture-ready files','Post-sprint support available'], badge:'R&D', badgeType:'', btnText:'Book', visible:true },
   { id:'8', name:'Beginner Micro Drone', category:'drone', emoji:'🎮', price:'₹4,500', description:'Indoor mini drone, perfect for learning and hobby flying', details:'The perfect starter drone for anyone new to flying. Altitude hold, one-key takeoff and landing, and a durable crash-resistant frame. Comes fully assembled with 2.4GHz remote, spare props, and USB charger.', specs:['Altitude hold mode','One-key takeoff and landing','2.4GHz controller included','10-min flight time per battery','Spare propellers in the box','USB charger included'], badge:'IN STOCK', badgeType:'', btnText:'Buy', visible:true },
 ];
+const D_CATEGORIES = [
+  { id: 'drone', emoji: '🚁', name: 'Drones',      desc: 'Survey, FPV & agricultural platforms' },
+  { id: 'print', emoji: '🖨️', name: '3D Printing', desc: 'FDM, resin & engineering-grade filaments' },
+  { id: 'proto', emoji: '⚙️', name: 'Prototyping', desc: 'PCB, enclosures & rapid development' },
+];
 const D_HERO = {
   tag:'// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA',
   l1:'Build.', l2:'Fly.', l3:'Innovate.',
@@ -735,22 +751,24 @@ const D_QUOTE = {
 };
 
 // ── STATE ──
-let products=[], hero={}, services=[], contact={}, quote={}, links={};
+let products=[], hero={}, services=[], contact={}, quote={}, links={}, categories=[];
 let editId = null;
 
 function load(key, def) { return JSON.parse(localStorage.getItem(key) || 'null') || JSON.parse(JSON.stringify(def)); }
 function loadAll() {
-  products = load('kyzer_products', D_PRODUCTS);
-  hero     = load('kyzer_hero', D_HERO);
-  services = load('kyzer_services', D_SERVICES);
-  contact  = load('kyzer_contact', D_CONTACT);
-  quote    = load('kyzer_quote', D_QUOTE);
-  links    = load('kyzer_links', D_LINKS);
+  products   = load('kyzer_products',   D_PRODUCTS);
+  hero       = load('kyzer_hero',       D_HERO);
+  services   = load('kyzer_services',   D_SERVICES);
+  contact    = load('kyzer_contact',    D_CONTACT);
+  quote      = load('kyzer_quote',      D_QUOTE);
+  links      = load('kyzer_links',      D_LINKS);
+  categories = load('kyzer_categories', D_CATEGORIES);
 }
 
 function initAdmin() {
   loadAll();
   renderProducts();
+  fillCategories();
   fillHero();
   renderServices();
   fillContact();
@@ -917,6 +935,40 @@ function saveProduct() {
   else { products.push(prod); }
   saveP(); renderProducts(); closeProdModal();
   toast(editId ? 'Product updated.' : 'Product added.');
+}
+
+// ── CATEGORIES ──
+function fillCategories() {
+  document.getElementById('catEditor').innerHTML = categories.map((cat, i) => `
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="panel-title" style="text-transform:uppercase;font-size:11px;letter-spacing:0.08em;">${cat.name}</div>
+      <div class="form-row-2" style="margin-bottom:14px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">EMOJI / ICON</label>
+          <input class="form-input" type="text" id="catEmoji${i}" value="${cat.emoji}" maxlength="4" style="font-size:22px;text-align:center;" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">CATEGORY NAME</label>
+          <input class="form-input" type="text" id="catName${i}" value="${cat.name}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SHORT DESCRIPTION</label>
+        <input class="form-input" type="text" id="catDesc${i}" value="${cat.desc}" />
+      </div>
+    </div>
+  `).join('');
+}
+function saveCategories() {
+  categories = categories.map((cat, i) => ({
+    id:    cat.id,
+    emoji: document.getElementById('catEmoji' + i).value.trim() || cat.emoji,
+    name:  document.getElementById('catName'  + i).value.trim() || cat.name,
+    desc:  document.getElementById('catDesc'  + i).value.trim(),
+  }));
+  localStorage.setItem('kyzer_categories', JSON.stringify(categories));
+  fillCategories();
+  toast('Categories saved.');
 }
 
 // ── HERO ──
