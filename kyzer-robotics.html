@@ -350,6 +350,39 @@
     background: var(--orange); color: #111;
     border-color: var(--orange); font-weight: 500;
   }
+  /* Category tiles */
+  .cat-tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 3rem;
+  }
+  .cat-tile {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 2rem 1.5rem;
+    text-align: center; cursor: none;
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .cat-tile::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(255,140,53,0.08) 0%, transparent 70%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .cat-tile:hover { border-color: var(--orange); transform: translateY(-5px); box-shadow: 0 12px 32px rgba(255,140,53,0.12); }
+  .cat-tile:hover::before { opacity: 1; }
+  .cat-tile.active-cat { border-color: var(--orange); background: #fff3e8; }
+  .cat-tile-icon { font-size: 52px; margin-bottom: 1rem; line-height: 1; }
+  .cat-tile-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .cat-tile-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .cat-tile-count {
+    display: inline-block; margin-top: 12px;
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: var(--orange); background: #fff3e8;
+    padding: 3px 10px; border-radius: 999px;
+    border: 0.5px solid rgba(255,140,53,0.25);
+  }
+  @media (max-width: 768px) { .cat-tiles { grid-template-columns: repeat(3, 1fr); gap: 10px; } .cat-tile { padding: 1.2rem 0.8rem; } .cat-tile-icon { font-size: 36px; } .cat-tile-name { font-size: 14px; } .cat-tile-desc { display: none; } }
+  @media (max-width: 480px) { .cat-tiles { grid-template-columns: repeat(3, 1fr); } }
+
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -1369,6 +1402,27 @@
       <button class="tab" data-filter="proto">Prototyping</button>
     </div>
   </div>
+  <div class="cat-tiles reveal">
+    <div class="cat-tile" onclick="filterCat('drone')" data-cat-tile="drone">
+      <div class="cat-tile-icon">🚁</div>
+      <div class="cat-tile-name">Drones</div>
+      <div class="cat-tile-desc">Survey, FPV & agricultural platforms</div>
+      <div class="cat-tile-count" id="catCount-drone"></div>
+    </div>
+    <div class="cat-tile" onclick="filterCat('print')" data-cat-tile="print">
+      <div class="cat-tile-icon">🖨️</div>
+      <div class="cat-tile-name">3D Printing</div>
+      <div class="cat-tile-desc">FDM, resin & engineering-grade filaments</div>
+      <div class="cat-tile-count" id="catCount-print"></div>
+    </div>
+    <div class="cat-tile" onclick="filterCat('proto')" data-cat-tile="proto">
+      <div class="cat-tile-icon">⚙️</div>
+      <div class="cat-tile-name">Prototyping</div>
+      <div class="cat-tile-desc">PCB, enclosures & rapid development</div>
+      <div class="cat-tile-count" id="catCount-proto"></div>
+    </div>
+  </div>
+
   <div class="products-grid reveal" id="productsGrid">
     <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"🚁","badge":"NEW","badgeType":"new","name":"KZ-Recon X1","price":"₹42,000","description":"4K aerial survey drone, 35-min flight, GPS hold","details":"The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform. Engineered for precision mapping and inspection, it features a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time on a single charge, and onboard GPS with return-to-home safety. Ideal for land surveys, construction site monitoring, and infrastructure inspection.","specs":["4K camera with 3-axis gimbal stabilization","35-min flight time per charge","GPS hold and return-to-home","500m control range","Foldable compact design","Hard carrying case included"]}'>
       <div class="prod-img">🚁</div>
@@ -1969,20 +2023,32 @@
   counters.forEach(c => counterObserver.observe(c));
 
   // Product filter
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const filter = tab.dataset.filter;
-      document.querySelectorAll('.prod-card').forEach(card => {
-        if (filter === 'all' || card.dataset.cat === filter) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+  function applyFilter(filter) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === filter));
+    document.querySelectorAll('[data-cat-tile]').forEach(t => t.classList.toggle('active-cat', t.dataset.catTile === filter));
+    document.querySelectorAll('.prod-card').forEach(card => {
+      card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
     });
+  }
+
+  function filterCat(cat) {
+    applyFilter(cat);
+    document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => applyFilter(tab.dataset.filter));
   });
+
+  // Count products per category and update tiles
+  function updateCatCounts() {
+    ['drone','print','proto'].forEach(cat => {
+      const n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
+      const el = document.getElementById('catCount-' + cat);
+      if (el) el.textContent = n + (n === 1 ? ' product' : ' products');
+    });
+  }
+  updateCatCounts();
 
   // Contact form — Web3Forms (no activation email needed)
   // Get your free access key at: https://web3forms.com → enter kyzerroboticspvtltd@gmail.com
@@ -2497,6 +2563,7 @@
           </div>
         </div>`;
       }).join('');
+      if (typeof updateCatCounts === 'function') updateCatCounts();
     }
 
     // Hero
