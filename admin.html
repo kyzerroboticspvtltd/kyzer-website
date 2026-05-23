@@ -582,18 +582,10 @@
       <button class="modal-close" onclick="closeProdModal()">✕</button>
     </div>
     <div class="form-group" style="margin-bottom:14px;">
-      <label class="form-label">PRODUCT PHOTO</label>
-      <div id="mPhotoArea" style="border:2px dashed var(--border);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;" onclick="document.getElementById('mPhotoFile').click()" onmouseenter="this.style.borderColor='var(--orange)';this.style.background='#fff3e8'" onmouseleave="this.style.borderColor='var(--border)';this.style.background=''">
-        <input type="file" id="mPhotoFile" accept="image/*" style="display:none;" onchange="handleProdPhoto(this.files[0])">
-        <div id="mPhotoEmpty" style="color:var(--muted);font-size:13px;">
-          <div style="font-size:28px;margin-bottom:6px;">📷</div>
-          Click to upload product photo<br><span style="font-size:11px;">JPG, PNG — recommended 800×800px</span>
-        </div>
-        <div id="mPhotoPreview" style="display:none;">
-          <img id="mPhotoImg" style="max-height:140px;border-radius:8px;object-fit:contain;display:block;margin:0 auto 8px;">
-          <button onclick="event.stopPropagation();removeProdPhoto()" style="font-size:11px;background:none;border:0.5px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;">Remove photo</button>
-        </div>
-      </div>
+      <label class="form-label">PRODUCT PHOTOS <span style="color:var(--muted);font-weight:400;">(first = main · drag to reorder)</span></label>
+      <div id="mPhotosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-bottom:8px;"></div>
+      <button type="button" onclick="document.getElementById('mPhotoFile').click()" style="width:100%;padding:10px;border:2px dashed var(--border);border-radius:10px;background:none;color:var(--muted);font-size:13px;cursor:pointer;transition:border-color 0.2s,background 0.2s;" onmouseenter="this.style.borderColor='var(--orange)';this.style.background='#fff3e8'" onmouseleave="this.style.borderColor='var(--border)';this.style.background=''">+ Add photos</button>
+      <input type="file" id="mPhotoFile" accept="image/*" multiple style="display:none;" onchange="handleProdPhotos(this.files);this.value=''">
     </div>
     <div class="form-row-2" style="margin-bottom:14px;">
       <div class="form-group" style="margin:0;">
@@ -824,10 +816,9 @@ function resetProducts() {
 function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); }
 
 // ── PRODUCT MODAL ──
-let prodPhotoData = null;
+let prodPhotosData = [];
 
-function handleProdPhoto(file) {
-  if (!file) return;
+function compressImage(file, callback) {
   const reader = new FileReader();
   reader.onload = e => {
     const img = new Image();
@@ -840,31 +831,35 @@ function handleProdPhoto(file) {
       }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      prodPhotoData = canvas.toDataURL('image/jpeg', 0.82);
-      document.getElementById('mPhotoImg').src = prodPhotoData;
-      document.getElementById('mPhotoEmpty').style.display = 'none';
-      document.getElementById('mPhotoPreview').style.display = 'block';
+      callback(canvas.toDataURL('image/jpeg', 0.82));
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
-function removeProdPhoto() {
-  prodPhotoData = null;
-  document.getElementById('mPhotoImg').src = '';
-  document.getElementById('mPhotoPreview').style.display = 'none';
-  document.getElementById('mPhotoEmpty').style.display = 'block';
-  document.getElementById('mPhotoFile').value = '';
+
+function handleProdPhotos(files) {
+  Array.from(files).forEach(file => {
+    compressImage(file, src => {
+      prodPhotosData.push(src);
+      renderProdPhotosGrid();
+    });
+  });
 }
-function setProdPhotoPreview(src) {
-  if (src) {
-    prodPhotoData = src;
-    document.getElementById('mPhotoImg').src = src;
-    document.getElementById('mPhotoEmpty').style.display = 'none';
-    document.getElementById('mPhotoPreview').style.display = 'block';
-  } else {
-    removeProdPhoto();
-  }
+
+function removeProdPhotoAt(i) {
+  prodPhotosData.splice(i, 1);
+  renderProdPhotosGrid();
+}
+
+function renderProdPhotosGrid() {
+  const grid = document.getElementById('mPhotosGrid');
+  grid.innerHTML = prodPhotosData.map((src, i) => `
+    <div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:${i===0?'2px solid var(--orange)':'0.5px solid var(--border)'};">
+      <img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <button onclick="removeProdPhotoAt(${i})" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>
+      ${i===0?'<div style="position:absolute;bottom:3px;left:4px;font-size:9px;color:rgba(255,255,255,0.85);font-family:JetBrains Mono,monospace;background:rgba(0,0,0,0.4);padding:1px 4px;border-radius:3px;">MAIN</div>':''}
+    </div>`).join('');
 }
 
 function openAddProduct() {
@@ -875,7 +870,8 @@ function openAddProduct() {
   document.getElementById('mBtn').value = 'Enquire';
   document.getElementById('mBadgeType').value = '';
   document.getElementById('mVisible').className = 'toggle on';
-  removeProdPhoto();
+  prodPhotosData = [];
+  renderProdPhotosGrid();
   document.getElementById('prodModal').classList.add('open');
 }
 function openEdit(id) {
@@ -893,7 +889,8 @@ function openEdit(id) {
   document.getElementById('mBadge').value   = p.badge;
   document.getElementById('mBadgeType').value = p.badgeType;
   document.getElementById('mVisible').className = 'toggle' + (p.visible ? ' on' : '');
-  setProdPhotoPreview(p.photo || null);
+  prodPhotosData = p.photos ? [...p.photos] : (p.photo ? [p.photo] : []);
+  renderProdPhotosGrid();
   document.getElementById('prodModal').classList.add('open');
 }
 function closeProdModal() { document.getElementById('prodModal').classList.remove('open'); }
@@ -903,7 +900,8 @@ function saveProduct() {
   const prod = {
     id: editId || Date.now().toString(),
     emoji: document.getElementById('mEmoji').value || '📦',
-    photo: prodPhotoData || null,
+    photos: [...prodPhotosData],
+    photo: prodPhotosData[0] || null,
     category: document.getElementById('mCat').value,
     name,
     description: document.getElementById('mDesc').value.trim(),

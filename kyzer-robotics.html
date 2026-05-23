@@ -567,13 +567,26 @@
     display: grid; grid-template-columns: 1fr 1.5fr;
     gap: 4rem; align-items: start;
   }
+  .pdp-gallery-col { position: sticky; top: 5rem; }
   .pdp-img-box {
     background: var(--bg2); border: 0.5px solid var(--border);
     border-radius: 20px; height: 380px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 110px; position: sticky; top: 5rem;
+    font-size: 110px; overflow: hidden;
     transition: background 0.3s;
   }
+  .pdp-thumbs {
+    display: flex; gap: 8px; margin-top: 10px;
+    overflow-x: auto; padding-bottom: 4px;
+  }
+  .pdp-thumbs:empty { display: none; }
+  .pdp-thumb {
+    width: 64px; height: 64px; flex-shrink: 0;
+    border-radius: 10px; object-fit: cover; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.65;
+  }
+  .pdp-thumb.active { border-color: var(--orange); opacity: 1; }
   .pdp-info-col .prod-badge { margin-bottom: 14px; font-size: 11px; }
   .pdp-info-col h1 {
     font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 1;
@@ -594,7 +607,8 @@
   .pdp-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
   @media (max-width: 768px) {
     .pdp-wrap { grid-template-columns: 1fr; gap: 2rem; }
-    .pdp-img-box { height: 240px; position: static; font-size: 80px; }
+    .pdp-gallery-col { position: static; }
+    .pdp-img-box { height: 240px; font-size: 80px; }
     .pdp-info-col h1 { font-size: 38px; }
     #productPage { padding: 6rem 1.5rem 4rem; }
   }
@@ -1592,7 +1606,10 @@
 <div id="productPage">
   <button class="back-btn" onclick="showPage('main')">← Back to products</button>
   <div class="pdp-wrap">
-    <div class="pdp-img-box" id="pdpEmoji">📦</div>
+    <div class="pdp-gallery-col">
+      <div class="pdp-img-box" id="pdpEmoji">📦</div>
+      <div class="pdp-thumbs" id="pdpThumbs"></div>
+    </div>
     <div class="pdp-info-col">
       <span class="prod-badge" id="pdpBadge"></span>
       <h1 id="pdpName"></h1>
@@ -2029,20 +2046,30 @@
   }
 
   // ====== PRODUCT DETAIL PAGE ======
+  let pdpPhotos = [];
+
   function openProduct(card) {
     const d = JSON.parse(card.dataset.product);
-    const pdpBox = document.getElementById('pdpEmoji');
+    pdpPhotos = [];
+
     if (d.id) {
       const allProds = JSON.parse(localStorage.getItem('kyzer_products') || '[]');
       const full = allProds.find(p => p.id === d.id);
-      if (full && full.photo) {
-        pdpBox.innerHTML = `<img src="${full.photo}" alt="${d.name}">`;
-      } else {
-        pdpBox.textContent = d.emoji;
-      }
+      if (full) pdpPhotos = full.photos || (full.photo ? [full.photo] : []);
+    }
+
+    const pdpBox = document.getElementById('pdpEmoji');
+    const thumbsEl = document.getElementById('pdpThumbs');
+    if (pdpPhotos.length > 0) {
+      pdpBox.innerHTML = `<img src="${pdpPhotos[0]}" alt="${d.name}" style="width:100%;height:100%;object-fit:contain;display:block;">`;
+      thumbsEl.innerHTML = pdpPhotos.length > 1
+        ? pdpPhotos.map((src, i) => `<img src="${src}" class="pdp-thumb${i===0?' active':''}" onclick="pdpSwitchPhoto(${i})" alt="">`).join('')
+        : '';
     } else {
       pdpBox.textContent = d.emoji;
+      thumbsEl.innerHTML = '';
     }
+
     const badge = document.getElementById('pdpBadge');
     badge.textContent  = d.badge;
     badge.className    = 'prod-badge' + (d.badgeType ? ' ' + d.badgeType : '');
@@ -2053,6 +2080,12 @@
     const specsList = document.getElementById('pdpSpecs');
     specsList.innerHTML = (d.specs || []).map(s => `<li>${s}</li>`).join('');
     showPage('product');
+  }
+
+  function pdpSwitchPhoto(i) {
+    document.getElementById('pdpEmoji').innerHTML =
+      `<img src="${pdpPhotos[i]}" alt="" style="width:100%;height:100%;object-fit:contain;display:block;">`;
+    document.querySelectorAll('.pdp-thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
   }
 
   function pdpEnquire() {
@@ -2448,9 +2481,8 @@
           name: p.name, price: p.price, description: p.description,
           details: p.details || '', specs: p.specs || [],
         }).replace(/'/g, '&#39;');
-        const cardImg = p.photo
-          ? `<img src="${p.photo}" alt="${p.name}">`
-          : p.emoji;
+        const firstPhoto = (p.photos && p.photos.length > 0) ? p.photos[0] : (p.photo || null);
+        const cardImg = firstPhoto ? `<img src="${firstPhoto}" alt="${p.name}">` : p.emoji;
         return `
         <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
