@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">
-  <g fill="none" stroke="#FF8C35" stroke-opacity="0.15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#FF8C35" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
 
     <!-- Drone (top-left) -->
     <g transform="translate(95,105)">
@@ -14,7 +14,7 @@
       <ellipse cx="53" cy="34" rx="15" ry="5" transform="rotate(-25,53,34)"/>
       <circle cx="0" cy="6" r="5"/>
       <line x1="0" y1="-9" x2="0" y2="-18"/>
-      <circle cx="0" cy="-20" r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
+      <circle cx="0" cy="-20" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
     </g>
 
     <!-- Gear (top-right) -->
@@ -46,10 +46,10 @@
       <line x1="22"  y1="-12" x2="38" y2="-12"/>
       <line x1="22"  y1="0"   x2="38" y2="0"/>
       <line x1="22"  y1="12"  x2="38" y2="12"/>
-      <circle cx="-90" cy="0" r="4" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-      <circle cx="90"  cy="0" r="4" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-      <circle cx="-42" cy="44" r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-      <circle cx="42"  cy="44" r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
+      <circle cx="-90" cy="0" r="4" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="90"  cy="0" r="4" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="-42" cy="44" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="42"  cy="44" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
     </g>
 
     <!-- Isometric cube (bottom-right) -->
@@ -67,7 +67,7 @@
       <rect x="-44" y="3" width="88" height="10" rx="3"/>
       <rect x="-14" y="-42" width="28" height="22" rx="3"/>
       <polygon points="-9,-20 9,-20 5,4 -5,4"/>
-      <circle cx="0" cy="6" r="3.5" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
+      <circle cx="0" cy="6" r="3.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
       <line x1="-28" y1="20" x2="28" y2="20"/>
       <line x1="-28" y1="27" x2="16" y2="27"/>
       <line x1="-28" y1="34" x2="22" y2="34"/>
@@ -134,19 +134,19 @@
 
     <!-- Dashed trace line -->
     <polyline points="188,380 188,420 240,420" stroke-dasharray="5,4"/>
-    <circle cx="240" cy="420" r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
+    <circle cx="240" cy="420" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
 
     <!-- Scattered solder dots -->
-    <circle cx="210" cy="55"  r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="155" cy="170" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="530" cy="200" r="2.5" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="395" cy="155" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="370" cy="400" r="3" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="500" cy="360" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="80"  cy="490" r="2.5" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="440" cy="490" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="560" cy="140" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
-    <circle cx="30"  cy="155" r="2" fill="#FF8C35" fill-opacity="0.15" stroke="none"/>
+    <circle cx="210" cy="55"  r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="155" cy="170" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="530" cy="200" r="2.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="395" cy="155" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="370" cy="400" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="500" cy="360" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="80"  cy="490" r="2.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="440" cy="490" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="560" cy="140" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="30"  cy="155" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
 
   </g>
 </svg>
