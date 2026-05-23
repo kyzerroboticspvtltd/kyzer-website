@@ -552,6 +552,50 @@
     padding: 7rem 3rem 4rem;
   }
   #quotePage.active { display: block; animation: fadeIn 0.4s forwards; }
+
+  /* PRODUCT DETAIL PAGE */
+  #productPage {
+    display: none; opacity: 0;
+    min-height: 100vh; background: var(--bg);
+    padding: 7rem 3rem 5rem;
+  }
+  #productPage.active { display: block; animation: fadeIn 0.4s forwards; }
+  .pdp-wrap {
+    max-width: 1060px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.5fr;
+    gap: 4rem; align-items: start;
+  }
+  .pdp-img-box {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 20px; height: 380px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 110px; position: sticky; top: 5rem;
+    transition: background 0.3s;
+  }
+  .pdp-info-col .prod-badge { margin-bottom: 14px; font-size: 11px; }
+  .pdp-info-col h1 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 1;
+    color: var(--text); margin-bottom: 10px;
+  }
+  .pdp-price-big { font-size: 26px; font-weight: 500; color: var(--orange); margin-bottom: 18px; }
+  .pdp-short-desc { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 22px; }
+  .pdp-divider { height: 0.5px; background: var(--border); margin: 22px 0; }
+  .pdp-long-desc { font-size: 14px; line-height: 1.85; color: var(--text); margin-bottom: 22px; }
+  .pdp-specs-list { list-style: none; margin-bottom: 2rem; }
+  .pdp-specs-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; padding: 9px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .pdp-specs-list li:last-child { border-bottom: none; }
+  .pdp-specs-list li::before { content: '→'; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+  .pdp-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+  @media (max-width: 768px) {
+    .pdp-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .pdp-img-box { height: 240px; position: static; font-size: 80px; }
+    .pdp-info-col h1 { font-size: 38px; }
+    #productPage { padding: 6rem 1.5rem 4rem; }
+  }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -1302,7 +1346,7 @@
     </div>
   </div>
   <div class="products-grid reveal" id="productsGrid">
-    <div class="prod-card" data-cat="drone">
+    <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"🚁","badge":"NEW","badgeType":"new","name":"KZ-Recon X1","price":"₹42,000","description":"4K aerial survey drone, 35-min flight, GPS hold","details":"The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform. Engineered for precision mapping and inspection, it features a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time on a single charge, and onboard GPS with return-to-home safety. Ideal for land surveys, construction site monitoring, and infrastructure inspection.","specs":["4K camera with 3-axis gimbal stabilization","35-min flight time per charge","GPS hold and return-to-home","500m control range","Foldable compact design","Hard carrying case included"]}'>
       <div class="prod-img">🚁</div>
       <div class="prod-body">
         <span class="prod-badge new">NEW</span>
@@ -1314,7 +1358,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="drone">
+    <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"✈️","badge":"POPULAR","badgeType":"","name":"FPV Racing Kit","price":"₹18,500","description":"Full 5\" freestyle frame kit with motor mounts and ESC","details":"Complete FPV racing and freestyle kit built around a stiff 5-inch carbon fibre frame. Includes top-spec brushless motors, 4-in-1 ESC, and a compact flight controller — all pre-soldered and bench-tested. Compatible with any 4S LiPo battery. Just add your receiver and goggles and you are ready to fly.","specs":["5-inch truX carbon fibre frame","2306 brushless motors 2450KV","45A 4-in-1 BLHeli_32 ESC","F7 flight controller pre-installed","Pre-soldered and bench tested","Supports FrSky, TBS and ExpressLRS"]}'>
       <div class="prod-img">✈️</div>
       <div class="prod-body">
         <span class="prod-badge">POPULAR</span>
@@ -1326,7 +1370,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="drone">
+    <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"🛸","badge":"IN STOCK","badgeType":"","name":"KZ-Agri Sprayer","price":"₹1,20,000","description":"Agricultural spray drone, 10L tank, 15m spray width","details":"Built for modern precision agriculture, the KZ-Agri Sprayer covers 15 metres of spray width per pass with a 10-litre tank capacity. The hexacopter frame provides stable hover even in light wind, and variable-rate nozzles ensure even chemical distribution. Custom field mapping missions available on request.","specs":["10-litre chemical tank","15m effective spray width per pass","Hexacopter frame for stable hover","20-min flight time per charge","Variable-rate spray nozzles","Custom field mission planning available"]}'>
       <div class="prod-img">🛸</div>
       <div class="prod-body">
         <span class="prod-badge">IN STOCK</span>
@@ -1338,7 +1382,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="print">
+    <div class="prod-card" data-cat="print" onclick="openProduct(this)" data-product='{"emoji":"🖨️","badge":"CUSTOM","badgeType":"","name":"Nylon enclosure print","price":"From ₹800","description":"High-strength engineering nylon housing, any spec","details":"Engineering-grade nylon (PA12) printed on industrial FDM machines for enclosures, brackets, and structural housings. Strong, slightly flexible, and resistant to common chemicals and heat. DXF, STEP, or STL files accepted. Lead time 2–3 business days from file approval.","specs":["PA12 Nylon 12 material","Layer height 0.15–0.3mm","Build volume up to 300×300×400mm","Chemical and heat resistant","STEP, STL or DXF files accepted","2–3 business day lead time"]}'>
       <div class="prod-img">🖨️</div>
       <div class="prod-body">
         <span class="prod-badge">CUSTOM</span>
@@ -1350,7 +1394,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="print">
+    <div class="prod-card" data-cat="print" onclick="openProduct(this)" data-product='{"emoji":"⚙️","badge":"CUSTOM","badgeType":"","name":"Functional gear print","price":"From ₹500","description":"PETG/ABS mechanical gears, brackets, and fixtures","details":"Precision-printed gears, brackets, and mechanical fixtures in PETG or ABS. Great for prototyping drivetrain components, replacement parts, or custom tooling. Parts are printed with 40–60% infill for strength and post-processed for dimensional accuracy.","specs":["PETG or ABS material options","40–60% infill for strength","Post-processed for accuracy","Spur, bevel and worm gear profiles","STEP, DXF or drawing input","Same-day turnaround for simple parts"]}'>
       <div class="prod-img">⚙️</div>
       <div class="prod-body">
         <span class="prod-badge">CUSTOM</span>
@@ -1362,7 +1406,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="proto">
+    <div class="prod-card" data-cat="proto" onclick="openProduct(this)" data-product='{"emoji":"💡","badge":"48HR","badgeType":"new","name":"Rapid prototype pack","price":"From ₹3,500","description":"Design + print + assembly, delivered within 48 hours","details":"From concept to physical prototype in under 48 hours. We handle design verification (or accept your CAD), print, and assemble the final part. Ideal for pitch demos, investor samples, user testing, and iterative design cycles. Up to 3 design revisions included.","specs":["48-hour turnaround guaranteed","Design verification included","Up to 3 revisions","Any FDM material available","Full assembly and finishing","Perfect for pitch demos and samples"]}'>
       <div class="prod-img">💡</div>
       <div class="prod-body">
         <span class="prod-badge new">48HR</span>
@@ -1374,7 +1418,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="proto">
+    <div class="prod-card" data-cat="proto" onclick="openProduct(this)" data-product='{"emoji":"🔬","badge":"R&D","badgeType":"","name":"Product dev sprint","price":"From ₹15,000","description":"3-day iterative design and prototyping sprint for startups","details":"A structured 3-day design and prototyping sprint for startups and product teams. Day 1: requirements gathering and CAD. Day 2: print, test, iterate. Day 3: final prototype and documentation. Delivered with a build report, BOM, and ready-to-manufacture files.","specs":["3-day structured sprint","Full CAD design included","Minimum 2 prototype iterations","Build report and BOM delivered","Manufacture-ready files","Post-sprint support available"]}'>
       <div class="prod-img">🔬</div>
       <div class="prod-body">
         <span class="prod-badge">R&D</span>
@@ -1386,7 +1430,7 @@
         </div>
       </div>
     </div>
-    <div class="prod-card" data-cat="drone">
+    <div class="prod-card" data-cat="drone" onclick="openProduct(this)" data-product='{"emoji":"🎮","badge":"IN STOCK","badgeType":"","name":"Beginner Micro Drone","price":"₹4,500","description":"Indoor mini drone, perfect for learning and hobby flying","details":"The perfect starter drone for anyone new to flying. Compact, lightweight, and packed with beginner-friendly features — altitude hold, one-key takeoff and landing, and a durable frame that survives crashes. Comes fully assembled with a 2.4GHz remote controller, spare props, and a USB charger.","specs":["Altitude hold mode","One-key takeoff and landing","2.4GHz controller included","10-min flight time per battery","Spare propellers in the box","USB charger included"]}'>
       <div class="prod-img">🎮</div>
       <div class="prod-body">
         <span class="prod-badge">IN STOCK</span>
@@ -1533,6 +1577,27 @@
   </div>
 </footer>
 </div><!-- end #mainSite -->
+
+<!-- PRODUCT DETAIL PAGE -->
+<div id="productPage">
+  <button class="back-btn" onclick="showPage('main')">← Back to products</button>
+  <div class="pdp-wrap">
+    <div class="pdp-img-box" id="pdpEmoji">📦</div>
+    <div class="pdp-info-col">
+      <span class="prod-badge" id="pdpBadge"></span>
+      <h1 id="pdpName"></h1>
+      <div class="pdp-price-big" id="pdpPrice"></div>
+      <p class="pdp-short-desc" id="pdpShort"></p>
+      <div class="pdp-divider"></div>
+      <div class="pdp-long-desc" id="pdpLong"></div>
+      <ul class="pdp-specs-list" id="pdpSpecs"></ul>
+      <div class="pdp-actions">
+        <button class="btn-primary" onclick="pdpEnquire()">Enquire now →</button>
+        <button class="btn-outline" onclick="showPage('main')">← All products</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- 3D PRINT QUOTE PAGE -->
 <div id="quotePage">
@@ -1935,26 +2000,43 @@
       window.scrollY > 60 ? 'rgba(248,248,246,0.97)' : 'rgba(248,248,246,0.92)';
   });
 
-  // Product enquire buttons — event delegation so dynamic products work too
-  document.getElementById('productsGrid').addEventListener('click', e => {
-    if (e.target.classList.contains('prod-btn')) {
-      document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-
   // ====== PAGE SWITCHER ======
   function showPage(page) {
-    const main = document.getElementById('mainSite');
-    const quote = document.getElementById('quotePage');
+    const main    = document.getElementById('mainSite');
+    const quote   = document.getElementById('quotePage');
+    const product = document.getElementById('productPage');
+    main.style.display = 'none';
+    quote.classList.remove('active');
+    product.classList.remove('active');
     if (page === 'quote') {
-      main.style.display = 'none';
       quote.classList.add('active');
-      window.scrollTo(0, 0);
+    } else if (page === 'product') {
+      product.classList.add('active');
     } else {
       main.style.display = 'block';
-      quote.classList.remove('active');
-      window.scrollTo(0, 0);
     }
+    window.scrollTo(0, 0);
+  }
+
+  // ====== PRODUCT DETAIL PAGE ======
+  function openProduct(card) {
+    const d = JSON.parse(card.dataset.product);
+    document.getElementById('pdpEmoji').textContent  = d.emoji;
+    const badge = document.getElementById('pdpBadge');
+    badge.textContent  = d.badge;
+    badge.className    = 'prod-badge' + (d.badgeType ? ' ' + d.badgeType : '');
+    document.getElementById('pdpName').textContent   = d.name;
+    document.getElementById('pdpPrice').textContent  = d.price;
+    document.getElementById('pdpShort').textContent  = d.description;
+    document.getElementById('pdpLong').textContent   = d.details || '';
+    const specsList = document.getElementById('pdpSpecs');
+    specsList.innerHTML = (d.specs || []).map(s => `<li>${s}</li>`).join('');
+    showPage('product');
+  }
+
+  function pdpEnquire() {
+    showPage('main');
+    setTimeout(() => document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' }), 80);
   }
 
   // ====== QUOTE STATE ======
@@ -2339,8 +2421,14 @@
     const savedProducts = localStorage.getItem('kyzer_products');
     if (savedProducts) {
       const arr = JSON.parse(savedProducts).filter(p => p.visible);
-      document.getElementById('productsGrid').innerHTML = arr.map(p => `
-        <div class="prod-card" data-cat="${p.category}">
+      document.getElementById('productsGrid').innerHTML = arr.map(p => {
+        const pd = JSON.stringify({
+          emoji: p.emoji, badge: p.badge, badgeType: p.badgeType || '',
+          name: p.name, price: p.price, description: p.description,
+          details: p.details || '', specs: p.specs || [],
+        }).replace(/'/g, '&#39;');
+        return `
+        <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${p.emoji}</div>
           <div class="prod-body">
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>
@@ -2351,8 +2439,8 @@
               <button class="prod-btn">${p.btnText}</button>
             </div>
           </div>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
     }
 
     // Hero
