@@ -2543,10 +2543,13 @@
       const descEl = document.querySelector('.contact-info p');
       if (ciH3  && ci.heading) ciH3.textContent = ci.heading;
       if (descEl && ci.desc)   descEl.textContent = ci.desc;
-      // Location row
+      // Contact info rows
       const rows = document.querySelectorAll('.ci-row');
       const icon = r => r.querySelector('.ci-icon').outerHTML;
-      if (rows[0] && ci.loc) rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
+      if (rows[0] && ci.loc)    rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
+      if (rows[1] && ci.email)  rows[1].innerHTML = icon(rows[1]) + ' <a href="mailto:' + ci.email + '">' + ci.email + '</a>';
+      if (rows[2] && ci.phone)  rows[2].innerHTML = icon(rows[2]) + ' <a href="tel:' + ci.phone.replace(/\D/g,'') + '">' + ci.phone + '</a>';
+      if (rows[3] && ci.social) rows[3].innerHTML = icon(rows[3]) + ' ' + ci.social;
       // Form subjects dropdown
       if (ci.subjects && ci.subjects.length) {
         const sel = document.getElementById('contactSubject');
@@ -2570,8 +2573,8 @@
     if (lk) {
       const ph = (lk.phone || '').replace(/\D/g,'');
       const em = lk.email || '';
-      if (ciRows[1] && em)  ciRows[1].innerHTML = ciIcon(ciRows[1]) + ' <a href="mailto:' + em + '">' + em + '</a>';
-      if (ciRows[2] && ph)  ciRows[2].innerHTML = ciIcon(ciRows[2]) + ' <a href="tel:+' + ph + '">' + lk.phone + '</a>';
+      if (ciRows[1] && em  && !(ci && ci.email))  ciRows[1].innerHTML = ciIcon(ciRows[1]) + ' <a href="mailto:' + em + '">' + em + '</a>';
+      if (ciRows[2] && ph  && !(ci && ci.phone))  ciRows[2].innerHTML = ciIcon(ciRows[2]) + ' <a href="tel:+' + ph + '">' + lk.phone + '</a>';
       // rebuild social rows from the socials array
       const socialWrap = document.querySelector('.contact-info');
       if (socialWrap && lk.socials) {
