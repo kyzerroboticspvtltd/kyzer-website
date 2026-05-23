@@ -572,7 +572,14 @@
           <div class="form-group">
             <label class="form-label">GITHUB PERSONAL ACCESS TOKEN</label>
             <input class="form-input" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Go to github.com → Settings → Developer settings → Personal access tokens → Fine-grained → New token → select repo <strong>kyzer-website</strong> → Contents: Read & Write → Generate.</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
+              <strong>Steps:</strong><br>
+              1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
+              2. Click <strong>Generate new token (classic)</strong><br>
+              3. Give it a name (e.g. "Kyzer Admin")<br>
+              4. Tick the <strong>repo</strong> checkbox (top of the list)<br>
+              5. Click <strong>Generate token</strong> → copy it → paste above
+            </div>
           </div>
           <button class="btn btn-primary" onclick="saveGhToken()">Save token →</button>
         </div>
