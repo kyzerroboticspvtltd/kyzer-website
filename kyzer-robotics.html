@@ -2434,7 +2434,6 @@
       if (rows[0] && ci.loc)    rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
       if (rows[1] && ci.email)  rows[1].innerHTML = icon(rows[1]) + ' <a href="mailto:' + ci.email + '">' + ci.email + '</a>';
       if (rows[2] && ci.phone)  rows[2].innerHTML = icon(rows[2]) + ' <a href="tel:' + ci.phone.replace(/\D/g,'') + '">' + ci.phone + '</a>';
-      if (rows[3] && ci.social) rows[3].innerHTML = icon(rows[3]) + ' ' + ci.social;
       // Form subjects dropdown
       if (ci.subjects && ci.subjects.length) {
         const sel = document.getElementById('contactSubject');

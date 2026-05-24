@@ -7,7 +7,7 @@
             "type": "command",
             "shell": "powershell",
             "statusMessage": "Deploying to GitHub Pages...",
-            "timeout": 30,
+            "timeout": 60,
             "command": "$env:PATH = $env:PATH + ';C:\\Program Files\\GitHub CLI'; Set-Location 'c:\\Desktop\\Kyzer website'; $token = gh auth token; git remote set-url origin \"https://kyzerroboticspvtltd:$token@github.com/kyzerroboticspvtltd/kyzer-website.git\"; $status = git status --porcelain -- kyzer-robotics.html admin.html index.html; if ($status) { git add kyzer-robotics.html admin.html index.html; git commit -m 'auto: update site'; git push; $out = @{systemMessage='Deployed to GitHub Pages'} | ConvertTo-Json -Compress; Write-Output $out } else { $out = @{systemMessage='No changes to deploy'} | ConvertTo-Json -Compress; Write-Output $out }"
           }
         ]
