@@ -2755,9 +2755,17 @@
     }
   }
 
+  // ── BACKEND API URL ─ set this to your Railway URL after deploying ──
+  // e.g. 'https://kyzer-backend-production.up.railway.app'
+  // Leave as '' to fall back to the kyzer-data.json file.
+  const KYZER_API = '';
+
   // Apply local data first (instant), then fetch remote published data
   applyAdminStorage();
-  fetch('kyzer-data.json?_=' + Date.now())
+  const dataUrl = KYZER_API
+    ? KYZER_API + '/api/data?_=' + Date.now()
+    : 'kyzer-data.json?_=' + Date.now();
+  fetch(dataUrl)
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (!data || !Object.keys(data).length) return;

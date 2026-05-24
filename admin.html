@@ -689,22 +689,44 @@
 const PASS_KEY = 'kyzer_admin_pass';
 const DEFAULT_PASS = 'kyzer2024';
 
+// ── BACKEND API URL ─ set this to your Railway URL after deploying ──
+// e.g. 'https://kyzer-backend-production.up.railway.app'
+// Leave as '' to use the download-based publish fallback only.
+const KYZER_API = '';
+
 // ── AUTH ──
-function doLogin() {
+async function doLogin() {
   const pass = document.getElementById('loginPass').value;
   const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
-  if (pass === stored) {
-    document.getElementById('loginScreen').style.display = 'none';
-    const p = document.getElementById('adminPanel');
-    p.style.display = 'flex';
-    p.style.flexDirection = 'column';
-    initAdmin();
-  } else {
+  if (pass !== stored) {
     document.getElementById('loginErr').style.display = 'block';
     document.getElementById('loginPass').value = '';
+    return;
   }
+
+  // If backend is configured, get an API session token
+  if (KYZER_API) {
+    try {
+      const r = await fetch(KYZER_API + '/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass }),
+      });
+      const j = await r.json();
+      if (j.ok) sessionStorage.setItem('kyzer_api_token', j.token);
+    } catch (e) {
+      console.warn('Backend auth failed (offline?):', e.message);
+    }
+  }
+
+  document.getElementById('loginScreen').style.display = 'none';
+  const p = document.getElementById('adminPanel');
+  p.style.display = 'flex';
+  p.style.flexDirection = 'column';
+  initAdmin();
 }
 function doLogout() {
+  sessionStorage.removeItem('kyzer_api_token');
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginPass').value = '';
@@ -1290,62 +1312,60 @@ function clearAllPhotos() {
   toast('All photos cleared.');
 }
 
-// ── PUBLISH TO GITHUB ──
-const GH_OWNER = 'kyzerroboticspvtltd';
-const GH_REPO  = 'kyzer-website';
-const GH_FILE  = 'kyzer-data.json';
-const GH_BRANCH = 'master';
-
-function saveGhToken() {
-  const t = document.getElementById('ghToken').value.trim();
-  if (!t) { toast('Token cannot be empty.', true); return; }
-  localStorage.setItem('kyzer_gh_token', t);
-  document.getElementById('ghToken').value = '';
-  toast('Token saved (on this device only).');
-}
-
+// ── PUBLISH TO SITE ──
 async function publishToSite() {
-  const token = localStorage.getItem('kyzer_gh_token');
-  if (!token) {
-    toast('Set your GitHub token in Settings → Security first.', true);
-    switchTab('security');
-    return;
+  const keys = ['kyzer_products','kyzer_hero','kyzer_services','kyzer_contact',
+                'kyzer_quote','kyzer_links','kyzer_categories','kyzer_hero_photos'];
+  const data = {};
+  keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = JSON.parse(v); });
+
+  // Try backend if configured
+  if (KYZER_API) {
+    const token = sessionStorage.getItem('kyzer_api_token');
+    if (!token) {
+      toast('Not authenticated with backend. Please log out and log in again.', true);
+      return;
+    }
+    const btn = document.getElementById('publishBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Saving…';
+    btn.disabled = true;
+    try {
+      const r = await fetch(KYZER_API + '/api/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(data),
+      });
+      const j = await r.json();
+      btn.textContent = orig;
+      btn.disabled = false;
+      if (j.ok) {
+        toast('✓ Published! All devices will see the changes immediately.');
+      } else {
+        toast('Backend error: ' + j.error, true);
+      }
+      return;
+    } catch (e) {
+      btn.textContent = orig;
+      btn.disabled = false;
+      toast('Backend unreachable — falling back to file download.', true);
+    }
   }
-  const btn = document.getElementById('publishBtn');
-  const orig = btn.textContent;
-  btn.textContent = 'Publishing…'; btn.disabled = true;
-  try {
-    const keys = ['kyzer_products','kyzer_hero','kyzer_services','kyzer_contact',
-                  'kyzer_quote','kyzer_links','kyzer_categories','kyzer_hero_photos'];
-    const data = {};
-    keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = JSON.parse(v); });
 
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-    const headers = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' };
-
-    // Get current SHA (needed to update existing file)
-    let sha = null;
-    const shaRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, { headers });
-    if (shaRes.ok) sha = (await shaRes.json()).sha;
-
-    const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, {
-      method: 'PUT', headers,
-      body: JSON.stringify({ message: 'Admin: publish site data', content: encoded, branch: GH_BRANCH, ...(sha ? { sha } : {}) })
-    });
-    if (!putRes.ok) throw new Error((await putRes.json()).message);
-    toast('✓ Published! Changes live on all devices in ~1 min.');
-  } catch (e) {
-    toast('Publish failed: ' + e.message, true);
-  } finally {
-    btn.textContent = orig; btn.disabled = false;
-  }
+  // Fallback: download kyzer-data.json
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kyzer-data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('✓ kyzer-data.json downloaded — replace the file in your website folder and push to GitHub.');
 }
 
-// Load saved token into field on Security tab open
-function initSecurity() {
-  const t = localStorage.getItem('kyzer_gh_token');
-  if (t) document.getElementById('ghToken').placeholder = 'Token saved ✓ (paste new to replace)';
-}
+function initSecurity() {}
 
 // ── SECURITY ──
 function changePass() {
