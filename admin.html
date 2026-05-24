@@ -308,8 +308,6 @@
     <img src="logo.png" alt="Kyzer Robotics" class="login-logo">
     <h1>Admin Panel</h1>
     <p>Kyzer Robotics · Manager Access</p>
-    <input class="login-input" type="email" id="loginEmail" placeholder="Email address"
-      onkeydown="if(event.key==='Enter')doLogin()" />
     <input class="login-input" type="password" id="loginPass" placeholder="Password"
       onkeydown="if(event.key==='Enter')doLogin()" />
     <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign in →</button>
@@ -567,7 +565,7 @@
 
       <!-- SECURITY -->
       <div class="admin-tab" id="tab-security">
-        <div class="tab-header"><h2>Security</h2><p>Supabase Auth secures this panel — no hardcoded passwords. Configure cross-device sync below.</p></div>
+        <div class="tab-header"><h2>Security</h2><p>Configure Supabase cross-device sync and change your admin password.</p></div>
 
         <div class="panel" style="max-width:520px;margin-bottom:20px;">
           <div class="panel-title">☁️ Supabase Setup (cross-device sync)</div>
@@ -603,22 +601,25 @@
 );
 INSERT INTO site_data (id) VALUES (1) ON CONFLICT DO NOTHING;
 ALTER TABLE site_data ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public_read" ON site_data;
+DROP POLICY IF EXISTS "auth_write" ON site_data;
 DROP POLICY IF EXISTS "read_all" ON site_data;
 DROP POLICY IF EXISTS "write_all" ON site_data;
--- Anyone can read (public site)
-CREATE POLICY "public_read" ON site_data FOR SELECT TO anon, authenticated USING (true);
--- Only logged-in admin can write
-CREATE POLICY "auth_write" ON site_data FOR ALL TO authenticated USING (true) WITH CHECK (true);</pre>
+CREATE POLICY "read_all"  ON site_data FOR SELECT USING (true);
+CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true);</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
 
         <div class="panel" style="max-width:380px;">
-          <div class="panel-title">🔒 Change admin password</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Password is managed by Supabase Auth — secure server-side, not stored in the browser.</p>
+          <div class="panel-title">🔒 Change password</div>
+          <div class="form-group">
+            <label class="form-label">CURRENT PASSWORD</label>
+            <input class="form-input" type="password" id="secCur" />
+          </div>
           <div class="form-group">
             <label class="form-label">NEW PASSWORD</label>
-            <input class="form-input" type="password" id="secNew" placeholder="Min. 8 characters" />
+            <input class="form-input" type="password" id="secNew" />
           </div>
           <div class="form-group">
             <label class="form-label">CONFIRM NEW PASSWORD</label>
@@ -712,86 +713,42 @@ CREATE POLICY "auth_write" ON site_data FOR ALL TO authenticated USING (true) WI
 <div class="toast" id="toast"></div>
 
 <script>
-// ── AUTH (Supabase) ──
-window._authToken = sessionStorage.getItem('kyzer_admin_token') || null;
+// ── AUTH ──
+const PASS_KEY = 'kyzer_admin_pass';
 
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPass').value;
-  const errEl = document.getElementById('loginErr');
-  const btn   = document.getElementById('loginBtn');
-  errEl.style.display = 'none';
+function doLogin() {
+  const pass   = document.getElementById('loginPass').value;
+  const errEl  = document.getElementById('loginErr');
+  const stored = localStorage.getItem(PASS_KEY);
 
-  if (!email || !pass) {
-    errEl.textContent = 'Enter your email and password.';
+  // First-time setup: no password saved yet
+  if (!stored) {
+    if (!pass || pass.length < 6) {
+      errEl.textContent = 'First time? Enter a password (min 6 chars) to set it.';
+      errEl.style.display = 'block';
+      return;
+    }
+    localStorage.setItem(PASS_KEY, pass);
+  } else if (pass !== stored) {
+    errEl.textContent = 'Incorrect password.';
     errEl.style.display = 'block';
+    document.getElementById('loginPass').value = '';
     return;
   }
 
-  btn.textContent = 'Signing in…';
-  btn.disabled = true;
-
-  const sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
-  const sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
-
-  try {
-    const r = await fetch(sbUrl + '/auth/v1/token?grant_type=password', {
-      method: 'POST',
-      headers: { 'apikey': sbKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass }),
-    });
-    const data = await r.json();
-    if (!r.ok || !data.access_token) {
-      throw new Error(data.error_description || data.msg || 'Invalid email or password.');
-    }
-    window._authToken = data.access_token;
-    sessionStorage.setItem('kyzer_admin_token', data.access_token);
-    if (data.refresh_token) sessionStorage.setItem('kyzer_admin_refresh', data.refresh_token);
-
-    document.getElementById('loginScreen').style.display = 'none';
-    const p = document.getElementById('adminPanel');
-    p.style.display = 'flex';
-    p.style.flexDirection = 'column';
-    initAdmin();
-  } catch (e) {
-    errEl.textContent = e.message || 'Login failed.';
-    errEl.style.display = 'block';
-    document.getElementById('loginPass').value = '';
-  } finally {
-    btn.textContent = 'Sign in →';
-    btn.disabled = false;
-  }
+  errEl.style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  const p = document.getElementById('adminPanel');
+  p.style.display = 'flex';
+  p.style.flexDirection = 'column';
+  initAdmin();
 }
 
-async function doLogout() {
-  const sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
-  const sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
-  if (window._authToken) {
-    try {
-      await fetch(sbUrl + '/auth/v1/logout', {
-        method: 'POST',
-        headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + window._authToken },
-      });
-    } catch (_e) {}
-  }
-  window._authToken = null;
-  sessionStorage.removeItem('kyzer_admin_token');
-  sessionStorage.removeItem('kyzer_admin_refresh');
+function doLogout() {
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginEmail').value = '';
   document.getElementById('loginPass').value = '';
   document.getElementById('loginErr').style.display = 'none';
-}
-
-// Auto-restore session if token exists
-if (window._authToken) {
-  document.getElementById('loginScreen').style.display = 'none';
-  const _ap = document.getElementById('adminPanel');
-  _ap.style.display = 'flex';
-  _ap.style.flexDirection = 'column';
-  // initAdmin() runs after D_* defaults are defined, so defer slightly
-  setTimeout(initAdmin, 0);
 }
 
 // ── DEFAULTS ──
@@ -1403,13 +1360,12 @@ async function publishToSite() {
     updated_at:  new Date().toISOString(),
   };
 
-  const writeToken = window._authToken || sbKey;
   try {
     const r = await fetch(sbUrl + '/rest/v1/site_data', {
       method: 'POST',
       headers: {
         'apikey': sbKey,
-        'Authorization': 'Bearer ' + writeToken,
+        'Authorization': 'Bearer ' + sbKey,
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates',
       },
@@ -1454,36 +1410,17 @@ function saveSupabase() {
   }
 }
 
-async function changePass() {
+function changePass() {
+  const cur  = document.getElementById('secCur').value;
   const nw   = document.getElementById('secNew').value;
   const conf = document.getElementById('secConf').value;
-  if (!nw)         { toast('New password cannot be empty.', true); return; }
-  if (nw !== conf) { toast('Passwords do not match.', true); return; }
-  if (nw.length < 8) { toast('Password must be at least 8 characters.', true); return; }
-  if (!window._authToken) { toast('Not logged in.', true); return; }
-
-  const sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
-  const sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
-  try {
-    const r = await fetch(sbUrl + '/auth/v1/user', {
-      method: 'PUT',
-      headers: {
-        'apikey': sbKey,
-        'Authorization': 'Bearer ' + window._authToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ password: nw }),
-    });
-    if (r.ok) {
-      ['secNew','secConf'].forEach(id => document.getElementById(id).value = '');
-      toast('Password updated successfully.');
-    } else {
-      const err = await r.json();
-      toast('Error: ' + (err.message || 'Failed to update password.'), true);
-    }
-  } catch {
-    toast('Cannot reach Supabase.', true);
-  }
+  const stored = localStorage.getItem(PASS_KEY) || '';
+  if (cur !== stored)  { toast('Current password is wrong.', true); return; }
+  if (!nw)             { toast('New password cannot be empty.', true); return; }
+  if (nw !== conf)     { toast('Passwords do not match.', true); return; }
+  localStorage.setItem(PASS_KEY, nw);
+  ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
+  toast('Password updated.');
 }
 </script>
 </body>
