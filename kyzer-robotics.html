@@ -2464,9 +2464,9 @@
       const socialWrap = document.querySelector('.contact-info');
       if (socialWrap && lk.socials) {
         const existing = socialWrap.querySelectorAll('.ci-row');
-        // remove rows beyond index 2 (keep loc, email, phone)
-        for (let i = existing.length - 1; i >= 3; i--) existing[i].remove();
-        lk.socials.filter(s => s.visible).forEach(s => {
+        // remove rows beyond index 3 (keep loc, email, phone, hardcoded instagram)
+        for (let i = existing.length - 1; i >= 4; i--) existing[i].remove();
+        lk.socials.filter(s => s.visible && !/instagram/i.test(s.label)).forEach(s => {
           const row = document.createElement('div');
           row.className = 'ci-row';
           row.innerHTML = '<div class="ci-icon">' + s.icon + '</div> <a href="' + s.url + '" target="_blank" rel="noopener">' + s.label + '</a>';
