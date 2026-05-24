@@ -415,7 +415,7 @@
   .prod-body h4 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
   .prod-body p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
   .prod-footer { display: flex; justify-content: space-between; align-items: center; }
-  .prod-price { font-size: 16px; font-weight: 500; color: var(--orange); }
+  .prod-price { display: none; }
   .prod-btn {
     background: var(--faint); color: var(--text);
     border: none; padding: 6px 14px;
@@ -1484,7 +1484,6 @@
     <div class="pdp-info-col">
       <span class="prod-badge" id="pdpBadge"></span>
       <h1 id="pdpName"></h1>
-      <div class="pdp-price-big" id="pdpPrice"></div>
       <p class="pdp-short-desc" id="pdpShort"></p>
       <div class="pdp-divider"></div>
       <div class="pdp-long-desc" id="pdpLong"></div>
@@ -1963,7 +1962,6 @@
     badge.textContent  = d.badge;
     badge.className    = 'prod-badge' + (d.badgeType ? ' ' + d.badgeType : '');
     document.getElementById('pdpName').textContent   = d.name;
-    document.getElementById('pdpPrice').textContent  = d.price;
     document.getElementById('pdpShort').textContent  = d.description;
     document.getElementById('pdpLong').textContent   = d.details || '';
     const specsList = document.getElementById('pdpSpecs');
@@ -1984,8 +1982,7 @@
 
   function pdpWhatsApp() {
     const name = document.getElementById('pdpName').textContent;
-    const price = document.getElementById('pdpPrice').textContent;
-    const msg = encodeURIComponent(`Hi Kyzer Robotics, I'm interested in the *${name}* (${price}). Could you please share more details?`);
+    const msg = encodeURIComponent(`Hi Kyzer Robotics, I'm interested in the *${name}*. Could you please share more details?`);
     window.open('https://wa.me/919049695264?text=' + msg, '_blank');
   }
 
@@ -2403,7 +2400,6 @@
             <h4>${p.name}</h4>
             <p>${p.description}</p>
             <div class="prod-footer">
-              <span class="prod-price">${p.price}</span>
               <button class="prod-btn">${p.btnText}</button>
             </div>
           </div>
