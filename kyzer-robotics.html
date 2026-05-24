@@ -317,9 +317,26 @@
   /* Category tiles */
   .cat-tiles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px; margin-bottom: 3rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 16px; margin-bottom: 1.5rem;
   }
+
+  /* Subcategory tabs */
+  .subcat-tabs {
+    display: none; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 2rem; padding: 1rem 1.25rem;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 12px;
+  }
+  .subcat-tabs.visible { display: flex; }
+  .subcat-tab {
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--muted); padding: 7px 18px;
+    border-radius: 999px; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .subcat-tab.active { background: var(--orange); color: #111; border-color: var(--orange); font-weight: 500; }
   .cat-tile {
     background: var(--bg2); border: 0.5px solid var(--border);
     border-radius: 20px; padding: 2rem 1.5rem;
@@ -1314,6 +1331,20 @@
       <div class="cat-tile-desc">PCB, enclosures & rapid development</div>
       <div class="cat-tile-count" id="catCount-proto"></div>
     </div>
+    <div class="cat-tile" onclick="filterCat('3dprint')" data-cat-tile="3dprint">
+      <div class="cat-tile-icon">🖨️</div>
+      <div class="cat-tile-name">3D Printing</div>
+      <div class="cat-tile-desc">Printers, filaments & upgrade components</div>
+      <div class="cat-tile-count" id="catCount-3dprint"></div>
+    </div>
+  </div>
+
+  <!-- Subcategory tabs (shown for 3D Printing) -->
+  <div class="subcat-tabs" id="subcatTabs">
+    <button class="subcat-tab active" data-subcat="all"       onclick="filterSubcat('all')">All</button>
+    <button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">🖨️ 3D Printers</button>
+    <button class="subcat-tab"        data-subcat="filament"  onclick="filterSubcat('filament')">🎨 Filaments</button>
+    <button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">⚙️ Components</button>
   </div>
 
   <div class="products-grid" id="productsGrid">
@@ -1411,6 +1442,111 @@
           <span class="prod-price">₹4,500</span>
           <button class="prod-btn">Buy</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ── 3D PRINTERS ── -->
+    <div class="prod-card" data-cat="3dprint" data-subcat="printer" onclick="openProduct(this)" data-product='{"emoji":"🖨️","badge":"IN STOCK","badgeType":"new","name":"Bambu Lab A1 Mini","description":"Fast compact FDM printer — 256×256×256mm, multicolor ready","details":"The Bambu Lab A1 Mini is a compact, high-speed FDM printer with automatic calibration, vibration compensation, and multicolor printing support via AMS Lite. Perfect for hobbyists and professionals who want reliable results out of the box.","specs":["256×256×256mm build volume","Max 500mm/s print speed","Auto bed leveling & calibration","Multicolor ready with AMS Lite","Compatible with PLA, PETG, TPU, PLA-CF","Wi-Fi & app control"]}'>
+      <div class="prod-img">🖨️</div>
+      <div class="prod-body">
+        <span class="prod-badge new">IN STOCK</span>
+        <h4>Bambu Lab A1 Mini</h4>
+        <p>Fast compact FDM printer — 256×256×256mm, multicolor ready</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="printer" onclick="openProduct(this)" data-product='{"emoji":"🖨️","badge":"POPULAR","badgeType":"","name":"Creality Ender 3 V3 KE","description":"Reliable beginner printer — 220×220×250mm, auto-leveling","details":"The Creality Ender 3 V3 KE is one of the best entry-level FDM printers on the market. It features automatic bed leveling, a direct drive extruder, and a large online community for support. Ideal for students, hobbyists, and anyone starting out with 3D printing.","specs":["220×220×250mm build volume","Direct drive extruder","Auto bed leveling (CR Touch)","Max 300mm/s print speed","Compatible with PLA, PETG, TPU, ABS","Open-source firmware"]}'>
+      <div class="prod-img">🖨️</div>
+      <div class="prod-body">
+        <span class="prod-badge">POPULAR</span>
+        <h4>Creality Ender 3 V3 KE</h4>
+        <p>Reliable beginner printer — 220×220×250mm, auto-leveling</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="printer" onclick="openProduct(this)" data-product='{"emoji":"🖨️","badge":"HIGH SPEED","badgeType":"new","name":"Creality K1C","description":"High-speed FDM printer — 600mm/s, carbon fibre compatible","details":"The Creality K1C is a CoreXY high-speed printer capable of 600mm/s. It includes an all-metal hotend that handles abrasive filaments like carbon fibre and glass-fibre reinforced materials. Built-in AI camera for print monitoring.","specs":["220×220×250mm build volume","600mm/s max print speed","All-metal hotend — CF/GF compatible","AI camera & print monitoring","Auto levelling & vibration compensation","Supports PLA, PETG, ABS, ASA, PLA-CF, PA-CF"]}'>
+      <div class="prod-img">🖨️</div>
+      <div class="prod-body">
+        <span class="prod-badge new">HIGH SPEED</span>
+        <h4>Creality K1C</h4>
+        <p>High-speed FDM printer — 600mm/s, carbon fibre compatible</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+
+    <!-- ── FILAMENTS ── -->
+    <div class="prod-card" data-cat="3dprint" data-subcat="filament" onclick="openProduct(this)" data-product='{"emoji":"🎨","badge":"IN STOCK","badgeType":"","name":"PLA+ 1kg Spool","description":"High-quality PLA+, 1.75mm — multiple colors available","details":"Premium PLA+ filament with improved impact resistance and reduced brittleness compared to standard PLA. Consistent diameter tolerance of ±0.02mm for reliable prints. Available in 20+ colors — specify when ordering.","specs":["1kg spool, 1.75mm diameter","Diameter tolerance ±0.02mm","Print temp: 200–230°C","Bed temp: 0–60°C (no heated bed needed)","20+ colors available","Compatible with all FDM printers"]}'>
+      <div class="prod-img">🎨</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>PLA+ 1kg Spool</h4>
+        <p>High-quality PLA+, 1.75mm — multiple colors available</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="filament" onclick="openProduct(this)" data-product='{"emoji":"🎨","badge":"IN STOCK","badgeType":"","name":"PETG 1kg Spool","description":"Chemical resistant PETG, 1.75mm — great for functional parts","details":"PETG offers a great balance between ease of printing and mechanical performance. More durable and impact-resistant than PLA, with good chemical resistance. Ideal for enclosures, brackets, and outdoor parts.","specs":["1kg spool, 1.75mm diameter","Diameter tolerance ±0.02mm","Print temp: 230–250°C","Bed temp: 70–90°C","Chemical and moisture resistant","Multiple colors available"]}'>
+      <div class="prod-img">🎨</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>PETG 1kg Spool</h4>
+        <p>Chemical resistant PETG, 1.75mm — great for functional parts</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="filament" onclick="openProduct(this)" data-product='{"emoji":"🎨","badge":"IN STOCK","badgeType":"","name":"TPU Flexible 500g","description":"95A flexible TPU, 1.75mm — grips, gaskets & flex parts","details":"Flexible 95A Shore hardness TPU for printing grips, gaskets, phone cases, and any part that needs to flex or absorb impact. Best used with a direct drive extruder.","specs":["500g spool, 1.75mm diameter","Shore hardness 95A","Print temp: 220–240°C","Direct drive extruder recommended","Excellent layer adhesion","UV and oil resistant"]}'>
+      <div class="prod-img">🎨</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>TPU Flexible 500g</h4>
+        <p>95A flexible TPU, 1.75mm — grips, gaskets & flex parts</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="filament" onclick="openProduct(this)" data-product='{"emoji":"🎨","badge":"IN STOCK","badgeType":"","name":"Carbon Fibre PLA 500g","description":"CF-reinforced PLA, 1.75mm — lightweight and stiff","details":"Carbon fibre reinforced PLA for parts that need to be lightweight and rigid. Matte finish, excellent dimensional stability, and very low warping. Requires a hardened steel nozzle.","specs":["500g spool, 1.75mm diameter","Carbon fibre reinforced PLA matrix","Print temp: 210–230°C","Hardened steel nozzle required","Matte finish, excellent rigidity","Low warping, high dimensional accuracy"]}'>
+      <div class="prod-img">🎨</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>Carbon Fibre PLA 500g</h4>
+        <p>CF-reinforced PLA, 1.75mm — lightweight and stiff</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+
+    <!-- ── COMPONENTS ── -->
+    <div class="prod-card" data-cat="3dprint" data-subcat="component" onclick="openProduct(this)" data-product='{"emoji":"⚙️","badge":"IN STOCK","badgeType":"","name":"Hardened Steel Nozzle 0.4mm","description":"Universal 0.4mm nozzle — handles abrasive filaments","details":"Hardened steel nozzle suitable for abrasive filaments like carbon fibre, glass fibre, and glow-in-the-dark. Much longer lifespan than brass nozzles. Compatible with most FDM printers using standard MK8 or V6 thread.","specs":["0.4mm orifice diameter","Hardened steel — abrasive filament rated","MK8 thread (fits most FDM printers)","V6 thread version also available","Max temp: 300°C","Pack of 2"]}'>
+      <div class="prod-img">⚙️</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>Hardened Steel Nozzle 0.4mm</h4>
+        <p>Universal 0.4mm nozzle — handles abrasive filaments</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="component" onclick="openProduct(this)" data-product='{"emoji":"⚙️","badge":"IN STOCK","badgeType":"","name":"PEI Spring Steel Sheet","description":"Magnetic flexible print bed — prints pop off when cool","details":"Double-sided textured PEI spring steel sheet with magnetic base. Prints adhere firmly when hot and release easily when the sheet flexes after cooling — no scraper needed. Compatible with most FDM printers with a heated bed.","specs":["235×235mm (Ender 3 size)","Double-sided textured PEI surface","Magnetic base for easy removal","Works with PLA, PETG, ABS, TPU","No adhesive or glue stick needed","Easy to clean and long-lasting"]}'>
+      <div class="prod-img">⚙️</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>PEI Spring Steel Sheet</h4>
+        <p>Magnetic flexible print bed — prints pop off when cool</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="component" onclick="openProduct(this)" data-product='{"emoji":"⚙️","badge":"UPGRADE","badgeType":"","name":"Direct Drive Extruder Kit","description":"Universal direct drive upgrade — better flexible filament control","details":"Converts a Bowden-setup printer to direct drive for better flexible filament performance and reduced stringing. Includes motor bracket, tensioner, PTFE tube, and all hardware.","specs":["Universal bracket (fits most FDM printers)","Reduces retraction distance significantly","Improved flexible filament handling","Includes all mounting hardware","PTFE-lined path for smooth feeding","Compatible with NEMA 17 motors"]}'>
+      <div class="prod-img">⚙️</div>
+      <div class="prod-body">
+        <span class="prod-badge">UPGRADE</span>
+        <h4>Direct Drive Extruder Kit</h4>
+        <p>Universal direct drive upgrade — better flexible filament control</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+    <div class="prod-card" data-cat="3dprint" data-subcat="component" onclick="openProduct(this)" data-product='{"emoji":"⚙️","badge":"IN STOCK","badgeType":"","name":"Hotend Heater Block Kit","description":"Replacement heater block, thermistor & heater cartridge set","details":"Complete hotend replacement kit including heater block, thermistor, heater cartridge, and all mounting screws. Fixes heat creep, temperature errors, and heat block damage. Compatible with E3D V6 and most clone hotends.","specs":["Aluminium heater block","24V 40W heater cartridge","NTC 100K thermistor","M6 thread, E3D V6 compatible","All screws and PTFE clip included","Rated to 300°C"]}'>
+      <div class="prod-img">⚙️</div>
+      <div class="prod-body">
+        <span class="prod-badge">IN STOCK</span>
+        <h4>Hotend Heater Block Kit</h4>
+        <p>Replacement heater block, thermistor & heater cartridge set</p>
+        <div class="prod-footer"><button class="prod-btn">Buy</button></div>
       </div>
     </div>
   </div>
@@ -1853,9 +1989,25 @@
 
   function filterCat(cat) {
     const grid = document.getElementById('productsGrid');
+    const subcatTabs = document.getElementById('subcatTabs');
     grid.classList.add('cat-open');
     applyFilter(cat);
+    if (cat === '3dprint') {
+      subcatTabs.classList.add('visible');
+      filterSubcat('all', false);
+    } else {
+      subcatTabs.classList.remove('visible');
+    }
     setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  function filterSubcat(subcat, scroll) {
+    document.querySelectorAll('.subcat-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.subcat === subcat)
+    );
+    document.querySelectorAll('.prod-card[data-cat="3dprint"]').forEach(card => {
+      card.style.display = (subcat === 'all' || card.dataset.subcat === subcat) ? '' : 'none';
+    });
   }
 
   document.querySelectorAll('.tab').forEach(tab => {
@@ -1864,7 +2016,7 @@
 
   // Count products per category and update tiles
   function updateCatCounts() {
-    ['drone','print','proto'].forEach(cat => {
+    ['drone','print','proto','3dprint'].forEach(cat => {
       const n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
       const el = document.getElementById('catCount-' + cat);
       if (el) el.textContent = n + (n === 1 ? ' product' : ' products');
