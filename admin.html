@@ -790,6 +790,8 @@ if (window._authToken) {
   const _ap = document.getElementById('adminPanel');
   _ap.style.display = 'flex';
   _ap.style.flexDirection = 'column';
+  // initAdmin() runs after D_* defaults are defined, so defer slightly
+  setTimeout(initAdmin, 0);
 }
 
 // ── DEFAULTS ──
