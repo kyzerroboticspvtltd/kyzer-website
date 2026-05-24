@@ -772,7 +772,7 @@ async function doLogout() {
         method: 'POST',
         headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + window._authToken },
       });
-    } catch {}
+    } catch (_e) {}
   }
   window._authToken = null;
   sessionStorage.removeItem('kyzer_admin_token');
