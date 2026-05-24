@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kyzer Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="supabase-config.js"></script>
 <style>
   :root {
     --orange: #FF8C35; --bg: #f4f2ee; --bg2: #eceae6; --bg3: #e2e0dc;
@@ -564,24 +565,46 @@
 
       <!-- SECURITY -->
       <div class="admin-tab" id="tab-security">
-        <div class="tab-header"><h2>Security</h2><p>Change the admin password and set up site publishing.</p></div>
+        <div class="tab-header"><h2>Security</h2><p>Configure Supabase cross-device sync and change your admin password.</p></div>
 
-        <div class="panel" style="max-width:480px;margin-bottom:20px;">
-          <div class="panel-title">🚀 Publish to site (GitHub sync)</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Changes made in admin are saved on this device only. To make them visible on mobile and all other devices, paste a GitHub token and click <strong>Publish to site</strong>.</p>
+        <div class="panel" style="max-width:520px;margin-bottom:20px;">
+          <div class="panel-title">☁️ Supabase Setup (cross-device sync)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Supabase syncs your admin changes to all devices instantly — no backend server needed. The free tier is plenty for this site.</p>
           <div class="form-group">
-            <label class="form-label">GITHUB PERSONAL ACCESS TOKEN</label>
-            <input class="form-input" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+            <label class="form-label">SUPABASE PROJECT URL</label>
+            <input class="form-input" type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">SUPABASE ANON KEY</label>
+            <input class="form-input" type="password" id="sbKey" placeholder="eyJ..." />
             <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
               <strong>Steps:</strong><br>
-              1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
-              2. Click <strong>Generate new token (classic)</strong><br>
-              3. Give it a name (e.g. "Kyzer Admin")<br>
-              4. Tick the <strong>repo</strong> checkbox (top of the list)<br>
-              5. Click <strong>Generate token</strong> → copy it → paste above
+              1. Go to <strong>supabase.com</strong> → New project (free Spark plan)<br>
+              2. Project Settings → API → copy <strong>Project URL</strong> and <strong>anon public</strong> key<br>
+              3. Open SQL Editor → run the SQL below → paste your credentials above<br>
+              4. Also paste credentials into <strong>supabase-config.js</strong> in your site folder (lets other devices read data)
             </div>
           </div>
-          <button class="btn btn-primary" onclick="saveGhToken()">Save token →</button>
+          <details style="margin-bottom:14px;">
+            <summary style="font-size:12px;color:var(--orange);cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">Show one-time setup SQL →</summary>
+            <pre style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;font-size:11px;margin-top:8px;overflow-x:auto;font-family:'JetBrains Mono',monospace;color:var(--text);line-height:1.6;white-space:pre-wrap;">CREATE TABLE site_data (
+  id INTEGER PRIMARY KEY DEFAULT 1,
+  products JSONB DEFAULT '[]',
+  categories JSONB DEFAULT '[]',
+  hero JSONB DEFAULT '{}',
+  services JSONB DEFAULT '[]',
+  contact JSONB DEFAULT '{}',
+  links JSONB DEFAULT '{}',
+  quote JSONB DEFAULT '{}',
+  hero_photos JSONB DEFAULT '[]',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+INSERT INTO site_data (id) VALUES (1);
+ALTER TABLE site_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read_all" ON site_data FOR SELECT USING (true);
+CREATE POLICY "write_all" ON site_data FOR ALL USING (true) WITH CHECK (true);</pre>
+          </details>
+          <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
 
         <div class="panel" style="max-width:380px;">
@@ -689,13 +712,8 @@
 const PASS_KEY = 'kyzer_admin_pass';
 const DEFAULT_PASS = 'kyzer2024';
 
-// ── BACKEND API URL ─ set this to your Railway URL after deploying ──
-// e.g. 'https://kyzer-backend-production.up.railway.app'
-// Leave as '' to use the download-based publish fallback only.
-const KYZER_API = 'https://kyzer-website-production.up.railway.app';
-
 // ── AUTH ──
-async function doLogin() {
+function doLogin() {
   const pass = document.getElementById('loginPass').value;
   const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
   if (pass !== stored) {
@@ -703,22 +721,6 @@ async function doLogin() {
     document.getElementById('loginPass').value = '';
     return;
   }
-
-  // If backend is configured, get an API session token
-  if (KYZER_API) {
-    try {
-      const r = await fetch(KYZER_API + '/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass }),
-      });
-      const j = await r.json();
-      if (j.ok) sessionStorage.setItem('kyzer_api_token', j.token);
-    } catch (e) {
-      console.warn('Backend auth failed (offline?):', e.message);
-    }
-  }
-
   document.getElementById('loginScreen').style.display = 'none';
   const p = document.getElementById('adminPanel');
   p.style.display = 'flex';
@@ -726,7 +728,6 @@ async function doLogin() {
   initAdmin();
 }
 function doLogout() {
-  sessionStorage.removeItem('kyzer_api_token');
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginPass').value = '';
@@ -1314,60 +1315,84 @@ function clearAllPhotos() {
 
 // ── PUBLISH TO SITE ──
 async function publishToSite() {
-  const keys = ['kyzer_products','kyzer_hero','kyzer_services','kyzer_contact',
-                'kyzer_quote','kyzer_links','kyzer_categories','kyzer_hero_photos'];
-  const data = {};
-  keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = JSON.parse(v); });
+  const sbUrl = localStorage.getItem('kyzer_supabase_url')
+    || (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : '');
+  const sbKey = localStorage.getItem('kyzer_supabase_key')
+    || (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY ? SUPABASE_KEY : '');
 
-  // Try backend if configured
-  if (KYZER_API) {
-    const token = sessionStorage.getItem('kyzer_api_token');
-    if (!token) {
-      toast('Not authenticated with backend. Please log out and log in again.', true);
-      return;
-    }
-    const btn = document.getElementById('publishBtn');
-    const orig = btn.textContent;
-    btn.textContent = 'Saving…';
-    btn.disabled = true;
-    try {
-      const r = await fetch(KYZER_API + '/api/data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify(data),
-      });
-      const j = await r.json();
-      btn.textContent = orig;
-      btn.disabled = false;
-      if (j.ok) {
-        toast('✓ Published! All devices will see the changes immediately.');
-      } else {
-        toast('Backend error: ' + j.error, true);
-      }
-      return;
-    } catch (e) {
-      btn.textContent = orig;
-      btn.disabled = false;
-      toast('Backend unreachable — falling back to file download.', true);
-    }
+  if (!sbUrl || !sbKey) {
+    toast('Supabase not configured. Go to Security tab → Supabase Setup.', true);
+    return;
   }
 
-  // Fallback: download kyzer-data.json
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'kyzer-data.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-  toast('✓ kyzer-data.json downloaded — replace the file in your website folder and push to GitHub.');
+  const btn = document.getElementById('publishBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Publishing…';
+  btn.disabled = true;
+
+  const payload = {
+    id: 1,
+    products:    products,
+    categories:  categories,
+    hero:        hero,
+    services:    services,
+    contact:     contact,
+    links:       links,
+    quote:       quote,
+    hero_photos: JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
+    updated_at:  new Date().toISOString(),
+  };
+
+  try {
+    const r = await fetch(sbUrl + '/rest/v1/site_data', {
+      method: 'POST',
+      headers: {
+        'apikey': sbKey,
+        'Authorization': 'Bearer ' + sbKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify(payload),
+    });
+    btn.textContent = orig;
+    btn.disabled = false;
+    if (r.ok) {
+      toast('✓ Published! All devices will see the changes within seconds.');
+    } else {
+      const err = await r.text();
+      toast('Supabase error: ' + err, true);
+    }
+  } catch (e) {
+    btn.textContent = orig;
+    btn.disabled = false;
+    toast('Cannot reach Supabase. Check your config in Security tab.', true);
+  }
 }
 
-function initSecurity() {}
-
 // ── SECURITY ──
+function initSecurity() {
+  const savedUrl = localStorage.getItem('kyzer_supabase_url')
+    || (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '');
+  const savedKey = localStorage.getItem('kyzer_supabase_key')
+    || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
+  const urlEl = document.getElementById('sbUrl');
+  const keyEl = document.getElementById('sbKey');
+  if (urlEl) urlEl.value = savedUrl || '';
+  if (keyEl) keyEl.value = savedKey || '';
+}
+
+function saveSupabase() {
+  const url = document.getElementById('sbUrl').value.trim();
+  const key = document.getElementById('sbKey').value.trim();
+  if (url) localStorage.setItem('kyzer_supabase_url', url);
+  if (key) localStorage.setItem('kyzer_supabase_key', key);
+  if (url && key) {
+    toast('Supabase config saved. Click Publish to sync all devices.');
+  } else {
+    toast('Saved — but enter both URL and key before publishing.', true);
+  }
+}
+
 function changePass() {
   const cur  = document.getElementById('secCur').value;
   const nw   = document.getElementById('secNew').value;

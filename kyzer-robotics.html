@@ -20,8 +20,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body {
-    background: var(--bg) url('doodle-bg.svg') repeat;
-    background-size: 600px 600px;
+    background: var(--bg);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     font-size: 18px;
@@ -256,27 +255,6 @@
     width: 1px; height: 40px; background: linear-gradient(var(--orange), transparent);
   }
 
-  /* TICKER */
-  .ticker {
-    background: var(--orange); color: #111;
-    padding: 10px 0; overflow: hidden;
-  }
-  .ticker-inner {
-    display: flex; gap: 0;
-    animation: ticker 25s linear infinite;
-    white-space: nowrap;
-  }
-  .ticker-item {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; font-weight: 500;
-    padding: 0 2.5rem;
-    letter-spacing: 0.05em;
-  }
-  .ticker-dot {
-    margin-right: 2.5rem;
-    opacity: 0.5;
-  }
-
   /* SECTIONS */
   section { padding: 6rem 3rem; }
   .sec-label {
@@ -294,47 +272,22 @@
 
   /* SERVICES */
   #services { background: var(--bg2); }
-  .services-layout {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 5rem; align-items: start; margin-top: 4rem;
+  .services-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-top: 3.5rem;
   }
-  .service-list { display: flex; flex-direction: column; gap: 0; }
-  .service-item {
-    padding: 1.75rem 0;
-    border-bottom: 0.5px solid var(--border);
-    cursor: none;
-    transition: padding-left 0.3s;
-    display: flex; gap: 1.5rem; align-items: flex-start;
+  .service-card {
+    background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 2rem 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
   }
-  .service-item:first-child { border-top: 0.5px solid var(--border); }
-  .service-item:hover { padding-left: 1rem; }
-  .service-num {
+  .service-card:hover { border-color: rgba(255,140,53,0.4); transform: translateY(-4px); }
+  .sc-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; color: var(--orange);
-    min-width: 28px; margin-top: 4px;
+    font-size: 12px; color: var(--orange); margin-bottom: 1rem;
   }
-  .service-item h3 { font-size: 19px; font-weight: 500; margin-bottom: 6px; }
-  .service-item p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-  .service-visual {
-    background: var(--bg3);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    aspect-ratio: 1;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  .sv-inner {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 100px; color: rgba(255,140,53,0.1);
-    user-select: none;
-    transition: font-size 0.4s, color 0.4s;
-  }
-  .service-visual:hover .sv-inner { font-size: 120px; color: rgba(255,140,53,0.18); }
-  .sv-tag {
-    position: absolute; bottom: 1.5rem; left: 1.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; color: var(--muted);
-  }
+  .service-card h3 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+  .service-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
   /* PRODUCTS */
   #products { background: var(--bg); }
@@ -468,66 +421,6 @@
   .prod-btn:hover { background: var(--orange); color: #111; }
   .hidden { display: none; }
 
-  /* PROTOTYPING PROCESS */
-  #process { background: var(--bg2); }
-  .process-steps {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0; margin-top: 4rem;
-    border: 0.5px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-  }
-  .step {
-    padding: 2rem 1.5rem;
-    border-right: 0.5px solid var(--border);
-    position: relative; transition: background 0.3s;
-  }
-  .step:last-child { border-right: none; }
-  .step:hover { background: var(--bg3); }
-  .step-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px; color: rgba(255,140,53,0.12);
-    line-height: 1; margin-bottom: 1rem;
-    transition: color 0.3s;
-  }
-  .step:hover .step-num { color: rgba(255,140,53,0.25); }
-  .step h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
-  .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
-  .step-arrow {
-    position: absolute; right: -12px; top: 50%;
-    transform: translateY(-50%);
-    width: 24px; height: 24px;
-    background: var(--bg2); border: 0.5px solid var(--border);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: var(--orange);
-    z-index: 1;
-  }
-  .step:last-child .step-arrow { display: none; }
-
-  /* WHY US */
-  #why { background: var(--bg); }
-  .why-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px; margin-top: 3.5rem;
-  }
-  .why-card {
-    padding: 1.75rem;
-    border: 0.5px solid var(--border);
-    border-radius: 14px;
-    background: var(--bg2);
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .why-card:hover { border-color: rgba(255,140,53,0.3); transform: translateY(-3px); }
-  .why-icon {
-    width: 42px; height: 42px;
-    background: #fff3e8; border: 0.5px solid rgba(255,140,53,0.2);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; margin-bottom: 1.25rem;
-  }
-  .why-card h4 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
-  .why-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
   /* CONTACT */
   #contact {
     background: var(--bg2);
@@ -603,10 +496,6 @@
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes ticker {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
   }
   @keyframes bounce {
     0%, 100% { transform: translateX(-50%) translateY(0); }
@@ -1161,13 +1050,6 @@
     .why-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
-  /* Doodle texture on all page sections */
-  #home, #services, #products, #process, #why, #contact, #quotePage, #productPage {
-    background-image: url('doodle-bg.svg');
-    background-size: 600px 600px;
-    background-repeat: repeat;
-  }
-
   /* ── MOBILE ── */
   @media (max-width: 768px) {
     body { cursor: auto; }
@@ -1203,22 +1085,12 @@
     section { padding: 4rem 1.5rem; }
 
     /* Services */
-    .services-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    .service-visual { aspect-ratio: 16/9; }
+    .services-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* Products */
     .products-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
     .filter-tabs { flex-wrap: wrap; }
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-
-    /* Process */
-    .process-steps { grid-template-columns: 1fr 1fr; }
-    .step { border-right: none; border-bottom: 0.5px solid var(--border); }
-    .step:last-child { border-bottom: none; }
-    .step-arrow { display: none; }
-
-    /* Why */
-    .why-grid { grid-template-columns: 1fr 1fr; }
 
     /* Contact */
     .contact-layout { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -1241,9 +1113,7 @@
   /* ── SMALL PHONES ── */
   @media (max-width: 480px) {
     .products-grid { grid-template-columns: 1fr; }
-    .why-grid { grid-template-columns: 1fr; }
-    .process-steps { grid-template-columns: 1fr; }
-    .step { border-bottom: 0.5px solid var(--border); }
+    .services-grid { grid-template-columns: 1fr; }
     .hero-stat-num { font-size: 35px; }
     .qf-row { grid-template-columns: 1fr; }
     .material-grid { grid-template-columns: 1fr 1fr; }
@@ -1252,6 +1122,7 @@
     .quote-panel { padding: 1.25rem; }
   }
 </style>
+<script src="supabase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
@@ -1275,9 +1146,7 @@
   </a>
   <ul class="nav-links" id="navLinks">
     <a href="#services">Services</a>
-    <a href="#products">Products</a>
-    <a href="#process">Process</a>
-    <a href="#why">Why us</a>
+    <a href="#products">Shop</a>
     <a href="#contact">Contact</a>
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
@@ -1363,28 +1232,6 @@
   <div class="scroll-hint">SCROLL</div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner" id="ticker">
-    <span class="ticker-item">DRONES</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">3D PRINTING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">RAPID PROTOTYPING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">CUSTOM BUILDS</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">PUNE · INDIA</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">FPV RACING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">INDUSTRIAL PARTS</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">NYLON · PLA · RESIN</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">DRONES</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">3D PRINTING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">RAPID PROTOTYPING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">CUSTOM BUILDS</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">PUNE · INDIA</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">FPV RACING</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">INDUSTRIAL PARTS</span><span class="ticker-dot">·</span>
-    <span class="ticker-item">NYLON · PLA · RESIN</span><span class="ticker-dot">·</span>
-  </div>
-</div>
-
 <!-- SERVICES -->
 <section id="services">
   <div class="reveal">
@@ -1392,40 +1239,26 @@
     <div class="sec-title">What we build</div>
     <div class="sec-sub">From ready-to-fly drones to precision 3D-printed parts — all under one roof in Pune.</div>
   </div>
-  <div class="services-layout reveal">
-    <div class="service-list">
-      <div class="service-item">
-        <span class="service-num">01</span>
-        <div>
-          <h3>Drone sales</h3>
-          <p>Ready-to-fly consumer and professional drones for aerial photography, surveying, agriculture, and FPV racing.</p>
-        </div>
-      </div>
-      <div class="service-item">
-        <span class="service-num">02</span>
-        <div>
-          <h3>Custom drone builds</h3>
-          <p>Bespoke drones built to your exact payload, range, and performance specs. We design, assemble, and test.</p>
-        </div>
-      </div>
-      <div class="service-item">
-        <span class="service-num">03</span>
-        <div>
-          <h3>3D printing</h3>
-          <p>FDM and resin printing across a wide material library — PLA, ABS, PETG, TPU, nylon, and engineering-grade filaments.</p>
-        </div>
-      </div>
-      <div class="service-item">
-        <span class="service-num">04</span>
-        <div>
-          <h3>Rapid prototyping</h3>
-          <p>Concept to physical prototype in 48 hours. Ideal for startups, R&D teams, and product designers.</p>
-        </div>
-      </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="sc-num">01</div>
+      <h3>Drone sales</h3>
+      <p>Ready-to-fly consumer and professional drones for aerial photography, surveying, agriculture, and FPV racing.</p>
     </div>
-    <div class="service-visual">
-      <div class="sv-inner">KR</div>
-      <div class="sv-tag">// EST. 2023 · PUNE</div>
+    <div class="service-card">
+      <div class="sc-num">02</div>
+      <h3>Custom drone builds</h3>
+      <p>Bespoke drones built to your exact payload, range, and performance specs. We design, assemble, and test.</p>
+    </div>
+    <div class="service-card">
+      <div class="sc-num">03</div>
+      <h3>3D printing</h3>
+      <p>FDM and resin printing across a wide material library — PLA, ABS, PETG, TPU, nylon, and engineering-grade filaments.</p>
+    </div>
+    <div class="service-card">
+      <div class="sc-num">04</div>
+      <h3>Rapid prototyping</h3>
+      <p>Concept to physical prototype in 48 hours. Ideal for startups, R&D teams, and product designers.</p>
     </div>
   </div>
 </section>
@@ -1561,82 +1394,6 @@
           <button class="prod-btn">Buy</button>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROCESS -->
-<section id="process">
-  <div class="reveal">
-    <div class="sec-label">// 03 — PROTOTYPING PROCESS</div>
-    <div class="sec-title">From idea to object</div>
-    <div class="sec-sub">Our 4-step process gets your concept into your hands — fast.</div>
-  </div>
-  <div class="process-steps reveal">
-    <div class="step">
-      <div class="step-num">01</div>
-      <h3>Brief</h3>
-      <p>Share your concept, drawings, or CAD files. We scope the build and confirm specs.</p>
-      <div class="step-arrow">→</div>
-    </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <h3>Design</h3>
-      <p>Our team models the part in CAD or prepares your files for printing.</p>
-      <div class="step-arrow">→</div>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <h3>Print & build</h3>
-      <p>We print, assemble, and test. You get real-time updates throughout.</p>
-      <div class="step-arrow">→</div>
-    </div>
-    <div class="step">
-      <div class="step-num">04</div>
-      <h3>Deliver</h3>
-      <p>Shipped to you or picked up from our Pune workshop within 48 hours.</p>
-      <div class="step-arrow">→</div>
-    </div>
-  </div>
-</section>
-
-<!-- WHY US -->
-<section id="why">
-  <div class="reveal">
-    <div class="sec-label">// 04 — WHY KYZER</div>
-    <div class="sec-title">Built different</div>
-    <div class="sec-sub">We're a team of engineers and makers who build the things we sell.</div>
-  </div>
-  <div class="why-grid reveal">
-    <div class="why-card">
-      <div class="why-icon">⚡</div>
-      <h4>48hr turnaround</h4>
-      <p>Prototype orders dispatched within two working days, every time.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🏭</div>
-      <h4>In-house manufacturing</h4>
-      <p>Everything is built at our Pune facility — no outsourcing, full quality control.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">👥</div>
-      <h4>For everyone</h4>
-      <p>Hobbyist or startup, we scale our service to your needs and budget.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">✅</div>
-      <h4>Quality assured</h4>
-      <p>Every product is tested before it leaves our workshop. No exceptions.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🎯</div>
-      <h4>Custom everything</h4>
-      <p>We don't do off-the-shelf thinking. Every order can be customised to your specs.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">📍</div>
-      <h4>Local, fast shipping</h4>
-      <p>Based in Pune — faster delivery across Maharashtra and pan-India shipping available.</p>
     </div>
   </div>
 </section>
@@ -2648,7 +2405,7 @@
     // Services
     const svcs = ld('kyzer_services', null);
     if (svcs) {
-      const items = document.querySelectorAll('.service-item');
+      const items = document.querySelectorAll('.service-card');
       svcs.forEach((s, i) => {
         if (!items[i]) return;
         items[i].querySelector('h3').textContent = s.title;
@@ -2755,24 +2512,38 @@
     }
   }
 
-  // ── BACKEND API URL ─ set this to your Railway URL after deploying ──
-  // e.g. 'https://kyzer-backend-production.up.railway.app'
-  // Leave as '' to fall back to the kyzer-data.json file.
-  const KYZER_API = 'https://kyzer-website-production.up.railway.app';
-
-  // Apply local data first (instant), then fetch remote published data
+  // Apply local data first (instant)
   applyAdminStorage();
-  const dataUrl = KYZER_API
-    ? KYZER_API + '/api/data?_=' + Date.now()
-    : 'kyzer-data.json?_=' + Date.now();
-  fetch(dataUrl)
+
+  // Then fetch from Supabase and re-apply if configured
+  (function fetchFromSupabase() {
+    const sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
+    const sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
+    if (!sbUrl || !sbKey) return;
+    fetch(sbUrl + '/rest/v1/site_data?id=eq.1&select=*', {
+      headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey }
+    })
     .then(r => r.ok ? r.json() : null)
-    .then(data => {
-      if (!data || !Object.keys(data).length) return;
-      Object.keys(data).forEach(k => localStorage.setItem(k, JSON.stringify(data[k])));
+    .then(rows => {
+      if (!rows || !rows.length) return;
+      const row = rows[0];
+      const map = {
+        kyzer_products:    row.products,
+        kyzer_categories:  row.categories,
+        kyzer_hero:        row.hero,
+        kyzer_services:    row.services,
+        kyzer_contact:     row.contact,
+        kyzer_links:       row.links,
+        kyzer_quote:       row.quote,
+        kyzer_hero_photos: row.hero_photos,
+      };
+      Object.entries(map).forEach(([k, v]) => {
+        if (v !== null && v !== undefined) localStorage.setItem(k, JSON.stringify(v));
+      });
       applyAdminStorage();
     })
     .catch(() => {});
+  })();
 
   function saveQuote() {
     const total = document.getElementById('bTotal').textContent;
