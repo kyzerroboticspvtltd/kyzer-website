@@ -1531,28 +1531,6 @@
   .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
   @media (max-width: 768px) { .wa-fab { bottom: 1.5rem; right: 1.5rem; width: 50px; height: 50px; } }
 
-  /* ── SCROLL DRONE ── */
-  #droneFlyWrap {
-    position: fixed; right: clamp(1rem, 4vw, 4rem); top: 0;
-    z-index: 40; pointer-events: none; width: 170px;
-    will-change: transform;
-  }
-  #droneScene { width: 170px; will-change: transform; }
-  #droneScene svg {
-    width: 170px; height: 170px; display: block;
-    filter: drop-shadow(0 18px 36px rgba(255,140,53,0.18)) drop-shadow(0 4px 12px rgba(0,0,0,0.38));
-  }
-  .drone-float { animation: droneBob 2.6s ease-in-out infinite; }
-  .prop-group {
-    animation: propSpin 0.19s linear infinite;
-    transform-box: fill-box; transform-origin: center;
-  }
-  @keyframes propSpin { to { transform: rotate(360deg); } }
-  @keyframes droneBob {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-9px); }
-  }
-  @media (max-width: 768px) { #droneFlyWrap { display: none; } }
 
   /* ── ANNOUNCEMENT BAR ── */
   #announcementBar {
@@ -3534,36 +3512,6 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     a.click();
   }
 
-  // ── SCROLL DRONE ──
-  document.addEventListener('DOMContentLoaded', function() {
-    const wrap  = document.getElementById('droneFlyWrap');
-    const scene = document.getElementById('droneScene');
-    if (!wrap || !scene) return;
-
-    let curY = window.innerHeight * 0.1;
-    let curBank = -8, curPitch = 32;
-
-    function update() {
-      const p = Math.min(1, window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight));
-
-      // Drone slides from 10vh → 80vh across the page as you scroll — always visible
-      const tgtY    = window.innerHeight * (0.1 + p * 0.7);
-      const tgtBank = -8  + Math.sin(p * Math.PI * 4) * 20;
-      const tgtPitch = 32 + Math.sin(p * Math.PI * 2) * 14;
-      const driftX  = Math.sin(p * Math.PI * 3) * 18;
-
-      curY     += (tgtY     - curY)     * 0.07;
-      curBank  += (tgtBank  - curBank)  * 0.08;
-      curPitch += (tgtPitch - curPitch) * 0.08;
-
-      wrap.style.transform  = `translateY(${curY.toFixed(1)}px) translateX(${driftX.toFixed(1)}px)`;
-      scene.style.transform = `perspective(480px) rotateX(${curPitch.toFixed(1)}deg) rotateZ(${curBank.toFixed(1)}deg)`;
-
-      requestAnimationFrame(update);
-    }
-    update();
-  });
-
   // ── ANNOUNCEMENT BAR ──
   document.addEventListener('DOMContentLoaded', function() {
     if (sessionStorage.getItem('ann_dismissed')) {
@@ -3605,76 +3553,6 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     e.target.style.display = 'none';
   }
 </script>
-
-<!-- SCROLL DRONE (desktop only, fixed) -->
-<div id="droneFlyWrap" aria-hidden="true">
-  <div id="droneScene">
-    <div class="drone-float">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- Propeller guard rings (dashed) -->
-        <circle cx="42" cy="42" r="29" fill="rgba(255,140,53,0.06)" stroke="rgba(255,140,53,0.28)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <circle cx="158" cy="42" r="29" fill="rgba(255,140,53,0.06)" stroke="rgba(255,140,53,0.28)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <circle cx="42" cy="158" r="29" fill="rgba(255,140,53,0.06)" stroke="rgba(255,140,53,0.28)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <circle cx="158" cy="158" r="29" fill="rgba(255,140,53,0.06)" stroke="rgba(255,140,53,0.28)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <!-- Arms (dark base + lighter highlight) -->
-        <line x1="86" y1="86" x2="59" y2="59" stroke="#252525" stroke-width="12" stroke-linecap="round"/>
-        <line x1="114" y1="86" x2="141" y2="59" stroke="#252525" stroke-width="12" stroke-linecap="round"/>
-        <line x1="86" y1="114" x2="59" y2="141" stroke="#252525" stroke-width="12" stroke-linecap="round"/>
-        <line x1="114" y1="114" x2="141" y2="141" stroke="#252525" stroke-width="12" stroke-linecap="round"/>
-        <line x1="86" y1="86" x2="59" y2="59" stroke="#383838" stroke-width="5" stroke-linecap="round"/>
-        <line x1="114" y1="86" x2="141" y2="59" stroke="#383838" stroke-width="5" stroke-linecap="round"/>
-        <line x1="86" y1="114" x2="59" y2="141" stroke="#383838" stroke-width="5" stroke-linecap="round"/>
-        <line x1="114" y1="114" x2="141" y2="141" stroke="#383838" stroke-width="5" stroke-linecap="round"/>
-        <!-- Motor mounts -->
-        <circle cx="42" cy="42" r="13" fill="#1a1a1a" stroke="#3d3d3d" stroke-width="1.5"/>
-        <circle cx="158" cy="42" r="13" fill="#1a1a1a" stroke="#3d3d3d" stroke-width="1.5"/>
-        <circle cx="42" cy="158" r="13" fill="#1a1a1a" stroke="#3d3d3d" stroke-width="1.5"/>
-        <circle cx="158" cy="158" r="13" fill="#1a1a1a" stroke="#3d3d3d" stroke-width="1.5"/>
-        <circle cx="42" cy="42" r="4.5" fill="#505050"/>
-        <circle cx="158" cy="42" r="4.5" fill="#505050"/>
-        <circle cx="42" cy="158" r="4.5" fill="#505050"/>
-        <circle cx="158" cy="158" r="4.5" fill="#505050"/>
-        <!-- Main body -->
-        <rect x="71" y="71" width="58" height="58" rx="12" fill="#131313" stroke="#FF8C35" stroke-width="1.5"/>
-        <!-- Body inner detail -->
-        <rect x="81" y="81" width="38" height="38" rx="7" fill="none" stroke="#FF8C35" stroke-width="0.7" opacity="0.18"/>
-        <line x1="100" y1="73" x2="100" y2="127" stroke="#FF8C35" stroke-width="0.6" opacity="0.22"/>
-        <line x1="73" y1="100" x2="127" y2="100" stroke="#FF8C35" stroke-width="0.6" opacity="0.22"/>
-        <!-- Front camera -->
-        <rect x="87" y="73" width="26" height="13" rx="4" fill="#1c1c1c" stroke="#FF8C35" stroke-width="1.2"/>
-        <circle cx="100" cy="79.5" r="4.5" fill="#FF8C35" opacity="0.55"/>
-        <circle cx="100" cy="79.5" r="2" fill="#fff" opacity="0.35"/>
-        <!-- Rear status LED -->
-        <circle cx="100" cy="119" r="3.2" fill="#FF8C35" opacity="0.85"/>
-        <!-- Spinning propellers (cross-blade sets per motor) -->
-        <g class="prop-group">
-          <line x1="14" y1="42" x2="70" y2="42" stroke="rgba(215,215,215,0.65)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="42" y1="14" x2="42" y2="70" stroke="rgba(215,215,215,0.55)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="22" y1="22" x2="62" y2="62" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="62" y1="22" x2="22" y2="62" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <g class="prop-group" style="animation-duration:0.16s;animation-direction:reverse;">
-          <line x1="130" y1="42" x2="186" y2="42" stroke="rgba(215,215,215,0.65)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="158" y1="14" x2="158" y2="70" stroke="rgba(215,215,215,0.55)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="138" y1="22" x2="178" y2="62" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="178" y1="22" x2="138" y2="62" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <g class="prop-group" style="animation-duration:0.16s;animation-direction:reverse;">
-          <line x1="14" y1="158" x2="70" y2="158" stroke="rgba(215,215,215,0.65)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="42" y1="130" x2="42" y2="186" stroke="rgba(215,215,215,0.55)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="22" y1="138" x2="62" y2="178" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="62" y1="138" x2="22" y2="178" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <g class="prop-group">
-          <line x1="130" y1="158" x2="186" y2="158" stroke="rgba(215,215,215,0.65)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="158" y1="130" x2="158" y2="186" stroke="rgba(215,215,215,0.55)" stroke-width="4" stroke-linecap="round"/>
-          <line x1="138" y1="138" x2="178" y2="178" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="178" y1="138" x2="138" y2="178" stroke="rgba(215,215,215,0.3)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-      </svg>
-    </div>
-  </div>
-</div>
 
 <!-- Floating WhatsApp Button -->
 <a class="wa-fab" href="https://wa.me/919049695264" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
