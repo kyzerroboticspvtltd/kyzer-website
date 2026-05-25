@@ -1157,6 +1157,125 @@
     .qf-row3 { grid-template-columns: 1fr 1fr; }
     .quote-panel { padding: 1.25rem; }
   }
+
+  /* MARQUEE STRIP */
+  .marquee-strip {
+    background: var(--text);
+    padding: 13px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-inner {
+    display: inline-flex;
+    animation: marqueeScroll 30s linear infinite;
+  }
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 0.1em;
+  }
+  .marquee-dot {
+    width: 4px; height: 4px;
+    background: var(--orange);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  @keyframes marqueeScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* HOW IT WORKS */
+  #process { background: var(--bg); }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 2.5rem 2rem;
+    margin-top: 3.5rem;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 0; right: 0;
+    height: 0.5px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .process-step { position: relative; z-index: 1; }
+  .ps-num {
+    width: 44px; height: 44px;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; color: var(--orange); font-weight: 600;
+    margin-bottom: 1.25rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .process-step:hover .ps-num { background: #fff3e8; border-color: var(--orange); }
+  .ps-title { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+  .ps-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+  @media (max-width: 768px) {
+    .process-steps::before { display: none; }
+    .process-steps { gap: 2rem; }
+  }
+
+  /* TESTIMONIALS */
+  #testimonials { background: var(--bg2); }
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+    margin-top: 3.5rem;
+  }
+  .testi-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .testi-card:hover { border-color: rgba(255,140,53,0.35); transform: translateY(-4px); }
+  .testi-stars { color: var(--orange); font-size: 13px; letter-spacing: 3px; margin-bottom: 1rem; }
+  .testi-text {
+    font-size: 15px; line-height: 1.7;
+    color: var(--text); margin-bottom: 1.25rem;
+    font-style: italic;
+  }
+  .testi-author { display: flex; align-items: center; gap: 10px; }
+  .testi-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #fff3e8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .testi-name { font-size: 14px; font-weight: 500; }
+  .testi-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* FLOATING WHATSAPP */
+  .wa-fab {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    width: 56px; height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .wa-fab:hover { transform: scale(1.12); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
+  .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+  @media (max-width: 768px) { .wa-fab { bottom: 1.5rem; right: 1.5rem; width: 50px; height: 50px; } }
 </style>
 <script src="supabase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1267,6 +1386,32 @@
   <div class="scroll-hint">SCROLL</div>
 </section>
 
+<!-- MARQUEE STRIP -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-inner">
+    <span class="marquee-item"><span class="marquee-dot"></span>DRONE BUILDS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>FDM 3D PRINTING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>RAPID PROTOTYPING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CARBON FIBRE PARTS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>NYLON ENGINEERING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>FPV RACING DRONES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>AGRICULTURAL DRONES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PCB ENCLOSURES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>ROBOTICS KITS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PRODUCT DEV SPRINTS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>DRONE BUILDS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>FDM 3D PRINTING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>RAPID PROTOTYPING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CARBON FIBRE PARTS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>NYLON ENGINEERING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>FPV RACING DRONES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>AGRICULTURAL DRONES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PCB ENCLOSURES</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>ROBOTICS KITS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PRODUCT DEV SPRINTS</span>
+  </div>
+</div>
+
 <!-- SERVICES -->
 <section id="services">
   <div class="reveal">
@@ -1298,11 +1443,42 @@
   </div>
 </section>
 
+<!-- HOW IT WORKS -->
+<section id="process">
+  <div class="reveal">
+    <div class="sec-label">// 02 — PROCESS</div>
+    <div class="sec-title">How it works</div>
+    <div class="sec-sub">From enquiry to delivery — a simple, transparent process built around your timeline.</div>
+  </div>
+  <div class="process-steps reveal">
+    <div class="process-step">
+      <div class="ps-num">01</div>
+      <div class="ps-title">Tell us what you need</div>
+      <div class="ps-desc">Fill in the contact form or send us your CAD file, sketch, or idea via WhatsApp. No spec is too rough to start with.</div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">02</div>
+      <div class="ps-title">Get a quote in hours</div>
+      <div class="ps-desc">We review your project, check material and print settings, and send back a detailed price breakdown — usually same day.</div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">03</div>
+      <div class="ps-title">We build & iterate</div>
+      <div class="ps-desc">Production starts after confirmation. Track progress via WhatsApp and request adjustments before final delivery.</div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">04</div>
+      <div class="ps-title">Delivery to your door</div>
+      <div class="ps-desc">Parts are inspected, packed, and shipped with tracking — or available for pickup from our Pune workshop.</div>
+    </div>
+  </div>
+</section>
+
 <!-- PRODUCTS -->
 <section id="products">
   <div class="products-header reveal">
     <div>
-      <div class="sec-label">// 02 — PRODUCTS</div>
+      <div class="sec-label">// 03 — PRODUCTS</div>
       <div class="sec-title">Shop</div>
     </div>
     <div class="filter-tabs" style="display:none;">
@@ -1320,9 +1496,9 @@
       <div class="cat-tile-count" id="catCount-drone"></div>
     </div>
     <div class="cat-tile" onclick="filterCat('print')" data-cat-tile="print">
-      <div class="cat-tile-icon">🖨️</div>
-      <div class="cat-tile-name">3D Printing</div>
-      <div class="cat-tile-desc">FDM, resin & engineering-grade filaments</div>
+      <div class="cat-tile-icon">🛠️</div>
+      <div class="cat-tile-name">Print Services</div>
+      <div class="cat-tile-desc">Custom FDM prints, nylon parts & enclosures</div>
       <div class="cat-tile-count" id="catCount-print"></div>
     </div>
     <div class="cat-tile" onclick="filterCat('proto')" data-cat-tile="proto">
@@ -1333,8 +1509,8 @@
     </div>
     <div class="cat-tile" onclick="filterCat('3dprint')" data-cat-tile="3dprint">
       <div class="cat-tile-icon">🖨️</div>
-      <div class="cat-tile-name">3D Printing</div>
-      <div class="cat-tile-desc">Printers, filaments & upgrade components</div>
+      <div class="cat-tile-name">Printers & Supplies</div>
+      <div class="cat-tile-desc">3D printers, filaments & upgrade components</div>
       <div class="cat-tile-count" id="catCount-3dprint"></div>
     </div>
   </div>
@@ -1547,6 +1723,50 @@
         <h4>Hotend Heater Block Kit</h4>
         <p>Replacement heater block, thermistor & heater cartridge set</p>
         <div class="prod-footer"><button class="prod-btn">Buy</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="reveal">
+    <div class="sec-label">// 04 — TESTIMONIALS</div>
+    <div class="sec-title">What clients say</div>
+    <div class="sec-sub">Real feedback from startups, hobbyists, and engineering teams who've worked with us.</div>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Kyzer delivered my drone prototype in under 48 hours. The build quality was excellent and the team was incredibly responsive throughout the whole process."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">🚀</div>
+        <div>
+          <div class="testi-name">Arjun Mehta</div>
+          <div class="testi-role">Founder, AeroStartup · Pune</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"We needed custom nylon enclosures for an IoT device — Kyzer had them printed, inspected, and shipped within two days. Will definitely use again."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">⚙️</div>
+        <div>
+          <div class="testi-name">Sneha Kulkarni</div>
+          <div class="testi-role">Hardware Engineer · Embedded Systems Co.</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Used the 3D print quote tool and got an accurate price instantly. The final print matched the specs perfectly. Great service for our final year project."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">🎓</div>
+        <div>
+          <div class="testi-name">Rohit Desai</div>
+          <div class="testi-role">Final Year Student · COEP Pune</div>
+        </div>
       </div>
     </div>
   </div>
@@ -2741,5 +2961,13 @@ Valid for 7 days. Contact: hello@kyzerrobotics.in`;
     a.click();
   }
 </script>
+
+<!-- Floating WhatsApp Button -->
+<a class="wa-fab" href="https://wa.me/919049695264" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.122 1.532 5.856L.044 23.444a.5.5 0 0 0 .612.612l5.588-1.488A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.897 0-3.671-.524-5.188-1.435l-.372-.22-3.862 1.028 1.028-3.862-.22-.372A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+  </svg>
+</a>
 </body>
 </html>
