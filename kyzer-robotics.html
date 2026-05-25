@@ -3536,7 +3536,8 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
   }
 
   // ── SCROLL DRONE ──
-  (function initScrollDrone() {
+  // HTML element is after </script>, so defer until DOM is fully parsed
+  document.addEventListener('DOMContentLoaded', function initScrollDrone() {
     const wrap  = document.getElementById('droneFlyWrap');
     const scene = document.getElementById('droneScene');
     if (!wrap || !scene) return;
@@ -3573,17 +3574,17 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
       if (!wrap.classList.contains('drone-loaded')) wrap.classList.add('drone-loaded');
     }
     loop();
-  })();
+  });
 
   // ── ANNOUNCEMENT BAR ──
-  (function() {
+  document.addEventListener('DOMContentLoaded', function() {
     if (sessionStorage.getItem('ann_dismissed')) {
       const bar = document.getElementById('announcementBar');
       if (bar) bar.style.display = 'none';
     } else {
       document.body.classList.add('has-ann');
     }
-  })();
+  });
 
   function dismissAnnouncement() {
     const bar = document.getElementById('announcementBar');
