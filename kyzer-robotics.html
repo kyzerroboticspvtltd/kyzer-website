@@ -1530,6 +1530,170 @@
   .wa-fab:hover { transform: scale(1.12); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
   .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
   @media (max-width: 768px) { .wa-fab { bottom: 1.5rem; right: 1.5rem; width: 50px; height: 50px; } }
+
+  /* ── ANNOUNCEMENT BAR ── */
+  #announcementBar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1001;
+    height: 36px; background: #111111; color: #f8f8f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; gap: 10px; padding: 0 2.5rem;
+    transition: transform 0.3s ease;
+  }
+  #announcementBar.ann-hidden { transform: translateY(-100%); }
+  #announcementBar a { color: var(--orange); text-decoration: none; font-weight: 500; }
+  #announcementBar a:hover { text-decoration: underline; }
+  .ann-dismiss {
+    position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: #666; cursor: pointer;
+    font-size: 18px; line-height: 1; padding: 4px 6px; transition: color 0.15s;
+  }
+  .ann-dismiss:hover { color: #f8f8f6; }
+  body.has-ann nav { top: 36px; }
+
+  /* ── PRODUCT CARD QUICK VIEW overlay ── */
+  .prod-img { position: relative; overflow: hidden; }
+  .prod-img::after {
+    content: 'Quick View →';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(255,140,53,0.93);
+    color: #111; font-size: 12.5px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif; text-align: center;
+    padding: 9px; letter-spacing: 0.02em;
+    transform: translateY(100%); transition: transform 0.22s ease;
+  }
+  .prod-card:hover .prod-img::after { transform: translateY(0); }
+
+  /* ── BRANDS STRIP ── */
+  #brands {
+    padding: 2.5rem 0;
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    overflow: hidden;
+  }
+  .brands-label {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.12em; margin-bottom: 1.25rem;
+    text-transform: uppercase;
+  }
+  .brands-track { overflow: hidden; }
+  .brands-inner {
+    display: flex; align-items: center; gap: 14px;
+    width: max-content;
+    animation: brandScroll 28s linear infinite;
+  }
+  .brands-inner:hover { animation-play-state: paused; }
+  .brand-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 20px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 999px; white-space: nowrap;
+    font-size: 13px; font-weight: 500; color: var(--text);
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+    user-select: none;
+  }
+  .brand-pill:hover { border-color: var(--orange); background: #fff3e8; color: var(--orange); }
+  .brand-pill .bp-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; opacity: 0.6; }
+  @keyframes brandScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── DEALS SECTION ── */
+  #deals {
+    background: #111111; color: #f8f8f6;
+    padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 3rem);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  #deals::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(255,140,53,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .deals-inner { position: relative; max-width: 720px; margin: 0 auto; }
+  .deals-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    background: rgba(255,140,53,0.15); color: var(--orange);
+    border: 0.5px solid rgba(255,140,53,0.4);
+    padding: 4px 14px; border-radius: 4px;
+    letter-spacing: 0.1em; margin-bottom: 1.5rem;
+  }
+  #deals h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 7vw, 80px); line-height: 1;
+    color: #f8f8f6; margin-bottom: 1.25rem;
+  }
+  #deals p {
+    font-size: clamp(14px, 2vw, 16px); color: #aaa;
+    line-height: 1.7; margin-bottom: 2.5rem;
+  }
+  .deals-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .deals-btn-primary {
+    background: var(--orange); color: #111;
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .deals-btn-primary:hover { background: #FF8C00; transform: translateY(-2px); }
+  .deals-btn-ghost {
+    background: transparent; color: #f8f8f6;
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    border: 0.5px solid rgba(248,248,246,0.25);
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-block;
+  }
+  .deals-btn-ghost:hover { border-color: rgba(248,248,246,0.6); background: rgba(248,248,246,0.05); }
+
+  /* ── NEWSLETTER ── */
+  #newsletter {
+    background: var(--bg2);
+    border-top: 0.5px solid var(--border);
+    padding: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 5vw, 3rem);
+  }
+  .newsletter-inner {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 3rem;
+    max-width: 860px; margin: 0 auto; align-items: center;
+  }
+  .nl-left .sec-title { font-size: clamp(28px, 4vw, 44px); margin-bottom: 0.75rem; }
+  .nl-left p { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.7; }
+  .nl-form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nl-form input {
+    flex: 1; min-width: 0; background: var(--bg3);
+    border: 0.5px solid var(--border); color: var(--text);
+    padding: 11px 16px; border-radius: 8px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; outline: none;
+    transition: border-color 0.2s;
+  }
+  .nl-form input:focus { border-color: var(--orange); }
+  .nl-form button {
+    background: var(--orange); color: #111; border: none;
+    padding: 11px 22px; border-radius: 8px; font-size: 14px;
+    font-weight: 500; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  }
+  .nl-form button:hover { background: #FF8C00; }
+  .nl-success { font-size: 13px; color: var(--orange); margin-top: 10px; display: none; }
+  .nl-divider { width: 0.5px; background: var(--border); align-self: stretch; }
+  .nl-right { text-align: center; }
+  .nl-wa-icon { font-size: 40px; margin-bottom: 0.75rem; }
+  .nl-right h3 { font-size: 18px; font-weight: 500; margin-bottom: 0.5rem; }
+  .nl-right p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+  .nl-wa-btn {
+    display: inline-block; background: #25D366; color: #fff;
+    padding: 11px 24px; border-radius: 8px; font-size: 14px;
+    font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.2s;
+  }
+  .nl-wa-btn:hover { background: #1ebe5c; transform: translateY(-2px); }
+  @media (max-width: 768px) {
+    .newsletter-inner { grid-template-columns: 1fr; }
+    .nl-divider { width: 100%; height: 0.5px; }
+    .nl-right { text-align: left; }
+  }
 </style>
 <script src="supabase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1543,6 +1707,12 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div id="mainSite">
+
+<!-- ANNOUNCEMENT BAR -->
+<div id="announcementBar">
+  <span>⚡ Free same-day quote on orders over ₹999 &nbsp;·&nbsp; <a href="https://wa.me/919049695264" target="_blank" rel="noopener">Chat on WhatsApp →</a></span>
+  <button class="ann-dismiss" onclick="dismissAnnouncement()" aria-label="Dismiss">×</button>
+</div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -1729,6 +1899,44 @@
       <div class="ps-num">04</div>
       <div class="ps-title">Delivery to your door</div>
       <div class="ps-desc">Parts are inspected, packed, and shipped with tracking — or available for pickup from our Pune workshop.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<section id="brands">
+  <div class="brands-label">Brands &amp; partners we work with</div>
+  <div class="brands-track">
+    <div class="brands-inner">
+      <span class="brand-pill"><span class="bp-dot"></span>DJI</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Creality</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Bambu Lab</span>
+      <span class="brand-pill"><span class="bp-dot"></span>eSUN</span>
+      <span class="brand-pill"><span class="bp-dot"></span>RadioMaster</span>
+      <span class="brand-pill"><span class="bp-dot"></span>IFlight</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Foxeer</span>
+      <span class="brand-pill"><span class="bp-dot"></span>RunCam</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Holybro</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Tattu</span>
+      <span class="brand-pill"><span class="bp-dot"></span>HGLRC</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Betaflight</span>
+      <span class="brand-pill"><span class="bp-dot"></span>PolyLite</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Emax</span>
+      <!-- duplicate set for seamless loop -->
+      <span class="brand-pill"><span class="bp-dot"></span>DJI</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Creality</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Bambu Lab</span>
+      <span class="brand-pill"><span class="bp-dot"></span>eSUN</span>
+      <span class="brand-pill"><span class="bp-dot"></span>RadioMaster</span>
+      <span class="brand-pill"><span class="bp-dot"></span>IFlight</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Foxeer</span>
+      <span class="brand-pill"><span class="bp-dot"></span>RunCam</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Holybro</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Tattu</span>
+      <span class="brand-pill"><span class="bp-dot"></span>HGLRC</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Betaflight</span>
+      <span class="brand-pill"><span class="bp-dot"></span>PolyLite</span>
+      <span class="brand-pill"><span class="bp-dot"></span>Emax</span>
     </div>
   </div>
 </section>
@@ -2031,6 +2239,23 @@
   </div>
 </section>
 
+<!-- DEALS -->
+<section id="deals">
+  <div class="deals-inner reveal">
+    <div class="deals-badge">LIMITED OFFERS</div>
+    <h2>Deals you can't resist.</h2>
+    <p>
+      🖨️ &nbsp;<strong>Bulk 3D prints</strong> — 10% off on 10+ pieces &nbsp;·&nbsp;
+      🚁 &nbsp;<strong>Drone service package</strong> — save ₹3,000 &nbsp;·&nbsp;
+      🎨 &nbsp;<strong>Free filament spool</strong> on orders above ₹5,000
+    </p>
+    <div class="deals-ctas">
+      <a href="#contact" class="deals-btn-primary">Claim your deal →</a>
+      <a href="#" onclick="showPage('quote'); return false;" class="deals-btn-ghost">Get a 3D quote ⚡</a>
+    </div>
+  </div>
+</section>
+
 <!-- CONTACT -->
 <section id="contact">
   <div class="reveal">
@@ -2068,6 +2293,29 @@
           ✓ Message sent! We'll get back to you within 24 hours.
         </div>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="newsletter-inner reveal">
+    <div class="nl-left">
+      <div class="sec-label" style="margin-bottom:0.5rem;">// STAY UPDATED</div>
+      <div class="sec-title" style="font-size:clamp(28px,4vw,44px);margin-bottom:0.75rem;">Build updates.<br>No spam.</div>
+      <p>Get early access to new products, 3D print material drops, and project showcases — straight to your inbox.</p>
+      <form class="nl-form" onsubmit="submitNewsletter(event)">
+        <input type="email" id="nlEmail" placeholder="your@email.com" required autocomplete="email">
+        <button type="submit">Subscribe →</button>
+      </form>
+      <div id="nlSuccess" class="nl-success">✓ You're in! Watch your inbox.</div>
+    </div>
+    <div class="nl-divider"></div>
+    <div class="nl-right">
+      <div class="nl-wa-icon">💬</div>
+      <h3>Prefer WhatsApp?</h3>
+      <p>Drop us a message and we'll add you to our updates group — instant notifications on new drops and restocks.</p>
+      <a href="https://wa.me/919049695264?text=Hi%2C%20add%20me%20to%20Kyzer%20updates%20please!" target="_blank" rel="noopener" class="nl-wa-btn">Chat on WhatsApp →</a>
     </div>
   </div>
 </section>
@@ -3261,6 +3509,47 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     a.href = URL.createObjectURL(blob);
     a.download = 'kyzer-3d-quote.txt';
     a.click();
+  }
+
+  // ── ANNOUNCEMENT BAR ──
+  (function() {
+    if (sessionStorage.getItem('ann_dismissed')) {
+      const bar = document.getElementById('announcementBar');
+      if (bar) bar.style.display = 'none';
+    } else {
+      document.body.classList.add('has-ann');
+    }
+  })();
+
+  function dismissAnnouncement() {
+    const bar = document.getElementById('announcementBar');
+    bar.classList.add('ann-hidden');
+    document.body.classList.remove('has-ann');
+    sessionStorage.setItem('ann_dismissed', '1');
+    setTimeout(() => { bar.style.display = 'none'; }, 320);
+  }
+
+  // ── NEWSLETTER ──
+  async function submitNewsletter(e) {
+    e.preventDefault();
+    const email = document.getElementById('nlEmail').value.trim();
+    if (!email) return;
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Subscribing…'; btn.disabled = true;
+    try {
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: W3F_KEY,
+          subject: 'Newsletter Signup — Kyzer Robotics',
+          email,
+          message: 'New newsletter subscriber: ' + email,
+        }),
+      });
+    } catch(_) {}
+    document.getElementById('nlSuccess').style.display = 'block';
+    e.target.style.display = 'none';
   }
 </script>
 
