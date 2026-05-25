@@ -1535,9 +1535,8 @@
   #droneFlyWrap {
     position: fixed; right: clamp(1rem, 4vw, 4rem); top: 0;
     z-index: 40; pointer-events: none; width: 170px;
-    opacity: 0; will-change: transform;
+    will-change: transform;
   }
-  #droneFlyWrap.drone-loaded { opacity: 1; transition: opacity 0.9s; }
   #droneScene { width: 170px; will-change: transform; }
   #droneScene svg {
     width: 170px; height: 170px; display: block;
@@ -1553,7 +1552,7 @@
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-9px); }
   }
-  @media (max-width: 960px) { #droneFlyWrap { display: none; } }
+  @media (max-width: 768px) { #droneFlyWrap { display: none; } }
 
   /* ── ANNOUNCEMENT BAR ── */
   #announcementBar {
@@ -3536,44 +3535,33 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
   }
 
   // ── SCROLL DRONE ──
-  // HTML element is after </script>, so defer until DOM is fully parsed
-  document.addEventListener('DOMContentLoaded', function initScrollDrone() {
+  document.addEventListener('DOMContentLoaded', function() {
     const wrap  = document.getElementById('droneFlyWrap');
     const scene = document.getElementById('droneScene');
     if (!wrap || !scene) return;
 
-    let curY     = -220, curBank  = -8, curPitch = 32;
-    let ready    = false;
-    setTimeout(() => { ready = true; }, 600);
+    let curY = window.innerHeight * 0.1;
+    let curBank = -8, curPitch = 32;
 
-    function loop() {
-      requestAnimationFrame(loop);
-      if (!ready) return;
+    function update() {
+      const p = Math.min(1, window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight));
 
-      const scrollY = window.scrollY;
-      const docH    = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const p       = Math.min(1, scrollY / docH);
+      // Drone slides from 10vh → 80vh across the page as you scroll — always visible
+      const tgtY    = window.innerHeight * (0.1 + p * 0.7);
+      const tgtBank = -8  + Math.sin(p * Math.PI * 4) * 20;
+      const tgtPitch = 32 + Math.sin(p * Math.PI * 2) * 14;
+      const driftX  = Math.sin(p * Math.PI * 3) * 18;
 
-      // Drone travels from off-screen top to off-screen bottom over full scroll
-      const tgtY     = -220 + p * (window.innerHeight + 460);
-      // Banks (rolls) ±20° in a wave pattern as it flies through
-      const tgtBank  = -8  + Math.sin(p * Math.PI * 4) * 20;
-      // Pitch varies 18–46° giving more tilt at top/bottom of arc
-      const tgtPitch = 32  + Math.sin(p * Math.PI * 2) * 14;
-      // Gentle X drift so it doesn't fly perfectly straight
-      const driftX   = Math.sin(p * Math.PI * 3) * 22;
-
-      const e = 0.065;
-      curY     += (tgtY     - curY)     * e;
-      curBank  += (tgtBank  - curBank)  * e;
-      curPitch += (tgtPitch - curPitch) * e;
+      curY     += (tgtY     - curY)     * 0.07;
+      curBank  += (tgtBank  - curBank)  * 0.08;
+      curPitch += (tgtPitch - curPitch) * 0.08;
 
       wrap.style.transform  = `translateY(${curY.toFixed(1)}px) translateX(${driftX.toFixed(1)}px)`;
       scene.style.transform = `perspective(480px) rotateX(${curPitch.toFixed(1)}deg) rotateZ(${curBank.toFixed(1)}deg)`;
 
-      if (!wrap.classList.contains('drone-loaded')) wrap.classList.add('drone-loaded');
+      requestAnimationFrame(update);
     }
-    loop();
+    update();
   });
 
   // ── ANNOUNCEMENT BAR ──
