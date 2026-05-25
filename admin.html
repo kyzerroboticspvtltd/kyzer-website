@@ -298,6 +298,54 @@
     .toggle-wrap label { display: none; }
     .login-box { padding: 1.75rem; width: 100%; margin: 1rem; }
   }
+
+  /* ── ORDERS ── */
+  .orders-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .ostat-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .ostat-card.new .ostat-num { color: var(--orange); }
+  .ostat-card.ip  .ostat-num { color: #1a73e8; }
+  .ostat-card.done .ostat-num { color: var(--green); }
+  .ostat-num { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; }
+  .ostat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .orders-filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ofb { background: var(--bg3); border: 0.5px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .ofb:hover { border-color: var(--orange); color: var(--orange); }
+  .ofb.active { background: var(--orange); color: #111; border-color: var(--orange); font-weight: 500; }
+  .order-list { display: flex; flex-direction: column; gap: 8px; }
+  .order-item { background: var(--bg2); border: 0.5px solid var(--border); border-left: 3px solid transparent; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .order-item:hover { border-color: var(--orange); }
+  .order-item.is-new { border-left-color: var(--orange); }
+  .order-status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .oi-main { flex: 1; min-width: 0; }
+  .oi-name { font-size: 14px; font-weight: 500; }
+  .oi-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .oi-right { text-align: right; flex-shrink: 0; }
+  .oi-total { font-size: 14px; font-weight: 500; color: var(--orange); }
+  .oi-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .order-status-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .osb-new        { background: #fff3e8; color: var(--orange); }
+  .osb-reviewing  { background: #e8f0fe; color: #1a73e8; }
+  .osb-printing   { background: #e8f5e9; color: #2e7d32; }
+  .osb-ready      { background: #e0f2f1; color: #00796b; }
+  .osb-completed  { background: #f3f3f3; color: #555; }
+  .osb-cancelled  { background: #ffebee; color: #c62828; }
+  .orders-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
+
+  /* ── ORDER MODAL ── */
+  .omodal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: none; align-items: center; justify-content: center; }
+  .omodal-backdrop.open { display: flex; }
+  .omodal { background: var(--bg); border: 0.5px solid var(--border); border-radius: 16px; width: min(760px, 96vw); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .omodal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; gap: 12px; flex-wrap: wrap; }
+  .omodal-id { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+  .omodal-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .omodal-body { overflow-y: auto; padding: 20px; }
+  .omod-section { margin-bottom: 20px; }
+  .omod-section-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .omod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .omod-field label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 2px; }
+  .omod-field > div { font-size: 13px; font-weight: 500; }
+  .omod-file-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 8px; }
+  .omod-file-name { font-size: 13px; flex: 1; font-family: 'JetBrains Mono', monospace; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -340,6 +388,7 @@
       <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📬</span> Contact Us</div>
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
       <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
+      <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>📄</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
       <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
@@ -597,6 +646,7 @@
   links JSONB DEFAULT '{}',
   quote JSONB DEFAULT '{}',
   hero_photos JSONB DEFAULT '[]',
+  print_orders JSONB DEFAULT '[]',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 INSERT INTO site_data (id) VALUES (1) ON CONFLICT DO NOTHING;
@@ -629,7 +679,94 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
         </div>
       </div>
 
+      <!-- 3D PRINT ORDERS TAB -->
+      <div class="admin-tab" id="tab-orders">
+        <div class="tab-header">
+          <h2>3D Print Orders</h2>
+          <p>All incoming 3D print quote requests submitted from the website.</p>
+        </div>
+
+        <div class="orders-stats">
+          <div class="ostat-card"><div class="ostat-num" id="ostat-total">0</div><div class="ostat-label">Total orders</div></div>
+          <div class="ostat-card new"><div class="ostat-num" id="ostat-new">0</div><div class="ostat-label">New</div></div>
+          <div class="ostat-card ip"><div class="ostat-num" id="ostat-inprogress">0</div><div class="ostat-label">In progress</div></div>
+          <div class="ostat-card done"><div class="ostat-num" id="ostat-completed">0</div><div class="ostat-label">Completed</div></div>
+        </div>
+
+        <div class="orders-filter-bar">
+          <button class="ofb active" onclick="filterOrders('all',this)">All</button>
+          <button class="ofb" onclick="filterOrders('new',this)">New</button>
+          <button class="ofb" onclick="filterOrders('reviewing',this)">Reviewing</button>
+          <button class="ofb" onclick="filterOrders('printing',this)">Printing</button>
+          <button class="ofb" onclick="filterOrders('ready',this)">Ready</button>
+          <button class="ofb" onclick="filterOrders('completed',this)">Completed</button>
+          <button class="ofb" onclick="filterOrders('cancelled',this)">Cancelled</button>
+        </div>
+
+        <div id="orderList" class="order-list"></div>
+      </div>
+
     </main>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div id="orderModal" class="omodal-backdrop" onclick="if(event.target===this)closeOrderModal()">
+  <div class="omodal">
+    <div class="omodal-header">
+      <div>
+        <div class="omodal-id" id="omod-id"></div>
+        <div class="omodal-date" id="omod-date"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <select class="form-input" id="omod-status" onchange="updateOrderStatus()" style="font-size:12px;padding:6px 10px;width:auto;">
+          <option value="new">New</option>
+          <option value="reviewing">Reviewing</option>
+          <option value="printing">Printing</option>
+          <option value="ready">Ready for pickup</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="topbar-btn danger" onclick="deleteCurrentOrder()">🗑 Delete</button>
+        <button class="topbar-btn" onclick="closeOrderModal()">✕ Close</button>
+      </div>
+    </div>
+    <div class="omodal-body">
+      <div class="omod-section">
+        <div class="omod-section-title">Customer</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Name</label><div id="omod-name"></div></div>
+          <div class="omod-field"><label>Email</label><div id="omod-email"></div></div>
+          <div class="omod-field"><label>Phone</label><div id="omod-phone"></div></div>
+          <div class="omod-field"><label>Company</label><div id="omod-company"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Print Configuration</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Material</label><div id="omod-material"></div></div>
+          <div class="omod-field"><label>Quality</label><div id="omod-quality"></div></div>
+          <div class="omod-field"><label>Infill</label><div id="omod-infill"></div></div>
+          <div class="omod-field"><label>Colour</label><div id="omod-colour"></div></div>
+          <div class="omod-field"><label>Support</label><div id="omod-support"></div></div>
+          <div class="omod-field"><label>Quantity</label><div id="omod-quantity"></div></div>
+          <div class="omod-field"><label>Delivery</label><div id="omod-delivery"></div></div>
+          <div class="omod-field"><label>Dimensions</label><div id="omod-dimensions"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Estimated Total</div>
+        <div id="omod-total" style="font-size:22px;font-weight:600;color:var(--orange);"></div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Model File</div>
+        <div id="omod-file-section"></div>
+      </div>
+      <div class="omod-section" id="omod-notes-section">
+        <div class="omod-section-title">Notes</div>
+        <div id="omod-notes" style="font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -838,6 +975,8 @@ function initAdmin() {
   fillLinks();
   initPhotoUpload();
   renderPhotoGrid();
+  loadOrders();
+  renderOrders();
 }
 
 // ── TABS ──
@@ -847,6 +986,7 @@ function switchTab(name) {
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tl-' + name).classList.add('active');
   if (name === 'security') initSecurity();
+  if (name === 'orders') renderOrders();
 }
 
 // ── TOAST ──
@@ -1356,8 +1496,9 @@ async function publishToSite() {
     contact:     contact,
     links:       links,
     quote:       quote,
-    hero_photos: JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
-    updated_at:  new Date().toISOString(),
+    hero_photos:  JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
+    print_orders: JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]'),
+    updated_at:   new Date().toISOString(),
   };
 
   try {
@@ -1408,6 +1549,169 @@ function saveSupabase() {
   } else {
     toast('Saved — but enter both URL and key before publishing.', true);
   }
+}
+
+// ── 3D PRINT ORDERS ──
+let allOrders = [];
+let currentOrderFilter = 'all';
+let currentOrderId = null;
+
+const ORDER_STATUS_COLORS = {
+  new: '#FF8C35', reviewing: '#1a73e8', printing: '#2e7d32',
+  ready: '#00796b', completed: '#888', cancelled: '#c62828'
+};
+
+function loadOrders() {
+  allOrders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+}
+
+function renderOrders() {
+  loadOrders();
+  const filtered = currentOrderFilter === 'all'
+    ? allOrders
+    : allOrders.filter(o => o.status === currentOrderFilter);
+
+  document.getElementById('ostat-total').textContent = allOrders.length;
+  document.getElementById('ostat-new').textContent = allOrders.filter(o => o.status === 'new').length;
+  document.getElementById('ostat-inprogress').textContent = allOrders.filter(o => ['reviewing','printing','ready'].includes(o.status)).length;
+  document.getElementById('ostat-completed').textContent = allOrders.filter(o => o.status === 'completed').length;
+
+  const newCount = allOrders.filter(o => o.status === 'new').length;
+  const badge = document.getElementById('ordersNewBadge');
+  if (newCount > 0) { badge.textContent = newCount; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+
+  const list = document.getElementById('orderList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="orders-empty">No orders here yet.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(o => {
+    const color = ORDER_STATUS_COLORS[o.status] || '#888';
+    const dot = `<div class="order-status-dot" style="background:${color}"></div>`;
+    const sbadge = `<span class="order-status-badge osb-${o.status}">${o.status}</span>`;
+    const date = new Date(o.submittedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+    const fileIcon = o.fileData ? '📎' : (o.fileName ? '📄' : '');
+    return `<div class="order-item${o.status==='new'?' is-new':''}" onclick="openOrderModal('${o.id}')">
+      ${dot}
+      <div class="oi-main">
+        <div class="oi-name">${escHtml(o.name)} <span style="font-size:11px;color:var(--muted);font-weight:400">${escHtml(o.email)}</span></div>
+        <div class="oi-meta">${escHtml(o.material)} · ${escHtml(o.quality)} · ${o.quantity}× · ${fileIcon} ${escHtml(o.fileName||'No file')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        ${sbadge}
+        <div class="oi-right">
+          <div class="oi-total">₹${escHtml(String(o.estimatedTotal||'—'))}</div>
+          <div class="oi-date">${date}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function filterOrders(status, btn) {
+  currentOrderFilter = status;
+  document.querySelectorAll('.ofb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function openOrderModal(id) {
+  const o = allOrders.find(o => o.id === id);
+  if (!o) return;
+  currentOrderId = id;
+
+  document.getElementById('omod-id').textContent = o.id;
+  document.getElementById('omod-date').textContent = new Date(o.submittedAt).toLocaleString('en-IN');
+  document.getElementById('omod-status').value = o.status;
+  document.getElementById('omod-name').textContent = o.name || '—';
+  document.getElementById('omod-email').textContent = o.email || '—';
+  document.getElementById('omod-phone').textContent = o.phone || '—';
+  document.getElementById('omod-company').textContent = o.company || '—';
+  document.getElementById('omod-material').textContent = o.material || '—';
+  document.getElementById('omod-quality').textContent = o.quality || '—';
+  document.getElementById('omod-infill').textContent = o.infill || '—';
+  document.getElementById('omod-colour').textContent = o.colour || '—';
+  document.getElementById('omod-support').textContent = o.support || '—';
+  document.getElementById('omod-quantity').textContent = o.quantity || '—';
+  document.getElementById('omod-delivery').textContent = o.delivery || '—';
+  document.getElementById('omod-dimensions').textContent = o.dimensions || '—';
+  document.getElementById('omod-total').textContent = o.estimatedTotal ? '₹' + o.estimatedTotal : '—';
+
+  const notesSection = document.getElementById('omod-notes-section');
+  if (o.notes) {
+    document.getElementById('omod-notes').textContent = o.notes;
+    notesSection.style.display = '';
+  } else {
+    notesSection.style.display = 'none';
+  }
+
+  const fileSection = document.getElementById('omod-file-section');
+  if (o.fileData) {
+    fileSection.innerHTML = `<div class="omod-file-row">
+      <span style="font-size:20px;">📎</span>
+      <span class="omod-file-name">${escHtml(o.fileName)}</span>
+      <button class="btn btn-primary" onclick="downloadOrderFile('${escHtml(o.id)}')">Download</button>
+    </div>`;
+  } else if (o.fileName) {
+    fileSection.innerHTML = `<div class="omod-file-row">
+      <span style="font-size:20px;">📄</span>
+      <span class="omod-file-name">${escHtml(o.fileName)}</span>
+      <span style="font-size:12px;color:var(--muted);">File &gt;5 MB — check email for attachment.</span>
+    </div>`;
+  } else {
+    fileSection.innerHTML = `<div style="font-size:13px;color:var(--muted);">No file uploaded — manual dimensions used.</div>`;
+  }
+
+  if (o.status === 'new') {
+    o.status = 'reviewing';
+    document.getElementById('omod-status').value = 'reviewing';
+    saveOrderStatus(id, 'reviewing');
+  }
+
+  document.getElementById('orderModal').classList.add('open');
+}
+
+function closeOrderModal() {
+  document.getElementById('orderModal').classList.remove('open');
+  currentOrderId = null;
+  renderOrders();
+}
+
+function updateOrderStatus() {
+  if (!currentOrderId) return;
+  saveOrderStatus(currentOrderId, document.getElementById('omod-status').value);
+}
+
+function saveOrderStatus(id, status) {
+  const orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx !== -1) orders[idx].status = status;
+  localStorage.setItem('kyzer_print_orders', JSON.stringify(orders));
+  allOrders = orders;
+}
+
+function deleteCurrentOrder() {
+  if (!currentOrderId) return;
+  if (!confirm('Delete this order permanently? This cannot be undone.')) return;
+  const orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]').filter(o => o.id !== currentOrderId);
+  localStorage.setItem('kyzer_print_orders', JSON.stringify(orders));
+  allOrders = orders;
+  closeOrderModal();
+}
+
+function downloadOrderFile(id) {
+  const o = allOrders.find(o => o.id === id);
+  if (!o || !o.fileData) return;
+  const a = document.createElement('a');
+  a.href = o.fileData;
+  a.download = o.fileName || 'model-file';
+  a.click();
 }
 
 function changePass() {

@@ -2631,6 +2631,7 @@
     qty: 1,
     delivery: 'sameday',
     hasFile: false, fileName: '',
+    fileData: null, fileSize: 0,
     L: 0, W: 0, H: 0
   };
 
@@ -2779,6 +2780,13 @@
     if (!file) return;
     quoteState.hasFile = true;
     quoteState.fileName = file.name;
+    quoteState.fileSize = file.size;
+    quoteState.fileData = null;
+    if (file.size <= 5 * 1024 * 1024) {
+      const reader = new FileReader();
+      reader.onload = e => { quoteState.fileData = e.target.result; };
+      reader.readAsDataURL(file);
+    }
     filePreviewName.textContent = file.name;
     filePreview.style.display = 'flex';
     uploadZone.style.display = 'none';
@@ -2822,6 +2830,9 @@
     uploadZone.style.display = '';
     fileInput.value = '';
     quoteState.hasFile = false;
+    quoteState.fileName = '';
+    quoteState.fileData = null;
+    quoteState.fileSize = 0;
     quoteState.L = quoteState.W = quoteState.H = 0;
     modelEmoji.textContent = '📦';
     modelViewerLabel.textContent = 'No file uploaded';
@@ -2957,6 +2968,34 @@
     btn.disabled = true;
     const colourEl  = document.getElementById('colorSelect');
     const supportEl = document.getElementById('supportSelect');
+
+    // Save order to localStorage for admin panel
+    const order = {
+      id: 'ORD-' + Date.now(),
+      submittedAt: new Date().toISOString(),
+      status: 'new',
+      name,
+      email,
+      phone:      document.getElementById('qfPhone').value.trim(),
+      company:    document.getElementById('qfCompany').value.trim(),
+      notes:      document.getElementById('qfNotes').value.trim(),
+      material:   quoteState.matName,
+      quality:    quoteState.qualName,
+      infill:     document.getElementById('infillVal').textContent,
+      colour:     colourEl.options[colourEl.selectedIndex].text,
+      support:    supportEl.options[supportEl.selectedIndex].text,
+      quantity:   quoteState.qty,
+      delivery:   quoteState.delivery,
+      fileName:   quoteState.fileName || '',
+      fileData:   quoteState.fileData || null,
+      fileSize:   quoteState.fileSize || 0,
+      dimensions: quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—',
+      estimatedTotal: document.getElementById('bTotal').textContent,
+    };
+    const _orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+    _orders.unshift(order);
+    localStorage.setItem('kyzer_print_orders', JSON.stringify(_orders));
+
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
