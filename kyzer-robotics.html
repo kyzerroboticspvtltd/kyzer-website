@@ -1531,6 +1531,45 @@
   .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
   @media (max-width: 768px) { .wa-fab { bottom: 1.5rem; right: 1.5rem; width: 50px; height: 50px; } }
 
+  /* ── CHECKOUT FORM ── */
+  .checkout-wrap {
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 1.5rem; align-items: start;
+    max-width: 1200px; margin: 1.5rem auto 0;
+  }
+  .checkout-form { display: flex; flex-direction: column; gap: 1rem; }
+  .checkout-section {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+  }
+  .checkout-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--border); }
+  .checkout-step-num { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--orange); line-height: 1; }
+  .checkout-step-title { font-size: 15px; font-weight: 500; }
+  .qcp-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .qcp-full { width: 100%; margin-bottom: 12px; display: block; }
+  .checkout-summary {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    position: sticky; top: 80px;
+  }
+  .cs-heading { font-size: 15px; font-weight: 500; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--border); }
+  .cs-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; gap: 8px; }
+  .cs-row:last-of-type { border-bottom: none; }
+  .cs-label { color: var(--muted); flex-shrink: 0; }
+  .cs-val { font-weight: 500; text-align: right; }
+  .cs-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 0.5px solid var(--border); }
+  .cs-total-label { font-size: 14px; font-weight: 500; }
+  .cs-total-price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--orange); line-height: 1; }
+  .cs-file-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg3); border-radius: 8px; margin-top: 0.75rem; font-size: 12px; color: var(--muted); }
+  @media (max-width: 900px) {
+    .checkout-wrap { grid-template-columns: 1fr; }
+    .checkout-summary { position: static; }
+    .qcp-grid-3 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .qcp-grid-3 { grid-template-columns: 1fr; }
+    .checkout-section { padding: 1.1rem; }
+  }
 
   /* ── ANNOUNCEMENT BAR ── */
   #announcementBar {
@@ -2619,25 +2658,82 @@
     </div>
   </div>
 
-  <!-- Quote Contact Form -->
-  <div id="quoteContactSection" style="max-width:1200px;margin:1.5rem auto 0;display:none;">
-    <div class="quote-contact-panel">
-      <div class="qcp-title">📬 Submit your quote request</div>
-      <div class="qcp-sub">Send us your details and we'll confirm the final price within a few hours.</div>
-      <div class="qcp-grid-2">
-        <input class="qcp-input" type="text" placeholder="Your name" id="qfName" />
-        <input class="qcp-input" type="email" placeholder="Email address" id="qfEmail" />
+  <!-- Quote Checkout -->
+  <div id="quoteContactSection" style="display:none;">
+    <div class="checkout-wrap">
+
+      <!-- LEFT: form -->
+      <div class="checkout-form">
+
+        <!-- 01 Contact details -->
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">01</div>
+            <div class="checkout-step-title">Contact details</div>
+          </div>
+          <div class="qcp-grid-2">
+            <input class="qcp-input" type="text" placeholder="Full name *" id="qfName" />
+            <input class="qcp-input" type="email" placeholder="Email address *" id="qfEmail" />
+          </div>
+          <div class="qcp-grid-2">
+            <input class="qcp-input" type="tel" placeholder="Phone number *" id="qfPhone" />
+            <input class="qcp-input" type="text" placeholder="Company / Organisation (optional)" id="qfCompany" />
+          </div>
+        </div>
+
+        <!-- 02 Shipping address -->
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">02</div>
+            <div class="checkout-step-title">Shipping address</div>
+          </div>
+          <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="qfAddr1" />
+          <input class="qcp-input qcp-full" type="text" placeholder="Address line 2 (street, area — optional)" id="qfAddr2" />
+          <div class="qcp-grid-3">
+            <input class="qcp-input" type="text" placeholder="City *" id="qfCity" />
+            <input class="qcp-input" type="text" placeholder="State *" id="qfState" />
+            <input class="qcp-input" type="text" placeholder="Pincode *" id="qfPincode" inputmode="numeric" maxlength="6" />
+          </div>
+          <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="qfLandmark" />
+        </div>
+
+        <!-- 03 Notes -->
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">03</div>
+            <div class="checkout-step-title">Additional notes</div>
+          </div>
+          <textarea class="qcp-input qcp-full" style="height:80px;resize:none;" placeholder="Special instructions, colour preferences, deadline, etc." id="qfNotes"></textarea>
+        </div>
+
+        <button class="qv2-order-btn" id="qfSubmitBtn" onclick="submitQuoteForm()">Place order →</button>
+        <div id="qfSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;">
+          ✓ Order placed! We'll confirm your pricing within a few hours.
+        </div>
+        <div class="qv2-note" style="margin-top:8px;">Or email us at <a href="mailto:hello@kyzerrobotics.com" style="color:#FF8C35;">hello@kyzerrobotics.com</a></div>
       </div>
-      <div class="qcp-grid-2">
-        <input class="qcp-input" type="tel" placeholder="Phone number" id="qfPhone" />
-        <input class="qcp-input" type="text" placeholder="Company (optional)" id="qfCompany" />
+
+      <!-- RIGHT: order summary -->
+      <div class="checkout-summary">
+        <div class="cs-heading">🧾 Order summary</div>
+        <div class="cs-row"><span class="cs-label">Material</span><span class="cs-val" id="cs-material">—</span></div>
+        <div class="cs-row"><span class="cs-label">Quality</span><span class="cs-val" id="cs-quality">—</span></div>
+        <div class="cs-row"><span class="cs-label">Infill</span><span class="cs-val" id="cs-infill">—</span></div>
+        <div class="cs-row"><span class="cs-label">Colour</span><span class="cs-val" id="cs-colour">—</span></div>
+        <div class="cs-row"><span class="cs-label">Support</span><span class="cs-val" id="cs-support">—</span></div>
+        <div class="cs-row"><span class="cs-label">Quantity</span><span class="cs-val" id="cs-qty">—</span></div>
+        <div class="cs-row"><span class="cs-label">Delivery</span><span class="cs-val" id="cs-delivery">—</span></div>
+        <div class="cs-row"><span class="cs-label">Dimensions</span><span class="cs-val" id="cs-dims">—</span></div>
+        <div id="cs-file-wrap" style="display:none;">
+          <div class="cs-file-row">📎 <span id="cs-filename" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span></div>
+        </div>
+        <div class="cs-total-row">
+          <span class="cs-total-label">Estimated total</span>
+          <span class="cs-total-price" id="cs-total">₹—</span>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Final price confirmed after review. No payment now.</p>
       </div>
-      <textarea class="qcp-input" style="height:90px;resize:none;margin-bottom:12px;display:block;" placeholder="Additional notes or requirements..." id="qfNotes"></textarea>
-      <button class="qv2-order-btn" id="qfSubmitBtn" onclick="submitQuoteForm()">Send quote request →</button>
-      <div id="qfSuccess" style="display:none;margin-top:14px;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size: 15px;text-align:center;">
-        ✓ Quote request sent! We'll confirm your pricing within a few hours.
-      </div>
-      <div class="qv2-note" style="margin-top:10px;">Or email us directly at <a href="mailto:hello@kyzerrobotics.com" style="color:#FF8C35;">hello@kyzerrobotics.com</a></div>
+
     </div>
   </div>
 </div>
@@ -3097,6 +3193,7 @@
     const sec = document.getElementById('quoteContactSection');
     sec.style.display = 'block';
     sec.scrollIntoView({ behavior: 'smooth' });
+    updateCheckoutSummary();
   }
 
   // ====== THREE.JS MODEL VIEWER ======
@@ -3208,37 +3305,87 @@
     document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
   }
 
-  async function submitQuoteForm() {
-    const name  = document.getElementById('qfName').value.trim();
-    const email = document.getElementById('qfEmail').value.trim();
-    if (!name || !email) { alert('Please enter your name and email.'); return; }
-    const btn = document.getElementById('qfSubmitBtn');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
+  // Populate the checkout order summary panel
+  function updateCheckoutSummary() {
     const colourEl  = document.getElementById('colorSelect');
     const supportEl = document.getElementById('supportSelect');
+    const dims = quoteState.L
+      ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
+      : '—';
+    const del = quoteState.delivery === 'sameday' ? 'Same day' : '7 working days';
+    const txt = (id) => { const el = document.getElementById(id); return el ? el.textContent : '—'; };
+    document.getElementById('cs-material').textContent  = quoteState.matName || '—';
+    document.getElementById('cs-quality').textContent   = quoteState.qualName || '—';
+    document.getElementById('cs-infill').textContent    = txt('infillVal') + '%';
+    document.getElementById('cs-colour').textContent    = colourEl ? colourEl.options[colourEl.selectedIndex].text : '—';
+    document.getElementById('cs-support').textContent   = supportEl ? supportEl.options[supportEl.selectedIndex].text : '—';
+    document.getElementById('cs-qty').textContent       = quoteState.qty;
+    document.getElementById('cs-delivery').textContent  = del;
+    document.getElementById('cs-dims').textContent      = dims;
+    document.getElementById('cs-total').textContent     = '₹' + txt('bTotal');
+    const fileWrap = document.getElementById('cs-file-wrap');
+    if (quoteState.fileName) {
+      fileWrap.style.display = '';
+      document.getElementById('cs-filename').textContent = quoteState.fileName;
+    } else {
+      fileWrap.style.display = 'none';
+    }
+  }
+
+  async function submitQuoteForm() {
+    const name   = document.getElementById('qfName').value.trim();
+    const email  = document.getElementById('qfEmail').value.trim();
+    const phone  = document.getElementById('qfPhone').value.trim();
+    const addr1  = document.getElementById('qfAddr1').value.trim();
+    const city   = document.getElementById('qfCity').value.trim();
+    const state  = document.getElementById('qfState').value.trim();
+    const pincode = document.getElementById('qfPincode').value.trim();
+
+    if (!name || !email)  { alert('Please enter your name and email.'); return; }
+    if (!phone)           { alert('Please enter your phone number.'); return; }
+    if (!addr1 || !city || !state || !pincode) { alert('Please fill in your complete shipping address.'); return; }
+
+    const btn = document.getElementById('qfSubmitBtn');
+    btn.textContent = 'Placing order...';
+    btn.disabled = true;
+
+    const colourEl  = document.getElementById('colorSelect');
+    const supportEl = document.getElementById('supportSelect');
+    const dims = quoteState.L
+      ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
+      : '—';
+
+    const shipping = {
+      addr1,
+      addr2:    document.getElementById('qfAddr2').value.trim(),
+      city,
+      state,
+      pincode,
+      landmark: document.getElementById('qfLandmark').value.trim(),
+    };
+    const shippingFull = [addr1, shipping.addr2, city, state, pincode, shipping.landmark]
+      .filter(Boolean).join(', ');
 
     // Save order to localStorage for admin panel
     const order = {
-      id: 'ORD-' + Date.now(),
-      submittedAt: new Date().toISOString(),
-      status: 'new',
-      name,
-      email,
-      phone:      document.getElementById('qfPhone').value.trim(),
-      company:    document.getElementById('qfCompany').value.trim(),
-      notes:      document.getElementById('qfNotes').value.trim(),
-      material:   quoteState.matName,
-      quality:    quoteState.qualName,
-      infill:     document.getElementById('infillVal').textContent,
-      colour:     colourEl.options[colourEl.selectedIndex].text,
-      support:    supportEl.options[supportEl.selectedIndex].text,
-      quantity:   quoteState.qty,
-      delivery:   quoteState.delivery,
-      fileName:   quoteState.fileName || '',
-      fileData:   quoteState.fileData || null,
-      fileSize:   quoteState.fileSize || 0,
-      dimensions: quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—',
+      id:           'ORD-' + Date.now(),
+      submittedAt:  new Date().toISOString(),
+      status:       'new',
+      name, email, phone,
+      company:      document.getElementById('qfCompany').value.trim(),
+      notes:        document.getElementById('qfNotes').value.trim(),
+      shipping,
+      material:     quoteState.matName,
+      quality:      quoteState.qualName,
+      infill:       document.getElementById('infillVal').textContent,
+      colour:       colourEl.options[colourEl.selectedIndex].text,
+      support:      supportEl.options[supportEl.selectedIndex].text,
+      quantity:     quoteState.qty,
+      delivery:     quoteState.delivery,
+      fileName:     quoteState.fileName || '',
+      fileData:     quoteState.fileData || null,
+      fileSize:     quoteState.fileSize || 0,
+      dimensions:   dims,
       estimatedTotal: document.getElementById('bTotal').textContent,
     };
     const _orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
@@ -3250,23 +3397,22 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          access_key: W3F_KEY,
-          subject:    '3D Print Quote Request — Kyzer Robotics',
-          name,
-          email,
-          phone:      document.getElementById('qfPhone').value.trim(),
-          company:    document.getElementById('qfCompany').value.trim(),
-          material:   quoteState.matName,
-          quality:    quoteState.qualName,
-          infill:     document.getElementById('infillVal').textContent,
-          colour:     colourEl.options[colourEl.selectedIndex].text,
-          support:    supportEl.options[supportEl.selectedIndex].text,
-          quantity:   quoteState.qty,
-          delivery:   quoteState.delivery,
-          file:       quoteState.fileName || 'Manual dimensions',
-          dimensions: quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—',
+          access_key:      W3F_KEY,
+          subject:         'New 3D Print Order — Kyzer Robotics',
+          name, email, phone,
+          company:         document.getElementById('qfCompany').value.trim(),
+          shipping_address: shippingFull,
+          material:        quoteState.matName,
+          quality:         quoteState.qualName,
+          infill:          document.getElementById('infillVal').textContent + '%',
+          colour:          colourEl.options[colourEl.selectedIndex].text,
+          support:         supportEl.options[supportEl.selectedIndex].text,
+          quantity:        quoteState.qty,
+          delivery:        quoteState.delivery === 'sameday' ? 'Same day' : '7 working days',
+          file:            quoteState.fileName || 'Manual dimensions',
+          dimensions:      dims,
           estimated_total: document.getElementById('bTotal').textContent,
-          notes:      document.getElementById('qfNotes').value.trim(),
+          notes:           document.getElementById('qfNotes').value.trim(),
         }),
       });
       const data = await res.json();
@@ -3277,7 +3423,7 @@
         throw new Error(data.message || 'failed');
       }
     } catch {
-      btn.textContent = 'Send quote request →';
+      btn.textContent = 'Place order →';
       btn.disabled = false;
       alert('Could not send. Please email us at hello@kyzerrobotics.com');
     }

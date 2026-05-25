@@ -742,6 +742,16 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
         </div>
       </div>
       <div class="omod-section">
+        <div class="omod-section-title">Shipping Address</div>
+        <div id="omod-shipping-addr" style="font-size:13px;font-weight:500;line-height:1.8;"></div>
+        <div class="omod-grid" style="margin-top:10px;">
+          <div class="omod-field"><label>City</label><div id="omod-city"></div></div>
+          <div class="omod-field"><label>State</label><div id="omod-state"></div></div>
+          <div class="omod-field"><label>Pincode</label><div id="omod-pincode"></div></div>
+          <div class="omod-field" id="omod-landmark-wrap"><label>Landmark</label><div id="omod-landmark"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
         <div class="omod-section-title">Print Configuration</div>
         <div class="omod-grid">
           <div class="omod-field"><label>Material</label><div id="omod-material"></div></div>
@@ -1633,6 +1643,16 @@ function openOrderModal(id) {
   document.getElementById('omod-email').textContent = o.email || '—';
   document.getElementById('omod-phone').textContent = o.phone || '—';
   document.getElementById('omod-company').textContent = o.company || '—';
+
+  // Shipping address
+  const s = o.shipping || {};
+  const addrLines = [s.addr1, s.addr2].filter(Boolean);
+  document.getElementById('omod-shipping-addr').textContent = addrLines.join(', ') || '—';
+  document.getElementById('omod-city').textContent    = s.city    || '—';
+  document.getElementById('omod-state').textContent   = s.state   || '—';
+  document.getElementById('omod-pincode').textContent = s.pincode || '—';
+  document.getElementById('omod-landmark').textContent = s.landmark || '—';
+  document.getElementById('omod-landmark-wrap').style.display = s.landmark ? '' : 'none';
   document.getElementById('omod-material').textContent = o.material || '—';
   document.getElementById('omod-quality').textContent = o.quality || '—';
   document.getElementById('omod-infill').textContent = o.infill || '—';
