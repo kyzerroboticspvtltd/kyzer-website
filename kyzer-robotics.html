@@ -3142,6 +3142,19 @@
 
   // ====== PAGE SWITCHER ======
   function showPage(page) {
+    if (page === 'account') {
+      if (!getCurrentCustomer()) { openAuthModal('login'); return; }
+      document.getElementById('mainSite').style.display = 'none';
+      document.getElementById('quotePage').classList.remove('active');
+      document.getElementById('productPage').classList.remove('active');
+      var ap = document.getElementById('accountPage');
+      if (ap) ap.classList.add('active');
+      loadAccountPage();
+      window.scrollTo(0, 0);
+      return;
+    }
+    var ap2 = document.getElementById('accountPage');
+    if (ap2) ap2.classList.remove('active');
     const main    = document.getElementById('mainSite');
     const quote   = document.getElementById('quotePage');
     const product = document.getElementById('productPage');
@@ -4051,25 +4064,6 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
       if (strip) strip.style.display = 'none';
     }
   }
-
-  // Extend showPage to handle account page
-  const _origShowPage = showPage;
-  showPage = function(page) {
-    const accPage = document.getElementById('accountPage');
-    if (page === 'account') {
-      const c = getCurrentCustomer();
-      if (!c) { openAuthModal('login'); return; }
-      document.getElementById('mainSite').style.display = 'none';
-      document.getElementById('quotePage').classList.remove('active');
-      document.getElementById('productPage').classList.remove('active');
-      accPage.classList.add('active');
-      loadAccountPage();
-      window.scrollTo(0, 0);
-    } else {
-      accPage.classList.remove('active');
-      _origShowPage(page);
-    }
-  };
 
   function setAccountSection(sec) {
     ['profile','orders'].forEach(s => {
