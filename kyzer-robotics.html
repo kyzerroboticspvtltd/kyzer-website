@@ -1947,8 +1947,24 @@
     .nav-account-btn { padding: 6px 10px; }
     .nav-right-group { gap: 6px; }
   }
+  .auth-google-btn {
+    width: 100%; padding: 11px 16px; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: #fff; border: 1.5px solid #dadce0; border-radius: 10px;
+    font-size: 0.88rem; font-weight: 600; color: #3c4043;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .auth-google-btn:hover { background: #f8f9fa; box-shadow: 0 1px 6px rgba(0,0,0,0.15); }
+  .auth-google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .auth-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px; color: #bbb; font-size: 0.78rem;
+  }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #e8e8e4; }
 </style>
 <script src="supabase-config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
@@ -4191,7 +4207,78 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
       if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') registerCustomer(); });
     });
     updateNavAccount();
+    setTimeout(initGoogleAuth, 500);
   });
+
+  // ── GOOGLE SIGN-IN ──
+  // To enable: go to console.cloud.google.com → APIs & Services → Credentials
+  // Create OAuth 2.0 Client ID (Web application) → add your domain as authorized origin
+  // Paste the Client ID below.
+  var GOOGLE_CLIENT_ID = window.GOOGLE_CLIENT_ID || '';
+
+  function initGoogleAuth() {
+    if (!window.google || !GOOGLE_CLIENT_ID) return;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+  }
+
+  function signInWithGoogle() {
+    if (!window.google) {
+      alert('Google Sign-In is loading, please try again in a moment.');
+      return;
+    }
+    if (!GOOGLE_CLIENT_ID) {
+      alert('Google Sign-In is not configured yet.\nPlease use email and password to sign in.');
+      return;
+    }
+    google.accounts.id.prompt(function(notification) {
+      if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
+        // Fallback: open popup
+        var client = google.accounts.oauth2.initCodeClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'email profile openid',
+          ux_mode: 'popup',
+          callback: function() {},
+        });
+        client.requestCode();
+      }
+    });
+  }
+
+  function handleGoogleCredential(response) {
+    try {
+      var parts = response.credential.split('.');
+      var b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var payload = JSON.parse(decodeURIComponent(escape(atob(b64))));
+      var name  = payload.name  || payload.given_name || 'Google User';
+      var email = (payload.email || '').toLowerCase();
+      if (!email) { alert('Could not get email from Google. Please try email sign-in.'); return; }
+      var customers = getCustomers();
+      var customer  = customers.find(function(c) { return c.email === email; });
+      if (!customer) {
+        customer = {
+          id: 'CUS-' + Date.now(), name: name, email: email,
+          phone: '', password: null, googleId: payload.sub,
+          address: {}, createdAt: new Date().toISOString()
+        };
+        customers.push(customer);
+        saveCustomers(customers);
+      } else if (!customer.googleId) {
+        customer.googleId = payload.sub;
+        saveCustomers(customers);
+      }
+      setCurrentCustomer({ id: customer.id, name: customer.name, email: customer.email });
+      updateNavAccount();
+      document.getElementById('authOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    } catch(err) {
+      alert('Google sign-in failed. Please try email sign-in.');
+    }
+  }
 
   // ── NEWSLETTER ──
   async function submitNewsletter(e) {
@@ -4231,6 +4318,11 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     <div class="auth-body">
       <!-- LOGIN -->
       <div id="authLoginForm">
+        <button class="auth-google-btn" onclick="signInWithGoogle(); return false;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+        <div class="auth-divider"><span>or sign in with email</span></div>
         <div class="auth-field">
           <label>Email</label>
           <input type="email" id="authLoginEmail" placeholder="you@example.com" autocomplete="email">
@@ -4245,6 +4337,11 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
       </div>
       <!-- REGISTER -->
       <div id="authRegForm" style="display:none;">
+        <button class="auth-google-btn" onclick="signInWithGoogle(); return false;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign up with Google
+        </button>
+        <div class="auth-divider"><span>or create account with email</span></div>
         <div class="auth-field">
           <label>Full Name</label>
           <input type="text" id="authRegName" placeholder="Your full name" autocomplete="name">
