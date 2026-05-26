@@ -1776,7 +1776,30 @@
   }
 
   /* ── NAV RIGHT GROUP ── */
-  .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .nav-right-group { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+  .nav-util-divider { width: 1px; height: 22px; background: #e0e0dc; margin: 0 6px; }
+  .nav-util-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 6px 10px; border-radius: 10px;
+    background: none; border: none; cursor: pointer; color: #555;
+    font-family: inherit; transition: color 0.15s, background 0.15s;
+    position: relative; min-width: 48px;
+  }
+  .nav-util-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .nav-util-btn:hover { color: #111; background: #f0f0ec; }
+  .nav-util-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.02em; line-height: 1; }
+  .nav-util-badge {
+    position: absolute; top: 4px; right: 6px;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    background: #FF8C35; color: #fff; font-size: 0.6rem;
+    font-weight: 700; display: flex; align-items: center; justify-content: center;
+    padding: 0 3px;
+  }
+  /* logged in: accent color on account btn */
+  .nav-util-btn.active { color: #FF8C35; }
+  .nav-util-btn.active svg { stroke: #FF8C35; }
+  /* wishlist active (item saved) */
+  .nav-util-btn.wish-active svg { fill: #FF8C35; stroke: #FF8C35; }
 
   /* ── ACCOUNT BUTTON ── */
   .nav-account-wrap { position: relative; }
@@ -1943,9 +1966,11 @@
     .account-grid { grid-template-columns: 1fr; }
     .profile-form-grid { grid-template-columns: 1fr; }
     .profile-field.full { grid-column: span 1; }
-    .nav-account-btn .acc-label { display: none; }
-    .nav-account-btn { padding: 6px 10px; }
-    .nav-right-group { gap: 6px; }
+    .nav-util-label { display: none; }
+    .nav-util-btn { min-width: 36px; padding: 6px; }
+    .nav-util-divider { display: none; }
+    .nav-cta { display: none; }
+    .nav-right-group { gap: 2px; }
   }
   .auth-google-btn {
     width: 100%; padding: 11px 16px; margin-bottom: 14px;
@@ -2000,10 +2025,19 @@
   </ul>
   <div class="nav-right-group">
     <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
+    <div class="nav-util-divider"></div>
+    <!-- Orders -->
+    <button class="nav-util-btn" id="navOrdersBtn" onclick="handleOrdersBtnClick()" title="My Orders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 9H6.5L5 8z"/><path d="M5 8L4 4H2"/><circle cx="9" cy="20" r="1"/><circle cx="15" cy="20" r="1"/></svg>
+      <span class="nav-util-label">Orders</span>
+      <span class="nav-util-badge" id="navOrdersBadge" style="display:none;"></span>
+    </button>
+    <!-- Account -->
     <div class="nav-account-wrap" id="navAccountWrap">
-      <button class="nav-account-btn" id="navAccountBtn" onclick="handleAccountBtnClick()">
+      <button class="nav-util-btn" id="navAccountBtn" onclick="handleAccountBtnClick()" title="Account">
         <span class="acc-avatar" id="navAccAvatar" style="display:none;"></span>
-        <span class="acc-label" id="navAccountLabel">Sign in</span>
+        <svg id="navAccIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span class="nav-util-label" id="navAccountLabel">Account</span>
       </button>
       <div class="acc-dropdown" id="accDropdown">
         <div class="acc-dropdown-header">
@@ -2015,6 +2049,17 @@
         <div class="acc-dropdown-item logout" onclick="logoutCustomer()">Sign out</div>
       </div>
     </div>
+    <!-- Wishlist -->
+    <button class="nav-util-btn" id="navWishBtn" onclick="toggleWishlist()" title="Wishlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="nav-util-label">Wishlist</span>
+      <span class="nav-util-badge" id="navWishBadge" style="display:none;"></span>
+    </button>
+    <!-- Quote bag -->
+    <button class="nav-util-btn" onclick="showPage('quote')" title="3D Print Quote">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="nav-util-label">Quote</span>
+    </button>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -4050,17 +4095,24 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     const c = getCurrentCustomer();
     const label     = document.getElementById('navAccountLabel');
     const avatar    = document.getElementById('navAccAvatar');
+    const icon      = document.getElementById('navAccIcon');
+    const accBtn    = document.getElementById('navAccountBtn');
     const dropName  = document.getElementById('accDropName');
     const dropEmail = document.getElementById('accDropEmail');
     const strip     = document.getElementById('profileStrip');
     if (c) {
       const initials = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-      // Navbar button
-      avatar.textContent = initials;
-      avatar.style.display = 'flex';
-      label.textContent = c.name.split(' ')[0];
-      dropName.textContent  = c.name;
-      dropEmail.textContent = c.email;
+      if (avatar) { avatar.textContent = initials; avatar.style.display = 'flex'; }
+      if (icon)   icon.style.display = 'none';
+      if (label)  label.textContent = c.name.split(' ')[0];
+      if (accBtn) accBtn.classList.add('active');
+      if (dropName)  dropName.textContent  = c.name;
+      if (dropEmail) dropEmail.textContent = c.email;
+      // Orders badge
+      const allOrders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+      const myOrders  = allOrders.filter(o => o.email && o.email.toLowerCase() === c.email.toLowerCase());
+      const badge = document.getElementById('navOrdersBadge');
+      if (badge) { badge.textContent = myOrders.length; badge.style.display = myOrders.length ? 'flex' : 'none'; }
       // Profile strip
       if (strip) {
         strip.style.display = 'block';
@@ -4075,10 +4127,35 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
           : 'No saved address — add one in your profile';
       }
     } else {
-      avatar.style.display = 'none';
-      label.textContent = 'Sign in';
-      if (strip) strip.style.display = 'none';
+      if (avatar) avatar.style.display = 'none';
+      if (icon)   icon.style.display = '';
+      if (label)  label.textContent = 'Account';
+      if (accBtn) accBtn.classList.remove('active');
+      const badge = document.getElementById('navOrdersBadge');
+      if (badge)  badge.style.display = 'none';
+      if (strip)  strip.style.display = 'none';
     }
+    updateWishlistBadge();
+  }
+
+  function handleOrdersBtnClick() {
+    const c = getCurrentCustomer();
+    if (c) { showPage('account'); setAccountSection('orders'); }
+    else   { openAuthModal('login'); }
+  }
+
+  // ── WISHLIST ──
+  function getWishlist() { return JSON.parse(localStorage.getItem('kyzer_wishlist') || '[]'); }
+  function saveWishlist(arr) { localStorage.setItem('kyzer_wishlist', JSON.stringify(arr)); }
+  function updateWishlistBadge() {
+    const w = getWishlist();
+    const badge = document.getElementById('navWishBadge');
+    const btn   = document.getElementById('navWishBtn');
+    if (badge) { badge.textContent = w.length; badge.style.display = w.length ? 'flex' : 'none'; }
+    if (btn)   btn.classList.toggle('wish-active', w.length > 0);
+  }
+  function toggleWishlist() {
+    showPage('account');
   }
 
   function setAccountSection(sec) {
