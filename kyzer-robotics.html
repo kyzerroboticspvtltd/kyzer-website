@@ -1734,6 +1734,174 @@
     .nl-divider { width: 100%; height: 0.5px; }
     .nl-right { text-align: left; }
   }
+
+  /* ── ACCOUNT BUTTON ── */
+  .nav-account-wrap { position: relative; margin-left: 8px; }
+  .nav-account-btn {
+    display: flex; align-items: center; gap: 7px;
+    background: none; border: 1.5px solid var(--accent);
+    color: var(--accent); border-radius: 8px;
+    padding: 6px 14px; font-family: inherit; font-size: 0.82rem;
+    font-weight: 600; letter-spacing: 0.04em; cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+  .nav-account-btn:hover { background: var(--accent); color: #fff; }
+  .acc-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+  }
+  .nav-account-btn:hover .acc-avatar { background: #fff; color: var(--accent); }
+  .acc-dropdown {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    background: #fff; border: 1.5px solid #e8e8e4;
+    border-radius: 14px; box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+    min-width: 210px; padding: 8px 0; z-index: 2000;
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+  }
+  .acc-dropdown.open { opacity: 1; transform: translateY(0); pointer-events: all; }
+  .acc-dropdown-header { padding: 12px 18px 10px; border-bottom: 1px solid #f0f0ec; }
+  .acc-dropdown-name { font-weight: 700; font-size: 0.92rem; color: #111; }
+  .acc-dropdown-email { font-size: 0.78rem; color: #888; margin-top: 2px; }
+  .acc-dropdown-item {
+    padding: 10px 18px; font-size: 0.88rem; color: #333;
+    cursor: pointer; display: flex; align-items: center; gap: 9px;
+    transition: background 0.14s, color 0.14s;
+  }
+  .acc-dropdown-item:hover { background: #f8f8f6; color: var(--accent); }
+  .acc-dropdown-item.logout { color: #e05050; }
+  .acc-dropdown-item.logout:hover { background: #fff5f5; color: #c03030; }
+
+  /* ── AUTH MODAL ── */
+  .auth-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 9000;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .auth-overlay.open { display: flex; }
+  .auth-modal {
+    background: #fff; border-radius: 20px; width: 100%;
+    max-width: 440px; padding: 0; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    animation: authPop 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    margin: 16px;
+  }
+  @keyframes authPop {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .auth-modal-header {
+    background: #111; padding: 24px 28px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .auth-modal-logo { font-size: 1.1rem; font-weight: 800; color: #fff; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; }
+  .auth-modal-logo span { color: var(--accent); }
+  .auth-close {
+    background: rgba(255,255,255,0.12); border: none; border-radius: 8px;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #fff; font-size: 1.1rem; transition: background 0.18s;
+  }
+  .auth-close:hover { background: rgba(255,255,255,0.24); }
+  .auth-tabs { display: flex; border-bottom: 1.5px solid #f0f0ec; padding: 0 28px; }
+  .auth-tab {
+    padding: 14px 0; margin-right: 24px; font-size: 0.9rem;
+    font-weight: 600; color: #888; cursor: pointer;
+    border-bottom: 2.5px solid transparent; transition: color 0.18s, border-color 0.18s;
+  }
+  .auth-tab.active { color: #111; border-bottom-color: var(--accent); }
+  .auth-body { padding: 22px 28px 28px; }
+  .auth-field { margin-bottom: 14px; }
+  .auth-field label { display: block; font-size: 0.78rem; font-weight: 600; color: #555; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .auth-field input {
+    width: 100%; padding: 11px 13px; border: 1.5px solid #e8e8e4;
+    border-radius: 10px; font-size: 0.9rem; font-family: inherit;
+    color: #111; background: #fafaf8; outline: none;
+    transition: border-color 0.18s; box-sizing: border-box;
+  }
+  .auth-field input:focus { border-color: var(--accent); background: #fff; }
+  .auth-submit {
+    width: 100%; padding: 13px; background: var(--accent); color: #fff;
+    border: none; border-radius: 12px; font-size: 0.95rem;
+    font-weight: 700; cursor: pointer; transition: background 0.18s, transform 0.15s;
+    margin-top: 6px; font-family: inherit;
+  }
+  .auth-submit:hover { background: #FFa050; transform: translateY(-1px); }
+  .auth-submit:disabled { background: #ccc; transform: none; cursor: default; }
+  .auth-error { color: #e05050; font-size: 0.83rem; margin-top: 8px; display: none; }
+  .auth-switch { text-align: center; font-size: 0.83rem; color: #888; margin-top: 14px; }
+  .auth-switch a { color: var(--accent); cursor: pointer; font-weight: 600; }
+
+  /* ── MY ACCOUNT PAGE ── */
+  #accountPage { display: none; min-height: 100vh; background: var(--bg); }
+  #accountPage.active { display: block; }
+  .account-wrap { max-width: 960px; margin: 0 auto; padding: 100px 24px 60px; }
+  .account-back { display: inline-flex; align-items: center; gap: 6px; color: #666; font-size: 0.88rem; cursor: pointer; margin-bottom: 28px; transition: color 0.15s; }
+  .account-back:hover { color: var(--accent); }
+  .account-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; letter-spacing: 0.04em; color: #111; margin-bottom: 2px; }
+  .account-page-subtitle { color: #888; font-size: 0.88rem; margin-bottom: 36px; }
+  .account-grid { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; }
+  .account-sidebar { background: #fff; border-radius: 16px; padding: 24px 16px; border: 1.5px solid #e8e8e4; }
+  .account-avatar-big {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; font-weight: 700; margin: 0 auto 12px;
+  }
+  .account-display-name { font-weight: 700; font-size: 1rem; text-align: center; color: #111; }
+  .account-display-email { font-size: 0.8rem; color: #888; text-align: center; margin-top: 3px; margin-bottom: 18px; }
+  .account-nav-item {
+    padding: 10px 12px; border-radius: 8px; cursor: pointer;
+    font-size: 0.88rem; color: #444; display: flex; align-items: center;
+    gap: 9px; transition: background 0.15s, color 0.15s;
+  }
+  .account-nav-item:hover { background: #f8f8f6; }
+  .account-nav-item.active { background: #fff5ee; color: var(--accent); font-weight: 600; }
+  .account-nav-item.logout-item { color: #e05050; margin-top: 6px; }
+  .account-nav-item.logout-item:hover { background: #fff5f5; color: #c03030; }
+  .account-main-panel { background: #fff; border-radius: 16px; padding: 26px 28px; border: 1.5px solid #e8e8e4; }
+  .account-section { display: none; }
+  .account-section.active { display: block; }
+  .account-section-title { font-size: 1.05rem; font-weight: 700; color: #111; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1.5px solid #f0f0ec; }
+  .profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .profile-field.full { grid-column: span 2; }
+  .profile-field label { display: block; font-size: 0.76rem; font-weight: 600; color: #666; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .profile-field input {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #e8e8e4;
+    border-radius: 10px; font-size: 0.88rem; font-family: inherit;
+    color: #111; background: #fafaf8; outline: none; box-sizing: border-box;
+    transition: border-color 0.18s;
+  }
+  .profile-field input:focus { border-color: var(--accent); background: #fff; }
+  .profile-save-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 10px;
+    padding: 11px 26px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: background 0.18s;
+  }
+  .profile-save-btn:hover { background: #FFa050; }
+  .order-hist-item { border: 1.5px solid #e8e8e4; border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+  .order-hist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+  .order-hist-id { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 600; }
+  .order-hist-status { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .order-hist-status.new { background: #e8f4ff; color: #1a6fba; }
+  .order-hist-status.reviewing { background: #f0e8ff; color: #6a2fba; }
+  .order-hist-status.printing { background: #fff5e6; color: #e07a00; }
+  .order-hist-status.ready { background: #e6fff5; color: #00a065; }
+  .order-hist-status.completed { background: #e6f9ef; color: #1a8f4f; }
+  .order-hist-status.cancelled { background: #ffeaea; color: #c03030; }
+  .order-hist-date { font-size: 0.8rem; color: #888; }
+  .order-hist-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .order-hist-chip { font-size: 0.78rem; color: #555; background: #f5f5f2; padding: 3px 9px; border-radius: 6px; }
+  .order-hist-empty { text-align: center; padding: 40px 20px; color: #aaa; }
+  .order-hist-empty-icon { font-size: 2.2rem; margin-bottom: 10px; }
+  @media (max-width: 768px) {
+    .account-grid { grid-template-columns: 1fr; }
+    .profile-form-grid { grid-template-columns: 1fr; }
+    .profile-field.full { grid-column: span 1; }
+    .nav-account-btn .acc-label { display: none; }
+  }
 </style>
 <script src="supabase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1770,6 +1938,21 @@
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
   <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
+  <div class="nav-account-wrap" id="navAccountWrap">
+    <button class="nav-account-btn" id="navAccountBtn" onclick="handleAccountBtnClick()">
+      <span class="acc-avatar" id="navAccAvatar" style="display:none;"></span>
+      <span class="acc-label" id="navAccountLabel">Sign in</span>
+    </button>
+    <div class="acc-dropdown" id="accDropdown">
+      <div class="acc-dropdown-header">
+        <div class="acc-dropdown-name" id="accDropName"></div>
+        <div class="acc-dropdown-email" id="accDropEmail"></div>
+      </div>
+      <div class="acc-dropdown-item" onclick="showPage('account'); closeAccDropdown();">&#128100; My Account</div>
+      <div class="acc-dropdown-item" onclick="showPage('account'); setAccountSection('orders'); closeAccDropdown();">&#128230; My Orders</div>
+      <div class="acc-dropdown-item logout" onclick="logoutCustomer()">Sign out</div>
+    </div>
+  </div>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -3194,6 +3377,7 @@
     sec.style.display = 'block';
     sec.scrollIntoView({ behavior: 'smooth' });
     updateCheckoutSummary();
+    autoFillCheckout();
   }
 
   // ====== THREE.JS MODEL VIEWER ======
@@ -3676,6 +3860,266 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     setTimeout(() => { bar.style.display = 'none'; }, 320);
   }
 
+  // ── CUSTOMER AUTH ──
+  async function hashPassword(password) {
+    const enc = new TextEncoder().encode(password);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  function getCustomers() { return JSON.parse(localStorage.getItem('kyzer_customers') || '[]'); }
+  function saveCustomers(arr) { localStorage.setItem('kyzer_customers', JSON.stringify(arr)); }
+  function getCurrentCustomer() { return JSON.parse(localStorage.getItem('kyzer_current_customer') || 'null'); }
+  function setCurrentCustomer(c) { localStorage.setItem('kyzer_current_customer', JSON.stringify(c)); }
+
+  function openAuthModal(tab) {
+    switchAuthTab(tab || 'login');
+    document.getElementById('authOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAuthModal(e) {
+    if (e && e.target !== document.getElementById('authOverlay')) return;
+    document.getElementById('authOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function switchAuthTab(tab) {
+    document.getElementById('authTabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('authTabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('authLoginForm').style.display = tab === 'login' ? '' : 'none';
+    document.getElementById('authRegForm').style.display = tab === 'register' ? '' : 'none';
+    document.getElementById('authLoginError').style.display = 'none';
+    document.getElementById('authRegError').style.display = 'none';
+  }
+
+  async function registerCustomer() {
+    const name  = document.getElementById('authRegName').value.trim();
+    const email = document.getElementById('authRegEmail').value.trim().toLowerCase();
+    const phone = document.getElementById('authRegPhone').value.trim();
+    const pass  = document.getElementById('authRegPass').value;
+    const errEl = document.getElementById('authRegError');
+    errEl.style.display = 'none';
+    if (!name || !email || !pass) { errEl.textContent = 'Name, email and password are required.'; errEl.style.display = 'block'; return; }
+    if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+    const customers = getCustomers();
+    if (customers.find(c => c.email === email)) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('authRegBtn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    const hashed = await hashPassword(pass);
+    const customer = { id: 'CUS-' + Date.now(), name, email, phone, password: hashed, address: {}, createdAt: new Date().toISOString() };
+    customers.push(customer);
+    saveCustomers(customers);
+    const session = { id: customer.id, name, email };
+    setCurrentCustomer(session);
+    updateNavAccount();
+    document.getElementById('authOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    btn.disabled = false; btn.textContent = 'Create account →';
+  }
+
+  async function loginCustomer() {
+    const email = document.getElementById('authLoginEmail').value.trim().toLowerCase();
+    const pass  = document.getElementById('authLoginPass').value;
+    const errEl = document.getElementById('authLoginError');
+    errEl.style.display = 'none';
+    if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('authLoginBtn');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    const hashed = await hashPassword(pass);
+    const customers = getCustomers();
+    const match = customers.find(c => c.email === email && c.password === hashed);
+    btn.disabled = false; btn.textContent = 'Sign in →';
+    if (!match) { errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return; }
+    const session = { id: match.id, name: match.name, email: match.email };
+    setCurrentCustomer(session);
+    updateNavAccount();
+    document.getElementById('authOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function logoutCustomer() {
+    localStorage.removeItem('kyzer_current_customer');
+    updateNavAccount();
+    closeAccDropdown();
+    showPage('main');
+  }
+
+  function handleAccountBtnClick() {
+    const c = getCurrentCustomer();
+    if (c) { toggleAccDropdown(); } else { openAuthModal('login'); }
+  }
+
+  function toggleAccDropdown() {
+    document.getElementById('accDropdown').classList.toggle('open');
+  }
+  function closeAccDropdown() {
+    document.getElementById('accDropdown').classList.remove('open');
+  }
+
+  function updateNavAccount() {
+    const c = getCurrentCustomer();
+    const label   = document.getElementById('navAccountLabel');
+    const avatar  = document.getElementById('navAccAvatar');
+    const dropName  = document.getElementById('accDropName');
+    const dropEmail = document.getElementById('accDropEmail');
+    if (c) {
+      const initials = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      avatar.textContent = initials;
+      avatar.style.display = 'flex';
+      label.textContent = c.name.split(' ')[0];
+      dropName.textContent  = c.name;
+      dropEmail.textContent = c.email;
+    } else {
+      avatar.style.display = 'none';
+      label.textContent = 'Sign in';
+    }
+  }
+
+  // Extend showPage to handle account page
+  const _origShowPage = showPage;
+  showPage = function(page) {
+    const accPage = document.getElementById('accountPage');
+    if (page === 'account') {
+      const c = getCurrentCustomer();
+      if (!c) { openAuthModal('login'); return; }
+      document.getElementById('mainSite').style.display = 'none';
+      document.getElementById('quotePage').classList.remove('active');
+      document.getElementById('productPage').classList.remove('active');
+      accPage.classList.add('active');
+      loadAccountPage();
+      window.scrollTo(0, 0);
+    } else {
+      accPage.classList.remove('active');
+      _origShowPage(page);
+    }
+  };
+
+  function setAccountSection(sec) {
+    ['profile','orders'].forEach(s => {
+      document.getElementById('accSec-' + s).classList.toggle('active', s === sec);
+      document.getElementById('accnav-' + s).classList.toggle('active', s === sec);
+    });
+    if (sec === 'orders') loadOrderHistory();
+  }
+
+  function loadAccountPage() {
+    const c = getCurrentCustomer();
+    if (!c) return;
+    const customers = getCustomers();
+    const full = customers.find(x => x.id === c.id) || c;
+    const initials = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('accBigAvatar').textContent = initials;
+    document.getElementById('accDispName').textContent  = c.name;
+    document.getElementById('accDispEmail').textContent = c.email;
+    // Fill profile form
+    document.getElementById('pfName').value    = full.name  || '';
+    document.getElementById('pfPhone').value   = full.phone || '';
+    document.getElementById('pfEmail').value   = full.email || '';
+    const a = full.address || {};
+    document.getElementById('pfAddr1').value   = a.addr1    || '';
+    document.getElementById('pfAddr2').value   = a.addr2    || '';
+    document.getElementById('pfCity').value    = a.city     || '';
+    document.getElementById('pfState').value   = a.state    || '';
+    document.getElementById('pfPincode').value = a.pincode  || '';
+    document.getElementById('pfLandmark').value= a.landmark || '';
+    setAccountSection('profile');
+  }
+
+  function saveProfile() {
+    const c = getCurrentCustomer();
+    if (!c) return;
+    const customers = getCustomers();
+    const idx = customers.findIndex(x => x.id === c.id);
+    if (idx === -1) return;
+    customers[idx].name  = document.getElementById('pfName').value.trim() || customers[idx].name;
+    customers[idx].phone = document.getElementById('pfPhone').value.trim();
+    customers[idx].address = {
+      addr1:    document.getElementById('pfAddr1').value.trim(),
+      addr2:    document.getElementById('pfAddr2').value.trim(),
+      city:     document.getElementById('pfCity').value.trim(),
+      state:    document.getElementById('pfState').value.trim(),
+      pincode:  document.getElementById('pfPincode').value.trim(),
+      landmark: document.getElementById('pfLandmark').value.trim(),
+    };
+    saveCustomers(customers);
+    const session = { id: c.id, name: customers[idx].name, email: c.email };
+    setCurrentCustomer(session);
+    updateNavAccount();
+    document.getElementById('accDispName').textContent = session.name;
+    const msg = document.getElementById('profileSaveMsg');
+    msg.style.display = 'inline';
+    setTimeout(() => { msg.style.display = 'none'; }, 2500);
+  }
+
+  function loadOrderHistory() {
+    const c = getCurrentCustomer();
+    const listEl = document.getElementById('orderHistList');
+    if (!c) { listEl.innerHTML = ''; return; }
+    const allOrders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+    const mine = allOrders.filter(o => o.email && o.email.toLowerCase() === c.email.toLowerCase());
+    if (!mine.length) {
+      listEl.innerHTML = '<div class="order-hist-empty"><div class="order-hist-empty-icon">&#128230;</div><div>No orders yet.</div></div>';
+      return;
+    }
+    listEl.innerHTML = mine.map(o => {
+      const date = new Date(o.submittedAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      const statusCls = (o.status || 'new').toLowerCase().replace(/\s+/g,'-');
+      return `<div class="order-hist-item">
+        <div class="order-hist-header">
+          <span class="order-hist-id">${o.id}</span>
+          <span class="order-hist-status ${statusCls}">${o.status || 'New'}</span>
+        </div>
+        <div class="order-hist-date">${date}</div>
+        <div class="order-hist-chips">
+          ${o.material ? `<span class="order-hist-chip">${o.material}</span>` : ''}
+          ${o.quality  ? `<span class="order-hist-chip">${o.quality}</span>` : ''}
+          ${o.dimensions ? `<span class="order-hist-chip">${o.dimensions}</span>` : ''}
+          ${o.estimatedTotal ? `<span class="order-hist-chip">&#8377;${o.estimatedTotal}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function autoFillCheckout() {
+    const c = getCurrentCustomer();
+    if (!c) return;
+    const customers = getCustomers();
+    const full = customers.find(x => x.id === c.id);
+    if (!full) return;
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+    set('qfName',    full.name);
+    set('qfEmail',   full.email);
+    set('qfPhone',   full.phone);
+    const a = full.address || {};
+    set('qfAddr1',   a.addr1);
+    set('qfAddr2',   a.addr2);
+    set('qfCity',    a.city);
+    set('qfState',   a.state);
+    set('qfPincode', a.pincode);
+    set('qfLandmark',a.landmark);
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+      const wrap = document.getElementById('navAccountWrap');
+      if (wrap && !wrap.contains(e.target)) closeAccDropdown();
+    });
+    // Close auth modal on overlay click
+    document.getElementById('authOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeAuthModal(e);
+    });
+    // Enter key in auth inputs
+    ['authLoginEmail','authLoginPass'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') loginCustomer(); });
+    });
+    ['authRegName','authRegEmail','authRegPhone','authRegPass'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') registerCustomer(); });
+    });
+    updateNavAccount();
+  });
+
   // ── NEWSLETTER ──
   async function submitNewsletter(e) {
     e.preventDefault();
@@ -3699,6 +4143,132 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     e.target.style.display = 'none';
   }
 </script>
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal" id="authModal">
+    <div class="auth-modal-header">
+      <div class="auth-modal-logo">Kyzer <span>Robotics</span></div>
+      <button class="auth-close" onclick="closeAuthModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">Sign In</div>
+      <div class="auth-tab" id="authTabRegister" onclick="switchAuthTab('register')">Create Account</div>
+    </div>
+    <div class="auth-body">
+      <!-- LOGIN -->
+      <div id="authLoginForm">
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="authLoginEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="authLoginPass" placeholder="Your password" autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="authLoginError"></div>
+        <button class="auth-submit" id="authLoginBtn" onclick="loginCustomer()">Sign in &#8594;</button>
+        <div class="auth-switch">Forgot password? <a href="mailto:kyzerroboticspvtltd@gmail.com">Contact us</a></div>
+      </div>
+      <!-- REGISTER -->
+      <div id="authRegForm" style="display:none;">
+        <div class="auth-field">
+          <label>Full Name</label>
+          <input type="text" id="authRegName" placeholder="Your full name" autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="authRegEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label>Phone</label>
+          <input type="tel" id="authRegPhone" placeholder="+91 XXXXX XXXXX" autocomplete="tel">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="authRegPass" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="authRegError"></div>
+        <button class="auth-submit" id="authRegBtn" onclick="registerCustomer()">Create account &#8594;</button>
+        <div class="auth-switch">Already have an account? <a onclick="switchAuthTab('login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MY ACCOUNT PAGE -->
+<div id="accountPage">
+  <div class="account-wrap">
+    <div class="account-back" onclick="showPage('main')">&#8592; Back to site</div>
+    <div class="account-page-title">My Account</div>
+    <div class="account-page-subtitle">Manage your profile and track your orders</div>
+    <div class="account-grid">
+      <!-- Sidebar -->
+      <div class="account-sidebar">
+        <div class="account-avatar-big" id="accBigAvatar">K</div>
+        <div class="account-display-name" id="accDispName">—</div>
+        <div class="account-display-email" id="accDispEmail">—</div>
+        <div class="account-nav-item active" id="accnav-profile" onclick="setAccountSection('profile')">&#128100; Profile</div>
+        <div class="account-nav-item" id="accnav-orders" onclick="setAccountSection('orders')">&#128230; My Orders</div>
+        <div class="account-nav-item logout-item" onclick="logoutCustomer()">&#128275; Sign out</div>
+      </div>
+      <!-- Main panel -->
+      <div class="account-main-panel">
+        <!-- Profile -->
+        <div class="account-section active" id="accSec-profile">
+          <div class="account-section-title">Profile</div>
+          <div class="profile-form-grid">
+            <div class="profile-field">
+              <label>Full Name</label>
+              <input type="text" id="pfName" placeholder="Your full name">
+            </div>
+            <div class="profile-field">
+              <label>Phone</label>
+              <input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX">
+            </div>
+            <div class="profile-field full">
+              <label>Email (cannot be changed)</label>
+              <input type="email" id="pfEmail" readonly style="opacity:0.55;cursor:default;">
+            </div>
+            <div class="profile-field full">
+              <label>Address Line 1</label>
+              <input type="text" id="pfAddr1" placeholder="Flat/House no., Street name">
+            </div>
+            <div class="profile-field full">
+              <label>Address Line 2</label>
+              <input type="text" id="pfAddr2" placeholder="Area, Colony (optional)">
+            </div>
+            <div class="profile-field">
+              <label>City</label>
+              <input type="text" id="pfCity" placeholder="City">
+            </div>
+            <div class="profile-field">
+              <label>State</label>
+              <input type="text" id="pfState" placeholder="State">
+            </div>
+            <div class="profile-field">
+              <label>Pincode</label>
+              <input type="text" id="pfPincode" placeholder="Pincode">
+            </div>
+            <div class="profile-field">
+              <label>Landmark</label>
+              <input type="text" id="pfLandmark" placeholder="Nearby landmark (optional)">
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:18px;">
+            <button class="profile-save-btn" onclick="saveProfile()">Save changes</button>
+            <span id="profileSaveMsg" style="font-size:0.85rem;color:#1a8f4f;display:none;">Saved!</span>
+          </div>
+        </div>
+        <!-- Orders -->
+        <div class="account-section" id="accSec-orders">
+          <div class="account-section-title">My Orders</div>
+          <div id="orderHistList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Floating WhatsApp Button -->
 <a class="wa-fab" href="https://wa.me/919049695264" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
