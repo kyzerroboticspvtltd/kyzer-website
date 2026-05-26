@@ -1735,6 +1735,45 @@
     .nl-right { text-align: left; }
   }
 
+  /* ── PROFILE STRIP ── */
+  #profileStrip {
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+    border-bottom: 1.5px solid rgba(255,140,53,0.25);
+    padding: 0 clamp(1rem,5vw,3rem);
+  }
+  .pstrip-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 0;
+  }
+  .pstrip-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+    border: 2px solid rgba(255,140,53,0.4);
+  }
+  .pstrip-info { flex: 1; min-width: 0; }
+  .pstrip-greeting { font-size: 0.92rem; font-weight: 700; color: #fff; }
+  .pstrip-addr { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pstrip-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .pstrip-btn {
+    padding: 7px 16px; border-radius: 8px; font-size: 0.82rem;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    background: var(--accent); color: #fff; border: none;
+    transition: background 0.18s, transform 0.15s;
+  }
+  .pstrip-btn:hover { background: #FFa050; transform: translateY(-1px); }
+  .pstrip-btn-ghost {
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .pstrip-btn-ghost:hover { background: rgba(255,255,255,0.15); color: #fff; transform: translateY(-1px); }
+  @media (max-width: 600px) {
+    .pstrip-btn-ghost { display: none; }
+    .pstrip-greeting { font-size: 0.85rem; }
+  }
+
   /* ── ACCOUNT BUTTON ── */
   .nav-account-wrap { position: relative; margin-left: 8px; }
   .nav-account-btn {
@@ -1957,6 +1996,21 @@
     <span></span><span></span><span></span>
   </button>
 </nav>
+
+<!-- LOGGED-IN PROFILE STRIP -->
+<div id="profileStrip" style="display:none;">
+  <div class="pstrip-inner">
+    <div class="pstrip-avatar" id="pstripAvatar">K</div>
+    <div class="pstrip-info">
+      <div class="pstrip-greeting" id="pstripGreeting">Welcome back!</div>
+      <div class="pstrip-addr" id="pstripAddr"></div>
+    </div>
+    <div class="pstrip-actions">
+      <button class="pstrip-btn" onclick="showPage('account'); setAccountSection('orders');">&#128230; My Orders</button>
+      <button class="pstrip-btn pstrip-btn-ghost" onclick="showPage('account');">Edit Profile</button>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -3957,20 +4011,36 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
 
   function updateNavAccount() {
     const c = getCurrentCustomer();
-    const label   = document.getElementById('navAccountLabel');
-    const avatar  = document.getElementById('navAccAvatar');
+    const label     = document.getElementById('navAccountLabel');
+    const avatar    = document.getElementById('navAccAvatar');
     const dropName  = document.getElementById('accDropName');
     const dropEmail = document.getElementById('accDropEmail');
+    const strip     = document.getElementById('profileStrip');
     if (c) {
       const initials = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      // Navbar button
       avatar.textContent = initials;
       avatar.style.display = 'flex';
       label.textContent = c.name.split(' ')[0];
       dropName.textContent  = c.name;
       dropEmail.textContent = c.email;
+      // Profile strip
+      if (strip) {
+        strip.style.display = 'block';
+        document.getElementById('pstripAvatar').textContent = initials;
+        document.getElementById('pstripGreeting').textContent = 'Welcome back, ' + c.name.split(' ')[0] + '!';
+        const customers = getCustomers();
+        const full = customers.find(x => x.id === c.id);
+        const a = (full && full.address) || {};
+        const addrParts = [a.addr1, a.city, a.state, a.pincode].filter(Boolean);
+        document.getElementById('pstripAddr').textContent = addrParts.length
+          ? '📍 ' + addrParts.join(', ')
+          : 'No saved address — add one in your profile';
+      }
     } else {
       avatar.style.display = 'none';
       label.textContent = 'Sign in';
+      if (strip) strip.style.display = 'none';
     }
   }
 
@@ -4045,6 +4115,7 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
     setCurrentCustomer(session);
     updateNavAccount();
     document.getElementById('accDispName').textContent = session.name;
+    document.getElementById('accBigAvatar').textContent = session.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const msg = document.getElementById('profileSaveMsg');
     msg.style.display = 'inline';
     setTimeout(() => { msg.style.display = 'none'; }, 2500);
