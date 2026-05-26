@@ -1237,7 +1237,7 @@
     .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-    .nav-cta { display: none; }
+    .nav-cta { font-size: 0.78rem; padding: 7px 12px; }
 
     /* ── Hero ── */
     .hero { grid-template-columns: 1fr; padding: 7rem 1.25rem 3rem; }
@@ -1774,8 +1774,11 @@
     .pstrip-greeting { font-size: 0.85rem; }
   }
 
+  /* ── NAV RIGHT GROUP ── */
+  .nav-right-group { display: flex; align-items: center; gap: 8px; }
+
   /* ── ACCOUNT BUTTON ── */
-  .nav-account-wrap { position: relative; margin-left: 8px; }
+  .nav-account-wrap { position: relative; }
   .nav-account-btn {
     display: flex; align-items: center; gap: 7px;
     background: none; border: 1.5px solid var(--accent);
@@ -1940,6 +1943,8 @@
     .profile-form-grid { grid-template-columns: 1fr; }
     .profile-field.full { grid-column: span 1; }
     .nav-account-btn .acc-label { display: none; }
+    .nav-account-btn { padding: 6px 10px; }
+    .nav-right-group { gap: 6px; }
   }
 </style>
 <script src="supabase-config.js"></script>
@@ -1976,20 +1981,22 @@
     <a href="#contact">Contact</a>
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
-  <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
-  <div class="nav-account-wrap" id="navAccountWrap">
-    <button class="nav-account-btn" id="navAccountBtn" onclick="handleAccountBtnClick()">
-      <span class="acc-avatar" id="navAccAvatar" style="display:none;"></span>
-      <span class="acc-label" id="navAccountLabel">Sign in</span>
-    </button>
-    <div class="acc-dropdown" id="accDropdown">
-      <div class="acc-dropdown-header">
-        <div class="acc-dropdown-name" id="accDropName"></div>
-        <div class="acc-dropdown-email" id="accDropEmail"></div>
+  <div class="nav-right-group">
+    <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
+    <div class="nav-account-wrap" id="navAccountWrap">
+      <button class="nav-account-btn" id="navAccountBtn" onclick="handleAccountBtnClick()">
+        <span class="acc-avatar" id="navAccAvatar" style="display:none;"></span>
+        <span class="acc-label" id="navAccountLabel">Sign in</span>
+      </button>
+      <div class="acc-dropdown" id="accDropdown">
+        <div class="acc-dropdown-header">
+          <div class="acc-dropdown-name" id="accDropName"></div>
+          <div class="acc-dropdown-email" id="accDropEmail"></div>
+        </div>
+        <div class="acc-dropdown-item" onclick="showPage('account'); closeAccDropdown();">&#128100; My Account</div>
+        <div class="acc-dropdown-item" onclick="showPage('account'); setAccountSection('orders'); closeAccDropdown();">&#128230; My Orders</div>
+        <div class="acc-dropdown-item logout" onclick="logoutCustomer()">Sign out</div>
       </div>
-      <div class="acc-dropdown-item" onclick="showPage('account'); closeAccDropdown();">&#128100; My Account</div>
-      <div class="acc-dropdown-item" onclick="showPage('account'); setAccountSection('orders'); closeAccDropdown();">&#128230; My Orders</div>
-      <div class="acc-dropdown-item logout" onclick="logoutCustomer()">Sign out</div>
     </div>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Menu">
