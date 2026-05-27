@@ -1,8 +1,3 @@
-// Supabase configuration for Kyzer Robotics website
-// 1. Create a free project at https://supabase.com
-// 2. Go to Project Settings → API
-// 3. Copy your Project URL and anon/public key below
-// 4. Run the setup SQL in your Supabase SQL Editor (see Security tab in admin panel)
-
-window.SUPABASE_URL = '';  // e.g. https://abcdefghij.supabase.co
-window.SUPABASE_KEY = '';  // starts with eyJ...
+window.SUPABASE_URL = 'https://alrgkykezmlcagovkkdl.supabase.co';
+window.SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
+window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.googleusercontent.com';
