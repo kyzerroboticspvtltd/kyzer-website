@@ -237,7 +237,7 @@
   .hero {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr clamp(240px, 32vw, 480px);
+    grid-template-columns: 1fr;
     gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
     padding: 8rem clamp(1.5rem, 5vw, 3rem) 4rem;
@@ -263,70 +263,6 @@
     pointer-events: none;
   }
 
-  /* Hero photo scroll */
-  .hero-photos {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    gap: 10px;
-    align-self: stretch;
-    padding: 0;
-    z-index: 1;
-  }
-  .hero-photos::before,
-  .hero-photos::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0;
-    height: 52%;
-    z-index: 2;
-    pointer-events: none;
-  }
-  .hero-photos::before {
-    top: 0;
-    background:
-      linear-gradient(to bottom, var(--bg) 0%, transparent 100%),
-      linear-gradient(to right,  var(--bg) 0%, transparent 40%);
-  }
-  .hero-photos::after {
-    bottom: 0;
-    background:
-      linear-gradient(to top,   var(--bg) 0%, transparent 100%),
-      linear-gradient(to right,  var(--bg) 0%, transparent 40%);
-  }
-  .hero-photos-left-fade {
-    position: absolute; top: 0; left: 0; bottom: 0;
-    width: 40%;
-    background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
-    z-index: 2; pointer-events: none;
-  }
-  .photo-col {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
-  }
-  .photo-col-a { animation: photoScrollUp 28s linear infinite; }
-  .photo-col-b { animation: photoScrollDown 32s linear infinite; }
-  .photo-col img {
-    width: 100%;
-    border-radius: 16px;
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-drag: none;
-  }
-  @keyframes photoScrollUp {
-    0%   { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
-  }
-  @keyframes photoScrollDown {
-    0%   { transform: translateY(-50%); }
-    100% { transform: translateY(0); }
-  }
   .hero-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: var(--orange);
@@ -2122,39 +2058,6 @@
     </div>
   </div>
 
-  <!-- Right: auto-scrolling photo montage -->
-  <!-- Replace these picsum placeholders with your own drone/3D print photos -->
-  <div class="hero-photos">
-    <div class="hero-photos-left-fade"></div>
-    <div class="photo-col photo-col-a">
-      <img src="https://picsum.photos/seed/kyz1/320/400" alt="Drone build">
-      <img src="https://picsum.photos/seed/kyz2/320/280" alt="3D print">
-      <img src="https://picsum.photos/seed/kyz3/320/360" alt="Prototype">
-      <img src="https://picsum.photos/seed/kyz4/320/420" alt="FPV racing">
-      <img src="https://picsum.photos/seed/kyz5/320/320" alt="Industrial part">
-      <img src="https://picsum.photos/seed/kyz6/320/400" alt="Custom build">
-      <img src="https://picsum.photos/seed/kyz1/320/400" alt="">
-      <img src="https://picsum.photos/seed/kyz2/320/280" alt="">
-      <img src="https://picsum.photos/seed/kyz3/320/360" alt="">
-      <img src="https://picsum.photos/seed/kyz4/320/420" alt="">
-      <img src="https://picsum.photos/seed/kyz5/320/320" alt="">
-      <img src="https://picsum.photos/seed/kyz6/320/400" alt="">
-    </div>
-    <div class="photo-col photo-col-b">
-      <img src="https://picsum.photos/seed/kyz7/320/360" alt="Resin print">
-      <img src="https://picsum.photos/seed/kyz8/320/420" alt="Drone frame">
-      <img src="https://picsum.photos/seed/kyz9/320/320" alt="Nylon part">
-      <img src="https://picsum.photos/seed/kyz10/320/400" alt="Workshop">
-      <img src="https://picsum.photos/seed/kyz11/320/280" alt="Assembly">
-      <img src="https://picsum.photos/seed/kyz12/320/360" alt="Testing">
-      <img src="https://picsum.photos/seed/kyz7/320/360" alt="">
-      <img src="https://picsum.photos/seed/kyz8/320/420" alt="">
-      <img src="https://picsum.photos/seed/kyz9/320/320" alt="">
-      <img src="https://picsum.photos/seed/kyz10/320/400" alt="">
-      <img src="https://picsum.photos/seed/kyz11/320/280" alt="">
-      <img src="https://picsum.photos/seed/kyz12/320/360" alt="">
-    </div>
-  </div>
 
   <div class="scroll-hint">SCROLL</div>
 </section>
