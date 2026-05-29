@@ -662,6 +662,29 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
 
+        <div class="panel" style="max-width:520px;margin-bottom:20px;">
+          <div class="panel-title">💳 Razorpay Payment Gateway</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Enables real online payments on the checkout page. Use test keys while testing — swap to live keys when ready to accept real payments.</p>
+          <div class="form-group">
+            <label class="form-label">RAZORPAY KEY ID <span style="color:var(--muted);font-weight:400;">(public — safe to store here)</span></label>
+            <input class="form-input" type="text" id="rzpKeyId" placeholder="rzp_test_..." />
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
+              <strong>Setup steps:</strong><br>
+              1. Sign up at <strong>dashboard.razorpay.com</strong><br>
+              2. Settings → API Keys → Generate Test Key<br>
+              3. Copy the <em>Key ID</em> here (starts with <code>rzp_test_</code>)<br>
+              4. Put the <em>Key Secret</em> in your backend <code>.env</code> as <code>RAZORPAY_KEY_SECRET</code>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">BACKEND URL <span style="color:var(--muted);font-weight:400;">(your Node server)</span></label>
+            <input class="form-input" type="text" id="rzpBackendUrl" placeholder="http://localhost:3000  or  https://your-app.railway.app" />
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Use <code>http://localhost:3000</code> while developing locally.</div>
+          </div>
+          <button class="btn btn-primary" onclick="saveRazorpayConfig()">Save payment config →</button>
+          <div id="rzpSaveMsg" style="display:none;font-size:12px;color:#1a8f4f;margin-top:8px;">✓ Saved</div>
+        </div>
+
         <div class="panel" style="max-width:380px;">
           <div class="panel-title">🔒 Change password</div>
           <div class="form-group">
@@ -1755,6 +1778,22 @@ function initSecurity() {
   const keyEl = document.getElementById('sbKey');
   if (urlEl) urlEl.value = savedUrl || '';
   if (keyEl) keyEl.value = savedKey || '';
+
+  const rzpId = document.getElementById('rzpKeyId');
+  const rzpUrl = document.getElementById('rzpBackendUrl');
+  if (rzpId) rzpId.value = localStorage.getItem('kyzer_razorpay_key_id') || '';
+  if (rzpUrl) rzpUrl.value = localStorage.getItem('kyzer_backend_url') || '';
+}
+
+function saveRazorpayConfig() {
+  const keyId  = document.getElementById('rzpKeyId').value.trim();
+  const backUrl = document.getElementById('rzpBackendUrl').value.trim().replace(/\/$/, '');
+  if (keyId)  localStorage.setItem('kyzer_razorpay_key_id', keyId);
+  if (backUrl) localStorage.setItem('kyzer_backend_url', backUrl);
+  const msg = document.getElementById('rzpSaveMsg');
+  msg.style.display = '';
+  setTimeout(() => msg.style.display = 'none', 2500);
+  toast('Razorpay config saved.');
 }
 
 function saveSupabase() {

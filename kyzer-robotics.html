@@ -2035,6 +2035,7 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -3430,13 +3431,13 @@
     const state   = document.getElementById('coState').value.trim();
     const pincode = document.getElementById('coPincode').value.trim();
 
-    if (!name || !email)                      { alert('Please enter your name and email.'); return; }
-    if (!phone)                               { alert('Please enter your phone number.'); return; }
-    if (!addr1 || !city || !state || !pincode){ alert('Please fill in your complete shipping address.'); return; }
-    if (cart.length === 0)                    { alert('Your cart is empty.'); return; }
+    if (!name || !email)                       { alert('Please enter your name and email.'); return; }
+    if (!phone)                                { alert('Please enter your phone number.'); return; }
+    if (!addr1 || !city || !state || !pincode) { alert('Please fill in your complete shipping address.'); return; }
+    if (cart.length === 0)                     { alert('Your cart is empty.'); return; }
 
     const btn = document.getElementById('coSubmitBtn');
-    btn.textContent = 'Placing order...';
+    btn.textContent = 'Processing…';
     btn.disabled = true;
 
     const shipping = {
@@ -3447,21 +3448,105 @@
     const shippingFull = [addr1, shipping.addr2, city, state, pincode, shipping.landmark]
       .filter(Boolean).join(', ');
 
-    const order = {
-      id:          'SHOP-' + Date.now(),
+    const orderId   = 'SHOP-' + Date.now();
+    const total     = cartTotal();
+    const orderData = {
+      id:          orderId,
       type:        'product',
       submittedAt: new Date().toISOString(),
       status:      'new',
       name, email, phone,
       company:     document.getElementById('coCompany').value.trim(),
       notes:       document.getElementById('coNotes').value.trim(),
-      shipping,
+      shipping, shippingFull,
       items:       JSON.parse(JSON.stringify(cart)),
-      total:       cartTotal(),
+      total,
     };
 
+    // ── Try Razorpay payment ──
+    const rzpKeyId    = localStorage.getItem('kyzer_razorpay_key_id');
+    const backendUrl  = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
+
+    if (rzpKeyId && backendUrl && typeof Razorpay !== 'undefined') {
+      try {
+        // 1. Create Razorpay order on backend
+        const createRes = await fetch(backendUrl + '/api/create-razorpay-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: total,
+            currency: 'INR',
+            receipt: orderId,
+            notes: { customer: name, email },
+          }),
+        });
+        const createData = await createRes.json();
+        if (!createData.ok) throw new Error(createData.error || 'Order creation failed');
+
+        // 2. Open Razorpay modal
+        btn.textContent = 'Pay now →';
+        btn.disabled = false;
+
+        const rzpOptions = {
+          key:         rzpKeyId,
+          amount:      createData.order.amount,
+          currency:    'INR',
+          name:        'Kyzer Robotics',
+          description: `Order ${orderId}`,
+          order_id:    createData.order.id,
+          prefill: { name, email, contact: phone },
+          theme: { color: '#FF8C35' },
+          handler: async function (response) {
+            btn.textContent = 'Verifying…';
+            btn.disabled = true;
+            try {
+              // 3. Verify signature on backend
+              const verRes = await fetch(backendUrl + '/api/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id:   response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature:  response.razorpay_signature,
+                  orderData,
+                }),
+              });
+              const verData = await verRes.json();
+              if (!verData.ok) throw new Error(verData.error || 'Verification failed');
+
+              orderData.paymentId = response.razorpay_payment_id;
+              orderData.status    = 'paid';
+              _finaliseOrder(orderData, shippingFull, btn);
+            } catch (verErr) {
+              alert('Payment received but verification failed — please contact us with Payment ID: ' + response.razorpay_payment_id);
+              btn.textContent = 'Pay now →';
+              btn.disabled = false;
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              btn.textContent = 'Pay now →';
+              btn.disabled = false;
+            },
+          },
+        };
+        const rzp = new Razorpay(rzpOptions);
+        rzp.open();
+        return;
+      } catch (err) {
+        console.error('Razorpay init error:', err);
+        // Fall through to COD/offline flow
+      }
+    }
+
+    // ── Fallback: offline order (no payment gateway configured) ──
+    _finaliseOrder(orderData, shippingFull, btn);
+  }
+
+  function _finaliseOrder(orderData, shippingFull, btn) {
+    // Save to localStorage for admin panel
     const orders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
-    orders.unshift(order);
+    orders.unshift(orderData);
     localStorage.setItem('kyzer_product_orders', JSON.stringify(orders));
 
     // Clear cart
@@ -3469,25 +3554,27 @@
     saveCart();
 
     // WhatsApp notification
-    const itemLines = order.items.map(i => `  • ${i.name} ×${i.qty} — ₹${(Number(i.price)*i.qty).toLocaleString('en-IN')}`).join('\n');
+    const paid = orderData.paymentId ? ` | Payment: ${orderData.paymentId}` : '';
+    const itemLines = (orderData.items || []).map(i =>
+      `  • ${i.name} ×${i.qty} — ₹${(Number(i.price||0)*i.qty).toLocaleString('en-IN')}`
+    ).join('\n');
     const waMsg = encodeURIComponent(
-      `🛒 *New Shop Order — ${order.id}*\n\n` +
-      `*Customer:* ${name}\n*Phone:* ${phone}\n*Email:* ${email}\n\n` +
+      `🛒 *New Shop Order — ${orderData.id}*${paid}\n\n` +
+      `*Customer:* ${orderData.name}\n*Phone:* ${orderData.phone}\n*Email:* ${orderData.email}\n\n` +
       `*Items:*\n${itemLines}\n\n` +
-      `*Total:* ₹${order.total.toLocaleString('en-IN')}\n\n` +
+      `*Total:* ₹${(orderData.total||0).toLocaleString('en-IN')}\n\n` +
       `*Ship to:* ${shippingFull}` +
-      (order.notes ? `\n\n*Notes:* ${order.notes}` : '')
+      (orderData.notes ? `\n\n*Notes:* ${orderData.notes}` : '')
     );
     setTimeout(() => window.open('https://wa.me/919049695264?text=' + waMsg, '_blank'), 400);
 
-    // Email link
-    const emailBody = encodeURIComponent(
-      `New shop order ${order.id}\n\nCustomer: ${name}\nPhone: ${phone}\n\nItems:\n${order.items.map(i=>`${i.name} x${i.qty}`).join('\n')}\n\nTotal: ₹${order.total.toLocaleString('en-IN')}\n\nShip to: ${shippingFull}`
-    );
-    setTimeout(() => { window.location.href = `mailto:kyzerroboticspvtltd@gmail.com?subject=New Order ${order.id}&body=${emailBody}`; }, 1200);
-
     document.getElementById('coSuccess').style.display = '';
-    btn.textContent = '✓ Order placed!';
+    document.getElementById('coSuccess').textContent =
+      orderData.paymentId
+        ? `✓ Payment successful! Order ${orderData.id} confirmed. Check your email for details.`
+        : `✓ Order placed! We'll be in touch soon to confirm your order.`;
+    btn.textContent = '✓ Done!';
+    btn.disabled = true;
   }
 
   // Init cart badge on load
@@ -4863,11 +4950,9 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
         <textarea class="qcp-input qcp-full" style="height:80px;resize:none;" placeholder="Delivery instructions, special requests, etc." id="coNotes"></textarea>
       </div>
 
-      <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Place order →</button>
-      <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;">
-        ✓ Order placed! We'll be in touch soon to confirm your order.
-      </div>
-      <div class="qv2-note" style="margin-top:8px;">Or reach us via <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp</a> or <a href="mailto:kyzerroboticspvtltd@gmail.com" style="color:#FF8C35;">email</a></div>
+      <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Pay now →</button>
+      <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;"></div>
+      <div class="qv2-note" style="margin-top:8px;">Secure payment via Razorpay · Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
     </div>
 
     <!-- RIGHT: order summary -->
@@ -4878,7 +4963,7 @@ Valid for 7 days. Contact: hello@kyzerrobotics.com`;
         <span class="cs-total-label">Total</span>
         <span class="cs-total-price" id="coSummaryTotal">₹0</span>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">No payment now. We'll confirm your order and send an invoice.</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Secure checkout · UPI, cards, netbanking & wallets accepted.</p>
     </div>
 
   </div>
