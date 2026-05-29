@@ -389,6 +389,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
       <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
       <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>📄</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
+      <div class="sidebar-link" onclick="switchTab('shoporders')" id="tl-shoporders" style="display:flex;align-items:center;"><span>🛒</span> Shop Orders <span id="shopOrdersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
       <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
@@ -706,6 +707,32 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
         <div id="orderList" class="order-list"></div>
       </div>
 
+      <!-- SHOP ORDERS -->
+      <div class="admin-tab" id="tab-shoporders">
+        <div class="tab-header">
+          <h2>Shop Orders</h2>
+          <p>Product orders placed through the website checkout.</p>
+        </div>
+
+        <div class="orders-stats">
+          <div class="ostat-card"><div class="ostat-num" id="sostat-total">0</div><div class="ostat-label">Total orders</div></div>
+          <div class="ostat-card new"><div class="ostat-num" id="sostat-new">0</div><div class="ostat-label">New</div></div>
+          <div class="ostat-card ip"><div class="ostat-num" id="sostat-inprogress">0</div><div class="ostat-label">Processing</div></div>
+          <div class="ostat-card done"><div class="ostat-num" id="sostat-completed">0</div><div class="ostat-label">Completed</div></div>
+        </div>
+
+        <div class="orders-filter-bar">
+          <button class="ofb active" id="sofb-all" onclick="filterShopOrders('all',this)">All</button>
+          <button class="ofb" onclick="filterShopOrders('new',this)">New</button>
+          <button class="ofb" onclick="filterShopOrders('processing',this)">Processing</button>
+          <button class="ofb" onclick="filterShopOrders('shipped',this)">Shipped</button>
+          <button class="ofb" onclick="filterShopOrders('completed',this)">Completed</button>
+          <button class="ofb" onclick="filterShopOrders('cancelled',this)">Cancelled</button>
+        </div>
+
+        <div id="shopOrderList" class="order-list"></div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -857,6 +884,60 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
   </div>
 </div>
 
+<!-- SHOP ORDER DETAIL MODAL -->
+<div id="shopOrderModal" class="omodal-backdrop" onclick="if(event.target===this)closeShopOrderModal()">
+  <div class="omodal">
+    <div class="omodal-header">
+      <div>
+        <div class="omodal-id" id="somod-id"></div>
+        <div class="omodal-date" id="somod-date"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <select class="form-input" id="somod-status" onchange="updateShopOrderStatus()" style="font-size:12px;padding:6px 10px;width:auto;">
+          <option value="new">New</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="topbar-btn" onclick="closeShopOrderModal()">✕ Close</button>
+      </div>
+    </div>
+    <div class="omodal-body">
+      <div class="omod-section">
+        <div class="omod-section-title">Customer</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Name</label><div id="somod-name"></div></div>
+          <div class="omod-field"><label>Email</label><div id="somod-email"></div></div>
+          <div class="omod-field"><label>Phone</label><div id="somod-phone"></div></div>
+          <div class="omod-field"><label>Company</label><div id="somod-company"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Shipping Address</div>
+        <div id="somod-addr" style="font-size:13px;font-weight:500;line-height:1.8;"></div>
+        <div class="omod-grid" style="margin-top:10px;">
+          <div class="omod-field"><label>City</label><div id="somod-city"></div></div>
+          <div class="omod-field"><label>State</label><div id="somod-state"></div></div>
+          <div class="omod-field"><label>Pincode</label><div id="somod-pincode"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Order Items</div>
+        <div id="somod-items"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
+          <span style="font-size:13px;font-weight:500;">Total</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#FF8C35;" id="somod-total"></span>
+        </div>
+      </div>
+      <div class="omod-section" id="somod-notes-section" style="display:none;">
+        <div class="omod-section-title">Notes</div>
+        <div id="somod-notes" style="font-size:13px;color:var(--muted);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -997,6 +1078,133 @@ function switchTab(name) {
   document.getElementById('tl-' + name).classList.add('active');
   if (name === 'security') initSecurity();
   if (name === 'orders') renderOrders();
+  if (name === 'shoporders') renderShopOrders();
+}
+
+// ── SHOP ORDERS ──
+let allShopOrders = [];
+let currentShopOrderFilter = 'all';
+let currentShopOrderId = null;
+
+const SHOP_ORDER_STATUS_COLORS = {
+  new: '#FF8C35', processing: '#2196F3', shipped: '#9C27B0',
+  completed: '#4CAF50', cancelled: '#e53935',
+};
+
+function loadShopOrders() {
+  allShopOrders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+}
+
+function renderShopOrders() {
+  loadShopOrders();
+  const filtered = currentShopOrderFilter === 'all'
+    ? allShopOrders
+    : allShopOrders.filter(o => o.status === currentShopOrderFilter);
+
+  document.getElementById('sostat-total').textContent = allShopOrders.length;
+  document.getElementById('sostat-new').textContent = allShopOrders.filter(o => o.status === 'new').length;
+  document.getElementById('sostat-inprogress').textContent = allShopOrders.filter(o => o.status === 'processing' || o.status === 'shipped').length;
+  document.getElementById('sostat-completed').textContent = allShopOrders.filter(o => o.status === 'completed').length;
+
+  const newCount = allShopOrders.filter(o => o.status === 'new').length;
+  const badge = document.getElementById('shopOrdersNewBadge');
+  if (newCount > 0) { badge.textContent = newCount; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+
+  const list = document.getElementById('shopOrderList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="orders-empty">No shop orders yet.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(o => {
+    const color = SHOP_ORDER_STATUS_COLORS[o.status] || '#888';
+    const dot = `<div class="order-status-dot" style="background:${color}"></div>`;
+    const sbadge = `<span class="order-status-badge osb-${o.status}">${o.status}</span>`;
+    const date = new Date(o.submittedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+    const itemSummary = (o.items || []).map(i => `${escHtml(i.name)} ×${i.qty}`).join(', ');
+    return `<div class="order-item${o.status==='new'?' is-new':''}" onclick="openShopOrderModal('${o.id}')">
+      ${dot}
+      <div class="oi-main">
+        <div class="oi-name">${escHtml(o.name)} <span style="font-size:11px;color:var(--muted);font-weight:400">${escHtml(o.email)}</span></div>
+        <div class="oi-meta">${itemSummary}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        ${sbadge}
+        <div class="oi-right">
+          <div class="oi-total">${o.total ? '₹' + Number(o.total).toLocaleString('en-IN') : '—'}</div>
+          <div class="oi-date">${date}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterShopOrders(status, btn) {
+  currentShopOrderFilter = status;
+  document.querySelectorAll('#tab-shoporders .ofb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShopOrders();
+}
+
+function openShopOrderModal(id) {
+  const o = allShopOrders.find(o => o.id === id);
+  if (!o) return;
+  currentShopOrderId = id;
+
+  document.getElementById('somod-id').textContent = o.id;
+  document.getElementById('somod-date').textContent = new Date(o.submittedAt).toLocaleString('en-IN');
+  document.getElementById('somod-status').value = o.status;
+  document.getElementById('somod-name').textContent = o.name || '—';
+  document.getElementById('somod-email').textContent = o.email || '—';
+  document.getElementById('somod-phone').textContent = o.phone || '—';
+  document.getElementById('somod-company').textContent = o.company || '—';
+
+  const s = o.shipping || {};
+  document.getElementById('somod-addr').textContent = [s.addr1, s.addr2].filter(Boolean).join(', ') || '—';
+  document.getElementById('somod-city').textContent = s.city || '—';
+  document.getElementById('somod-state').textContent = s.state || '—';
+  document.getElementById('somod-pincode').textContent = s.pincode || '—';
+
+  const itemsEl = document.getElementById('somod-items');
+  itemsEl.innerHTML = (o.items || []).map(i =>
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
+      <span>${escHtml(i.name)} <span style="color:var(--muted)">×${i.qty}</span></span>
+      <span style="font-weight:600;">${i.price ? '₹' + (Number(i.price)*i.qty).toLocaleString('en-IN') : '—'}</span>
+    </div>`
+  ).join('');
+  document.getElementById('somod-total').textContent = o.total ? '₹' + Number(o.total).toLocaleString('en-IN') : '—';
+
+  const notesSection = document.getElementById('somod-notes-section');
+  if (o.notes) { document.getElementById('somod-notes').textContent = o.notes; notesSection.style.display = ''; }
+  else { notesSection.style.display = 'none'; }
+
+  if (o.status === 'new') {
+    o.status = 'processing';
+    document.getElementById('somod-status').value = 'processing';
+    saveShopOrderStatus(id, 'processing');
+  }
+
+  document.getElementById('shopOrderModal').classList.add('open');
+}
+
+function closeShopOrderModal() {
+  document.getElementById('shopOrderModal').classList.remove('open');
+  currentShopOrderId = null;
+  renderShopOrders();
+}
+
+function updateShopOrderStatus() {
+  if (!currentShopOrderId) return;
+  saveShopOrderStatus(currentShopOrderId, document.getElementById('somod-status').value);
+}
+
+function saveShopOrderStatus(id, status) {
+  const orders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx !== -1) orders[idx].status = status;
+  localStorage.setItem('kyzer_product_orders', JSON.stringify(orders));
+  allShopOrders = orders;
 }
 
 // ── TOAST ──
