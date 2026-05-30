@@ -4598,39 +4598,43 @@
   }
 
   // ── COMING SOON ──
-  (function initComingSoon() {
+  let _csTimerStarted = false;
+  function checkComingSoon() {
     const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null');
     if (!cs || !cs.enabled) return;
-    // Admin bypass: ?preview in URL or admin session active
     if (location.search.includes('preview') || localStorage.getItem('kyzer_admin_authed') === '1') return;
     const overlay = document.getElementById('comingSoonOverlay');
-    if (!overlay) return;
+    if (!overlay || overlay.classList.contains('active')) return;
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
     if (cs.headline) document.getElementById('csHeadline').textContent = cs.headline;
     if (cs.tagline)  document.getElementById('csTagline').textContent  = cs.tagline;
 
-    const launch = new Date(cs.date || 'June 2, 2026 00:00:00 IST');
-    function tick() {
-      const diff = launch - Date.now();
-      if (diff <= 0) {
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-        return;
+    if (!_csTimerStarted) {
+      _csTimerStarted = true;
+      const launch = new Date(cs.date || 'June 2, 2026 00:00:00 IST');
+      function tick() {
+        const diff = launch - Date.now();
+        if (diff <= 0) {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+          return;
+        }
+        const d = Math.floor(diff / 864e5);
+        const h = Math.floor((diff % 864e5) / 36e5);
+        const m = Math.floor((diff % 36e5) / 6e4);
+        const s = Math.floor((diff % 6e4) / 1e3);
+        document.getElementById('csDays').textContent  = String(d).padStart(2,'0');
+        document.getElementById('csHours').textContent = String(h).padStart(2,'0');
+        document.getElementById('csMins').textContent  = String(m).padStart(2,'0');
+        document.getElementById('csSecs').textContent  = String(s).padStart(2,'0');
       }
-      const d = Math.floor(diff / 864e5);
-      const h = Math.floor((diff % 864e5) / 36e5);
-      const m = Math.floor((diff % 36e5) / 6e4);
-      const s = Math.floor((diff % 6e4) / 1e3);
-      document.getElementById('csDays').textContent  = String(d).padStart(2,'0');
-      document.getElementById('csHours').textContent = String(h).padStart(2,'0');
-      document.getElementById('csMins').textContent  = String(m).padStart(2,'0');
-      document.getElementById('csSecs').textContent  = String(s).padStart(2,'0');
+      tick();
+      setInterval(tick, 1000);
     }
-    tick();
-    setInterval(tick, 1000);
-  })();
+  }
+  checkComingSoon();
 
   function csSignup() {
     const email = document.getElementById('csEmail').value.trim();
@@ -4689,12 +4693,14 @@
         kyzer_links:       row.links,
         kyzer_quote:       row.quote,
         kyzer_hero_photos: row.hero_photos,
+        kyzer_coming_soon: row.coming_soon,
       };
       Object.entries(map).forEach(([k, v]) => {
         if (v !== null && v !== undefined) localStorage.setItem(k, JSON.stringify(v));
       });
       applyAdminStorage();
       upgradeStaticCards();
+      checkComingSoon();
     })
     .catch(() => {});
   })();
