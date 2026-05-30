@@ -662,6 +662,20 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
               <input class="form-input" type="number" id="q7Day" min="0" />
             </div>
           </div>
+          <div class="form-row-3" style="margin-bottom:14px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">SETUP FEE (₹)</label>
+              <input class="form-input" type="number" id="qSetupFee" min="0" placeholder="25" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">RUSH MULTIPLIER (×)</label>
+              <input class="form-input" type="number" id="qRushMult" min="1" step="0.1" placeholder="1.5" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">MIN ORDER (₹)</label>
+              <input class="form-input" type="number" id="qMinOrder" min="0" placeholder="50" />
+            </div>
+          </div>
           <button class="btn btn-primary" onclick="saveQuote()">Save pricing →</button>
         </div>
       </div>
@@ -2032,9 +2046,12 @@ function removeMat(i) {
   renderMats();
 }
 function fillQuoteFees() {
-  document.getElementById('qMachine').value = quote.machineRate  || 80;
-  document.getElementById('qSameDay').value = quote.sameDayFee  || 200;
-  document.getElementById('q7Day').value    = quote.sevenDayFee || 150;
+  document.getElementById('qMachine').value  = quote.machineRate || 80;
+  document.getElementById('qSameDay').value  = quote.sameDayFee  || 200;
+  document.getElementById('q7Day').value     = quote.sevenDayFee || 150;
+  document.getElementById('qSetupFee').value = quote.setupFee  != null ? quote.setupFee  : 25;
+  document.getElementById('qRushMult').value = quote.rushMult  != null ? quote.rushMult  : 1.5;
+  document.getElementById('qMinOrder').value = quote.minOrder  != null ? quote.minOrder  : 50;
 }
 function saveQuote() {
   quote.materials = quote.materials.map((_,i) => ({
@@ -2042,9 +2059,12 @@ function saveQuote() {
     desc: document.getElementById('md'+i).value.trim(),
     rate: parseFloat(document.getElementById('mr'+i).value) || 1,
   }));
-  quote.machineRate  = parseFloat(document.getElementById('qMachine').value) || 80;
-  quote.sameDayFee   = parseFloat(document.getElementById('qSameDay').value) || 200;
-  quote.sevenDayFee  = parseFloat(document.getElementById('q7Day').value)    || 150;
+  quote.machineRate  = parseFloat(document.getElementById('qMachine').value)  || 80;
+  quote.sameDayFee   = parseFloat(document.getElementById('qSameDay').value)  || 200;
+  quote.sevenDayFee  = parseFloat(document.getElementById('q7Day').value)     || 150;
+  quote.setupFee     = parseFloat(document.getElementById('qSetupFee').value) ?? 25;
+  quote.rushMult     = parseFloat(document.getElementById('qRushMult').value) || 1.5;
+  quote.minOrder     = parseFloat(document.getElementById('qMinOrder').value) ?? 50;
   localStorage.setItem('kyzer_quote', JSON.stringify(quote));
   toast('Pricing saved.');
   publishToSite(true);

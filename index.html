@@ -2212,6 +2212,37 @@
   .co-panel { display: none; }
   .co-panel.active { display: block; animation: fadeIn 0.3s; }
 
+  /* ── COLOR SWATCHES ── */
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .color-swatch {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    padding: 4px 6px; border-radius: 8px; border: 1.5px solid transparent;
+    transition: border-color 0.15s, background 0.15s; min-width: 44px;
+  }
+  .color-swatch:hover { background: var(--bg3); }
+  .color-swatch.selected { border-color: var(--orange); background: #fff3e8; color: var(--orange); }
+  .swatch-circle { width: 26px; height: 26px; border-radius: 50%; border: 0.5px solid var(--border); flex-shrink: 0; }
+  .swatch-custom { display: flex; align-items: center; justify-content: center; background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red); font-weight: 700; font-size: 13px; color: #fff; text-shadow: 0 0 3px rgba(0,0,0,0.6); }
+  .custom-color-row { display: none; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .custom-color-row.visible { display: flex; }
+  #customColorPicker { width: 36px; height: 36px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 50%; }
+  #customColorHex { width: 110px; background: var(--bg3); border: 0.5px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+  /* ── RUSH TOGGLE ── */
+  .rush-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg3); border: 0.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 10px;
+  }
+  .rush-toggle-label { font-size: 13px; font-weight: 500; }
+  .rush-toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rush-toggle-badge { font-size: 11px; font-family: 'JetBrains Mono', monospace; background: #fff3e8; color: #e65100; border-radius: 4px; padding: 2px 7px; font-weight: 600; }
+  .toggle-switch { width: 40px; height: 22px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 11px; cursor: pointer; position: relative; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; }
+  .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--muted); transition: transform 0.2s, background 0.2s; }
+  .toggle-switch.on { background: var(--orange); border-color: var(--orange); }
+  .toggle-switch.on::after { transform: translateX(18px); background: #fff; }
+
   /* ── BRANDED LOADER ── */
   #pageLoader {
     position: fixed; inset: 0; z-index: 9999;
@@ -3198,12 +3229,24 @@
             </div>
           </div>
 
-          <div style="font-size: 12px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">COLOUR / FINISH</div>
-          <select class="acc-select" id="colorSelect" onchange="calculateQuote()">
-            <option value="0">Standard white / black (no extra charge)</option>
-            <option value="50">Custom colour (+₹50)</option>
-            <option value="150">Painted / post-processed (+₹150)</option>
-          </select>
+          <div style="font-size: 12px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">COLOUR / FINISH</div>
+          <div class="color-swatches" id="colorSwatches">
+            <div class="color-swatch selected" data-color="#FFFFFF" data-name="White" data-premium="0" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#fff;"></div>White</div>
+            <div class="color-swatch" data-color="#1a1a1a" data-name="Black" data-premium="0" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#1a1a1a;"></div>Black</div>
+            <div class="color-swatch" data-color="#9E9E9E" data-name="Gray" data-premium="0" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#9E9E9E;"></div>Gray</div>
+            <div class="color-swatch" data-color="#F5DEB3" data-name="Natural" data-premium="0" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#F5DEB3;border-color:#ccc;"></div>Natural</div>
+            <div class="color-swatch" data-color="#EF5350" data-name="Red" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#EF5350;"></div>Red</div>
+            <div class="color-swatch" data-color="#42A5F5" data-name="Blue" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#42A5F5;"></div>Blue</div>
+            <div class="color-swatch" data-color="#66BB6A" data-name="Green" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#66BB6A;"></div>Green</div>
+            <div class="color-swatch" data-color="#FF8C35" data-name="Orange" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#FF8C35;"></div>Orange</div>
+            <div class="color-swatch" data-color="#AB47BC" data-name="Purple" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle" style="background:#AB47BC;"></div>Purple</div>
+            <div class="color-swatch" data-color="custom" data-name="Custom" data-premium="20" onclick="selectColorSwatch(this)"><div class="swatch-circle swatch-custom">+</div>Custom</div>
+          </div>
+          <div class="custom-color-row" id="customColorRow">
+            <input type="color" id="customColorPicker" value="#FF0000" oninput="syncCustomColor(this.value)">
+            <input type="text" id="customColorHex" placeholder="#FF0000" maxlength="7" oninput="syncCustomHex(this.value)">
+            <span style="font-size:11px;color:var(--muted);">+₹20</span>
+          </div>
 
           <div style="font-size: 12px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">SUPPORT STRUCTURES</div>
           <select class="acc-select" id="supportSelect" onchange="calculateQuote()">
@@ -3215,17 +3258,29 @@
           <div style="font-size: 12px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">QUANTITY</div>
           <div class="acc-qty-wrap">
             <button class="acc-qty-btn" onclick="changeQty(-1)">−</button>
-            <div class="acc-qty-num" id="qtyDisplay">1</div>
+            <input type="number" id="qtyInput" value="1" min="1" max="100"
+              style="width:52px;text-align:center;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);border-radius:8px;padding:6px 4px;font-size:15px;font-family:'DM Sans',sans-serif;"
+              oninput="setQtyDirect(this.value)">
             <button class="acc-qty-btn" onclick="changeQty(1)">+</button>
             <span style="font-size: 12px;color:var(--muted);">bulk discount at 5+</span>
           </div>
 
           <div style="font-size: 12px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">DELIVERY</div>
+          <div class="rush-toggle-row">
+            <div>
+              <div class="rush-toggle-label">⚡ Rush Priority</div>
+              <div class="rush-toggle-sub">Jump the queue · +50% to total</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="rush-toggle-badge" id="rushBadge" style="display:none;">+50%</span>
+              <div class="toggle-switch" id="rushToggle" onclick="toggleRush()"></div>
+            </div>
+          </div>
           <div class="acc-delivery-grid">
-            <button class="acc-del-btn selected" id="delSameDay" onclick="selectDelivery('sameday',this)">
+            <button class="acc-del-btn" id="delSameDay" onclick="selectDelivery('sameday',this)">
               Same Day<span>+₹200</span>
             </button>
-            <button class="acc-del-btn" id="del7d" onclick="selectDelivery('7day',this)">
+            <button class="acc-del-btn selected" id="del7d" onclick="selectDelivery('7day',this)">
               7 Days<span>+₹150</span>
             </button>
           </div>
@@ -3248,12 +3303,14 @@
 
           <div class="qv2-breakdown">
             <div class="qv2-pb-row"><span>Material</span><span id="bMat">—</span></div>
-            <div class="qv2-pb-row"><span>Print time</span><span id="bTime">—</span></div>
+            <div class="qv2-pb-row"><span>Machine time</span><span id="bTime">—</span></div>
             <div class="qv2-pb-row"><span>Quality</span><span id="bQual">—</span></div>
             <div class="qv2-pb-row"><span>Infill</span><span id="bInfill">—</span></div>
-            <div class="qv2-pb-row"><span>Finish</span><span id="bColor">—</span></div>
-            <div class="qv2-pb-row"><span>Support</span><span id="bSupport">—</span></div>
+            <div class="qv2-pb-row"><span>Colour</span><span id="bColor">—</span></div>
+            <div class="qv2-pb-row"><span>Supports</span><span id="bSupport">—</span></div>
+            <div class="qv2-pb-row"><span>Setup fee</span><span id="bSetup">—</span></div>
             <div class="qv2-pb-row"><span>Quantity</span><span id="bQty">—</span></div>
+            <div class="qv2-pb-row"><span>Rush priority</span><span id="bRush" style="color:#e65100;">—</span></div>
             <div class="qv2-pb-row"><span>Delivery</span><span id="bDelivery">—</span></div>
             <div class="qv2-pb-row total"><span>TOTAL</span><span id="bTotal">—</span></div>
           </div>
@@ -4013,11 +4070,12 @@
   let quoteState = {
     matRate: 4, matName: 'PLA',
     qualMult: 1.0, qualName: 'Standard',
+    rush: false, colorName: 'White', colorHex: '#FFFFFF',
     infill: 20,
     colorExtra: 0,
     supportMult: 0,
     qty: 1,
-    delivery: 'sameday',
+    delivery: '7day',
     hasFile: false, fileName: '',
     fileData: null, fileSize: 0,
     L: 0, W: 0, H: 0
@@ -4079,7 +4137,53 @@
   // Quantity
   function changeQty(delta) {
     quoteState.qty = Math.max(1, Math.min(100, quoteState.qty + delta));
-    document.getElementById('qtyDisplay').textContent = quoteState.qty;
+    const inp = document.getElementById('qtyInput');
+    if (inp) inp.value = quoteState.qty;
+    calculateQuote();
+  }
+
+  function setQtyDirect(val) {
+    quoteState.qty = Math.max(1, Math.min(100, parseInt(val) || 1));
+    calculateQuote();
+  }
+
+  // Color swatches
+  function selectColorSwatch(el) {
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    quoteState.colorName = el.dataset.name;
+    quoteState.colorHex  = el.dataset.color;
+    quoteState.colorExtra = parseInt(el.dataset.premium) || 0;
+    const customRow = document.getElementById('customColorRow');
+    if (customRow) customRow.style.display = el.dataset.name === 'Custom' ? 'flex' : 'none';
+    calculateQuote();
+  }
+
+  function syncCustomColor(hex) {
+    quoteState.colorHex = hex;
+    const hexInput = document.getElementById('customColorHex');
+    if (hexInput) hexInput.value = hex.toUpperCase();
+    quoteState.colorName = 'Custom (' + hex.toUpperCase() + ')';
+    calculateQuote();
+  }
+
+  function syncCustomHex(val) {
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+      quoteState.colorHex = val;
+      quoteState.colorName = 'Custom (' + val.toUpperCase() + ')';
+      const picker = document.getElementById('customColorPicker');
+      if (picker) picker.value = val;
+      calculateQuote();
+    }
+  }
+
+  // Rush toggle
+  function toggleRush() {
+    quoteState.rush = !quoteState.rush;
+    const tog = document.getElementById('rushToggle');
+    const badge = document.getElementById('rushBadge');
+    if (tog) tog.classList.toggle('active', quoteState.rush);
+    if (badge) badge.style.display = quoteState.rush ? 'inline-flex' : 'none';
     calculateQuote();
   }
 
@@ -4090,7 +4194,6 @@
     const H = parseFloat(document.getElementById('dimH').value) || quoteState.H;
     quoteState.L = L; quoteState.W = W; quoteState.H = H;
     quoteState.infill = parseInt(document.getElementById('infillSlider').value);
-    quoteState.colorExtra = parseInt(document.getElementById('colorSelect').value);
     const suppVal = document.getElementById('supportSelect').value;
     quoteState.supportMult = suppVal === '1' ? 0.10 : suppVal === '2' ? 0.20 : 0;
 
@@ -4105,19 +4208,19 @@
     }
 
     // Volume in cm³, density ~1.2 g/cm³ average, weight estimation
-    const volumeMm3 = L * W * H * 0.6; // 0.6 fill factor for typical shape
+    const volumeMm3 = L * W * H * 0.6;
     const volumeCm3 = volumeMm3 / 1000;
     const infillFactor = quoteState.infill / 100;
     const estimatedGrams = Math.max(5, volumeCm3 * 1.2 * infillFactor);
 
-    const matCost = estimatedGrams * quoteState.matRate;
-    const printHours = Math.max(0.5, estimatedGrams / 15); // ~15g/hr rough estimate
+    const matCost     = estimatedGrams * quoteState.matRate;
+    const printHours  = Math.max(0.5, estimatedGrams / 15);
     const printTimeCost = printHours * (window._MACHINE_RATE || 80);
     const qualityCost = (matCost + printTimeCost) * (quoteState.qualMult - 1);
-    const infillDisplay = quoteState.infill + '%';
     let subtotal = matCost + printTimeCost + qualityCost + quoteState.colorExtra;
-    const supportExtra = subtotal * quoteState.supportMult;
-    subtotal += supportExtra;
+    subtotal += subtotal * quoteState.supportMult;
+    const setupFee = window._SETUP_FEE || 25;
+    subtotal += setupFee;
 
     // Bulk discount
     let qtyMultiplier = 1;
@@ -4125,31 +4228,40 @@
     else if (quoteState.qty >= 5) qtyMultiplier = 0.85;
     const qtyTotal = subtotal * quoteState.qty * qtyMultiplier;
 
+    // Rush multiplier
+    const rushMult = quoteState.rush ? (window._RUSH_MULT || 1.5) : 1;
+    const rushExtra = qtyTotal * (rushMult - 1);
+    const afterRush = qtyTotal + rushExtra;
+
     // Delivery
     const deliveryCost = quoteState.delivery === 'sameday'
       ? (window._DELIVERY?.sameday ?? 200)
       : (window._DELIVERY?.sevenDay ?? 150);
-    const finalTotal = Math.round(qtyTotal + deliveryCost);
+    const rawTotal = afterRush + deliveryCost;
+    const minOrder = window._MIN_ORDER || 50;
+    const finalTotal = Math.round(Math.max(minOrder, rawTotal));
 
     // Update UI
     const priceEl = document.getElementById('priceAmount');
     priceEl.textContent = '₹' + finalTotal.toLocaleString('en-IN');
     document.getElementById('priceSub').textContent =
-      `${estimatedGrams.toFixed(0)}g · ${quoteState.matName} · ${quoteState.qualName} · Qty ${quoteState.qty}`;
+      `${estimatedGrams.toFixed(0)}g · ${quoteState.matName} · ${quoteState.colorName} · ${quoteState.qualName} · Qty ${quoteState.qty}${quoteState.rush ? ' · Rush' : ''}`;
 
-    document.getElementById('bMat').textContent = `₹${matCost.toFixed(0)} (${estimatedGrams.toFixed(0)}g × ₹${quoteState.matRate})`;
-    document.getElementById('bTime').textContent = `₹${printTimeCost.toFixed(0)} (${printHours.toFixed(1)} hrs)`;
-    document.getElementById('bQual').textContent = quoteState.qualMult === 1 ? 'Standard (×1.0)' : `${quoteState.qualName} (×${quoteState.qualMult})`;
-    document.getElementById('bInfill').textContent = infillDisplay;
-    document.getElementById('bColor').textContent = quoteState.colorExtra > 0 ? `+₹${quoteState.colorExtra}` : 'Included';
+    document.getElementById('bMat').textContent     = `₹${matCost.toFixed(0)} (${estimatedGrams.toFixed(0)}g × ₹${quoteState.matRate})`;
+    document.getElementById('bTime').textContent    = `₹${printTimeCost.toFixed(0)} (${printHours.toFixed(1)} hrs)`;
+    document.getElementById('bQual').textContent    = quoteState.qualMult === 1 ? 'Standard (×1.0)' : `${quoteState.qualName} (×${quoteState.qualMult})`;
+    document.getElementById('bInfill').textContent  = quoteState.infill + '%';
+    document.getElementById('bColor').textContent   = quoteState.colorExtra > 0 ? `${quoteState.colorName} +₹${quoteState.colorExtra}` : `${quoteState.colorName} (included)`;
     document.getElementById('bSupport').textContent = quoteState.supportMult > 0 ? `+${(quoteState.supportMult*100).toFixed(0)}%` : 'None';
-    document.getElementById('bQty').textContent = `×${quoteState.qty}` + (qtyMultiplier < 1 ? ` (${((1-qtyMultiplier)*100).toFixed(0)}% bulk discount)` : '');
+    document.getElementById('bSetup').textContent   = `₹${setupFee}`;
+    document.getElementById('bQty').textContent     = `×${quoteState.qty}` + (qtyMultiplier < 1 ? ` (${((1-qtyMultiplier)*100).toFixed(0)}% bulk discount)` : '');
+    document.getElementById('bRush').textContent    = quoteState.rush ? `+₹${rushExtra.toFixed(0)} (×${rushMult})` : '—';
     document.getElementById('bDelivery').textContent = quoteState.delivery === 'sameday' ? `₹${deliveryCost} (Same Day)` : `₹${deliveryCost} (7 Days)`;
-    document.getElementById('bTotal').textContent = '₹' + finalTotal.toLocaleString('en-IN');
+    document.getElementById('bTotal').textContent   = '₹' + finalTotal.toLocaleString('en-IN');
 
     // Turnaround
-    const days = quoteState.delivery === 'sameday' ? 'same day' : '7 working days';
-    document.getElementById('turnaroundText').textContent = `Estimated delivery: ${days} · ${estimatedGrams.toFixed(0)}g part`;
+    const rushDays = quoteState.rush ? '1–2' : (quoteState.delivery === 'sameday' ? 'same' : '5–7');
+    document.getElementById('turnaroundText').textContent = `Estimated delivery: ${rushDays} working days · ${estimatedGrams.toFixed(0)}g`;
 
     // Animate price
     priceEl.style.transform = 'scale(1.08)';
@@ -4351,7 +4463,6 @@
 
   // Populate the checkout order summary panel
   function updateCheckoutSummary() {
-    const colourEl  = document.getElementById('colorSelect');
     const supportEl = document.getElementById('supportSelect');
     const dims = quoteState.L
       ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
@@ -4361,7 +4472,7 @@
     document.getElementById('cs-material').textContent  = quoteState.matName || '—';
     document.getElementById('cs-quality').textContent   = quoteState.qualName || '—';
     document.getElementById('cs-infill').textContent    = txt('infillVal') + '%';
-    document.getElementById('cs-colour').textContent    = colourEl ? colourEl.options[colourEl.selectedIndex].text : '—';
+    document.getElementById('cs-colour').textContent    = quoteState.colorName || '—';
     document.getElementById('cs-support').textContent   = supportEl ? supportEl.options[supportEl.selectedIndex].text : '—';
     document.getElementById('cs-qty').textContent       = quoteState.qty;
     document.getElementById('cs-delivery').textContent  = del;
@@ -4393,7 +4504,6 @@
     btn.textContent = 'Placing order...';
     btn.disabled = true;
 
-    const colourEl  = document.getElementById('colorSelect');
     const supportEl = document.getElementById('supportSelect');
     const dims = quoteState.L
       ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
@@ -4422,7 +4532,7 @@
       material:     quoteState.matName,
       quality:      quoteState.qualName,
       infill:       document.getElementById('infillVal').textContent,
-      colour:       colourEl.options[colourEl.selectedIndex].text,
+      colour:       quoteState.colorName || 'White',
       support:      supportEl.options[supportEl.selectedIndex].text,
       quantity:     quoteState.qty,
       delivery:     quoteState.delivery,
@@ -4449,7 +4559,7 @@
           material:        quoteState.matName,
           quality:         quoteState.qualName,
           infill:          document.getElementById('infillVal').textContent + '%',
-          colour:          colourEl.options[colourEl.selectedIndex].text,
+          colour:          quoteState.colorName || 'White',
           support:         supportEl.options[supportEl.selectedIndex].text,
           quantity:        quoteState.qty,
           delivery:        quoteState.delivery === 'sameday' ? 'Same day' : '7 working days',
@@ -4642,6 +4752,16 @@
     if (q) {
       window._MACHINE_RATE = q.machineRate || 80;
       window._DELIVERY = { sameday: q.sameDayFee || 200, sevenDay: q.sevenDayFee || 150 };
+      window._SETUP_FEE  = q.setupFee   != null ? q.setupFee   : 25;
+      window._RUSH_MULT  = q.rushMult   != null ? q.rushMult   : 1.5;
+      window._MIN_ORDER  = q.minOrder   != null ? q.minOrder   : 50;
+      // Update color swatch premiums if admin has configured them
+      if (q.colorPremiums) {
+        document.querySelectorAll('.color-swatch').forEach(sw => {
+          const name = sw.dataset.name;
+          if (q.colorPremiums[name] != null) sw.dataset.premium = q.colorPremiums[name];
+        });
+      }
       // Rebuild material buttons
       if (q.materials && q.materials.length) {
         const grid = document.querySelector('.material-grid');
