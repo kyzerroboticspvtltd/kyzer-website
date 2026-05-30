@@ -192,6 +192,40 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   .modal-close:hover { color: var(--text); }
   .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 0.5px solid var(--border); }
 
+  /* PRODUCT PREVIEW */
+  .prev-sheet {
+    background: var(--bg2); border: 0.5px solid var(--border); border-radius: 20px;
+    width: min(860px, 95vw); max-height: 90vh; overflow-y: auto; position: relative;
+    padding: 2rem;
+  }
+  .prev-close-btn { position: absolute; top: 1rem; right: 1rem; }
+  .prev-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 2.5rem; align-items: start; margin-top: 0.5rem; }
+  .prev-img-box {
+    background: var(--bg3); border: 0.5px solid var(--border); border-radius: 16px;
+    height: 280px; display: flex; align-items: center; justify-content: center;
+    font-size: 80px; overflow: hidden;
+  }
+  .prev-img-box img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .prev-thumbs { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .prev-thumbs:empty { display: none; }
+  .prev-thumb {
+    width: 54px; height: 54px; flex-shrink: 0; border-radius: 8px; object-fit: cover;
+    cursor: pointer; border: 2px solid transparent; opacity: 0.65;
+  }
+  .prev-thumb.active { border-color: var(--orange); opacity: 1; }
+  .prev-info h2 { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1.1; margin: 8px 0 6px; color: var(--text); }
+  .prev-price { font-size: 24px; font-weight: 600; color: var(--orange); margin-bottom: 12px; }
+  .prev-short { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+  .prev-long { font-size: 14px; color: var(--text); line-height: 1.8; margin-bottom: 14px; white-space: pre-wrap; }
+  .prev-specs { list-style: none; margin-bottom: 1.5rem; }
+  .prev-specs li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid var(--border); }
+  .prev-specs li::before { content: '›'; color: var(--orange); font-weight: 700; flex-shrink: 0; }
+  .prev-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 640px) {
+    .prev-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+    .prev-img-box { height: 200px; }
+  }
+
   /* MATERIALS TABLE */
   .mat-table { width: 100%; border-collapse: collapse; }
   .mat-table th {
@@ -1030,6 +1064,30 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
   </div>
 </div>
 
+<!-- PRODUCT PREVIEW MODAL -->
+<div class="modal-overlay" id="prevModal" onclick="if(event.target===this)closePrevModal()">
+  <div class="prev-sheet">
+    <button class="modal-close prev-close-btn" onclick="closePrevModal()">✕</button>
+    <div class="prev-layout">
+      <div class="prev-gallery">
+        <div class="prev-img-box" id="prevImgBox"></div>
+        <div class="prev-thumbs" id="prevThumbs"></div>
+      </div>
+      <div class="prev-info">
+        <span class="prod-badge" id="prevBadge"></span>
+        <h2 id="prevName"></h2>
+        <div class="prev-price" id="prevPrice"></div>
+        <p class="prev-short" id="prevShort"></p>
+        <div id="prevLong" class="prev-long"></div>
+        <ul class="prev-specs" id="prevSpecs"></ul>
+        <div class="prev-actions">
+          <button class="btn btn-primary" onclick="openEdit(window._prevId);closePrevModal()">✏️ Edit this product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1472,17 +1530,17 @@ function renderProducts() {
     html += `<div style="margin:18px 0 6px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border-bottom:0.5px solid var(--border);padding-bottom:5px;">${label} <span style="font-weight:400;opacity:.6;">(${grouped[key].length})</span></div>`;
     grouped[key].forEach(p => {
       html += `
-        <div class="product-item">
+        <div class="product-item" style="cursor:pointer;" onclick="previewProduct('${p.id}')">
           <div class="pi-emoji">${p.emoji}</div>
           <div class="pi-info">
             <div class="pi-name">${p.name}</div>
             <div class="pi-meta">${p.price} · ${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
           </div>
-          <div class="toggle-wrap">
+          <div class="toggle-wrap" onclick="event.stopPropagation()">
             <label>${p.visible?'Live':'Hidden'}</label>
             <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
           </div>
-          <div class="pi-actions">
+          <div class="pi-actions" onclick="event.stopPropagation()">
             <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit">✏️</button>
             <button class="btn btn-danger btn-sm btn-icon" onclick="delProduct('${p.id}')" title="Delete">🗑</button>
           </div>
@@ -1507,6 +1565,65 @@ function resetProducts() {
   saveP(); renderProducts(); toast('Reset to defaults.');
 }
 function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); publishToSite(true); }
+
+// ── PRODUCT PREVIEW ──
+let _prevPhotos = [];
+window._prevId = null;
+
+function previewProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  window._prevId = id;
+  _prevPhotos = p.photos ? [...p.photos] : (p.photo ? [p.photo] : []);
+
+  const box = document.getElementById('prevImgBox');
+  const thumbs = document.getElementById('prevThumbs');
+  if (_prevPhotos.length > 0) {
+    box.innerHTML = `<img src="${_prevPhotos[0]}" alt="${p.name}">`;
+    thumbs.innerHTML = _prevPhotos.length > 1
+      ? _prevPhotos.map((src, i) => `<img src="${src}" class="prev-thumb${i===0?' active':''}" onclick="prevSwitchPhoto(${i})" alt="">`).join('')
+      : '';
+  } else {
+    box.textContent = p.emoji || '📦';
+    thumbs.innerHTML = '';
+  }
+
+  const badge = document.getElementById('prevBadge');
+  badge.textContent = p.badge || '';
+  badge.className = 'prod-badge' + (p.badgeType ? ' ' + p.badgeType : '');
+
+  document.getElementById('prevName').textContent = p.name;
+  document.getElementById('prevShort').textContent = p.description || '';
+  document.getElementById('prevLong').textContent = p.details || '';
+  document.getElementById('prevSpecs').innerHTML = (p.specs || []).map(s => `<li>${s}</li>`).join('');
+
+  const priceEl = document.getElementById('prevPrice');
+  if (p.price) {
+    const np = parseNumericPrice(p.price);
+    priceEl.textContent = np > 0 ? '₹' + np.toLocaleString('en-IN') : p.price;
+    priceEl.style.display = '';
+  } else {
+    priceEl.style.display = 'none';
+  }
+
+  document.getElementById('prevModal').classList.add('open');
+}
+
+function prevSwitchPhoto(i) {
+  document.getElementById('prevImgBox').innerHTML = `<img src="${_prevPhotos[i]}" alt="">`;
+  document.querySelectorAll('.prev-thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
+}
+
+function closePrevModal() {
+  document.getElementById('prevModal').classList.remove('open');
+}
+
+function parseNumericPrice(v) {
+  if (!v) return 0;
+  if (String(v).toLowerCase().includes('from')) return 0;
+  const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
 
 // ── PRODUCT MODAL ──
 let prodPhotosData = [];
