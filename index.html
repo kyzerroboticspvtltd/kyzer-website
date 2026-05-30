@@ -4388,8 +4388,10 @@
       });
     }
 
-    // Contact
-    const ci = ld('kyzer_contact', null);
+    // Contact — always enforce correct email
+    const _ciRaw = ld('kyzer_contact', null);
+    if (_ciRaw) { _ciRaw.email = 'info@kyzerrobotics.com'; }
+    const ci = _ciRaw;
     if (ci) {
       // Section label & title
       const secLbl = document.querySelector('#contact .sec-label');
