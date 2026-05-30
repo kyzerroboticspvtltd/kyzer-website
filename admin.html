@@ -1016,9 +1016,20 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
       <div class="omod-section">
         <div class="omod-section-title">Order Items</div>
         <div id="somod-items"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
-          <span style="font-size:13px;font-weight:500;">Total</span>
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#FF8C35;" id="somod-total"></span>
+        <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:3px 0;" id="somod-subtotal-row">
+            <span>Subtotal</span><span id="somod-subtotal"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:3px 0;" id="somod-gst-row">
+            <span>GST (18%)</span><span id="somod-gst"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:3px 0;" id="somod-delivery-row">
+            <span>Delivery</span><span id="somod-delivery"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border);">
+            <span style="font-size:13px;font-weight:600;">Total</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#FF8C35;" id="somod-total"></span>
+          </div>
         </div>
       </div>
       <div class="omod-section" id="somod-notes-section" style="display:none;">
@@ -1465,7 +1476,17 @@ function openShopOrderModal(id) {
       <span style="font-weight:600;">${i.price ? '₹' + (Number(i.price)*i.qty).toLocaleString('en-IN') : '—'}</span>
     </div>`
   ).join('');
-  document.getElementById('somod-total').textContent = o.total ? '₹' + Number(o.total).toLocaleString('en-IN') : '—';
+  const fmt = n => '₹' + Number(n).toLocaleString('en-IN');
+  document.getElementById('somod-total').textContent = o.total ? fmt(o.total) : '—';
+  const hasBreakdown = o.subtotal != null;
+  document.getElementById('somod-subtotal-row').style.display = hasBreakdown ? '' : 'none';
+  document.getElementById('somod-gst-row').style.display      = hasBreakdown ? '' : 'none';
+  document.getElementById('somod-delivery-row').style.display = hasBreakdown ? '' : 'none';
+  if (hasBreakdown) {
+    document.getElementById('somod-subtotal').textContent = fmt(o.subtotal);
+    document.getElementById('somod-gst').textContent      = fmt(o.gst || 0);
+    document.getElementById('somod-delivery').textContent = o.delivery === 0 ? 'FREE' : fmt(o.delivery || 0);
+  }
 
   const notesSection = document.getElementById('somod-notes-section');
   if (o.notes) { document.getElementById('somod-notes').textContent = o.notes; notesSection.style.display = ''; }
