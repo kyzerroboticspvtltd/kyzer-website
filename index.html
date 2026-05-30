@@ -195,8 +195,9 @@
     background: rgba(248,248,246,0.92);
     backdrop-filter: blur(16px);
     border-bottom: 0.5px solid var(--border);
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.35s cubic-bezier(.4,0,.2,1);
   }
+  nav.nav-hidden { transform: translateY(-100%); }
   .nav-logo {
     display: flex; align-items: center; gap: 10px;
     text-decoration: none;
@@ -2138,6 +2139,91 @@
     margin-bottom: 14px; color: #bbb; font-size: 0.78rem;
   }
   .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #e8e8e4; }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .card-reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .card-reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── CART BADGE BOUNCE ── */
+  @keyframes badgeBounce { 0%,100%{transform:scale(1)} 40%{transform:scale(1.55)} 70%{transform:scale(0.9)} }
+  .nav-util-badge.bounce { animation: badgeBounce 0.4s ease; }
+
+  /* ── FREE SHIPPING BAR ── */
+  .free-ship-bar {
+    background: linear-gradient(90deg, #fff3e8, #fff9f4);
+    border: 0.5px solid rgba(255,140,53,0.35);
+    border-radius: 8px; padding: 9px 12px;
+    font-size: 12px; color: #CC5500; line-height: 1.4;
+    margin-bottom: 4px; text-align: center;
+  }
+  .free-ship-bar.achieved { background: #e8f5e9; border-color: rgba(46,125,50,0.3); color: #2e7d32; }
+  .free-ship-progress { height: 4px; background: var(--bg3); border-radius: 4px; margin-top: 7px; overflow: hidden; }
+  .free-ship-progress-fill { height: 100%; background: var(--orange); border-radius: 4px; transition: width 0.4s ease; }
+
+  /* ── TRUST BADGES ── */
+  .trust-badges {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 1.25rem; padding-top: 1.25rem;
+    border-top: 0.5px solid var(--border);
+  }
+  .trust-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 7px 11px; font-size: 12px; color: var(--muted);
+    white-space: nowrap;
+  }
+  .trust-badge span { font-size: 14px; }
+
+  /* ── STOCK / DISCOUNT BADGE ── */
+  .prod-badge.in-stock { background: #e8f5e9; color: #2e7d32; border: 0.5px solid rgba(46,125,50,0.25); }
+  .prod-badge.low-stock { background: #fff3e8; color: #e65100; border: 0.5px solid rgba(230,81,0,0.25); }
+  .prod-discount-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; margin-bottom: 6px;
+  }
+  .prod-mrp { text-decoration: line-through; color: var(--muted); }
+  .prod-off { background: #e8f5e9; color: #2e7d32; font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+
+  /* ── CHECKOUT STEP PROGRESS ── */
+  .co-steps {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 2rem; background: var(--bg2);
+    border: 0.5px solid var(--border); border-radius: 12px;
+    overflow: hidden; max-width: 520px;
+  }
+  .co-step {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 6px; font-size: 13px; color: var(--muted); cursor: pointer;
+    border-right: 0.5px solid var(--border); transition: background 0.2s, color 0.2s;
+    position: relative;
+  }
+  .co-step:last-child { border-right: none; }
+  .co-step.active { background: var(--orange); color: #111; font-weight: 600; }
+  .co-step.done { background: #e8f5e9; color: #2e7d32; }
+  .co-step-num {
+    width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .co-step.done .co-step-num::before { content: '✓'; }
+  .co-step.done .co-step-num-txt { display: none; }
+  .co-step-label { display: none; }
+  @media (min-width: 520px) { .co-step-label { display: block; } }
+  .co-panel { display: none; }
+  .co-panel.active { display: block; animation: fadeIn 0.3s; }
+
+  /* ── BRANDED LOADER ── */
+  #pageLoader {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg); opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  #pageLoader.show { opacity: 1; pointer-events: auto; }
+  @keyframes droneLift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  @keyframes propSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .loader-drone { animation: droneLift 1.4s ease-in-out infinite; }
+  .loader-prop { transform-origin: center; animation: propSpin 0.3s linear infinite; }
 </style>
 <script src="supabase-config.js?v=20260527"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2918,6 +3004,12 @@
           WhatsApp
         </button>
         <button class="btn-outline" onclick="showPage('main')">← All products</button>
+      </div>
+      <div class="trust-badges">
+        <div class="trust-badge"><span>🚚</span> Free delivery above ₹999</div>
+        <div class="trust-badge"><span>🔒</span> Secure checkout</div>
+        <div class="trust-badge"><span>↩️</span> Easy returns</div>
+        <div class="trust-badge"><span>💳</span> COD available</div>
       </div>
     </div>
   </div>
@@ -4581,7 +4673,17 @@
         if (!footer.querySelector('.prod-price')) {
           const ps = document.createElement('span');
           ps.className = 'prod-price';
-          ps.textContent = np > 0 ? '₹' + np.toLocaleString('en-IN') : d.price;
+          if (np > 0 && d.originalPrice) {
+            const op = parseNumericPrice(d.originalPrice);
+            if (op > np) {
+              const pct = Math.round(((op - np) / op) * 100);
+              ps.innerHTML = `<span class="prod-discount-badge"><span class="prod-mrp">₹${op.toLocaleString('en-IN')}</span><span class="prod-off">${pct}% OFF</span></span>₹${np.toLocaleString('en-IN')}`;
+            } else {
+              ps.textContent = '₹' + np.toLocaleString('en-IN');
+            }
+          } else {
+            ps.textContent = np > 0 ? '₹' + np.toLocaleString('en-IN') : d.price;
+          }
           footer.insertBefore(ps, footer.firstChild);
         }
         // Upgrade button style and label
@@ -4704,6 +4806,147 @@
     })
     .catch(() => {});
   })();
+
+  // ── SCROLL-AWARE HEADER ──
+  (function initScrollNav() {
+    let lastY = 0, ticking = false;
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y > lastY && y > 80) nav.classList.add('nav-hidden');
+        else nav.classList.remove('nav-hidden');
+        lastY = y;
+        ticking = false;
+      });
+    }, { passive: true });
+  })();
+
+  // ── SCROLL CARD ANIMATIONS ──
+  (function initCardReveal() {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.prod-card').forEach(c => {
+      c.classList.add('card-reveal');
+      io.observe(c);
+    });
+  })();
+
+  // ── CART BADGE BOUNCE ──
+  const _origUpdateCartBadge = updateCartBadge;
+  window.updateCartBadge = function() {
+    _origUpdateCartBadge();
+    const badge = document.getElementById('navCartBadge');
+    if (badge && badge.style.display !== 'none') {
+      badge.classList.remove('bounce');
+      void badge.offsetWidth;
+      badge.classList.add('bounce');
+      setTimeout(() => badge.classList.remove('bounce'), 450);
+    }
+  };
+
+  // ── FREE SHIPPING BAR ──
+  const FREE_SHIP_THRESHOLD = 999;
+  const _origRenderCartDrawer = renderCartDrawer;
+  window.renderCartDrawer = function() {
+    _origRenderCartDrawer();
+    const bar = document.getElementById('freeShipBar');
+    if (!bar) return;
+    const tot = cartTotal();
+    if (tot <= 0) { bar.innerHTML = ''; return; }
+    if (tot >= FREE_SHIP_THRESHOLD) {
+      bar.innerHTML = `<div class="free-ship-bar achieved">🎉 You qualify for <strong>free delivery</strong>!</div>`;
+    } else {
+      const rem = FREE_SHIP_THRESHOLD - tot;
+      const pct = Math.round((tot / FREE_SHIP_THRESHOLD) * 100);
+      bar.innerHTML = `<div class="free-ship-bar">Add <strong>₹${rem.toLocaleString('en-IN')}</strong> more for free delivery 🚚<div class="free-ship-progress"><div class="free-ship-progress-fill" style="width:${pct}%"></div></div></div>`;
+    }
+  };
+
+  // ── CHECKOUT STEPS ──
+  let _coCurrentStep = 1;
+  function coGoStep(n) {
+    if (n < 1 || n > 3) return;
+    if (n > _coCurrentStep + 1) return;
+    _coCurrentStep = n;
+    [1,2,3].forEach(i => {
+      const step = document.getElementById('coStep' + i);
+      const panel = document.getElementById('coPanel' + i);
+      if (step) { step.classList.remove('active','done'); if (i < n) step.classList.add('done'); else if (i === n) step.classList.add('active'); }
+      if (panel) { panel.classList.remove('active'); if (i === n) panel.classList.add('active'); }
+    });
+    if (n === 2) loadCheckoutReview();
+    if (n === 3) loadCheckoutPayment();
+    document.getElementById('checkoutPage')?.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function coAdvance() {
+    if (_coCurrentStep === 1) {
+      const name = document.getElementById('coName').value.trim();
+      const email = document.getElementById('coEmail').value.trim();
+      const phone = document.getElementById('coPhone').value.trim();
+      const addr1 = document.getElementById('coAddr1').value.trim();
+      const city  = document.getElementById('coCity').value.trim();
+      const pin   = document.getElementById('coPincode').value.trim();
+      if (!name || !email || !phone || !addr1 || !city || !pin) {
+        alert('Please fill in all required fields (*)'); return;
+      }
+      coGoStep(2);
+    } else if (_coCurrentStep === 2) {
+      coGoStep(3);
+    }
+  }
+  function loadCheckoutReview() {
+    const items = cart.map(i => {
+      const np = parseNumericPrice(i.price);
+      return `<div class="co-cart-item-row">
+        <div class="co-cart-thumb">${i.photo ? `<img src="${i.photo}">` : i.emoji || '📦'}</div>
+        <div class="co-cart-item-name">${i.name} × ${i.qty}</div>
+        <div style="font-weight:600;color:var(--orange);">${np ? '₹' + (np*i.qty).toLocaleString('en-IN') : i.price}</div>
+      </div>`;
+    }).join('');
+    const rev = document.getElementById('coReviewItems');
+    if (rev) rev.innerHTML = items || '<p style="color:var(--muted);font-size:14px;">Cart is empty.</p>';
+    const addrEl = document.getElementById('coReviewAddress');
+    if (addrEl) {
+      const parts = [
+        document.getElementById('coName')?.value,
+        document.getElementById('coPhone')?.value,
+        document.getElementById('coAddr1')?.value,
+        document.getElementById('coAddr2')?.value,
+        [document.getElementById('coCity')?.value, document.getElementById('coState')?.value, document.getElementById('coPincode')?.value].filter(Boolean).join(', '),
+        document.getElementById('coLandmark')?.value,
+      ].filter(Boolean);
+      addrEl.innerHTML = parts.join('<br>');
+    }
+    renderCheckoutSummary();
+  }
+  function loadCheckoutPayment() {
+    renderCheckoutSummary();
+  }
+
+  // Re-init step on checkout open
+  const _origShowPage = showPage;
+  window.showPage = function(p) {
+    _origShowPage(p);
+    if (p === 'checkout') {
+      _coCurrentStep = 1;
+      loadCheckoutPage();
+      coGoStep(1);
+    }
+    if (p !== 'main') {
+      const loader = document.getElementById('pageLoader');
+      if (loader) { loader.classList.add('show'); setTimeout(() => loader.classList.remove('show'), 350); }
+    }
+  };
 
   function saveQuote() {
     const total = document.getElementById('bTotal').textContent;
@@ -5285,6 +5528,7 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
   </div>
   <div class="cart-items-list" id="cartItemsList"></div>
   <div class="cart-drawer-footer" id="cartDrawerFooter" style="display:none;">
+    <div id="freeShipBar"></div>
     <div class="cart-total-row">
       <span class="cart-total-label">Total</span>
       <span class="cart-total-val" id="cartTotalVal">₹0</span>
@@ -5293,70 +5537,116 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
   </div>
 </div>
 
+<!-- BRANDED PAGE LOADER -->
+<div id="pageLoader">
+  <div class="loader-drone">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <g class="loader-prop" style="transform-origin:16px 28px"><rect x="6" y="26" width="20" height="4" rx="2" fill="#FF8C35"/></g>
+      <g class="loader-prop" style="transform-origin:48px 28px"><rect x="38" y="26" width="20" height="4" rx="2" fill="#FF8C35"/></g>
+      <rect x="24" y="30" width="16" height="10" rx="4" fill="#111"/>
+      <rect x="28" y="40" width="8" height="6" rx="2" fill="#333"/>
+      <line x1="16" y1="28" x2="24" y2="32" stroke="#555" stroke-width="2"/>
+      <line x1="48" y1="28" x2="40" y2="32" stroke="#555" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+
 <!-- CHECKOUT PAGE -->
 <div id="checkoutPage">
   <button class="co-back-btn" onclick="openCartDrawer()">← Back to cart</button>
   <div class="co-page-title">Checkout</div>
+  <div class="co-steps" id="coSteps">
+    <div class="co-step active" id="coStep1" onclick="coGoStep(1)">
+      <div class="co-step-num"><span class="co-step-num-txt">1</span></div>
+      <span class="co-step-label">Delivery</span>
+    </div>
+    <div class="co-step" id="coStep2" onclick="coGoStep(2)">
+      <div class="co-step-num"><span class="co-step-num-txt">2</span></div>
+      <span class="co-step-label">Review</span>
+    </div>
+    <div class="co-step" id="coStep3" onclick="coGoStep(3)">
+      <div class="co-step-num"><span class="co-step-num-txt">3</span></div>
+      <span class="co-step-label">Payment</span>
+    </div>
+  </div>
   <div class="checkout-wrap">
 
-    <!-- LEFT: form -->
+    <!-- LEFT: multi-step panels -->
     <div class="checkout-form">
 
-      <!-- 01 Contact details -->
-      <div class="checkout-section">
-        <div class="checkout-section-header">
-          <div class="checkout-step-num">01</div>
-          <div class="checkout-step-title">Contact details</div>
+      <!-- STEP 1: Delivery details -->
+      <div class="co-panel active" id="coPanel1">
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">01</div>
+            <div class="checkout-step-title">Contact details</div>
+          </div>
+          <div class="qcp-grid-2">
+            <input class="qcp-input" type="text" placeholder="Full name *" id="coName" />
+            <input class="qcp-input" type="email" placeholder="Email address *" id="coEmail" />
+          </div>
+          <div class="qcp-grid-2">
+            <input class="qcp-input" type="tel" placeholder="Phone number *" id="coPhone" />
+            <input class="qcp-input" type="text" placeholder="Company / Organisation (optional)" id="coCompany" />
+          </div>
         </div>
-        <div class="qcp-grid-2">
-          <input class="qcp-input" type="text" placeholder="Full name *" id="coName" />
-          <input class="qcp-input" type="email" placeholder="Email address *" id="coEmail" />
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">02</div>
+            <div class="checkout-step-title">Shipping address</div>
+          </div>
+          <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="coAddr1" />
+          <input class="qcp-input qcp-full" type="text" placeholder="Address line 2 (street, area — optional)" id="coAddr2" />
+          <div class="qcp-grid-3">
+            <input class="qcp-input" type="text" placeholder="City *" id="coCity" />
+            <input class="qcp-input" type="text" placeholder="State *" id="coState" />
+            <input class="qcp-input" type="text" placeholder="Pincode *" id="coPincode" inputmode="numeric" maxlength="6" />
+          </div>
+          <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="coLandmark" />
+          <textarea class="qcp-input qcp-full" style="height:70px;resize:none;margin-top:10px;" placeholder="Delivery instructions (optional)" id="coNotes"></textarea>
         </div>
-        <div class="qcp-grid-2">
-          <input class="qcp-input" type="tel" placeholder="Phone number *" id="coPhone" />
-          <input class="qcp-input" type="text" placeholder="Company / Organisation (optional)" id="coCompany" />
+        <button class="qv2-order-btn" onclick="coAdvance()">Continue to Review →</button>
+      </div>
+
+      <!-- STEP 2: Review order -->
+      <div class="co-panel" id="coPanel2">
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">✓</div>
+            <div class="checkout-step-title">Your order</div>
+          </div>
+          <div id="coReviewItems"></div>
+        </div>
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">✓</div>
+            <div class="checkout-step-title">Delivering to</div>
+          </div>
+          <div id="coReviewAddress" style="font-size:14px;color:var(--muted);line-height:1.7;"></div>
+          <button onclick="coGoStep(1)" style="margin-top:8px;background:none;border:none;color:var(--orange);font-size:13px;cursor:pointer;padding:0;">Edit address ↗</button>
+        </div>
+        <button class="qv2-order-btn" onclick="coAdvance()">Continue to Payment →</button>
+      </div>
+
+      <!-- STEP 3: Payment -->
+      <div class="co-panel" id="coPanel3">
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">03</div>
+            <div class="checkout-step-title">Payment</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <div class="trust-badge"><span>🔒</span> Secured by Razorpay</div>
+            <div class="trust-badge"><span>💳</span> Card / UPI</div>
+            <div class="trust-badge"><span>🏦</span> Netbanking</div>
+            <div class="trust-badge"><span>👛</span> Wallets</div>
+          </div>
+          <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Pay now →</button>
+          <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:12px;"></div>
+          <div class="qv2-note" style="margin-top:10px;">Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
         </div>
       </div>
 
-      <!-- 02 Shipping address -->
-      <div class="checkout-section">
-        <div class="checkout-section-header">
-          <div class="checkout-step-num">02</div>
-          <div class="checkout-step-title">Shipping address</div>
-        </div>
-        <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="coAddr1" />
-        <input class="qcp-input qcp-full" type="text" placeholder="Address line 2 (street, area — optional)" id="coAddr2" />
-        <div class="qcp-grid-3">
-          <input class="qcp-input" type="text" placeholder="City *" id="coCity" />
-          <input class="qcp-input" type="text" placeholder="State *" id="coState" />
-          <input class="qcp-input" type="text" placeholder="Pincode *" id="coPincode" inputmode="numeric" maxlength="6" />
-        </div>
-        <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="coLandmark" />
-      </div>
-
-      <!-- 03 Notes -->
-      <div class="checkout-section">
-        <div class="checkout-section-header">
-          <div class="checkout-step-num">03</div>
-          <div class="checkout-step-title">Additional notes</div>
-        </div>
-        <textarea class="qcp-input qcp-full" style="height:80px;resize:none;" placeholder="Delivery instructions, special requests, etc." id="coNotes"></textarea>
-      </div>
-
-      <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Pay now →</button>
-      <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;"></div>
-      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
-        <span style="font-size:12px;color:var(--muted);">🔒 Secured by Razorpay</span>
-        <span style="color:var(--border);">·</span>
-        <span style="font-size:12px;color:var(--muted);">💳 Credit / Debit Card</span>
-        <span style="color:var(--border);">·</span>
-        <span style="font-size:12px;color:var(--muted);">📱 UPI</span>
-        <span style="color:var(--border);">·</span>
-        <span style="font-size:12px;color:var(--muted);">🏦 Netbanking</span>
-        <span style="color:var(--border);">·</span>
-        <span style="font-size:12px;color:var(--muted);">👛 Wallets</span>
-      </div>
-      <div class="qv2-note" style="margin-top:6px;">Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
     </div>
 
     <!-- RIGHT: order summary -->
