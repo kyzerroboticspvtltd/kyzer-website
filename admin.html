@@ -749,7 +749,7 @@ CREATE POLICY "read_all" ON site_data FOR SELECT USING (true);
 -- No write policy for anon = writes blocked
 -- Service role key bypasses RLS automatically
 
--- ── ORDERS TABLE (for real-time notifications) ──
+-- ── 3D PRINT ORDERS TABLE ──
 CREATE TABLE IF NOT EXISTS orders (
   id TEXT PRIMARY KEY,
   submitted_at TIMESTAMPTZ DEFAULT NOW(),
@@ -758,8 +758,18 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "customers_insert_orders" ON orders;
--- Customers can submit orders (anon INSERT)
 CREATE POLICY "customers_insert_orders" ON orders FOR INSERT TO anon WITH CHECK (true);
+
+-- ── SHOP ORDERS TABLE ──
+CREATE TABLE IF NOT EXISTS shop_orders (
+  id TEXT PRIMARY KEY,
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT DEFAULT 'new',
+  data JSONB NOT NULL DEFAULT '{}'
+);
+ALTER TABLE shop_orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "customers_insert_shop_orders" ON shop_orders;
+CREATE POLICY "customers_insert_shop_orders" ON shop_orders FOR INSERT TO anon WITH CHECK (true);
 -- Admin reads/updates via service_role key (bypasses RLS)</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
@@ -1343,7 +1353,7 @@ function initAdmin() {
   startRealtimePolling();
   requestNotificationPermission();
 
-  // Auto-refresh orders when index.html saves a new order in another tab (same device)
+  // Auto-refresh when another tab saves a new order (same device)
   window.addEventListener('storage', (e) => {
     if (e.key === 'kyzer_print_orders' && e.newValue) {
       try {
@@ -1353,6 +1363,16 @@ function initAdmin() {
         allOrders = updated;
         renderOrders();
         newOnes.forEach(o => _showOrderAlert(o));
+      } catch(e) {}
+    }
+    if (e.key === 'kyzer_product_orders' && e.newValue) {
+      try {
+        const updated = JSON.parse(e.newValue);
+        const prev    = allShopOrders.map(o => o.id);
+        const newOnes = updated.filter(o => !prev.includes(o.id));
+        allShopOrders = updated;
+        renderShopOrders();
+        newOnes.forEach(o => _showShopOrderAlert(o));
       } catch(e) {}
     }
   });
@@ -2640,6 +2660,7 @@ function downloadOrderFile(id) {
 // ── REALTIME ORDER POLLING ──
 let _rtInterval = null;
 let _lastPollTime = null;
+let _lastShopPollTime = null;
 
 function _sbCreds() {
   const url = localStorage.getItem('kyzer_supabase_url') || (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '');
@@ -2653,12 +2674,16 @@ async function startRealtimePolling() {
   const { url, key } = _sbCreds();
   if (!url || !key) return;
 
-  // Initial load from Supabase
   await _fetchAllSupabaseOrders(url, key);
+  await _fetchAllSupabaseShopOrders(url, key);
 
   _lastPollTime = new Date().toISOString();
+  _lastShopPollTime = _lastPollTime;
   if (_rtInterval) clearInterval(_rtInterval);
-  _rtInterval = setInterval(() => _pollNewOrders(url, key), 15000);
+  _rtInterval = setInterval(() => {
+    _pollNewOrders(url, key);
+    _pollNewShopOrders(url, key);
+  }, 15000);
   document.getElementById('liveIndicator').style.display = 'flex';
 }
 
@@ -2735,6 +2760,76 @@ function _showOrderAlert(order) {
 function requestNotificationPermission() {
   if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
     Notification.requestPermission();
+  }
+}
+
+async function _fetchAllSupabaseShopOrders(url, key) {
+  try {
+    const res = await fetch(`${url}/rest/v1/shop_orders?select=*&order=submitted_at.desc`, {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return;
+    const local = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+    const seen  = new Set(local.map(o => o.id));
+    rows.forEach(row => {
+      if (!seen.has(row.id)) {
+        local.push({ ...(row.data || {}), id: row.id, status: row.status || 'new', submittedAt: row.submitted_at });
+      }
+    });
+    local.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+    localStorage.setItem('kyzer_product_orders', JSON.stringify(local));
+    allShopOrders = local;
+    renderShopOrders();
+  } catch(e) {}
+}
+
+async function _pollNewShopOrders(url, key) {
+  try {
+    const since = encodeURIComponent(_lastShopPollTime);
+    const res = await fetch(`${url}/rest/v1/shop_orders?submitted_at=gt.${since}&order=submitted_at.desc`, {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    _lastShopPollTime = new Date().toISOString();
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return;
+
+    const local = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+    const seen  = new Set(local.map(o => o.id));
+    let hasNew  = false;
+
+    rows.forEach(row => {
+      if (!seen.has(row.id)) {
+        const order = { ...(row.data || {}), id: row.id, status: row.status || 'new', submittedAt: row.submitted_at };
+        local.unshift(order);
+        seen.add(row.id);
+        hasNew = true;
+        _showShopOrderAlert(order);
+      }
+    });
+
+    if (hasNew) {
+      local.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+      localStorage.setItem('kyzer_product_orders', JSON.stringify(local));
+      allShopOrders = local;
+      renderShopOrders();
+    }
+  } catch(e) {}
+}
+
+function _showShopOrderAlert(order) {
+  const name  = order.name  || 'Someone';
+  const total = order.total || '?';
+  toast(`🛒 New shop order from ${name} — ₹${Number(total).toLocaleString('en-IN')}`);
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    try {
+      new Notification('New Shop Order!', {
+        body: `${name} · ₹${Number(total).toLocaleString('en-IN')}`,
+        icon: './logo.png'
+      });
+    } catch(e) {}
   }
 }
 

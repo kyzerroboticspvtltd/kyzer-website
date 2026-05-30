@@ -1614,6 +1614,13 @@
   @media (max-width: 480px) {
     .qcp-grid-3 { grid-template-columns: 1fr; }
     .checkout-section { padding: 1.1rem; }
+    /* 3-step checkout mobile */
+    .qco-steps { max-width: 100%; }
+    .qco-step-lbl { font-size: 8px; letter-spacing: 0.02em; }
+    .qco-step-circle { width: 28px; height: 28px; font-size: 11px; }
+    .qco-line { min-width: 12px; max-width: 32px; margin-bottom: 14px; }
+    .qco-pay-amount { font-size: 38px; }
+    .qco-rev-row { font-size: 12px; }
   }
 
   /* ── CART DRAWER ── */
@@ -4004,6 +4011,18 @@
     const orders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
     orders.unshift(orderData);
     localStorage.setItem('kyzer_product_orders', JSON.stringify(orders));
+
+    // Non-blocking Supabase INSERT for cross-device admin real-time
+    (function() {
+      const _sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
+      const _sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
+      if (!_sbUrl || !_sbKey) return;
+      fetch(_sbUrl + '/rest/v1/shop_orders', {
+        method: 'POST',
+        headers: { 'apikey': _sbKey, 'Authorization': 'Bearer ' + _sbKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ id: orderData.id, status: orderData.status || 'new', data: orderData })
+      }).catch(() => {});
+    })();
 
     // Send email + SMS via backend (for offline/COD orders; Razorpay orders are notified by verify-payment)
     if (!orderData.paymentId) {
