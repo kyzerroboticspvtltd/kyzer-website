@@ -758,7 +758,9 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "customers_insert_orders" ON orders;
+DROP POLICY IF EXISTS "read_orders" ON orders;
 CREATE POLICY "customers_insert_orders" ON orders FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "read_orders" ON orders FOR SELECT USING (true);
 
 -- ── SHOP ORDERS TABLE ──
 CREATE TABLE IF NOT EXISTS shop_orders (
@@ -769,8 +771,9 @@ CREATE TABLE IF NOT EXISTS shop_orders (
 );
 ALTER TABLE shop_orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "customers_insert_shop_orders" ON shop_orders;
+DROP POLICY IF EXISTS "read_shop_orders" ON shop_orders;
 CREATE POLICY "customers_insert_shop_orders" ON shop_orders FOR INSERT TO anon WITH CHECK (true);
--- Admin reads/updates via service_role key (bypasses RLS)</pre>
+CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
@@ -1526,8 +1529,8 @@ function switchTab(name) {
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tl-' + name).classList.add('active');
   if (name === 'security') initSecurity();
-  if (name === 'orders') renderOrders();
-  if (name === 'shoporders') renderShopOrders();
+  if (name === 'orders') { renderOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseOrders(url,key); }
+  if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
   if (name === 'customers') renderCustomers();
 }
 
