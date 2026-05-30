@@ -1486,7 +1486,7 @@ function resetProducts() {
   products = JSON.parse(JSON.stringify(D_PRODUCTS));
   saveP(); renderProducts(); toast('Reset to defaults.');
 }
-function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); }
+function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); publishToSite(true); }
 
 // ── PRODUCT MODAL ──
 let prodPhotosData = [];
@@ -1642,6 +1642,7 @@ function saveCategories() {
   localStorage.setItem('kyzer_categories', JSON.stringify(categories));
   fillCategories();
   toast('Categories saved.');
+  publishToSite(true);
 }
 
 // ── HERO ──
@@ -1672,6 +1673,7 @@ function saveHero() {
   }));
   localStorage.setItem('kyzer_hero', JSON.stringify(hero));
   toast('Hero saved.');
+  publishToSite(true);
 }
 
 // ── SERVICES ──
@@ -1697,6 +1699,7 @@ function saveServices() {
   }));
   localStorage.setItem('kyzer_services', JSON.stringify(services));
   toast('Services saved.');
+  publishToSite(true);
 }
 
 // ── CONTACT ──
@@ -1748,6 +1751,7 @@ function saveContact() {
   };
   localStorage.setItem('kyzer_contact', JSON.stringify(contact));
   toast('Contact section saved.');
+  publishToSite(true);
 }
 
 // ── QUOTE ──
@@ -1785,7 +1789,8 @@ function saveQuote() {
   quote.sameDayFee   = parseFloat(document.getElementById('qSameDay').value) || 200;
   quote.sevenDayFee  = parseFloat(document.getElementById('q7Day').value)    || 150;
   localStorage.setItem('kyzer_quote', JSON.stringify(quote));
-  toast('Pricing saved — refresh the main site to apply.');
+  toast('Pricing saved.');
+  publishToSite(true);
 }
 
 // ── LINKS ──
@@ -1836,6 +1841,7 @@ function saveLinks() {
   links.email = document.getElementById('lkEmail').value.trim();
   localStorage.setItem('kyzer_links', JSON.stringify(links));
   toast('Links saved.');
+  publishToSite(true);
 }
 
 // ── PHOTOS ──
@@ -1899,6 +1905,7 @@ function handlePhotoUpload(files) {
           localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos));
           renderPhotoGrid();
           toast(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded.`);
+          publishToSite(true);
         }
       };
       img.src = ev.target.result;
@@ -1914,6 +1921,7 @@ function deletePhoto(i) {
   localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos));
   renderPhotoGrid();
   toast('Photo removed.');
+  publishToSite(true);
 }
 
 function clearAllPhotos() {
@@ -1924,21 +1932,19 @@ function clearAllPhotos() {
 }
 
 // ── PUBLISH TO SITE ──
-async function publishToSite() {
+async function publishToSite(silent) {
   const sbUrl = localStorage.getItem('kyzer_supabase_url')
     || (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : '');
   const sbKey = localStorage.getItem('kyzer_supabase_key')
     || (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY ? SUPABASE_KEY : '');
 
   if (!sbUrl || !sbKey) {
-    toast('Supabase not configured. Go to Security tab → Supabase Setup.', true);
+    if (!silent) toast('Supabase not configured. Go to Security tab → Supabase Setup.', true);
     return;
   }
 
   const btn = document.getElementById('publishBtn');
-  const orig = btn.textContent;
-  btn.textContent = 'Publishing…';
-  btn.disabled = true;
+  if (!silent) { btn.textContent = 'Publishing…'; btn.disabled = true; }
 
   const payload = {
     id: 1,
@@ -1964,18 +1970,16 @@ async function publishToSite() {
       },
       body: JSON.stringify(payload),
     });
-    btn.textContent = orig;
-    btn.disabled = false;
+    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
     if (r.ok) {
-      toast('✓ Published! All devices will see the changes within seconds.');
+      if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
     } else {
       const err = await r.text();
       toast('Supabase error: ' + err, true);
     }
   } catch (e) {
-    btn.textContent = orig;
-    btn.disabled = false;
-    toast('Cannot reach Supabase. Check your config in Security tab.', true);
+    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
+    if (!silent) toast('Cannot reach Supabase. Check your config in Security tab.', true);
   }
 }
 
