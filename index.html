@@ -2212,6 +2212,33 @@
   .co-panel { display: none; }
   .co-panel.active { display: block; animation: fadeIn 0.3s; }
 
+  /* ── QUOTE CHECKOUT STEPS ── */
+  .qco-steps { display: flex; align-items: center; gap: 0; margin-bottom: 2rem; max-width: 420px; }
+  .qco-step  { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 0 0 auto; }
+  .qco-step-circle {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bg3); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    transition: all 0.25s;
+  }
+  .qco-step.active .qco-step-circle { background: var(--orange); border-color: var(--orange); color: #111; }
+  .qco-step.done   .qco-step-circle { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+  .qco-step-lbl { font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; color: var(--muted); }
+  .qco-step.active .qco-step-lbl { color: var(--orange); }
+  .qco-step.done   .qco-step-lbl { color: #2e7d32; }
+  .qco-line { flex: 1; height: 1.5px; background: var(--border); margin: 0 6px 18px; min-width: 24px; max-width: 60px; }
+  .qco-panel { display: none; }
+  .qco-panel.active { display: block; animation: fadeIn 0.25s; }
+  .qco-review-box { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+  .qco-rev-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid var(--border); }
+  .qco-rev-row:last-child { border-bottom: none; }
+  .qco-rev-row.grand { border-top: 1.5px solid var(--border); padding-top: 12px; margin-top: 4px; border-bottom: none; font-weight: 700; }
+  .qco-pay-box { text-align: center; padding: 1.5rem 1rem; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; margin-bottom: 1.25rem; }
+  .qco-pay-amount { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--orange); line-height: 1; margin: 8px 0 4px; }
+  .qco-back-link { display: inline-block; font-size: 13px; color: var(--muted); cursor: pointer; margin-top: 10px; text-decoration: underline; }
+  .qco-back-link:hover { color: var(--text); }
+
   /* ── COLOR SWATCHES ── */
   .color-swatches { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
   .color-swatch {
@@ -3299,60 +3326,114 @@
 
   <!-- Quote Checkout -->
   <div id="quoteContactSection" style="display:none;">
-    <div class="checkout-wrap">
 
-      <!-- LEFT: form -->
+    <!-- Step bar -->
+    <div class="qco-steps">
+      <div class="qco-step active" id="qcoStep1">
+        <div class="qco-step-circle" id="qcoCircle1">1</div>
+        <div class="qco-step-lbl">DELIVERY</div>
+      </div>
+      <div class="qco-line"></div>
+      <div class="qco-step" id="qcoStep2">
+        <div class="qco-step-circle" id="qcoCircle2">2</div>
+        <div class="qco-step-lbl">REVIEW</div>
+      </div>
+      <div class="qco-line"></div>
+      <div class="qco-step" id="qcoStep3">
+        <div class="qco-step-circle" id="qcoCircle3">3</div>
+        <div class="qco-step-lbl">PAYMENT</div>
+      </div>
+    </div>
+
+    <div class="checkout-wrap">
+      <!-- LEFT: step panels -->
       <div class="checkout-form">
 
-        <!-- 01 Contact details -->
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">01</div>
-            <div class="checkout-step-title">Contact details</div>
+        <!-- PANEL 1: Delivery details -->
+        <div class="qco-panel active" id="qcoPanel1">
+          <div class="checkout-section">
+            <div class="checkout-section-header">
+              <div class="checkout-step-num">01</div>
+              <div class="checkout-step-title">Contact details</div>
+            </div>
+            <div class="qcp-grid-2">
+              <input class="qcp-input" type="text" placeholder="Full name *" id="qfName" />
+              <input class="qcp-input" type="email" placeholder="Email address *" id="qfEmail" />
+            </div>
+            <div class="qcp-grid-2">
+              <input class="qcp-input" type="tel" placeholder="Phone number *" id="qfPhone" />
+              <input class="qcp-input" type="text" placeholder="Company / Organisation (optional)" id="qfCompany" />
+            </div>
           </div>
-          <div class="qcp-grid-2">
-            <input class="qcp-input" type="text" placeholder="Full name *" id="qfName" />
-            <input class="qcp-input" type="email" placeholder="Email address *" id="qfEmail" />
+          <div class="checkout-section">
+            <div class="checkout-section-header">
+              <div class="checkout-step-num">02</div>
+              <div class="checkout-step-title">Shipping address</div>
+            </div>
+            <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="qfAddr1" />
+            <input class="qcp-input qcp-full" type="text" placeholder="Address line 2 (street, area — optional)" id="qfAddr2" />
+            <div class="qcp-grid-3">
+              <input class="qcp-input" type="text" placeholder="City *" id="qfCity" />
+              <input class="qcp-input" type="text" placeholder="State *" id="qfState" />
+              <input class="qcp-input" type="text" placeholder="Pincode *" id="qfPincode" inputmode="numeric" maxlength="6" />
+            </div>
+            <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="qfLandmark" />
           </div>
-          <div class="qcp-grid-2">
-            <input class="qcp-input" type="tel" placeholder="Phone number *" id="qfPhone" />
-            <input class="qcp-input" type="text" placeholder="Company / Organisation (optional)" id="qfCompany" />
+          <div class="checkout-section">
+            <div class="checkout-section-header">
+              <div class="checkout-step-num">03</div>
+              <div class="checkout-step-title">Additional notes</div>
+            </div>
+            <textarea class="qcp-input qcp-full" style="height:70px;resize:none;" placeholder="Special instructions, colour preferences, deadline, etc." id="qfNotes"></textarea>
           </div>
+          <button class="qv2-order-btn" onclick="qcoAdvance()">Continue to Review →</button>
         </div>
 
-        <!-- 02 Shipping address -->
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">02</div>
-            <div class="checkout-step-title">Shipping address</div>
+        <!-- PANEL 2: Review -->
+        <div class="qco-panel" id="qcoPanel2">
+          <div class="qco-review-box">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">ORDER REVIEW</div>
+            <div style="font-size:17px;font-weight:600;margin-bottom:2px;" id="qcoRevName">—</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="qcoRevContact">—</div>
+            <div class="qco-rev-row"><span>Material</span><span id="qcoRevMat">—</span></div>
+            <div class="qco-rev-row"><span>Quality</span><span id="qcoRevQual">—</span></div>
+            <div class="qco-rev-row"><span>Colour</span><span id="qcoRevColor">—</span></div>
+            <div class="qco-rev-row"><span>Quantity</span><span id="qcoRevQty">—</span></div>
+            <div class="qco-rev-row"><span>Delivery</span><span id="qcoRevDel">—</span></div>
+            <div class="qco-rev-row"><span>Dimensions</span><span id="qcoRevDims">—</span></div>
+            <div class="qco-rev-row grand"><span>Estimated Total</span><span id="qcoRevTotal" style="color:var(--orange);font-size:17px;">₹—</span></div>
           </div>
-          <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="qfAddr1" />
-          <input class="qcp-input qcp-full" type="text" placeholder="Address line 2 (street, area — optional)" id="qfAddr2" />
-          <div class="qcp-grid-3">
-            <input class="qcp-input" type="text" placeholder="City *" id="qfCity" />
-            <input class="qcp-input" type="text" placeholder="State *" id="qfState" />
-            <input class="qcp-input" type="text" placeholder="Pincode *" id="qfPincode" inputmode="numeric" maxlength="6" />
-          </div>
-          <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="qfLandmark" />
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.6;">Price is an estimate. Final amount confirmed after file review by our team.</div>
+          <button class="qv2-order-btn" onclick="qcoAdvance()">Continue to Payment →</button>
+          <span class="qco-back-link" onclick="qcoGoStep(1)">← Edit details</span>
         </div>
 
-        <!-- 03 Notes -->
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">03</div>
-            <div class="checkout-step-title">Additional notes</div>
+        <!-- PANEL 3: Payment -->
+        <div class="qco-panel" id="qcoPanel3">
+          <div class="qco-pay-box">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);">ESTIMATED TOTAL</div>
+            <div class="qco-pay-amount" id="qcoPayTotal">₹—</div>
+            <div style="font-size:11px;color:var(--muted);">Final confirmed after file review</div>
           </div>
-          <textarea class="qcp-input qcp-full" style="height:80px;resize:none;" placeholder="Special instructions, colour preferences, deadline, etc." id="qfNotes"></textarea>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="qv2-order-btn" id="qcoPayBtn" onclick="qcoPay()" style="background:var(--orange);">
+              💳 Pay Now →
+            </button>
+            <div style="text-align:center;font-size:12px;color:var(--muted);padding:2px 0;">— or —</div>
+            <button class="qv2-save-btn" id="qcoPayLaterBtn" onclick="qcoSubmitWithoutPayment()">
+              📋 Submit without payment · We'll send payment link after review
+            </button>
+          </div>
+          <div id="qfSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:14px;text-align:center;margin-top:16px;line-height:1.6;">
+            ✓ Order placed!
+          </div>
+          <span class="qco-back-link" onclick="qcoGoStep(2)">← Back to review</span>
+          <div class="qv2-note" style="margin-top:14px;">Payments secured by Razorpay · Or email <a href="mailto:info@kyzerrobotics.com" style="color:#FF8C35;">info@kyzerrobotics.com</a></div>
         </div>
 
-        <button class="qv2-order-btn" id="qfSubmitBtn" onclick="submitQuoteForm()">Place order →</button>
-        <div id="qfSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;">
-          ✓ Order placed! We'll confirm your pricing within a few hours.
-        </div>
-        <div class="qv2-note" style="margin-top:8px;">Or email us at <a href="mailto:info@kyzerrobotics.com" style="color:#FF8C35;">info@kyzerrobotics.com</a></div>
       </div>
 
-      <!-- RIGHT: order summary -->
+      <!-- RIGHT: order summary (always visible) -->
       <div class="checkout-summary">
         <div class="cs-heading">🧾 Order summary</div>
         <div class="cs-row"><span class="cs-label">Material</span><span class="cs-val" id="cs-material">—</span></div>
@@ -3370,9 +3451,7 @@
           <span class="cs-total-label">Estimated total</span>
           <span class="cs-total-price" id="cs-total">₹—</span>
         </div>
-        <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Final price confirmed after review. No payment now.</p>
       </div>
-
     </div>
   </div>
 </div>
@@ -4350,9 +4429,252 @@
     }
     const sec = document.getElementById('quoteContactSection');
     sec.style.display = 'block';
-    sec.scrollIntoView({ behavior: 'smooth' });
     updateCheckoutSummary();
     autoFillCheckout();
+    qcoGoStep(1);
+    sec.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── QUOTE CHECKOUT STEPS ──
+  let _qcoStep = 1;
+
+  function qcoGoStep(n) {
+    [1,2,3].forEach(i => {
+      const step   = document.getElementById('qcoStep'   + i);
+      const circle = document.getElementById('qcoCircle' + i);
+      const panel  = document.getElementById('qcoPanel'  + i);
+      if (step)   { step.classList.remove('active','done'); if (i < n) step.classList.add('done'); else if (i === n) step.classList.add('active'); }
+      if (circle && i < n) circle.innerHTML = '✓';
+      if (circle && i >= n) circle.innerHTML = String(i);
+      if (panel)  panel.classList.toggle('active', i === n);
+    });
+    _qcoStep = n;
+    document.getElementById('quoteContactSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (n === 2) _qcoLoadReview();
+    if (n === 3) _qcoLoadPayment();
+  }
+
+  function qcoAdvance() {
+    if (_qcoStep === 1) {
+      const name    = document.getElementById('qfName').value.trim();
+      const email   = document.getElementById('qfEmail').value.trim();
+      const phone   = document.getElementById('qfPhone').value.trim();
+      const addr1   = document.getElementById('qfAddr1').value.trim();
+      const city    = document.getElementById('qfCity').value.trim();
+      const state   = document.getElementById('qfState').value.trim();
+      const pincode = document.getElementById('qfPincode').value.trim();
+      if (!name || !email)  { alert('Please enter your name and email.'); return; }
+      if (!phone)           { alert('Please enter your phone number.'); return; }
+      if (!addr1 || !city || !state || !pincode) { alert('Please fill in your complete shipping address.'); return; }
+      qcoGoStep(2);
+    } else if (_qcoStep === 2) {
+      qcoGoStep(3);
+    }
+  }
+
+  function _qcoLoadReview() {
+    const name  = document.getElementById('qfName').value.trim();
+    const email = document.getElementById('qfEmail').value.trim();
+    const phone = document.getElementById('qfPhone').value.trim();
+    const dims  = quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—';
+    document.getElementById('qcoRevName').textContent    = name;
+    document.getElementById('qcoRevContact').textContent = email + ' · ' + phone;
+    document.getElementById('qcoRevMat').textContent     = quoteState.matName;
+    document.getElementById('qcoRevQual').textContent    = quoteState.qualName;
+    document.getElementById('qcoRevColor').textContent   = quoteState.colorName || 'White';
+    document.getElementById('qcoRevQty').textContent     = '×' + quoteState.qty;
+    document.getElementById('qcoRevDel').textContent     = quoteState.delivery === 'sameday' ? 'Same day' : '7 working days';
+    document.getElementById('qcoRevDims').textContent    = dims;
+    document.getElementById('qcoRevTotal').textContent   = document.getElementById('bTotal').textContent;
+  }
+
+  function _qcoLoadPayment() {
+    const total  = document.getElementById('bTotal').textContent;
+    document.getElementById('qcoPayTotal').textContent = total;
+    const rzpKey  = localStorage.getItem('kyzer_razorpay_key_id') || '';
+    const backUrl = localStorage.getItem('kyzer_backend_url') || '';
+    const payBtn  = document.getElementById('qcoPayBtn');
+    if (payBtn) {
+      if (rzpKey && backUrl) {
+        payBtn.style.display = '';
+        payBtn.textContent = '💳 Pay ' + total + ' Now →';
+      } else {
+        payBtn.style.display = 'none';
+      }
+    }
+  }
+
+  async function qcoPay() {
+    const rzpKey  = localStorage.getItem('kyzer_razorpay_key_id') || '';
+    const backUrl = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
+    if (!rzpKey || !backUrl) {
+      alert('Payment not configured yet. Use "Submit without payment" for now.');
+      return;
+    }
+    const rawTotal = document.getElementById('bTotal').textContent.replace(/[₹,\s]/g, '');
+    const amount   = parseInt(rawTotal);
+    if (!amount || amount < 1) {
+      alert('Please complete your quote dimensions before paying.');
+      return;
+    }
+    const payBtn = document.getElementById('qcoPayBtn');
+    payBtn.textContent = 'Opening payment…';
+    payBtn.disabled = true;
+    try {
+      const res = await fetch(backUrl + '/api/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, currency: 'INR', receipt: 'PRINT-' + Date.now() })
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'Could not create order');
+      await _loadRazorpay();
+      const name  = document.getElementById('qfName').value.trim();
+      const email = document.getElementById('qfEmail').value.trim();
+      const phone = document.getElementById('qfPhone').value.trim();
+      const rzp = new window.Razorpay({
+        key: rzpKey, amount: json.order.amount, currency: json.order.currency,
+        name: 'Kyzer Robotics', description: '3D Print Order',
+        image: './logo.png', order_id: json.order.id,
+        prefill: { name, email, contact: phone },
+        theme: { color: '#FF8C35' },
+        handler: async (response) => { await _qcoVerifyPayment(response); },
+      });
+      rzp.on('payment.failed', () => {
+        payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
+        payBtn.disabled = false;
+      });
+      rzp.open();
+      payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
+      payBtn.disabled = false;
+    } catch(e) {
+      payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
+      payBtn.disabled = false;
+      alert('Could not start payment: ' + e.message + '. Try "Submit without payment" instead.');
+    }
+  }
+
+  async function _qcoVerifyPayment(rzpResp) {
+    const backUrl = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
+    const order   = _buildQcoOrder('paid');
+    order.razorpayOrderId   = rzpResp.razorpay_order_id;
+    order.razorpayPaymentId = rzpResp.razorpay_payment_id;
+    const total = parseInt(document.getElementById('bTotal').textContent.replace(/[₹,\s]/g,'')) || 0;
+    try {
+      const res = await fetch(backUrl + '/api/verify-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          razorpay_order_id:   rzpResp.razorpay_order_id,
+          razorpay_payment_id: rzpResp.razorpay_payment_id,
+          razorpay_signature:  rzpResp.razorpay_signature,
+          orderData: { ...order,
+            items: [{ name: `3D Print · ${order.material} · ${order.quality}`, qty: order.quantity, price: total }],
+            total, shippingFull: [order.shipping.addr1, order.shipping.city, order.shipping.state, order.shipping.pincode].filter(Boolean).join(', ')
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        _saveQcoOrder(order);
+        _showQcoSuccess('✓ Payment successful! Order confirmed — check your email for confirmation.');
+      } else { throw new Error(data.error); }
+    } catch(e) {
+      _saveQcoOrder(order);
+      _showQcoSuccess('✓ Payment received (ref: ' + rzpResp.razorpay_payment_id + '). Order confirmed!');
+    }
+  }
+
+  async function qcoSubmitWithoutPayment() {
+    const btn = document.getElementById('qcoPayLaterBtn');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+    const order = _buildQcoOrder('pending_payment');
+    _saveQcoOrder(order);
+    try {
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: W3F_KEY, subject: 'New 3D Print Quote — Kyzer Robotics',
+          name: order.name, email: order.email, phone: order.phone,
+          material: order.material, quality: order.quality,
+          colour: order.colour, quantity: order.quantity,
+          delivery: order.delivery === 'sameday' ? 'Same day' : '7 working days',
+          dimensions: order.dimensions, estimated_total: order.estimatedTotal,
+          payment_status: 'Pending (pay after confirmation)',
+          file: order.fileName || 'Manual dimensions', notes: order.notes || '—',
+          shipping: [order.shipping.addr1, order.shipping.addr2, order.shipping.city, order.shipping.state, order.shipping.pincode].filter(Boolean).join(', '),
+        })
+      });
+    } catch(e) {}
+    _showQcoSuccess('✓ Quote request received! We\'ll confirm pricing and send a payment link within a few hours.');
+    btn.textContent = 'Submit without payment';
+    btn.disabled = false;
+  }
+
+  function _buildQcoOrder(paymentStatus) {
+    const supportEl = document.getElementById('supportSelect');
+    const dims = quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—';
+    return {
+      id: 'ORD-' + Date.now(), submittedAt: new Date().toISOString(),
+      status: 'new', paymentStatus,
+      name:    document.getElementById('qfName').value.trim(),
+      email:   document.getElementById('qfEmail').value.trim(),
+      phone:   document.getElementById('qfPhone').value.trim(),
+      company: document.getElementById('qfCompany').value.trim(),
+      notes:   document.getElementById('qfNotes').value.trim(),
+      shipping: {
+        addr1:    document.getElementById('qfAddr1').value.trim(),
+        addr2:    document.getElementById('qfAddr2').value.trim(),
+        city:     document.getElementById('qfCity').value.trim(),
+        state:    document.getElementById('qfState').value.trim(),
+        pincode:  document.getElementById('qfPincode').value.trim(),
+        landmark: document.getElementById('qfLandmark').value.trim(),
+      },
+      material: quoteState.matName, quality: quoteState.qualName,
+      infill:   document.getElementById('infillVal').textContent,
+      colour:   quoteState.colorName || 'White',
+      support:  supportEl.options[supportEl.selectedIndex].text,
+      quantity: quoteState.qty, delivery: quoteState.delivery,
+      fileName: quoteState.fileName || '', fileData: quoteState.fileData || null,
+      fileSize: quoteState.fileSize || 0, dimensions: dims,
+      estimatedTotal: document.getElementById('bTotal').textContent,
+    };
+  }
+
+  function _saveQcoOrder(order) {
+    const orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+    orders.unshift(order);
+    localStorage.setItem('kyzer_print_orders', JSON.stringify(orders));
+    const _sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
+    const _sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
+    if (_sbUrl && _sbKey) {
+      fetch(_sbUrl + '/rest/v1/orders', {
+        method: 'POST',
+        headers: { 'apikey': _sbKey, 'Authorization': 'Bearer ' + _sbKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ id: order.id, status: 'new', data: order })
+      }).catch(() => {});
+    }
+  }
+
+  function _showQcoSuccess(msg) {
+    const el = document.getElementById('qfSuccess');
+    if (el) { el.innerHTML = msg; el.style.display = 'block'; }
+    const p = document.getElementById('qcoPayBtn');
+    const l = document.getElementById('qcoPayLaterBtn');
+    if (p) p.style.display = 'none';
+    if (l) l.style.display = 'none';
+  }
+
+  function _loadRazorpay() {
+    return new Promise((resolve, reject) => {
+      if (window.Razorpay) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
   }
 
   // ====== THREE.JS MODEL VIEWER ======
