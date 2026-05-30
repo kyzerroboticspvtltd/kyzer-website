@@ -663,7 +663,6 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   links JSONB DEFAULT '{}',
   quote JSONB DEFAULT '{}',
   hero_photos JSONB DEFAULT '[]',
-  print_orders JSONB DEFAULT '[]',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 INSERT INTO site_data (id) VALUES (1) ON CONFLICT DO NOTHING;
@@ -1951,7 +1950,6 @@ async function publishToSite() {
     links:       links,
     quote:       quote,
     hero_photos:  JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
-    print_orders: JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]'),
     updated_at:   new Date().toISOString(),
   };
 
