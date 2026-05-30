@@ -1169,7 +1169,7 @@
     .cursor, .cursor-ring { display: none; }
 
     /* ── Nav ── */
-    nav { padding: 1rem 1.25rem; min-height: 62px; }
+    nav { padding: 1rem 1.25rem; min-height: 62px; gap: 0.75rem; }
     .nav-links { display: none; }
     .nav-links.open {
       display: flex; flex-direction: column;
@@ -1230,9 +1230,18 @@
     /* ── Contact ── */
     .form-row { grid-template-columns: 1fr; }
 
+    /* ── Deals ── */
+    #deals { padding: 4rem 1.25rem; text-align: left; }
+    .deals-inner { text-align: left; }
+    .deals-items { justify-content: flex-start; }
+    .deals-ctas { justify-content: flex-start; }
+
     /* ── Footer ── */
     footer { flex-direction: column; text-align: center; padding: 2rem 1.25rem; }
     .footer-links { justify-content: center; flex-wrap: wrap; gap: 1rem; }
+
+    /* ── Cursor fix for touch/hybrid devices ── */
+    button, a, label, select, [onclick] { cursor: pointer; }
 
     /* ── Product detail page ── */
     .pdp-wrap { grid-template-columns: 1fr; gap: 2rem; }
@@ -1259,6 +1268,22 @@
 
   /* ── SMALL PHONES (≤ 480px) ── */
   @media (max-width: 480px) {
+    /* ── Nav — hide secondary utility buttons, keep Account + Cart ── */
+    #navOrdersBtn { display: none; }
+    #navWishBtn   { display: none; }
+    #navQuoteBtn  { display: none; }
+    nav { gap: 0.5rem; }
+    .nav-right-group { gap: 1px; }
+
+    /* ── Deals — stack items vertically ── */
+    .deals-items { flex-direction: column; gap: 6px; align-items: flex-start; }
+    .deals-sep { display: none; }
+    .deals-ctas { flex-direction: column; gap: 10px; }
+    .deals-btn-primary, .deals-btn-ghost { width: 100%; text-align: center; padding: 13px 20px; }
+
+    /* ── Checkout ── */
+    #checkoutPage { padding: 5.5rem 1rem 3rem; }
+
     /* ── Hero ── */
     .hero { padding: 6.5rem 1rem 2.5rem; }
     .hero h1 { font-size: clamp(40px, 11.5vw, 52px); line-height: 0.9; }
@@ -1365,6 +1390,13 @@
     .qv2-meta-row { gap: 5px; }
     .quote-contact-panel { padding: 1rem 0.875rem; }
     .qcp-grid-2 { gap: 8px; }
+
+    /* ── Nav tightest ── */
+    nav { gap: 0; padding: 0.85rem 0.75rem; }
+    .nav-util-btn { min-width: 32px; padding: 5px; }
+
+    /* ── Checkout ── */
+    #checkoutPage { padding: 5rem 0.875rem 2.5rem; }
   }
 
   /* MARQUEE STRIP */
@@ -1727,6 +1759,12 @@
     font-size: clamp(14px, 2vw, 16px); color: #aaa;
     line-height: 1.7; margin-bottom: 2.5rem;
   }
+  .deals-items {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 4px 8px; margin-bottom: 2.5rem;
+    font-size: clamp(13px, 2vw, 15px); color: #aaa; line-height: 1.8;
+  }
+  .deals-sep { color: rgba(255,255,255,0.2); flex-shrink: 0; }
   .deals-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
   .deals-btn-primary {
     background: var(--orange); color: #111;
@@ -2120,7 +2158,7 @@
       <span class="nav-util-badge" id="navCartBadge" style="display:none;"></span>
     </button>
     <!-- Quote bag -->
-    <button class="nav-util-btn" onclick="showPage('quote')" title="3D Print Quote">
+    <button class="nav-util-btn" id="navQuoteBtn" onclick="showPage('quote')" title="3D Print Quote">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       <span class="nav-util-label">Quote</span>
     </button>
@@ -2667,11 +2705,13 @@
   <div class="deals-inner reveal">
     <div class="deals-badge">LIMITED OFFERS</div>
     <h2>Deals you can't resist.</h2>
-    <p>
-      🖨️ &nbsp;<strong>Bulk 3D prints</strong> — 10% off on 10+ pieces &nbsp;·&nbsp;
-      🚁 &nbsp;<strong>Drone service package</strong> — save ₹3,000 &nbsp;·&nbsp;
-      🎨 &nbsp;<strong>Free filament spool</strong> on orders above ₹5,000
-    </p>
+    <div class="deals-items">
+      <span>🖨️ &nbsp;<strong>Bulk 3D prints</strong> — 10% off on 10+ pieces</span>
+      <span class="deals-sep"> · </span>
+      <span>🚁 &nbsp;<strong>Drone service package</strong> — save ₹3,000</span>
+      <span class="deals-sep"> · </span>
+      <span>🎨 &nbsp;<strong>Free filament spool</strong> on orders above ₹5,000</span>
+    </div>
     <div class="deals-ctas">
       <a href="#contact" class="deals-btn-primary">Claim your deal →</a>
       <a href="#" onclick="showPage('quote'); return false;" class="deals-btn-ghost">Get a 3D quote ⚡</a>
