@@ -678,14 +678,15 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
             <input class="form-input" type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" />
           </div>
           <div class="form-group">
-            <label class="form-label">SUPABASE ANON KEY</label>
+            <label class="form-label">SUPABASE ANON KEY <span style="color:var(--muted);font-weight:400;">(public — safe to share)</span></label>
             <input class="form-input" type="password" id="sbKey" placeholder="eyJ..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">SUPABASE SERVICE ROLE KEY <span style="color:#cc2200;font-weight:400;">(secret — never share)</span></label>
+            <input class="form-input" type="password" id="sbServiceKey" placeholder="eyJ..." />
             <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
-              <strong>Setup steps:</strong><br>
-              1. <strong>supabase.com</strong> → Project Settings → API → copy Project URL + anon key<br>
-              2. SQL Editor → run the SQL below (sets up table + secure RLS)<br>
-              3. Authentication → Users → Add user → enter your email + a strong password<br>
-              4. Paste credentials above and into <strong>supabase-config.js</strong> in your site folder
+              Used only for publishing from this admin panel. Keeps your data safe — anon key can read but cannot write.<br>
+              <strong>supabase.com</strong> → Project Settings → API → copy <strong>service_role</strong> key (the secret one)
             </div>
           </div>
           <details style="margin-bottom:14px;">
@@ -700,16 +701,20 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   links JSONB DEFAULT '{}',
   quote JSONB DEFAULT '{}',
   hero_photos JSONB DEFAULT '[]',
+  coming_soon JSONB DEFAULT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 INSERT INTO site_data (id) VALUES (1) ON CONFLICT DO NOTHING;
+ALTER TABLE site_data ADD COLUMN IF NOT EXISTS coming_soon JSONB;
 ALTER TABLE site_data ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "public_read" ON site_data;
 DROP POLICY IF EXISTS "auth_write" ON site_data;
 DROP POLICY IF EXISTS "read_all" ON site_data;
 DROP POLICY IF EXISTS "write_all" ON site_data;
-CREATE POLICY "read_all"  ON site_data FOR SELECT USING (true);
-CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true);</pre>
+-- Allow anyone to read (needed for customer site)
+CREATE POLICY "read_all" ON site_data FOR SELECT USING (true);
+-- No write policy for anon = writes blocked
+-- Service role key bypasses RLS automatically</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
@@ -2195,6 +2200,9 @@ async function publishToSite(silent) {
     return;
   }
 
+  // Use service role key for writes if available (bypasses RLS), otherwise fall back to anon key
+  const writeKey = localStorage.getItem('kyzer_supabase_service_key') || sbKey;
+
   const btn = document.getElementById('publishBtn');
   if (!silent) { btn.textContent = 'Publishing…'; btn.disabled = true; }
 
@@ -2216,8 +2224,8 @@ async function publishToSite(silent) {
     const r = await fetch(sbUrl + '/rest/v1/site_data', {
       method: 'POST',
       headers: {
-        'apikey': sbKey,
-        'Authorization': 'Bearer ' + sbKey,
+        'apikey': writeKey,
+        'Authorization': 'Bearer ' + writeKey,
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates',
       },
@@ -2244,8 +2252,10 @@ function initSecurity() {
     || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
   const urlEl = document.getElementById('sbUrl');
   const keyEl = document.getElementById('sbKey');
+  const svcEl = document.getElementById('sbServiceKey');
   if (urlEl) urlEl.value = savedUrl || '';
   if (keyEl) keyEl.value = savedKey || '';
+  if (svcEl) svcEl.value = localStorage.getItem('kyzer_supabase_service_key') || '';
 
   const rzpId = document.getElementById('rzpKeyId');
   const rzpUrl = document.getElementById('rzpBackendUrl');
@@ -2347,8 +2357,11 @@ function saveRazorpayConfig() {
 function saveSupabase() {
   const url = document.getElementById('sbUrl').value.trim();
   const key = document.getElementById('sbKey').value.trim();
+  const svc = document.getElementById('sbServiceKey').value.trim();
   if (url) localStorage.setItem('kyzer_supabase_url', url);
   if (key) localStorage.setItem('kyzer_supabase_key', key);
+  if (svc) localStorage.setItem('kyzer_supabase_service_key', svc);
+  else localStorage.removeItem('kyzer_supabase_service_key');
   if (url && key) {
     toast('Supabase config saved. Click Publish to sync all devices.');
   } else {
