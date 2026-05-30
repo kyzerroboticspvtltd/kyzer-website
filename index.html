@@ -2553,39 +2553,9 @@
       <div class="sec-label">// 03 — PRODUCTS</div>
       <div class="sec-title">Shop</div>
     </div>
-    <div class="filter-tabs" style="display:none;">
-      <button class="tab active" data-filter="all">All</button>
-      <button class="tab" data-filter="drone">Drones</button>
-      <button class="tab" data-filter="print">3D Prints</button>
-      <button class="tab" data-filter="proto">Prototyping</button>
-    </div>
+    <div class="filter-tabs" id="catFilterTabs" style="display:none;"></div>
   </div>
-  <div class="cat-tiles reveal">
-    <div class="cat-tile" onclick="filterCat('drone')" data-cat-tile="drone">
-      <div class="cat-tile-icon">🚁</div>
-      <div class="cat-tile-name">Drones</div>
-      <div class="cat-tile-desc">Survey, FPV & agricultural platforms</div>
-      <div class="cat-tile-count" id="catCount-drone"></div>
-    </div>
-    <div class="cat-tile" onclick="filterCat('print')" data-cat-tile="print">
-      <div class="cat-tile-icon">🛠️</div>
-      <div class="cat-tile-name">Print Services</div>
-      <div class="cat-tile-desc">Custom FDM prints, nylon parts & enclosures</div>
-      <div class="cat-tile-count" id="catCount-print"></div>
-    </div>
-    <div class="cat-tile" onclick="filterCat('proto')" data-cat-tile="proto">
-      <div class="cat-tile-icon">⚙️</div>
-      <div class="cat-tile-name">Prototyping</div>
-      <div class="cat-tile-desc">PCB, enclosures & rapid development</div>
-      <div class="cat-tile-count" id="catCount-proto"></div>
-    </div>
-    <div class="cat-tile" onclick="filterCat('3dprint')" data-cat-tile="3dprint">
-      <div class="cat-tile-icon">🖨️</div>
-      <div class="cat-tile-name">Printers & Supplies</div>
-      <div class="cat-tile-desc">3D printers, filaments & upgrade components</div>
-      <div class="cat-tile-count" id="catCount-3dprint"></div>
-    </div>
-  </div>
+  <div class="cat-tiles reveal" id="catTilesContainer"></div>
 
   <!-- Subcategory tabs (shown for 3D Printing) -->
   <div class="subcat-tabs" id="subcatTabs">
@@ -3488,19 +3458,52 @@
     });
   }
 
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => applyFilter(tab.dataset.filter));
-  });
+  // Tab click handled inline via onclick in renderCategoryTiles
+
+  // Default categories used before Supabase data loads
+  const DEFAULT_CATS = [
+    { id: 'drone',   emoji: '🚁', name: 'Drones',             desc: 'Survey, FPV & agricultural platforms' },
+    { id: 'print',   emoji: '🛠️', name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures' },
+    { id: 'proto',   emoji: '⚙️', name: 'Prototyping',        desc: 'PCB, enclosures & rapid development' },
+    { id: '3dprint', emoji: '🖨️', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
+  ];
+
+  function renderCategoryTiles(cats) {
+    const list = cats && cats.length ? cats : DEFAULT_CATS;
+    const tilesEl = document.getElementById('catTilesContainer');
+    const tabsEl  = document.getElementById('catFilterTabs');
+    if (!tilesEl) return;
+
+    tilesEl.innerHTML = list.map(cat => {
+      const icon = cat.photo
+        ? `<div class="cat-tile-photo"><img src="${cat.photo}" alt="${cat.name}"></div>`
+        : `<div class="cat-tile-icon">${cat.emoji || '📦'}</div>`;
+      return `<div class="cat-tile" onclick="filterCat('${cat.id}')" data-cat-tile="${cat.id}">
+        ${icon}
+        <div class="cat-tile-name">${cat.name}</div>
+        <div class="cat-tile-desc">${cat.desc || ''}</div>
+        <div class="cat-tile-count" id="catCount-${cat.id}"></div>
+      </div>`;
+    }).join('');
+
+    if (tabsEl) {
+      tabsEl.innerHTML = `<button class="tab active" data-filter="all" onclick="applyFilter('all')">All</button>`
+        + list.map(cat => `<button class="tab" data-filter="${cat.id}" onclick="applyFilter('${cat.id}')">${cat.name}</button>`).join('');
+    }
+
+    updateCatCounts();
+  }
 
   // Count products per category and update tiles
   function updateCatCounts() {
-    ['drone','print','proto','3dprint'].forEach(cat => {
+    document.querySelectorAll('[id^="catCount-"]').forEach(el => {
+      const cat = el.id.replace('catCount-', '');
       const n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
-      const el = document.getElementById('catCount-' + cat);
-      if (el) el.textContent = n + (n === 1 ? ' product' : ' products');
+      el.textContent = n + (n === 1 ? ' product' : ' products');
     });
   }
-  updateCatCounts();
+
+  renderCategoryTiles(JSON.parse(localStorage.getItem('kyzer_categories') || 'null'));
 
   // ── CONTACT FORM (Web3Forms) ──
   // ACTION REQUIRED: verify this key delivers to your inbox.
@@ -4602,21 +4605,9 @@
   function applyAdminStorage() {
     const ld = (key, def) => JSON.parse(localStorage.getItem(key) || 'null') || def;
 
-    // Categories
+    // Categories — fully re-render tiles and filter tabs from saved array
     const savedCats = JSON.parse(localStorage.getItem('kyzer_categories') || 'null');
-    if (savedCats) {
-      savedCats.forEach(cat => {
-        const tile = document.querySelector(`[data-cat-tile="${cat.id}"]`);
-        if (!tile) return;
-        const iconEl = tile.querySelector('.cat-tile-icon');
-        if (cat.photo) {
-          iconEl.className = 'cat-tile-photo';
-          iconEl.innerHTML = `<img src="${cat.photo}" alt="${cat.name}">`;
-        }
-        tile.querySelector('.cat-tile-name').textContent = cat.name;
-        tile.querySelector('.cat-tile-desc').textContent = cat.desc;
-      });
-    }
+    renderCategoryTiles(savedCats);
 
     // Products
     const savedProducts = localStorage.getItem('kyzer_products');
