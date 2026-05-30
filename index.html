@@ -3615,6 +3615,13 @@
     const rzpKeyId    = localStorage.getItem('kyzer_razorpay_key_id');
     const backendUrl  = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
 
+    if (!rzpKeyId || !backendUrl) {
+      alert('Online payment is not configured yet.\n\nPlease contact us on WhatsApp or email to place your order.');
+      btn.textContent = 'Place Order →';
+      btn.disabled = false;
+      return;
+    }
+
     if (rzpKeyId && backendUrl && typeof Razorpay !== 'undefined') {
       try {
         // 1. Create Razorpay order on backend
@@ -3641,9 +3648,16 @@
           currency:    'INR',
           name:        'Kyzer Robotics',
           description: `Order ${orderId}`,
+          image:       'https://kyzerrobotics.com/logo.png',
           order_id:    createData.order.id,
           prefill: { name, email, contact: phone },
           theme: { color: '#FF8C35' },
+          config: {
+            display: {
+              hide: [],
+              preferences: { show_default_blocks: true },
+            },
+          },
           handler: async function (response) {
             btn.textContent = 'Verifying…';
             btn.disabled = true;
@@ -3683,12 +3697,12 @@
         return;
       } catch (err) {
         console.error('Razorpay init error:', err);
-        // Fall through to COD/offline flow
+        btn.textContent = 'Place Order →';
+        btn.disabled = false;
+        alert('Payment failed to initialise. Please check your internet connection and try again.\n\nError: ' + err.message);
+        return;
       }
     }
-
-    // ── Fallback: offline order (no payment gateway configured) ──
-    _finaliseOrder(orderData, shippingFull, btn);
   }
 
   function _finaliseOrder(orderData, shippingFull, btn) {
@@ -3713,20 +3727,21 @@
     cart = [];
     saveCart();
 
-    // WhatsApp notification
-    const paid = orderData.paymentId ? ` | Payment: ${orderData.paymentId}` : '';
-    const itemLines = (orderData.items || []).map(i =>
-      `  • ${i.name} ×${i.qty} — ₹${(Number(i.price||0)*i.qty).toLocaleString('en-IN')}`
-    ).join('\n');
-    const waMsg = encodeURIComponent(
-      `🛒 *New Shop Order — ${orderData.id}*${paid}\n\n` +
-      `*Customer:* ${orderData.name}\n*Phone:* ${orderData.phone}\n*Email:* ${orderData.email}\n\n` +
-      `*Items:*\n${itemLines}\n\n` +
-      `*Total:* ₹${(orderData.total||0).toLocaleString('en-IN')}\n\n` +
-      `*Ship to:* ${shippingFull}` +
-      (orderData.notes ? `\n\n*Notes:* ${orderData.notes}` : '')
-    );
-    setTimeout(() => window.open('https://wa.me/919049695264?text=' + waMsg, '_blank'), 400);
+    // WhatsApp admin notification — only for COD/offline orders (paid orders are notified via backend email/SMS)
+    if (!orderData.paymentId) {
+      const itemLines = (orderData.items || []).map(i =>
+        `  • ${i.name} ×${i.qty} — ₹${(Number(i.price||0)*i.qty).toLocaleString('en-IN')}`
+      ).join('\n');
+      const waMsg = encodeURIComponent(
+        `🛒 *New Shop Order — ${orderData.id}*\n\n` +
+        `*Customer:* ${orderData.name}\n*Phone:* ${orderData.phone}\n*Email:* ${orderData.email}\n\n` +
+        `*Items:*\n${itemLines}\n\n` +
+        `*Total:* ₹${(orderData.total||0).toLocaleString('en-IN')}\n\n` +
+        `*Ship to:* ${shippingFull}` +
+        (orderData.notes ? `\n\n*Notes:* ${orderData.notes}` : '')
+      );
+      setTimeout(() => window.open('https://wa.me/919049695264?text=' + waMsg, '_blank'), 400);
+    }
 
     document.getElementById('coSuccess').style.display = '';
     document.getElementById('coSuccess').textContent =
@@ -5186,7 +5201,18 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
 
       <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Pay now →</button>
       <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;"></div>
-      <div class="qv2-note" style="margin-top:8px;">Secure payment via Razorpay · Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
+        <span style="font-size:12px;color:var(--muted);">🔒 Secured by Razorpay</span>
+        <span style="color:var(--border);">·</span>
+        <span style="font-size:12px;color:var(--muted);">💳 Credit / Debit Card</span>
+        <span style="color:var(--border);">·</span>
+        <span style="font-size:12px;color:var(--muted);">📱 UPI</span>
+        <span style="color:var(--border);">·</span>
+        <span style="font-size:12px;color:var(--muted);">🏦 Netbanking</span>
+        <span style="color:var(--border);">·</span>
+        <span style="font-size:12px;color:var(--muted);">👛 Wallets</span>
+      </div>
+      <div class="qv2-note" style="margin-top:6px;">Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
     </div>
 
     <!-- RIGHT: order summary -->
