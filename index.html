@@ -4601,6 +4601,8 @@
   (function initComingSoon() {
     const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null');
     if (!cs || !cs.enabled) return;
+    // Admin bypass: ?preview in URL or admin session active
+    if (location.search.includes('preview') || localStorage.getItem('kyzer_admin_authed') === '1') return;
     const overlay = document.getElementById('comingSoonOverlay');
     if (!overlay) return;
     overlay.classList.add('active');
