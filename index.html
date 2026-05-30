@@ -2005,48 +2005,48 @@
   .account-wrap { max-width: 960px; margin: 0 auto; padding: 100px 24px 60px; }
   .account-back { display: inline-flex; align-items: center; gap: 6px; color: #666; font-size: 0.88rem; cursor: pointer; margin-bottom: 28px; transition: color 0.15s; }
   .account-back:hover { color: var(--accent); }
-  .account-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; letter-spacing: 0.04em; color: #111; margin-bottom: 2px; }
-  .account-page-subtitle { color: #888; font-size: 0.88rem; margin-bottom: 36px; }
+  .account-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; letter-spacing: 0.04em; color: var(--text); margin-bottom: 2px; }
+  .account-page-subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 36px; }
   .account-grid { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; }
-  .account-sidebar { background: #fff; border-radius: 16px; padding: 24px 16px; border: 1.5px solid #e8e8e4; }
+  .account-sidebar { background: var(--bg2); border-radius: 16px; padding: 24px 16px; border: 0.5px solid var(--border); }
   .account-avatar-big {
     width: 68px; height: 68px; border-radius: 50%;
     background: var(--accent); color: #fff;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.8rem; font-weight: 700; margin: 0 auto 12px;
   }
-  .account-display-name { font-weight: 700; font-size: 1rem; text-align: center; color: #111; }
-  .account-display-email { font-size: 0.8rem; color: #888; text-align: center; margin-top: 3px; margin-bottom: 18px; }
+  .account-display-name { font-weight: 700; font-size: 1rem; text-align: center; color: var(--text); }
+  .account-display-email { font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 3px; margin-bottom: 18px; }
   .account-nav-item {
     padding: 10px 12px; border-radius: 8px; cursor: pointer;
-    font-size: 0.88rem; color: #444; display: flex; align-items: center;
+    font-size: 0.88rem; color: var(--muted); display: flex; align-items: center;
     gap: 9px; transition: background 0.15s, color 0.15s;
   }
-  .account-nav-item:hover { background: #f8f8f6; }
-  .account-nav-item.active { background: #fff5ee; color: var(--accent); font-weight: 600; }
+  .account-nav-item:hover { background: var(--bg3); color: var(--text); }
+  .account-nav-item.active { background: rgba(255,140,53,0.12); color: var(--orange); font-weight: 600; }
   .account-nav-item.logout-item { color: #e05050; margin-top: 6px; }
-  .account-nav-item.logout-item:hover { background: #fff5f5; color: #c03030; }
-  .account-main-panel { background: #fff; border-radius: 16px; padding: 26px 28px; border: 1.5px solid #e8e8e4; }
+  .account-nav-item.logout-item:hover { background: rgba(224,80,80,0.1); color: #c03030; }
+  .account-main-panel { background: var(--bg2); border-radius: 16px; padding: 26px 28px; border: 0.5px solid var(--border); }
   .account-section { display: none; }
   .account-section.active { display: block; }
-  .account-section-title { font-size: 1.05rem; font-weight: 700; color: #111; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1.5px solid #f0f0ec; }
+  .account-section-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 0.5px solid var(--border); }
   .profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .profile-field.full { grid-column: span 2; }
-  .profile-field label { display: block; font-size: 0.76rem; font-weight: 600; color: #666; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .profile-field label { display: block; font-size: 0.76rem; font-weight: 600; color: var(--muted); margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
   .profile-field input {
-    width: 100%; padding: 10px 12px; border: 1.5px solid #e8e8e4;
+    width: 100%; padding: 10px 12px; border: 0.5px solid var(--border);
     border-radius: 10px; font-size: 0.88rem; font-family: inherit;
-    color: #111; background: #fafaf8; outline: none; box-sizing: border-box;
+    color: var(--text); background: var(--bg3); outline: none; box-sizing: border-box;
     transition: border-color 0.18s;
   }
-  .profile-field input:focus { border-color: var(--accent); background: #fff; }
+  .profile-field input:focus { border-color: var(--orange); background: var(--bg3); }
   .profile-save-btn {
     background: var(--accent); color: #fff; border: none; border-radius: 10px;
     padding: 11px 26px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
     font-family: inherit; transition: background 0.18s;
   }
   .profile-save-btn:hover { background: #FFa050; }
-  .order-hist-item { border: 1.5px solid #e8e8e4; border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+  .order-hist-item { border: 0.5px solid var(--border); background: var(--bg3); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
   .order-hist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
   .order-hist-id { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 600; }
   .order-hist-status { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -2056,10 +2056,10 @@
   .order-hist-status.ready { background: #e6fff5; color: #00a065; }
   .order-hist-status.completed { background: #e6f9ef; color: #1a8f4f; }
   .order-hist-status.cancelled { background: #ffeaea; color: #c03030; }
-  .order-hist-date { font-size: 0.8rem; color: #888; }
+  .order-hist-date { font-size: 0.8rem; color: var(--muted); }
   .order-hist-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-  .order-hist-chip { font-size: 0.78rem; color: #555; background: #f5f5f2; padding: 3px 9px; border-radius: 6px; }
-  .order-hist-empty { text-align: center; padding: 40px 20px; color: #aaa; }
+  .order-hist-chip { font-size: 0.78rem; color: var(--muted); background: var(--bg2); padding: 3px 9px; border-radius: 6px; }
+  .order-hist-empty { text-align: center; padding: 40px 20px; color: var(--muted); }
   .order-hist-empty-icon { font-size: 2.2rem; margin-bottom: 10px; }
   @media (max-width: 768px) {
     .account-grid { grid-template-columns: 1fr; }
@@ -4678,6 +4678,7 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
     document.getElementById('authOverlay').classList.remove('open');
     document.body.style.overflow = '';
     btn.disabled = false; btn.textContent = 'Create account →';
+    showPage('account');
   }
 
   async function loginCustomer() {
@@ -4698,6 +4699,7 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
     updateNavAccount();
     document.getElementById('authOverlay').classList.remove('open');
     document.body.style.overflow = '';
+    showPage('account');
   }
 
   function logoutCustomer() {
@@ -4980,6 +4982,7 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
       updateNavAccount();
       document.getElementById('authOverlay').classList.remove('open');
       document.body.style.overflow = '';
+      showPage('account');
     } catch(err) {
       alert('Google sign-in failed. Please try email sign-in.');
     }
