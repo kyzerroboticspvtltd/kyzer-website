@@ -438,7 +438,10 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
           <p>Edit the category tiles shown in the shop section. Each tile filters products by its type.</p>
         </div>
         <div id="catEditor"></div>
-        <button class="btn btn-primary" onclick="saveCategories()" style="margin-top:8px;">Save categories →</button>
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="addCategory()">+ Add category</button>
+          <button class="btn btn-primary" onclick="saveCategories()">Save categories →</button>
+        </div>
       </div>
 
       <!-- HERO -->
@@ -885,11 +888,7 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
       </div>
       <div class="form-group" style="margin:0;">
         <label class="form-label">CATEGORY</label>
-        <select class="form-input form-select" id="mCat">
-          <option value="drone">Drone</option>
-          <option value="print">3D Print</option>
-          <option value="proto">Prototyping</option>
-        </select>
+        <select class="form-input form-select" id="mCat"></select>
       </div>
     </div>
     <div class="form-group">
@@ -1452,24 +1451,45 @@ function toast(msg, err) {
 
 // ── PRODUCTS ──
 function renderProducts() {
-  document.getElementById('productList').innerHTML = products.map(p => `
-    <div class="product-item">
-      <div class="pi-emoji">${p.emoji}</div>
-      <div class="pi-info">
-        <div class="pi-name">${p.name}</div>
-        <div class="pi-meta">${p.price} · ${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
-      </div>
-      <span class="cat-badge">${p.category}</span>
-      <div class="toggle-wrap">
-        <label>${p.visible?'Live':'Hidden'}</label>
-        <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
-      </div>
-      <div class="pi-actions">
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="delProduct('${p.id}')" title="Delete">🗑</button>
-      </div>
-    </div>
-  `).join('') || '<p style="color:var(--muted);font-size:13px;">No products yet.</p>';
+  if (!products.length) {
+    document.getElementById('productList').innerHTML = '<p style="color:var(--muted);font-size:13px;">No products yet.</p>';
+    return;
+  }
+  const catMap = {};
+  categories.forEach(c => { catMap[c.id] = c.name; });
+  const grouped = {};
+  const uncatKey = '__uncat__';
+  products.forEach(p => {
+    const key = (p.category && catMap[p.category]) ? p.category : uncatKey;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(p);
+  });
+  const orderedKeys = categories.map(c => c.id).filter(k => grouped[k]);
+  if (grouped[uncatKey]) orderedKeys.push(uncatKey);
+  let html = '';
+  orderedKeys.forEach(key => {
+    const label = key === uncatKey ? 'Uncategorised' : (catMap[key] || key);
+    html += `<div style="margin:18px 0 6px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border-bottom:0.5px solid var(--border);padding-bottom:5px;">${label} <span style="font-weight:400;opacity:.6;">(${grouped[key].length})</span></div>`;
+    grouped[key].forEach(p => {
+      html += `
+        <div class="product-item">
+          <div class="pi-emoji">${p.emoji}</div>
+          <div class="pi-info">
+            <div class="pi-name">${p.name}</div>
+            <div class="pi-meta">${p.price} · ${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
+          </div>
+          <div class="toggle-wrap">
+            <label>${p.visible?'Live':'Hidden'}</label>
+            <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
+          </div>
+          <div class="pi-actions">
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit">✏️</button>
+            <button class="btn btn-danger btn-sm btn-icon" onclick="delProduct('${p.id}')" title="Delete">🗑</button>
+          </div>
+        </div>`;
+    });
+  });
+  document.getElementById('productList').innerHTML = html;
 }
 
 function toggleVis(id) {
@@ -1535,11 +1555,19 @@ function renderProdPhotosGrid() {
     </div>`).join('');
 }
 
+function fillCatDropdown(currentVal) {
+  const sel = document.getElementById('mCat');
+  sel.innerHTML = categories.length
+    ? categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
+    : '<option value="">No categories yet</option>';
+  if (currentVal) sel.value = currentVal;
+}
+
 function openAddProduct() {
   editId = null;
   document.getElementById('modalTitle').textContent = 'Add product';
   ['mEmoji','mName','mDesc','mDetails','mSpecs','mPrice','mBadge'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('mCat').value = 'drone';
+  fillCatDropdown(categories[0]?.id || '');
   document.getElementById('mBtn').value = 'Enquire';
   document.getElementById('mBadgeType').value = '';
   document.getElementById('mVisible').className = 'toggle on';
@@ -1552,7 +1580,7 @@ function openEdit(id) {
   const p = products.find(x => x.id === id);
   document.getElementById('modalTitle').textContent = 'Edit product';
   document.getElementById('mEmoji').value   = p.emoji;
-  document.getElementById('mCat').value     = p.category;
+  fillCatDropdown(p.category);
   document.getElementById('mName').value    = p.name;
   document.getElementById('mDesc').value    = p.description;
   document.getElementById('mDetails').value = p.details || '';
@@ -1595,8 +1623,11 @@ function saveProduct() {
 // ── CATEGORIES ──
 function fillCategories() {
   document.getElementById('catEditor').innerHTML = categories.map((cat, i) => `
-    <div class="panel" style="margin-bottom:14px;">
-      <div class="panel-title" style="text-transform:uppercase;font-size:11px;letter-spacing:0.08em;">${cat.name}</div>
+    <div class="panel" style="margin-bottom:14px;position:relative;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="panel-title" style="text-transform:uppercase;font-size:11px;letter-spacing:0.08em;margin:0;">${cat.name}</div>
+        <button type="button" class="btn btn-danger btn-sm btn-icon" onclick="deleteCategory(${i})" title="Delete category" style="font-size:13px;">🗑</button>
+      </div>
       <div class="form-group" style="margin-bottom:14px;">
         <label class="form-label">CATEGORY PHOTO</label>
         <div style="display:flex;align-items:center;gap:14px;">
@@ -1621,6 +1652,28 @@ function fillCategories() {
     </div>
   `).join('');
 }
+function addCategory() {
+  const name = prompt('Category name (e.g. Drone, 3D Print):');
+  if (!name || !name.trim()) return;
+  const id = name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  categories.push({ id, name: name.trim(), desc: '', photo: null });
+  localStorage.setItem('kyzer_categories', JSON.stringify(categories));
+  fillCategories();
+  fillCatDropdown();
+  renderProducts();
+  toast('Category added. Set a photo and description, then save.');
+}
+function deleteCategory(i) {
+  const cat = categories[i];
+  if (!confirm(`Delete category "${cat.name}"? Products in this category will become uncategorised.`)) return;
+  categories.splice(i, 1);
+  localStorage.setItem('kyzer_categories', JSON.stringify(categories));
+  fillCategories();
+  fillCatDropdown();
+  renderProducts();
+  toast('Category deleted.');
+  publishToSite(true);
+}
 function handleCatPhoto(i, file) {
   if (!file) return;
   compressImage(file, src => {
@@ -1641,6 +1694,8 @@ function saveCategories() {
   }));
   localStorage.setItem('kyzer_categories', JSON.stringify(categories));
   fillCategories();
+  fillCatDropdown();
+  renderProducts();
   toast('Categories saved.');
   publishToSite(true);
 }
