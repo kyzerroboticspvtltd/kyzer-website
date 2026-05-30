@@ -3549,6 +3549,17 @@
     renderCheckoutSummary();
   }
 
+  const DELIVERY_FREE_ABOVE = 999;
+  const DELIVERY_CHARGE    = 99;
+  const GST_RATE           = 0.18;
+
+  function orderBreakdown() {
+    const subtotal = cartTotal();
+    const gst      = Math.round(subtotal * GST_RATE);
+    const delivery = subtotal >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
+    return { subtotal, gst, delivery, total: subtotal + gst + delivery };
+  }
+
   function renderCheckoutSummary() {
     const itemsEl = document.getElementById('coSummaryItems');
     const totEl   = document.getElementById('coSummaryTotal');
@@ -3566,8 +3577,15 @@
         <div class="co-cart-item-sub">${sub}</div>
       </div>`;
     }).join('');
-    const tot = cartTotal();
-    if (totEl) totEl.textContent = tot > 0 ? '₹' + tot.toLocaleString('en-IN') : '—';
+    const { subtotal, gst, delivery, total } = orderBreakdown();
+    const fmt = n => '₹' + n.toLocaleString('en-IN');
+    const subtotalEl = document.getElementById('coSummarySubtotal');
+    const gstEl      = document.getElementById('coSummaryGST');
+    const delivEl    = document.getElementById('coSummaryDelivery');
+    if (subtotalEl) subtotalEl.textContent = subtotal > 0 ? fmt(subtotal) : '—';
+    if (gstEl)      gstEl.textContent      = subtotal > 0 ? fmt(gst) : '—';
+    if (delivEl)    delivEl.textContent    = delivery === 0 ? 'FREE' : fmt(delivery);
+    if (totEl)      totEl.textContent      = total > 0 ? fmt(total) : '—';
   }
 
   async function submitProductOrder() {
@@ -3596,14 +3614,15 @@
     const shippingFull = [addr1, shipping.addr2, city, state, pincode, shipping.landmark]
       .filter(Boolean).join(', ');
 
-    const orderId   = 'SHOP-' + Date.now();
-    const total     = cartTotal();
+    const orderId = 'SHOP-' + Date.now();
+    const { subtotal, gst, delivery, total } = orderBreakdown();
     const orderData = {
       id:          orderId,
       type:        'product',
       submittedAt: new Date().toISOString(),
       status:      'new',
       name, email, phone,
+      subtotal, gst, delivery,
       company:     document.getElementById('coCompany').value.trim(),
       notes:       document.getElementById('coNotes').value.trim(),
       shipping, shippingFull,
@@ -3736,6 +3755,9 @@
         `🛒 *New Shop Order — ${orderData.id}*\n\n` +
         `*Customer:* ${orderData.name}\n*Phone:* ${orderData.phone}\n*Email:* ${orderData.email}\n\n` +
         `*Items:*\n${itemLines}\n\n` +
+        `*Subtotal:* ₹${(orderData.subtotal||orderData.total||0).toLocaleString('en-IN')}\n` +
+        `*GST (18%):* ₹${(orderData.gst||0).toLocaleString('en-IN')}\n` +
+        `*Delivery:* ${orderData.delivery===0?'FREE':'₹'+(orderData.delivery||0).toLocaleString('en-IN')}\n` +
         `*Total:* ₹${(orderData.total||0).toLocaleString('en-IN')}\n\n` +
         `*Ship to:* ${shippingFull}` +
         (orderData.notes ? `\n\n*Notes:* ${orderData.notes}` : '')
@@ -5219,11 +5241,15 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
     <div class="checkout-summary">
       <div class="cs-heading">&#x1F9FE; Order summary</div>
       <div id="coSummaryItems"></div>
-      <div class="cs-total-row" style="margin-top:0.75rem;">
+      <div style="border-top:0.5px solid var(--border);margin:10px 0 8px;"></div>
+      <div class="cs-row"><span class="cs-label">Subtotal</span><span class="cs-val" id="coSummarySubtotal">—</span></div>
+      <div class="cs-row"><span class="cs-label">GST (18%)</span><span class="cs-val" id="coSummaryGST">—</span></div>
+      <div class="cs-row"><span class="cs-label">Delivery</span><span class="cs-val" id="coSummaryDelivery">—</span></div>
+      <div class="cs-total-row" style="margin-top:0.75rem;border-top:0.5px solid var(--border);padding-top:0.75rem;">
         <span class="cs-total-label">Total</span>
         <span class="cs-total-price" id="coSummaryTotal">₹0</span>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Secure checkout · UPI, cards, netbanking & wallets accepted.</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Free delivery on orders above ₹999 · Secure checkout</p>
     </div>
 
   </div>
