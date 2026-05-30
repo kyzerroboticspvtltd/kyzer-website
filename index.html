@@ -4595,9 +4595,11 @@
         throw new Error(data.message || 'failed');
       }
     } catch {
-      btn.textContent = 'Place order →';
-      btn.disabled = false;
-      alert('Could not send. Please email us at info@kyzerrobotics.com or WhatsApp +91 90496 95264.');
+      // Order is already saved — show success but note email issue
+      btn.style.display = 'none';
+      document.getElementById('qfSuccess').style.display = 'block';
+      document.getElementById('qfSuccess').innerHTML =
+        '✓ Order received! We\'ll confirm your pricing within a few hours.<br><span style="font-size:12px;opacity:0.8;">Note: confirmation email may be delayed — we have your order.</span>';
     }
   }
 

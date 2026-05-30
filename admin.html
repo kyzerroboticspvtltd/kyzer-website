@@ -868,6 +868,7 @@ CREATE POLICY "customers_insert_orders" ON orders FOR INSERT TO anon WITH CHECK 
         <div class="tab-header">
           <h2>3D Print Orders</h2>
           <p>All incoming 3D print quote requests submitted from the website.</p>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="loadOrders();renderOrders();toast('Orders refreshed.')">↻ Refresh</button>
         </div>
 
         <div class="orders-stats">
@@ -1341,6 +1342,20 @@ function initAdmin() {
   renderOrders();
   startRealtimePolling();
   requestNotificationPermission();
+
+  // Auto-refresh orders when index.html saves a new order in another tab (same device)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'kyzer_print_orders' && e.newValue) {
+      try {
+        const updated = JSON.parse(e.newValue);
+        const prev    = allOrders.map(o => o.id);
+        const newOnes = updated.filter(o => !prev.includes(o.id));
+        allOrders = updated;
+        renderOrders();
+        newOnes.forEach(o => _showOrderAlert(o));
+      } catch(e) {}
+    }
+  });
 }
 
 // ── TABS ──
