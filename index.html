@@ -700,6 +700,56 @@
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+  /* ── COMING SOON OVERLAY ── */
+  #comingSoonOverlay {
+    display: none; position: fixed; inset: 0; z-index: 99999;
+    background: #0a0a0a; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: clamp(1.5rem, 5vw, 3rem);
+    animation: fadeIn 0.6s ease;
+  }
+  #comingSoonOverlay.active { display: flex; }
+  .cs-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: 18px; }
+  .cs-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em;
+    color: #FF8C35; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .cs-headline {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 10vw, 110px);
+    line-height: 0.95; color: #fff; margin-bottom: 10px; letter-spacing: 0.02em;
+  }
+  .cs-tagline { font-size: 15px; color: #888; max-width: 480px; line-height: 1.6; margin: 0 auto 36px; }
+  .cs-countdown {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center;
+  }
+  .cs-unit { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+  .cs-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 7vw, 72px);
+    color: #FF8C35; line-height: 1; background: rgba(255,140,53,0.08);
+    border: 0.5px solid rgba(255,140,53,0.25); border-radius: 10px;
+    padding: 8px 14px; min-width: 72px; display: block; text-align: center;
+  }
+  .cs-lbl { font-size: 10px; letter-spacing: 0.12em; color: #666; margin-top: 6px; text-transform: uppercase; }
+  .cs-sep { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 5vw, 56px); color: #FF8C35; line-height: 1; margin-bottom: 16px; }
+  .cs-notify-wrap { display: flex; gap: 8px; max-width: 420px; width: 100%; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+  .cs-notify-wrap input {
+    flex: 1; min-width: 200px; padding: 12px 16px; border: 0.5px solid #333;
+    border-radius: 8px; background: #111; color: #fff; font-size: 14px;
+    font-family: inherit; outline: none;
+  }
+  .cs-notify-wrap input:focus { border-color: #FF8C35; }
+  .cs-notify-wrap button {
+    padding: 12px 20px; background: #FF8C35; color: #111; border: none;
+    border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; white-space: nowrap; transition: background 0.2s;
+  }
+  .cs-notify-wrap button:hover { background: #e07b20; }
+  .cs-notify-msg { font-size: 13px; color: #FF8C35; margin-top: 12px; display: none; }
+  .cs-social { margin-top: 28px; display: flex; gap: 16px; align-items: center; justify-content: center; }
+  .cs-social a { font-size: 13px; color: #555; text-decoration: none; transition: color 0.2s; }
+  .cs-social a:hover { color: #FF8C35; }
+  .cs-social span { color: #333; }
+
   /* QUOTE PAGE v2 */
   .quote-v2-layout {
     display: grid;
@@ -2103,6 +2153,33 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div id="mainSite">
+
+<!-- COMING SOON OVERLAY -->
+<div id="comingSoonOverlay">
+  <img src="logo.png" class="cs-logo" alt="Kyzer Robotics">
+  <div class="cs-brand">Kyzer Robotics</div>
+  <div class="cs-headline" id="csHeadline">Coming Soon</div>
+  <p class="cs-tagline" id="csTagline">Precision drones, custom 3D printing &amp; rapid prototyping — launching June 2, 2026.</p>
+  <div class="cs-countdown" id="csCountdown">
+    <div class="cs-unit"><span class="cs-num" id="csDays">00</span><span class="cs-lbl">Days</span></div>
+    <div class="cs-sep">:</div>
+    <div class="cs-unit"><span class="cs-num" id="csHours">00</span><span class="cs-lbl">Hours</span></div>
+    <div class="cs-sep">:</div>
+    <div class="cs-unit"><span class="cs-num" id="csMins">00</span><span class="cs-lbl">Minutes</span></div>
+    <div class="cs-sep">:</div>
+    <div class="cs-unit"><span class="cs-num" id="csSecs">00</span><span class="cs-lbl">Seconds</span></div>
+  </div>
+  <div class="cs-notify-wrap">
+    <input type="email" id="csEmail" placeholder="Your email — get notified on launch">
+    <button onclick="csSignup()">Notify me →</button>
+  </div>
+  <div class="cs-notify-msg" id="csSignupMsg">✓ You're on the list! We'll reach out on launch day.</div>
+  <div class="cs-social">
+    <a href="https://wa.me/919049695264" target="_blank" rel="noopener">WhatsApp</a>
+    <span>·</span>
+    <a href="https://www.instagram.com/kyzer.robotics" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</div>
 
 <!-- ANNOUNCEMENT BAR -->
 <div id="announcementBar">
@@ -4519,6 +4596,71 @@
       } catch (e) {}
     });
   }
+
+  // ── COMING SOON ──
+  (function initComingSoon() {
+    const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null');
+    if (!cs || !cs.enabled) return;
+    const overlay = document.getElementById('comingSoonOverlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    if (cs.headline) document.getElementById('csHeadline').textContent = cs.headline;
+    if (cs.tagline)  document.getElementById('csTagline').textContent  = cs.tagline;
+
+    const launch = new Date(cs.date || 'June 2, 2026 00:00:00 IST');
+    function tick() {
+      const diff = launch - Date.now();
+      if (diff <= 0) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        return;
+      }
+      const d = Math.floor(diff / 864e5);
+      const h = Math.floor((diff % 864e5) / 36e5);
+      const m = Math.floor((diff % 36e5) / 6e4);
+      const s = Math.floor((diff % 6e4) / 1e3);
+      document.getElementById('csDays').textContent  = String(d).padStart(2,'0');
+      document.getElementById('csHours').textContent = String(h).padStart(2,'0');
+      document.getElementById('csMins').textContent  = String(m).padStart(2,'0');
+      document.getElementById('csSecs').textContent  = String(s).padStart(2,'0');
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+  function csSignup() {
+    const email = document.getElementById('csEmail').value.trim();
+    if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+    const subs = JSON.parse(localStorage.getItem('kyzer_cs_subscribers') || '[]');
+    if (!subs.includes(email)) { subs.push(email); localStorage.setItem('kyzer_cs_subscribers', JSON.stringify(subs)); }
+    const bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/,'');
+    if (bu) fetch(bu + '/api/cs-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email }) }).catch(()=>{});
+    document.getElementById('csSignupMsg').style.display = '';
+    document.getElementById('csEmail').style.display = 'none';
+    document.querySelector('#comingSoonOverlay .cs-notify-wrap button').style.display = 'none';
+  }
+
+  // ── GOOGLE ANALYTICS (GA4) ──
+  (function initGA() {
+    const gid = localStorage.getItem('kyzer_ga_id') || '';
+    if (!gid || !gid.startsWith('G-')) return;
+    const s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gid;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date()); gtag('config', gid);
+  })();
+
+  // ── VISIT COUNTER ──
+  (function trackVisit() {
+    const bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/,'');
+    if (!bu) return;
+    fetch(bu + '/api/track-visit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ page: location.pathname }) }).catch(()=>{});
+  })();
 
   // Apply local data first (instant)
   applyAdminStorage();

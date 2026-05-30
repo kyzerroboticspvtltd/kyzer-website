@@ -458,4 +458,49 @@ app.post('/api/order-notify', formLimiter, async (req, res) => {
   res.json({ ok: true });
 });
 
+// ── VISIT COUNTER ──
+const VISITS_FILE = path.join(DATA_DIR, 'visits.json');
+function readVisits() {
+  try { if (fs.existsSync(VISITS_FILE)) return JSON.parse(fs.readFileSync(VISITS_FILE, 'utf8')); } catch {}
+  return { total: 0, byDay: {} };
+}
+function writeVisits(v) { fs.writeFileSync(VISITS_FILE, JSON.stringify(v)); }
+
+app.post('/api/track-visit', (req, res) => {
+  const v = readVisits();
+  v.total = (v.total || 0) + 1;
+  const today = new Date().toISOString().slice(0, 10);
+  v.byDay = v.byDay || {};
+  v.byDay[today] = (v.byDay[today] || 0) + 1;
+  // Keep only last 30 days
+  const keys = Object.keys(v.byDay).sort();
+  if (keys.length > 30) keys.slice(0, keys.length - 30).forEach(k => delete v.byDay[k]);
+  writeVisits(v);
+  res.json({ ok: true });
+});
+
+app.get('/api/analytics', (req, res) => {
+  const v = readVisits();
+  const today = new Date().toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+  const week = Object.entries(v.byDay || {})
+    .filter(([d]) => d >= weekAgo)
+    .reduce((s, [, n]) => s + n, 0);
+  res.json({ ok: true, total: v.total || 0, today: v.byDay?.[today] || 0, week });
+});
+
+// ── COMING SOON SIGNUP ──
+app.post('/api/cs-subscribe', async (req, res) => {
+  const { email } = req.body || {};
+  if (!email) return res.json({ ok: false });
+  try {
+    await sendMail({
+      to: process.env.NOTIFY_EMAIL || process.env.GMAIL_USER,
+      subject: '[Kyzer] New coming-soon signup: ' + email,
+      html: `<p><strong>${email}</strong> signed up for launch notification on kyzerrobotics.com</p>`,
+    });
+  } catch {}
+  res.json({ ok: true });
+});
+
 app.listen(PORT, () => console.log(`Kyzer API running on port ${PORT}`));

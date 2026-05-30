@@ -714,6 +714,60 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
 
+        <!-- COMING SOON -->
+        <div class="panel" style="max-width:520px;margin-bottom:20px;">
+          <div class="panel-title">🚀 Coming Soon Mode</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">When enabled, the website shows a branded "Coming Soon" countdown page to all visitors. Disable to go live.</p>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label">STATUS</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button class="toggle" id="csToggle" onclick="toggleCS()"></button>
+              <span id="csToggleLabel" style="font-size:13px;color:var(--muted);">Disabled (site is live)</span>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label">LAUNCH DATE &amp; TIME</label>
+            <input class="form-input" type="datetime-local" id="csDate" />
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label">HEADLINE</label>
+            <input class="form-input" type="text" id="csHeadlineInput" placeholder="Coming Soon" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">TAGLINE</label>
+            <input class="form-input" type="text" id="csTaglineInput" placeholder="Launching June 2, 2026..." />
+          </div>
+          <button class="btn btn-primary" onclick="saveCS()" style="margin-top:14px;">Save →</button>
+          <div id="csSaveMsg" style="display:none;font-size:12px;color:#1a8f4f;margin-top:8px;">✓ Saved</div>
+          <div style="margin-top:16px;padding-top:14px;border-top:0.5px solid var(--border);">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;">NOTIFICATION SIGNUPS</div>
+            <div id="csSubscriberList" style="font-size:12px;color:var(--muted);">—</div>
+          </div>
+        </div>
+
+        <!-- GOOGLE ANALYTICS -->
+        <div class="panel" style="max-width:520px;margin-bottom:20px;">
+          <div class="panel-title">📊 Google Analytics (GA4)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Tracks page views, visitor locations, devices, and more. Free via Google Analytics.</p>
+          <div class="form-group">
+            <label class="form-label">MEASUREMENT ID</label>
+            <input class="form-input" type="text" id="gaId" placeholder="G-XXXXXXXXXX" />
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
+              <strong>Setup:</strong> Go to <strong>analytics.google.com</strong> → create a property → copy the Measurement ID (starts with <code>G-</code>)
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveGA()" style="margin-top:14px;">Save →</button>
+          <div id="gaSaveMsg" style="display:none;font-size:12px;color:#1a8f4f;margin-top:8px;">✓ Saved — reload the live site to activate</div>
+        </div>
+
+        <!-- VISIT COUNTER -->
+        <div class="panel" style="max-width:520px;margin-bottom:20px;">
+          <div class="panel-title">👁️ Visit Counter</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Basic visit count tracked via your backend. Requires backend URL to be configured.</p>
+          <div id="visitStats" style="font-size:13px;color:var(--muted);">Loading...</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadVisitStats()" style="margin-top:10px;">Refresh →</button>
+        </div>
+
         <div class="panel" style="max-width:520px;margin-bottom:20px;">
           <div class="panel-title">💳 Razorpay Payment Gateway</div>
           <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Enables real online payments on the checkout page. Use test keys while testing — swap to live keys when ready to accept real payments.</p>
@@ -2191,6 +2245,84 @@ function initSecurity() {
   const rzpUrl = document.getElementById('rzpBackendUrl');
   if (rzpId) rzpId.value = localStorage.getItem('kyzer_razorpay_key_id') || '';
   if (rzpUrl) rzpUrl.value = localStorage.getItem('kyzer_backend_url') || '';
+  initCS();
+  initGA();
+  loadVisitStats();
+}
+
+// ── COMING SOON ──
+function initCS() {
+  const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || '{}');
+  const tog = document.getElementById('csToggle');
+  const lbl = document.getElementById('csToggleLabel');
+  if (cs.enabled) { tog.classList.add('on'); lbl.textContent = 'Enabled (visitors see countdown)'; }
+  else { tog.classList.remove('on'); lbl.textContent = 'Disabled (site is live)'; }
+  if (cs.date) document.getElementById('csDate').value = cs.date;
+  else { const d = new Date('2026-06-02T00:00'); document.getElementById('csDate').value = d.toISOString().slice(0,16); }
+  document.getElementById('csHeadlineInput').value = cs.headline || 'Coming Soon';
+  document.getElementById('csTaglineInput').value  = cs.tagline  || 'Precision drones, custom 3D printing & rapid prototyping — launching June 2, 2026.';
+  const subs = JSON.parse(localStorage.getItem('kyzer_cs_subscribers') || '[]');
+  document.getElementById('csSubscriberList').innerHTML = subs.length
+    ? subs.map(e => `<div style="padding:2px 0;">${e}</div>`).join('')
+    : '<span style="color:var(--muted);">No signups yet.</span>';
+}
+function toggleCS() {
+  const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || '{}');
+  cs.enabled = !cs.enabled;
+  localStorage.setItem('kyzer_coming_soon', JSON.stringify(cs));
+  initCS();
+}
+function saveCS() {
+  const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || '{}');
+  cs.date     = document.getElementById('csDate').value;
+  cs.headline = document.getElementById('csHeadlineInput').value.trim() || 'Coming Soon';
+  cs.tagline  = document.getElementById('csTaglineInput').value.trim();
+  localStorage.setItem('kyzer_coming_soon', JSON.stringify(cs));
+  const msg = document.getElementById('csSaveMsg');
+  msg.style.display = ''; setTimeout(() => msg.style.display = 'none', 2500);
+  toast('Coming soon settings saved.');
+}
+
+// ── GOOGLE ANALYTICS ──
+function initGA() {
+  document.getElementById('gaId').value = localStorage.getItem('kyzer_ga_id') || '';
+}
+function saveGA() {
+  const id = document.getElementById('gaId').value.trim();
+  if (id) localStorage.setItem('kyzer_ga_id', id);
+  else localStorage.removeItem('kyzer_ga_id');
+  const msg = document.getElementById('gaSaveMsg');
+  msg.style.display = ''; setTimeout(() => msg.style.display = 'none', 3000);
+  toast('GA4 ID saved.');
+}
+
+// ── VISIT COUNTER ──
+async function loadVisitStats() {
+  const bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/,'');
+  const el = document.getElementById('visitStats');
+  if (!bu) { el.textContent = 'No backend URL configured — set it in Razorpay settings.'; return; }
+  el.textContent = 'Loading…';
+  try {
+    const res = await fetch(bu + '/api/analytics');
+    const d = await res.json();
+    if (d.ok) {
+      el.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;">
+          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.total||0}</div>
+            <div style="font-size:11px;color:var(--muted);">Total visits</div>
+          </div>
+          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.today||0}</div>
+            <div style="font-size:11px;color:var(--muted);">Today</div>
+          </div>
+          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.week||0}</div>
+            <div style="font-size:11px;color:var(--muted);">This week</div>
+          </div>
+        </div>`;
+    } else { el.textContent = 'Could not load stats.'; }
+  } catch { el.textContent = 'Backend not reachable.'; }
 }
 
 function saveRazorpayConfig() {
