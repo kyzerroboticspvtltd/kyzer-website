@@ -63,7 +63,10 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     background: #fff3e8; color: var(--orange); padding: 3px 8px;
     border-radius: 4px; border: 0.5px solid rgba(255,107,0,0.25);
   }
-  .admin-topbar-right { display: flex; gap: 10px; }
+  .admin-topbar-right { display: flex; align-items: center; gap: 10px; }
+  @keyframes pulseLive { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.7)} }
+  .live-dot { width:7px; height:7px; background:#2e7d32; border-radius:50%; display:inline-block; animation: pulseLive 2s infinite; }
+  .live-indicator { display:none; align-items:center; gap:6px; font-size:11px; color:#2e7d32; font-family:'JetBrains Mono',monospace; letter-spacing:0.05em; }
   .topbar-btn {
     background: var(--bg3); color: var(--muted); border: 0.5px solid var(--border);
     padding: 7px 14px; border-radius: 7px; font-size: 12px; cursor: pointer;
@@ -421,6 +424,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       <span class="admin-badge">MANAGER</span>
     </div>
     <div class="admin-topbar-right">
+      <span class="live-indicator" id="liveIndicator"><span class="live-dot"></span>LIVE</span>
       <button class="topbar-btn" id="publishBtn" onclick="publishToSite()" style="background:var(--orange);color:#111;font-weight:600;border-color:var(--orange);">🚀 Publish to site</button>
       <a href="./" target="_blank" class="topbar-btn">View site ↗</a>
       <button class="topbar-btn danger" onclick="doLogout()">Logout</button>
@@ -728,7 +732,20 @@ DROP POLICY IF EXISTS "write_all" ON site_data;
 -- Allow anyone to read (needed for customer site)
 CREATE POLICY "read_all" ON site_data FOR SELECT USING (true);
 -- No write policy for anon = writes blocked
--- Service role key bypasses RLS automatically</pre>
+-- Service role key bypasses RLS automatically
+
+-- ── ORDERS TABLE (for real-time notifications) ──
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT DEFAULT 'new',
+  data JSONB NOT NULL DEFAULT '{}'
+);
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "customers_insert_orders" ON orders;
+-- Customers can submit orders (anon INSERT)
+CREATE POLICY "customers_insert_orders" ON orders FOR INSERT TO anon WITH CHECK (true);
+-- Admin reads/updates via service_role key (bypasses RLS)</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
@@ -1307,6 +1324,8 @@ function initAdmin() {
   renderPhotoGrid();
   loadOrders();
   renderOrders();
+  startRealtimePolling();
+  requestNotificationPermission();
 }
 
 // ── TABS ──
@@ -2542,6 +2561,18 @@ function saveOrderStatus(id, status) {
   if (idx !== -1) orders[idx].status = status;
   localStorage.setItem('kyzer_print_orders', JSON.stringify(orders));
   allOrders = orders;
+  // Sync status to Supabase
+  const { url, key } = _sbCreds();
+  if (url && key) {
+    fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': key, 'Authorization': 'Bearer ' + key,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ status })
+    }).catch(() => {});
+  }
 }
 
 function deleteCurrentOrder() {
@@ -2560,6 +2591,107 @@ function downloadOrderFile(id) {
   a.href = o.fileData;
   a.download = o.fileName || 'model-file';
   a.click();
+}
+
+// ── REALTIME ORDER POLLING ──
+let _rtInterval = null;
+let _lastPollTime = null;
+
+function _sbCreds() {
+  const url = localStorage.getItem('kyzer_supabase_url') || (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '');
+  const key  = localStorage.getItem('kyzer_supabase_service_key')
+            || localStorage.getItem('kyzer_supabase_key')
+            || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
+  return { url, key };
+}
+
+async function startRealtimePolling() {
+  const { url, key } = _sbCreds();
+  if (!url || !key) return;
+
+  // Initial load from Supabase
+  await _fetchAllSupabaseOrders(url, key);
+
+  _lastPollTime = new Date().toISOString();
+  if (_rtInterval) clearInterval(_rtInterval);
+  _rtInterval = setInterval(() => _pollNewOrders(url, key), 15000);
+  document.getElementById('liveIndicator').style.display = 'flex';
+}
+
+async function _fetchAllSupabaseOrders(url, key) {
+  try {
+    const res = await fetch(`${url}/rest/v1/orders?select=*&order=submitted_at.desc`, {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return;
+    const local = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+    const seen  = new Set(local.map(o => o.id));
+    rows.forEach(row => {
+      if (!seen.has(row.id)) {
+        local.push({ ...(row.data || {}), id: row.id, status: row.status || 'new', submittedAt: row.submitted_at });
+      }
+    });
+    local.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+    localStorage.setItem('kyzer_print_orders', JSON.stringify(local));
+    allOrders = local;
+    renderOrders();
+  } catch(e) {}
+}
+
+async function _pollNewOrders(url, key) {
+  try {
+    const since = encodeURIComponent(_lastPollTime);
+    const res = await fetch(`${url}/rest/v1/orders?submitted_at=gt.${since}&order=submitted_at.desc`, {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    _lastPollTime = new Date().toISOString();
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return;
+
+    const local = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+    const seen  = new Set(local.map(o => o.id));
+    let hasNew  = false;
+
+    rows.forEach(row => {
+      if (!seen.has(row.id)) {
+        const order = { ...(row.data || {}), id: row.id, status: row.status || 'new', submittedAt: row.submitted_at };
+        local.unshift(order);
+        seen.add(row.id);
+        hasNew = true;
+        _showOrderAlert(order);
+      }
+    });
+
+    if (hasNew) {
+      local.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+      localStorage.setItem('kyzer_print_orders', JSON.stringify(local));
+      allOrders = local;
+      renderOrders();
+    }
+  } catch(e) {}
+}
+
+function _showOrderAlert(order) {
+  const name  = order.name  || 'Someone';
+  const total = order.estimatedTotal || '?';
+  toast(`🔔 New order from ${name} — ₹${total}`);
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    try {
+      new Notification('New 3D Print Order!', {
+        body: `${name} · ${order.material || ''} · ₹${total}`,
+        icon: './logo.png'
+      });
+    } catch(e) {}
+  }
+}
+
+function requestNotificationPermission() {
+  if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
 }
 
 function changePass() {

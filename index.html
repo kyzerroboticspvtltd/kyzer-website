@@ -4546,6 +4546,21 @@
     _orders.unshift(order);
     localStorage.setItem('kyzer_print_orders', JSON.stringify(_orders));
 
+    // Non-blocking: push to Supabase so admin gets real-time notification
+    (function() {
+      const _sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
+      const _sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
+      if (!_sbUrl || !_sbKey) return;
+      fetch(_sbUrl + '/rest/v1/orders', {
+        method: 'POST',
+        headers: {
+          'apikey': _sbKey, 'Authorization': 'Bearer ' + _sbKey,
+          'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ id: order.id, status: 'new', data: order })
+      }).catch(() => {});
+    })();
+
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
