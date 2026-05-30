@@ -527,6 +527,9 @@
   .prod-btn:hover { background: var(--orange); color: #111; }
   .prod-btn-buy { background: var(--orange); color: #111; font-weight: 600; }
   .prod-btn-buy:hover { background: #e07b20; }
+  .filament-colors { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 10px; }
+  .fc { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); cursor: default; transition: transform 0.15s; }
+  .fc:hover { transform: scale(1.35); }
   .hidden { display: none; }
 
   /* CONTACT */
@@ -2576,9 +2579,22 @@
         <span class="prod-badge">IN STOCK</span>
         <h4>PLA+ 1kg Spool</h4>
         <p>High-quality PLA+, 1.75mm — multiple colors available</p>
+        <div class="filament-colors">
+          <span class="fc" style="background:#ffffff" title="White"></span>
+          <span class="fc" style="background:#1a1a1a" title="Black"></span>
+          <span class="fc" style="background:#e53935" title="Red"></span>
+          <span class="fc" style="background:#ff6f00" title="Orange"></span>
+          <span class="fc" style="background:#fdd835" title="Yellow"></span>
+          <span class="fc" style="background:#43a047" title="Green"></span>
+          <span class="fc" style="background:#1e88e5" title="Blue"></span>
+          <span class="fc" style="background:#8e24aa" title="Purple"></span>
+          <span class="fc" style="background:#e91e8c" title="Pink"></span>
+          <span class="fc" style="background:#757575" title="Grey"></span>
+          <span class="fc" style="background:#c0c0c0" title="Silver"></span>
+        </div>
         <div class="prod-footer">
           <span class="prod-price">₹899</span>
-          <button class="prod-btn">Buy</button>
+          <button class="prod-btn prod-btn-buy">Buy Now →</button>
         </div>
       </div>
     </div>
@@ -2588,9 +2604,19 @@
         <span class="prod-badge">IN STOCK</span>
         <h4>PETG 1kg Spool</h4>
         <p>Chemical resistant PETG, 1.75mm — great for functional parts</p>
+        <div class="filament-colors">
+          <span class="fc" style="background:#ffffff" title="White"></span>
+          <span class="fc" style="background:#1a1a1a" title="Black"></span>
+          <span class="fc" style="background:#e53935" title="Red"></span>
+          <span class="fc" style="background:#1e88e5" title="Blue"></span>
+          <span class="fc" style="background:#fdd835" title="Yellow"></span>
+          <span class="fc" style="background:#b0bec5;border:1px solid #90a4ae" title="Clear"></span>
+          <span class="fc" style="background:#757575" title="Grey"></span>
+          <span class="fc" style="background:#43a047" title="Green"></span>
+        </div>
         <div class="prod-footer">
           <span class="prod-price">₹999</span>
-          <button class="prod-btn">Buy</button>
+          <button class="prod-btn prod-btn-buy">Buy Now →</button>
         </div>
       </div>
     </div>
@@ -2600,9 +2626,17 @@
         <span class="prod-badge">IN STOCK</span>
         <h4>TPU Flexible 500g</h4>
         <p>95A flexible TPU, 1.75mm — grips, gaskets & flex parts</p>
+        <div class="filament-colors">
+          <span class="fc" style="background:#1a1a1a" title="Black"></span>
+          <span class="fc" style="background:#ffffff" title="White"></span>
+          <span class="fc" style="background:#e53935" title="Red"></span>
+          <span class="fc" style="background:#1e88e5" title="Blue"></span>
+          <span class="fc" style="background:#fdd835" title="Yellow"></span>
+          <span class="fc" style="background:#43a047" title="Green"></span>
+        </div>
         <div class="prod-footer">
           <span class="prod-price">₹799</span>
-          <button class="prod-btn">Buy</button>
+          <button class="prod-btn prod-btn-buy">Buy Now →</button>
         </div>
       </div>
     </div>
@@ -2612,9 +2646,13 @@
         <span class="prod-badge">IN STOCK</span>
         <h4>Carbon Fibre PLA 500g</h4>
         <p>CF-reinforced PLA, 1.75mm — lightweight and stiff</p>
+        <div class="filament-colors">
+          <span class="fc" style="background:#2b2b2b" title="Matte Black"></span>
+          <span class="fc" style="background:#3d3d3d" title="Dark Grey"></span>
+        </div>
         <div class="prod-footer">
           <span class="prod-price">₹1,299</span>
-          <button class="prod-btn">Buy</button>
+          <button class="prod-btn prod-btn-buy">Buy Now →</button>
         </div>
       </div>
     </div>
@@ -4446,8 +4484,39 @@
     }
   }
 
+  // Upgrades every .prod-card button to Buy Now / Get Quote based on its data-product price
+  function upgradeStaticCards() {
+    document.querySelectorAll('.prod-card').forEach(card => {
+      try {
+        const d = JSON.parse(card.dataset.product || '{}');
+        if (!d.price) return;
+        const np = parseNumericPrice(d.price);
+        const isFrom = String(d.price).toLowerCase().startsWith('from');
+        const footer = card.querySelector('.prod-footer');
+        if (!footer) return;
+        // Add price span if missing (e.g. dynamic cards without price)
+        if (!footer.querySelector('.prod-price')) {
+          const ps = document.createElement('span');
+          ps.className = 'prod-price';
+          ps.textContent = np > 0 ? '₹' + np.toLocaleString('en-IN') : d.price;
+          footer.insertBefore(ps, footer.firstChild);
+        }
+        // Upgrade button style and label
+        const btn = footer.querySelector('button');
+        if (!btn) return;
+        if (np > 0 && !btn.classList.contains('prod-btn-buy')) {
+          btn.textContent = 'Buy Now →';
+          btn.classList.add('prod-btn-buy');
+        } else if (isFrom) {
+          btn.textContent = 'Get Quote →';
+        }
+      } catch (e) {}
+    });
+  }
+
   // Apply local data first (instant)
   applyAdminStorage();
+  upgradeStaticCards();
 
   // Then fetch from Supabase and re-apply if configured
   (function fetchFromSupabase() {
@@ -4475,6 +4544,7 @@
         if (v !== null && v !== undefined) localStorage.setItem(k, JSON.stringify(v));
       });
       applyAdminStorage();
+      upgradeStaticCards();
     })
     .catch(() => {});
   })();
