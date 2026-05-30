@@ -3532,19 +3532,21 @@
 
   // ====== CHECKOUT PAGE ======
   function loadCheckoutPage() {
-    // Pre-fill from logged-in customer profile
-    const cust = typeof getCurrentCustomer === 'function' ? getCurrentCustomer() : null;
-    if (cust) {
+    const session = typeof getCurrentCustomer === 'function' ? getCurrentCustomer() : null;
+    if (session) {
+      const customers = typeof getCustomers === 'function' ? getCustomers() : [];
+      const full = customers.find(x => x.id === session.id) || session;
       const fill = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
-      fill('coName', cust.name);
-      fill('coEmail', cust.email);
-      fill('coPhone', cust.phone);
-      if (cust.address) {
-        fill('coAddr1', cust.address.addr1 || cust.address);
-        fill('coCity', cust.address.city);
-        fill('coState', cust.address.state);
-        fill('coPincode', cust.address.pincode);
-      }
+      fill('coName',    full.name);
+      fill('coEmail',   full.email);
+      fill('coPhone',   full.phone);
+      const a = full.address || {};
+      fill('coAddr1',   a.addr1);
+      fill('coAddr2',   a.addr2);
+      fill('coCity',    a.city);
+      fill('coState',   a.state);
+      fill('coPincode', a.pincode);
+      fill('coLandmark',a.landmark);
     }
     renderCheckoutSummary();
   }
