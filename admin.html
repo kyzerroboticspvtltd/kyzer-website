@@ -346,6 +346,20 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   .omod-field > div { font-size: 13px; font-weight: 500; }
   .omod-file-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 8px; }
   .omod-file-name { font-size: 13px; flex: 1; font-family: 'JetBrains Mono', monospace; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── CUSTOMERS ── */
+  .cust-list { display: flex; flex-direction: column; gap: 8px; }
+  .cust-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: border-color 0.2s; }
+  .cust-card:hover { border-color: rgba(255,140,53,0.4); }
+  .cust-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); color: #111; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+  .cust-info { flex: 1; min-width: 0; }
+  .cust-name { font-size: 14px; font-weight: 500; }
+  .cust-contact { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cust-meta { text-align: right; flex-shrink: 0; }
+  .cust-orders-count { font-size: 13px; font-weight: 500; }
+  .cust-joined { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cust-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
+  .cust-search-bar { margin-bottom: 1rem; }
 </style>
 </head>
 <body>
@@ -390,6 +404,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
       <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>📄</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-link" onclick="switchTab('shoporders')" id="tl-shoporders" style="display:flex;align-items:center;"><span>🛒</span> Shop Orders <span id="shopOrdersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
+      <div class="sidebar-link" onclick="switchTab('customers')" id="tl-customers"><span>👤</span> Customers</div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
       <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
@@ -756,6 +771,26 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
         <div id="shopOrderList" class="order-list"></div>
       </div>
 
+      <!-- CUSTOMERS TAB -->
+      <div class="admin-tab" id="tab-customers">
+        <div class="tab-header">
+          <h2>Customers</h2>
+          <p>Registered accounts created on the website.</p>
+        </div>
+
+        <div class="orders-stats" style="grid-template-columns:repeat(3,1fr);">
+          <div class="ostat-card"><div class="ostat-num" id="cstat-total">0</div><div class="ostat-label">Total accounts</div></div>
+          <div class="ostat-card new"><div class="ostat-num" id="cstat-today">0</div><div class="ostat-label">Joined today</div></div>
+          <div class="ostat-card done"><div class="ostat-num" id="cstat-ordered">0</div><div class="ostat-label">Have placed orders</div></div>
+        </div>
+
+        <div class="cust-search-bar">
+          <input type="text" class="form-input" id="custSearchInput" placeholder="Search by name, email or phone…" oninput="filterCustomers(this.value)" style="max-width:400px;">
+        </div>
+
+        <div id="customerList" class="cust-list"></div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -961,6 +996,41 @@ CREATE POLICY "write_all" ON site_data FOR ALL    USING (true) WITH CHECK (true)
   </div>
 </div>
 
+<!-- CUSTOMER DETAIL MODAL -->
+<div id="customerModal" class="omodal-backdrop" onclick="if(event.target===this)closeCustomerModal()">
+  <div class="omodal">
+    <div class="omodal-header">
+      <div>
+        <div class="omodal-id" id="cmod-id"></div>
+        <div class="omodal-date" id="cmod-joined"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="topbar-btn danger" onclick="deleteCustomer()">🗑 Delete</button>
+        <button class="topbar-btn" onclick="closeCustomerModal()">✕ Close</button>
+      </div>
+    </div>
+    <div class="omodal-body">
+      <div class="omod-section">
+        <div class="omod-section-title">Profile</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Name</label><div id="cmod-name"></div></div>
+          <div class="omod-field"><label>Email</label><div id="cmod-email"></div></div>
+          <div class="omod-field"><label>Phone</label><div id="cmod-phone"></div></div>
+          <div class="omod-field"><label>Member since</label><div id="cmod-since"></div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Saved Address</div>
+        <div id="cmod-address" style="font-size:13px;line-height:1.8;"></div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Order History</div>
+        <div id="cmod-orders"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1094,6 +1164,147 @@ function initAdmin() {
 }
 
 // ── TABS ──
+// ── CUSTOMERS ──
+let allCustomers = [];
+let currentCustomerId = null;
+
+function loadCustomers() {
+  allCustomers = JSON.parse(localStorage.getItem('kyzer_customers') || '[]');
+}
+
+function renderCustomers(filter) {
+  loadCustomers();
+  const list = document.getElementById('customerList');
+  const q = (filter || '').toLowerCase();
+  const shown = q
+    ? allCustomers.filter(c =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.email || '').toLowerCase().includes(q) ||
+        (c.phone || '').includes(q))
+    : allCustomers;
+
+  const shopOrds = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+  const printOrds = JSON.parse(localStorage.getItem('kyzer_orders') || '[]');
+
+  const today = new Date().toDateString();
+  const todayNew = allCustomers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === today).length;
+  const withOrders = allCustomers.filter(c =>
+    shopOrds.some(o => o.contact && o.contact.email === c.email) ||
+    printOrds.some(o => o.email === c.email)
+  ).length;
+
+  document.getElementById('cstat-total').textContent = allCustomers.length;
+  document.getElementById('cstat-today').textContent = todayNew;
+  document.getElementById('cstat-ordered').textContent = withOrders;
+
+  if (!shown.length) {
+    list.innerHTML = '<div class="orders-empty">' + (q ? 'No customers match your search.' : 'No registered customers yet.') + '</div>';
+    return;
+  }
+
+  list.innerHTML = shown.slice().reverse().map(c => {
+    const initials = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const shopCount = shopOrds.filter(o => o.contact && o.contact.email === c.email).length;
+    const printCount = printOrds.filter(o => o.email === c.email).length;
+    const total = shopCount + printCount;
+    const joined = c.createdAt
+      ? new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      : '—';
+    return `<div class="cust-card" onclick="openCustomerModal('${c.id}')">
+      <div class="cust-avatar">${initials}</div>
+      <div class="cust-info">
+        <div class="cust-name">${c.name || '—'}</div>
+        <div class="cust-contact">${c.email}${c.phone ? ' · ' + c.phone : ''}</div>
+      </div>
+      <div class="cust-meta">
+        <div class="cust-orders-count">${total} order${total !== 1 ? 's' : ''}</div>
+        <div class="cust-joined">Joined ${joined}</div>
+      </div>
+      <div class="cust-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+
+function filterCustomers(q) {
+  renderCustomers(q);
+}
+
+function openCustomerModal(id) {
+  loadCustomers();
+  const c = allCustomers.find(x => x.id === id);
+  if (!c) return;
+  currentCustomerId = id;
+
+  document.getElementById('cmod-id').textContent = c.id;
+  document.getElementById('cmod-joined').textContent = c.createdAt
+    ? 'Joined ' + new Date(c.createdAt).toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' })
+    : 'Join date unknown';
+  document.getElementById('cmod-name').textContent = c.name || '—';
+  document.getElementById('cmod-email').innerHTML = c.email ? `<a href="mailto:${c.email}" style="color:var(--orange);text-decoration:none;">${c.email}</a>` : '—';
+  document.getElementById('cmod-phone').innerHTML = c.phone ? `<a href="tel:${c.phone}" style="color:var(--orange);text-decoration:none;">${c.phone}</a>` : '—';
+  document.getElementById('cmod-since').textContent = c.createdAt
+    ? new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : '—';
+
+  const addr = c.address || {};
+  const parts = [addr.line1, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean);
+  document.getElementById('cmod-address').innerHTML = parts.length
+    ? parts.join(', ') + (addr.landmark ? '<br><span style="color:var(--muted);font-size:12px;">Near: ' + addr.landmark + '</span>' : '')
+    : '<span style="color:var(--muted);">No address saved yet.</span>';
+
+  const shopOrds = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+  const printOrds = JSON.parse(localStorage.getItem('kyzer_orders') || '[]');
+  const myShop  = shopOrds.filter(o => o.contact && o.contact.email === c.email);
+  const myPrint = printOrds.filter(o => o.email === c.email);
+
+  let html = '';
+  if (!myShop.length && !myPrint.length) {
+    html = '<div style="color:var(--muted);font-size:13px;">No orders placed yet.</div>';
+  } else {
+    if (myShop.length) {
+      html += `<div class="omod-section-title" style="margin-bottom:8px;">Shop Orders (${myShop.length})</div>`;
+      html += myShop.map(o => {
+        const tot = (o.items || []).reduce((s, i) => s + (i.price * i.qty), 0);
+        const d = o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : '—';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;">${o.id || '—'}</span>
+          <span style="font-weight:500;">₹${tot.toLocaleString('en-IN')}</span>
+          <span style="color:var(--muted);">${d}</span>
+        </div>`;
+      }).join('');
+    }
+    if (myPrint.length) {
+      html += `<div class="omod-section-title" style="margin:${myShop.length ? '14px' : '0'} 0 8px;">3D Print Quotes (${myPrint.length})</div>`;
+      html += myPrint.map(o => {
+        const d = o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : '—';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;">${o.id || '—'}</span>
+          <span style="color:var(--muted);">${o.material || '—'}</span>
+          <span style="color:var(--muted);">${d}</span>
+        </div>`;
+      }).join('');
+    }
+  }
+  document.getElementById('cmod-orders').innerHTML = html;
+
+  document.getElementById('customerModal').classList.add('open');
+}
+
+function closeCustomerModal() {
+  document.getElementById('customerModal').classList.remove('open');
+  currentCustomerId = null;
+}
+
+function deleteCustomer() {
+  if (!currentCustomerId) return;
+  if (!confirm('Delete this customer account permanently? This cannot be undone.')) return;
+  let arr = JSON.parse(localStorage.getItem('kyzer_customers') || '[]');
+  arr = arr.filter(c => c.id !== currentCustomerId);
+  localStorage.setItem('kyzer_customers', JSON.stringify(arr));
+  closeCustomerModal();
+  renderCustomers(document.getElementById('custSearchInput').value);
+}
+
 function switchTab(name) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -1102,6 +1313,7 @@ function switchTab(name) {
   if (name === 'security') initSecurity();
   if (name === 'orders') renderOrders();
   if (name === 'shoporders') renderShopOrders();
+  if (name === 'customers') renderCustomers();
 }
 
 // ── SHOP ORDERS ──
