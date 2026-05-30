@@ -6,6 +6,23 @@ const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const Razorpay = require('razorpay');
+
+// ── Twilio SMS (optional — only loaded if credentials are set) ──
+function sendSMS(to, body) {
+  const sid   = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const from  = process.env.TWILIO_FROM;
+  if (!sid || !token || !from) return Promise.resolve();
+  try {
+    const twilio = require('twilio')(sid, token);
+    const phone  = to.startsWith('+') ? to : '+91' + to.replace(/\D/g, '').slice(-10);
+    return twilio.messages.create({ from, to: phone, body });
+  } catch (e) {
+    console.error('SMS error:', e.message);
+    return Promise.resolve();
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +50,8 @@ const sessions = new Set();
 app.use(express.json({ limit: '50mb' }));
 app.use(cors({
   origin: [
+    'https://kyzerrobotics.com',
+    'https://www.kyzerrobotics.com',
     'https://kyzerroboticspvtltd.github.io',
     'https://kyzerrobotics.in',
     'http://localhost',
@@ -226,7 +245,7 @@ app.post('/api/quote', formLimiter, async (req, res) => {
           <p><strong>Estimated total:</strong> <span style="color:#FF8C35;">${q.total || '—'}</span></p>
           <p style="color:#888;font-size:13px;">Material: ${q.material || '—'} · Quality: ${q.quality || '—'} · Qty: ${q.qty || '—'}</p>
           <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
-          <p style="font-size:13px;color:#888;">Questions? Reply to this email or call us at <a href="tel:+919876543210">+91 98765 43210</a></p>
+          <p style="font-size:13px;color:#888;">Questions? Reply to this email or WhatsApp us at <a href="https://wa.me/919049695264">+91 90496 95264</a></p>
           <p style="font-size:13px;color:#888;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra</p>
         </div>`,
     });
@@ -235,6 +254,208 @@ app.post('/api/quote', formLimiter, async (req, res) => {
     console.error('Quote mail error:', err.message);
     res.status(500).json({ ok: false, error: 'Failed to send email. Please try again.' });
   }
+});
+
+// ── RAZORPAY ──
+function getRazorpay() {
+  const keyId     = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) return null;
+  return new Razorpay({ key_id: keyId, key_secret: keySecret });
+}
+
+// POST /api/create-razorpay-order
+app.post('/api/create-razorpay-order', formLimiter, async (req, res) => {
+  const rzp = getRazorpay();
+  if (!rzp) {
+    return res.status(503).json({ ok: false, error: 'Payment gateway not configured on server.' });
+  }
+
+  const { amount, currency = 'INR', receipt, notes } = req.body;
+  if (!amount || isNaN(amount) || amount < 1) {
+    return res.status(400).json({ ok: false, error: 'Invalid amount.' });
+  }
+
+  try {
+    const order = await rzp.orders.create({
+      amount: Math.round(Number(amount) * 100), // paise
+      currency,
+      receipt: receipt || ('SHOP-' + Date.now()),
+      notes: notes || {},
+    });
+    res.json({ ok: true, order });
+  } catch (err) {
+    console.error('Razorpay create order error:', err.message);
+    res.status(500).json({ ok: false, error: 'Failed to create payment order.' });
+  }
+});
+
+// POST /api/verify-payment
+app.post('/api/verify-payment', formLimiter, async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderData } = req.body;
+
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    return res.status(400).json({ ok: false, error: 'Missing payment fields.' });
+  }
+
+  const secret = process.env.RAZORPAY_KEY_SECRET;
+  if (!secret) {
+    return res.status(503).json({ ok: false, error: 'Payment gateway not configured.' });
+  }
+
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(razorpay_order_id + '|' + razorpay_payment_id)
+    .digest('hex');
+
+  if (expected !== razorpay_signature) {
+    return res.status(400).json({ ok: false, error: 'Payment verification failed.' });
+  }
+
+  // Send order confirmation email if orderData provided
+  if (orderData && orderData.email) {
+    const o = orderData;
+    const itemRows = (o.items || []).map(i =>
+      `<tr><td style="padding:8px;">${i.name}</td><td style="padding:8px;text-align:center;">×${i.qty}</td><td style="padding:8px;text-align:right;">₹${(Number(i.price||0)*i.qty).toLocaleString('en-IN')}</td></tr>`
+    ).join('');
+
+    const html = `
+      <div style="font-family:sans-serif;max-width:600px;margin:auto;">
+        <h2 style="color:#FF8C35;">New Shop Order — Kyzer Robotics</h2>
+        <p><strong>Order ID:</strong> ${o.id || '—'} &nbsp;|&nbsp; <strong>Payment:</strong> ${razorpay_payment_id}</p>
+        <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;width:130px;">Customer</td><td style="padding:8px;font-weight:500;">${o.name}</td></tr>
+          <tr><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${o.email}">${o.email}</a></td></tr>
+          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${o.phone || '—'}</td></tr>
+          <tr><td style="padding:8px;color:#888;">Ship to</td><td style="padding:8px;">${o.shippingFull || '—'}</td></tr>
+        </table>
+        <h3 style="margin:20px 0 8px;">Items</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tr style="background:#f4f4f4;font-weight:600;"><td style="padding:8px;">Product</td><td style="padding:8px;text-align:center;">Qty</td><td style="padding:8px;text-align:right;">Subtotal</td></tr>
+          ${itemRows}
+          <tr style="border-top:2px solid #eee;font-weight:700;font-size:15px;color:#FF8C35;">
+            <td colspan="2" style="padding:10px;">Total</td>
+            <td style="padding:10px;text-align:right;">₹${Number(o.total||0).toLocaleString('en-IN')}</td>
+          </tr>
+        </table>
+        ${o.notes ? `<p style="margin-top:14px;font-size:13px;color:#555;"><strong>Notes:</strong> ${o.notes}</p>` : ''}
+        <p style="font-size:12px;color:#aaa;margin-top:20px;">Submitted from kyzerrobotics.com checkout</p>
+      </div>`;
+
+    try {
+      await sendMail({
+        to: process.env.NOTIFY_EMAIL || process.env.GMAIL_USER,
+        subject: `[Kyzer] New Order ${o.id || ''} — ₹${Number(o.total||0).toLocaleString('en-IN')} — ${o.name}`,
+        html,
+      });
+      // Customer confirmation email
+      await sendMail({
+        to: o.email,
+        subject: `Order confirmed — Kyzer Robotics`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
+            <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
+              <h2 style="color:#111;margin:0;font-family:sans-serif;">Order Confirmed ✓</h2>
+            </div>
+            <div style="background:#fff;border:1px solid #eee;border-top:none;padding:24px 28px;border-radius:0 0 12px 12px;">
+              <p style="font-size:15px;">Hi <strong>${o.name}</strong>, thanks for your order!</p>
+              <p style="color:#555;">Your payment was received and we will process your order shortly.</p>
+              <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;">
+                ${(o.items||[]).map(i=>`<tr><td style="padding:6px 0;border-bottom:1px solid #f0f0f0;">${i.name} ×${i.qty}</td><td style="padding:6px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:600;">₹${(Number(i.price||0)*i.qty).toLocaleString('en-IN')}</td></tr>`).join('')}
+                <tr><td style="padding:10px 0;font-weight:700;font-size:15px;">Total</td><td style="padding:10px 0;font-weight:700;font-size:15px;text-align:right;color:#FF8C35;">₹${Number(o.total||0).toLocaleString('en-IN')}</td></tr>
+              </table>
+              <p style="font-size:13px;color:#888;margin-top:6px;"><strong>Order ID:</strong> ${o.id || '—'} &nbsp;|&nbsp; <strong>Payment:</strong> ${razorpay_payment_id}</p>
+              <p style="font-size:13px;color:#888;"><strong>Ship to:</strong> ${o.shippingFull || '—'}</p>
+              <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+              <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at +91 90496 95264 or reply to this email.</p>
+              <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra</p>
+            </div>
+          </div>`,
+      });
+    } catch (mailErr) {
+      console.error('Order confirmation mail error:', mailErr.message);
+    }
+
+    // SMS notifications (fires and forgets — does not block the response)
+    if (o.phone) {
+      const itemSummary = (o.items||[]).map(i => `${i.name} x${i.qty}`).join(', ');
+      sendSMS(o.phone,
+        `Hi ${o.name}! Your Kyzer Robotics order ${o.id||''} is confirmed. ` +
+        `Items: ${itemSummary}. Total: Rs.${Number(o.total||0).toLocaleString('en-IN')}. ` +
+        `We will reach out soon. -Kyzer Robotics`
+      ).catch(e => console.error('Customer SMS failed:', e.message));
+    }
+    sendSMS(process.env.NOTIFY_PHONE || '',
+      `[Kyzer Order] ${o.id||''} - ${o.name} - Rs.${Number(o.total||0).toLocaleString('en-IN')} - ${o.phone||''}`
+    ).catch(e => console.error('Owner SMS failed:', e.message));
+  }
+
+  res.json({ ok: true, message: 'Payment verified successfully.' });
+});
+
+// POST /api/order-notify — offline/COD order email + SMS notification
+app.post('/api/order-notify', formLimiter, async (req, res) => {
+  const o = req.body.orderData;
+  if (!o || !o.email) return res.status(400).json({ ok: false, error: 'Missing order data.' });
+
+  const itemRows = (o.items || []).map(i =>
+    `<tr><td style="padding:8px;">${i.name}</td><td style="padding:8px;text-align:center;">×${i.qty}</td><td style="padding:8px;text-align:right;">₹${(Number(String(i.price||'').replace(/[^0-9.]/g,''))||0*i.qty).toLocaleString('en-IN')}</td></tr>`
+  ).join('');
+
+  try {
+    await sendMail({
+      to: process.env.NOTIFY_EMAIL || process.env.GMAIL_USER,
+      subject: `[Kyzer] New Order ${o.id || ''} — ${o.name}`,
+      html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;">
+        <h2 style="color:#FF8C35;">New Shop Order — Kyzer Robotics</h2>
+        <p><strong>Order ID:</strong> ${o.id || '—'}</p>
+        <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;width:130px;">Customer</td><td style="padding:8px;font-weight:500;">${o.name}</td></tr>
+          <tr><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${o.email}">${o.email}</a></td></tr>
+          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${o.phone || '—'}</td></tr>
+          <tr><td style="padding:8px;color:#888;">Ship to</td><td style="padding:8px;">${o.shippingFull || '—'}</td></tr>
+        </table>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
+          <tr style="background:#f4f4f4;font-weight:600;"><td style="padding:8px;">Product</td><td style="padding:8px;text-align:center;">Qty</td><td style="padding:8px;text-align:right;">Subtotal</td></tr>
+          ${itemRows}
+        </table>
+        <p style="font-size:12px;color:#aaa;margin-top:20px;">Submitted from kyzerrobotics.com checkout</p>
+      </div>`,
+    });
+    await sendMail({
+      to: o.email,
+      subject: 'Order received — Kyzer Robotics',
+      html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
+        <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
+          <h2 style="color:#111;margin:0;">Order Received ✓</h2>
+        </div>
+        <div style="background:#fff;border:1px solid #eee;border-top:none;padding:24px 28px;border-radius:0 0 12px 12px;">
+          <p style="font-size:15px;">Hi <strong>${o.name}</strong>, we received your order!</p>
+          <p style="color:#555;">Our team will confirm pricing and availability shortly.</p>
+          <p style="font-size:13px;color:#888;"><strong>Order ID:</strong> ${o.id || '—'}</p>
+          <p style="font-size:13px;color:#888;"><strong>Ship to:</strong> ${o.shippingFull || '—'}</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+          <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at +91 90496 95264 or reply to this email.</p>
+          <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra</p>
+        </div>
+      </div>`,
+    });
+  } catch (err) {
+    console.error('Order notify mail error:', err.message);
+  }
+
+  if (o.phone) {
+    const itemSummary = (o.items || []).map(i => `${i.name} x${i.qty}`).join(', ');
+    sendSMS(o.phone,
+      `Hi ${o.name}! Your Kyzer Robotics order ${o.id || ''} received. ` +
+      `${itemSummary}. We will confirm shortly. -Kyzer Robotics`
+    ).catch(e => console.error('Customer SMS failed:', e.message));
+  }
+  sendSMS(process.env.NOTIFY_PHONE || '',
+    `[Kyzer Order] ${o.id || ''} - ${o.name} - ${o.phone || ''} - ${(o.items || []).map(i => i.name).join(', ')}`
+  ).catch(e => console.error('Owner SMS failed:', e.message));
+
+  res.json({ ok: true });
 });
 
 app.listen(PORT, () => console.log(`Kyzer API running on port ${PORT}`));

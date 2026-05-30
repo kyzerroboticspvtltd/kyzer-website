@@ -49,7 +49,7 @@
       "logo": "https://kyzerrobotics.com/logo.png",
       "image": "https://kyzerrobotics.com/og-image.jpg",
       "telephone": "+919049695264",
-      "email": "kyzerroboticspvtltd@gmail.com",
+      "email": "info@kyzerrobotics.com",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Pune",
@@ -525,6 +525,8 @@
     font-family: 'DM Sans', sans-serif;
   }
   .prod-btn:hover { background: var(--orange); color: #111; }
+  .prod-btn-buy { background: var(--orange); color: #111; font-weight: 600; }
+  .prod-btn-buy:hover { background: #e07b20; }
   .hidden { display: none; }
 
   /* CONTACT */
@@ -2730,7 +2732,7 @@
       <h3>Get in touch</h3>
       <p>Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours.</p>
       <div class="ci-row"><div class="ci-icon">📍</div> Pune, Maharashtra, India</div>
-      <div class="ci-row"><div class="ci-icon">✉️</div> <a href="mailto:kyzerroboticspvtltd@gmail.com">kyzerroboticspvtltd@gmail.com</a></div>
+      <div class="ci-row"><div class="ci-icon">✉️</div> <a href="mailto:info@kyzerrobotics.com">info@kyzerrobotics.com</a></div>
       <div class="ci-row"><div class="ci-icon">📞</div> <a href="tel:+919049695264">+91 90496 95264</a></div>
       <div class="ci-row"><div class="ci-icon">📸</div> <a href="https://www.instagram.com/kyzer.robotics?igsh=bjZ3enVqaGk2NXY0" target="_blank" rel="noopener">@Kyzer.robotics</a></div>
     </div>
@@ -3148,7 +3150,7 @@
         <div id="qfSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:4px;">
           ✓ Order placed! We'll confirm your pricing within a few hours.
         </div>
-        <div class="qv2-note" style="margin-top:8px;">Or email us at <a href="mailto:kyzerroboticspvtltd@gmail.com" style="color:#FF8C35;">kyzerroboticspvtltd@gmail.com</a></div>
+        <div class="qv2-note" style="margin-top:8px;">Or email us at <a href="mailto:info@kyzerrobotics.com" style="color:#FF8C35;">info@kyzerrobotics.com</a></div>
       </div>
 
       <!-- RIGHT: order summary -->
@@ -3274,7 +3276,7 @@
   // ── CONTACT FORM (Web3Forms) ──
   // ACTION REQUIRED: verify this key delivers to your inbox.
   //   1. Go to https://web3forms.com
-  //   2. Enter kyzerroboticspvtltd@gmail.com → click "Get your free key"
+  //   2. Enter info@kyzerrobotics.com → click "Get your free key"
   //   3. Replace the key below with the one emailed to you (or confirm this one is active)
   //   4. Submit the contact form on the site to test end-to-end
   const W3F_KEY = 'e7fdcf4c-a418-4151-9bc7-84524c13fc0d';
@@ -3308,7 +3310,7 @@
     } catch {
       btn.textContent = 'Send message →';
       btn.disabled = false;
-      if (confirm('Message could not send automatically.\n\nClick OK to open WhatsApp instead, or Cancel to email us at kyzerroboticspvtltd@gmail.com')) {
+      if (confirm('Message could not send automatically.\n\nClick OK to open WhatsApp instead, or Cancel to email us at info@kyzerrobotics.com')) {
         const n = document.getElementById('contactName').value.trim();
         const m = document.getElementById('contactMessage').value.trim();
         window.open('https://wa.me/919049695264?text=' + encodeURIComponent(`Hi Kyzer Robotics,\n\n${m}\n\n— ${n}`), '_blank');
@@ -3402,8 +3404,14 @@
     renderCartDrawer();
   }
 
+  function parseNumericPrice(v) {
+    if (!v || String(v).toLowerCase().includes('from')) return 0;
+    const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
   function cartTotal() {
-    return cart.reduce((s, i) => s + (Number(i.price) * i.qty), 0);
+    return cart.reduce((s, i) => s + (parseNumericPrice(i.price) * i.qty), 0);
   }
 
   function openCartDrawer() {
@@ -3436,12 +3444,14 @@
       const thumb = item.photo
         ? `<img src="${item.photo}" alt="${item.name}">`
         : item.emoji;
-      const sub = item.price ? '₹' + (Number(item.price) * item.qty).toLocaleString('en-IN') : '—';
+      const _np = parseNumericPrice(item.price);
+      const _unit = _np ? '₹' + _np.toLocaleString('en-IN') : (item.price || '');
+      const _sub  = _np ? '₹' + (_np * item.qty).toLocaleString('en-IN') : '—';
       return `<div class="cart-item">
         <div class="cart-item-img">${thumb}</div>
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">${item.price ? '₹' + Number(item.price).toLocaleString('en-IN') : ''} · ${sub}</div>
+          <div class="cart-item-price">${_unit ? _unit + ' · ' + _sub : ''}</div>
           <div class="cart-item-controls">
             <button class="cart-qty-btn" onclick="updateCartItemQty('${item.id}', -1)">&#8722;</button>
             <span class="cart-item-qty">${item.qty}</span>
@@ -3509,7 +3519,8 @@
       const thumb = item.photo
         ? `<img src="${item.photo}" alt="${item.name}">`
         : item.emoji;
-      const sub = item.price ? '₹' + (Number(item.price) * item.qty).toLocaleString('en-IN') : '—';
+      const _np2 = parseNumericPrice(item.price);
+      const sub = _np2 ? '₹' + (_np2 * item.qty).toLocaleString('en-IN') : (item.price || '—');
       return `<div class="co-cart-item-row">
         <div class="co-cart-thumb">${thumb}</div>
         <div class="co-cart-item-name">${item.name}</div>
@@ -3648,6 +3659,18 @@
     orders.unshift(orderData);
     localStorage.setItem('kyzer_product_orders', JSON.stringify(orders));
 
+    // Send email + SMS via backend (for offline/COD orders; Razorpay orders are notified by verify-payment)
+    if (!orderData.paymentId) {
+      const _bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
+      if (_bu) {
+        fetch(_bu + '/api/order-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderData }),
+        }).catch(() => {});
+      }
+    }
+
     // Clear cart
     cart = [];
     saveCart();
@@ -3727,7 +3750,8 @@
     const getQuoteBtn = document.getElementById('pdpGetQuoteBtn');
     const enquireBtn  = document.getElementById('pdpEnquireBtn');
     const qtyRow      = document.getElementById('pdpQtyRow');
-    const numPrice    = parseFloat(d.price);
+    const numPrice = parseNumericPrice(d.price);
+    const isFromPrice = d.price && String(d.price).toLowerCase().startsWith('from');
 
     // Reset all
     [addCartBtn, buyNowBtn, getQuoteBtn].forEach(b => b.style.display = 'none');
@@ -3735,7 +3759,7 @@
     addCartBtn.classList.remove('added');
     enquireBtn.style.display = '';
 
-    if (d.price && !isNaN(numPrice)) {
+    if (d.price && numPrice > 0) {
       // Fixed-price product: full buy flow
       document.getElementById('pdpPrice').textContent = '₹' + numPrice.toLocaleString('en-IN');
       document.getElementById('pdpPriceNote').textContent = 'Incl. GST · excl. shipping';
@@ -3744,8 +3768,7 @@
       buyNowBtn.style.display = '';
       addCartBtn.style.display = '';
       enquireBtn.style.display = 'none';
-    } else if (d.price && String(d.price).toLowerCase().startsWith('from')) {
-      // Variable-price service: show starting price, offer quote
+    } else if (isFromPrice) {
       document.getElementById('pdpPrice').textContent = d.price;
       document.getElementById('pdpPriceNote').textContent = 'Final price confirmed after file review';
       qtyRow.style.display = 'none';
@@ -4235,7 +4258,7 @@
     } catch {
       btn.textContent = 'Place order →';
       btn.disabled = false;
-      alert('Could not send. Please email us at kyzerroboticspvtltd@gmail.com or WhatsApp +91 90496 95264.');
+      alert('Could not send. Please email us at info@kyzerrobotics.com or WhatsApp +91 90496 95264.');
     }
   }
 
@@ -4271,6 +4294,13 @@
         }).replace(/'/g, '&#39;');
         const firstPhoto = (p.photos && p.photos.length > 0) ? p.photos[0] : (p.photo || null);
         const cardImg = firstPhoto ? `<img src="${firstPhoto}" alt="${p.name}">` : p.emoji;
+        const _cnp = parseNumericPrice(p.price);
+        const _isFrom = p.price && String(p.price).toLowerCase().startsWith('from');
+        const priceHtml = p.price
+          ? `<span class="prod-price">${_cnp > 0 ? '₹' + _cnp.toLocaleString('en-IN') : p.price}</span>`
+          : '';
+        const btnLabel = _cnp > 0 ? 'Buy Now →' : (_isFrom ? 'Get Quote →' : (p.btnText || 'Enquire'));
+        const btnCls   = _cnp > 0 ? 'prod-btn prod-btn-buy' : 'prod-btn';
         return `
         <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
@@ -4279,7 +4309,8 @@
             <h4>${p.name}</h4>
             <p>${p.description}</p>
             <div class="prod-footer">
-              <button class="prod-btn">${p.btnText}</button>
+              ${priceHtml}
+              <button class="${btnCls}">${btnLabel}</button>
             </div>
           </div>
         </div>`;
@@ -4460,7 +4491,7 @@ Quantity: ${quoteState.qty}
 Delivery: ${quoteState.delivery === 'sameday' ? 'Same Day' : '7 Working Days'}
 TOTAL: ${total}
 ================================
-Valid for 7 days. Contact: kyzerroboticspvtltd@gmail.com`;
+Valid for 7 days. Contact: info@kyzerrobotics.com`;
     const blob = new Blob([text], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -4909,7 +4940,7 @@ Valid for 7 days. Contact: kyzerroboticspvtltd@gmail.com`;
         </div>
         <div class="auth-error" id="authLoginError"></div>
         <button class="auth-submit" id="authLoginBtn" onclick="loginCustomer()">Sign in &#8594;</button>
-        <div class="auth-switch">Forgot password? <a href="mailto:kyzerroboticspvtltd@gmail.com">Contact us</a></div>
+        <div class="auth-switch">Forgot password? <a href="mailto:info@kyzerrobotics.com">Contact us</a></div>
       </div>
       <!-- REGISTER -->
       <div id="authRegForm" style="display:none;">
@@ -5141,7 +5172,7 @@ Valid for 7 days. Contact: kyzerroboticspvtltd@gmail.com`;
       <p>Under applicable Indian law (IT Act 2000, DPDP Act 2023), you have the right to access, correct, or request deletion of your personal data.</p>
 
       <h4 style="margin:18px 0 6px;font-size:14px;">Contact</h4>
-      <p>For privacy-related queries, email us at <a href="mailto:kyzerroboticspvtltd@gmail.com" style="color:var(--orange);">kyzerroboticspvtltd@gmail.com</a>.</p>
+      <p>For privacy-related queries, email us at <a href="mailto:info@kyzerrobotics.com" style="color:var(--orange);">info@kyzerrobotics.com</a>.</p>
 
       <p style="margin-top:18px;font-size:12px;color:var(--muted);">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra, India</p>
     </div>
