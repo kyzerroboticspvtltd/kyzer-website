@@ -4610,23 +4610,16 @@
     btn.disabled = true;
     const order = _buildQcoOrder('pending_payment');
     _saveQcoOrder(order);
-    try {
-      await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: W3F_KEY, subject: 'New 3D Print Quote — Kyzer Robotics',
-          name: order.name, email: order.email, phone: order.phone,
-          material: order.material, quality: order.quality,
-          colour: order.colour, quantity: order.quantity,
-          delivery: order.delivery === 'sameday' ? 'Same day' : '7 working days',
-          dimensions: order.dimensions, estimated_total: order.estimatedTotal,
-          payment_status: 'Pending (pay after confirmation)',
-          file: order.fileName || 'Manual dimensions', notes: order.notes || '—',
-          shipping: [order.shipping.addr1, order.shipping.addr2, order.shipping.city, order.shipping.state, order.shipping.pincode].filter(Boolean).join(', '),
-        })
-      });
-    } catch(e) {}
+    const _bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/, '');
+    if (_bu) {
+      try {
+        await fetch(_bu + '/api/print-quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order),
+        });
+      } catch(e) {}
+    }
     _showQcoSuccess('✓ Quote request received! We\'ll confirm pricing and send a payment link within a few hours.');
     btn.textContent = 'Submit without payment';
     btn.disabled = false;
