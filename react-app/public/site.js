@@ -180,6 +180,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     return rest;
   }
 
+  const TILE_PHOTOS = {
+    drone:    '/drone-cover.png',
+    printing: '/3dprint-tile.png',
+  };
+
   function renderCategoryTiles(cats) {
     const raw  = cats && cats.length ? cats : DEFAULT_CATS;
     const list = mergePrintCats(raw);
@@ -188,8 +193,9 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (!tilesEl) return;
 
     tilesEl.innerHTML = list.map(cat => {
-      const icon = cat.photo
-        ? `<div class="cat-tile-photo"><img src="${cat.photo}" alt="${cat.name}"></div>`
+      const photo = TILE_PHOTOS[cat.id] || cat.photo || null;
+      const icon = photo
+        ? `<div class="cat-tile-photo"><img src="${photo}" alt="${cat.name}"></div>`
         : `<div class="cat-tile-icon">${cat.emoji || '📦'}</div>`;
       return `<div class="cat-tile" onclick="filterCat('${cat.id}')" data-cat-tile="${cat.id}">
         ${icon}
