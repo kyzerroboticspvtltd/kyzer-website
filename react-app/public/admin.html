@@ -1225,9 +1225,30 @@ CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);</pre>
 
 <script>
 // ── AUTH ──
-const _TOKEN_KEY = 'kyzer_admin_token';
+const PASS_KEY = 'kyzer_admin_pass';
 
-function _showAdminPanel() {
+function doLogin() {
+  const pass   = document.getElementById('loginPass').value;
+  const errEl  = document.getElementById('loginErr');
+  const stored = localStorage.getItem(PASS_KEY);
+
+  // First-time setup: no password saved yet
+  if (!stored) {
+    if (!pass || pass.length < 6) {
+      errEl.textContent = 'First time? Enter a password (min 6 chars) to set it.';
+      errEl.style.display = 'block';
+      return;
+    }
+    localStorage.setItem(PASS_KEY, pass);
+  } else if (pass !== stored) {
+    errEl.textContent = 'Incorrect password.';
+    errEl.style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  localStorage.setItem('kyzer_admin_authed', '1');
   document.getElementById('loginScreen').style.display = 'none';
   const p = document.getElementById('adminPanel');
   p.style.display = 'flex';
@@ -1235,54 +1256,13 @@ function _showAdminPanel() {
   initAdmin();
 }
 
-async function doLogin() {
-  const pass  = document.getElementById('loginPass').value;
-  const errEl = document.getElementById('loginErr');
-  const btn   = document.getElementById('loginBtn');
-  if (!pass) { errEl.textContent = 'Enter your password.'; errEl.style.display = 'block'; return; }
-  btn.textContent = 'Signing in…'; btn.disabled = true;
-  try {
-    const res  = await fetch('/api/admin-login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pass }),
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      errEl.textContent = 'Incorrect password.';
-      errEl.style.display = 'block';
-      document.getElementById('loginPass').value = '';
-      btn.textContent = 'Sign in →'; btn.disabled = false;
-      return;
-    }
-    sessionStorage.setItem(_TOKEN_KEY, data.token);
-    errEl.style.display = 'none';
-    _showAdminPanel();
-  } catch {
-    errEl.textContent = 'Connection error. Try again.';
-    errEl.style.display = 'block';
-    btn.textContent = 'Sign in →'; btn.disabled = false;
-  }
-}
-
 function doLogout() {
-  sessionStorage.removeItem(_TOKEN_KEY);
+  localStorage.removeItem('kyzer_admin_authed');
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginPass').value = '';
   document.getElementById('loginErr').style.display = 'none';
 }
-
-// On page load — restore session if token is still valid
-(async function checkAuth() {
-  const token = sessionStorage.getItem(_TOKEN_KEY);
-  if (!token) return;
-  try {
-    const res = await fetch('/api/admin-verify', { headers: { 'Authorization': 'Bearer ' + token } });
-    if (res.ok) _showAdminPanel();
-    else sessionStorage.removeItem(_TOKEN_KEY);
-  } catch {}
-})();
 
 // ── DEFAULTS ──
 const D_PRODUCTS = [
@@ -2316,38 +2296,61 @@ function clearAllPhotos() {
 
 // ── PUBLISH TO SITE ──
 async function publishToSite(silent) {
-  const sbUrl = localStorage.getItem('kyzer_supabase_url')
-    || (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : '');
-  const sbKey = localStorage.getItem('kyzer_supabase_key')
-    || (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY ? SUPABASE_KEY : '');
-
-  if (!sbUrl || !sbKey) {
-    if (!silent) toast('Supabase not configured. Go to Security tab → Supabase Setup.', true);
-    return;
-  }
-
-  // Use service role key for writes if available (bypasses RLS), otherwise fall back to anon key
-  const writeKey = localStorage.getItem('kyzer_supabase_service_key') || sbKey;
-
   const btn = document.getElementById('publishBtn');
   if (!silent) { btn.textContent = 'Publishing…'; btn.disabled = true; }
 
   const payload = {
-    id: 1,
-    products:    products,
-    categories:  categories,
-    hero:        hero,
-    services:    services,
-    contact:     contact,
-    links:       links,
-    quote:       quote,
-    hero_photos:  JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
-    coming_soon:  JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null'),
-    updated_at:   new Date().toISOString(),
+    products:   products,
+    categories: categories,
+    hero:       hero,
+    services:   services,
+    contact:    contact,
+    links:      links,
+    quote:      quote,
+    hero_photos: JSON.parse(localStorage.getItem('kyzer_hero_photos') || '[]'),
+    coming_soon: JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null'),
   };
 
+  // Try the secure server-side API route first
+  const apiBase = localStorage.getItem('kyzer_backend_url') || window.location.origin;
+  const password = localStorage.getItem('kyzer_admin_pass') || '';
+
   try {
-    const r = await fetch(sbUrl + '/rest/v1/site_data', {
+    const r = await fetch(apiBase + '/api/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password, payload }),
+    });
+    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
+    if (r.ok) {
+      if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
+      return;
+    }
+    const err = await r.json().catch(() => ({}));
+    // If 401, fall through to direct Supabase write
+    if (r.status !== 401) {
+      if (!silent) toast('Publish error: ' + (err.error || r.status), true);
+      return;
+    }
+  } catch {
+    // API route unreachable — fall through to direct Supabase
+  }
+
+  // Fallback: write directly to Supabase (requires service key in Security tab)
+  const sbUrl = localStorage.getItem('kyzer_supabase_url')
+    || (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : '');
+  const sbKey = localStorage.getItem('kyzer_supabase_key')
+    || (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY ? SUPABASE_KEY : '');
+  const writeKey = localStorage.getItem('kyzer_supabase_service_key') || sbKey;
+
+  if (!sbUrl || !writeKey) {
+    if (!silent) toast('Could not publish. Set your Supabase service key in Security tab.', true);
+    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
+    return;
+  }
+
+  try {
+    const r2 = await fetch(sbUrl + '/rest/v1/site_data', {
       method: 'POST',
       headers: {
         'apikey': writeKey,
@@ -2355,18 +2358,18 @@ async function publishToSite(silent) {
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...payload, id: 1, updated_at: new Date().toISOString() }),
     });
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
-    if (r.ok) {
+    if (r2.ok) {
       if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
     } else {
-      const err = await r.text();
-      toast('Supabase error: ' + err, true);
+      const err = await r2.text();
+      if (!silent) toast('Supabase error: ' + err, true);
     }
-  } catch (e) {
+  } catch {
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
-    if (!silent) toast('Cannot reach Supabase. Check your config in Security tab.', true);
+    if (!silent) toast('Cannot reach Supabase. Check Security tab config.', true);
   }
 }
 
@@ -2857,7 +2860,16 @@ function _showShopOrderAlert(order) {
 }
 
 function changePass() {
-  toast('To change your password, update the ADMIN_PASSWORD environment variable in your Vercel project settings.', true);
+  const cur  = document.getElementById('secCur').value;
+  const nw   = document.getElementById('secNew').value;
+  const conf = document.getElementById('secConf').value;
+  const stored = localStorage.getItem(PASS_KEY) || '';
+  if (cur !== stored)  { toast('Current password is wrong.', true); return; }
+  if (!nw)             { toast('New password cannot be empty.', true); return; }
+  if (nw !== conf)     { toast('Passwords do not match.', true); return; }
+  localStorage.setItem(PASS_KEY, nw);
+  ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
+  toast('Password updated.');
 }
 </script>
 </body>
