@@ -81,7 +81,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     } else if (cat === 'drone') {
       subcatTabs.innerHTML =
         `<button class="subcat-tab active" data-subcat="all"   onclick="filterSubcat('all')">All Drones</button>` +
-        `<button class="subcat-tab"        data-subcat="frame" onclick="filterSubcat('frame')">🛸 Drone Frames</button>`;
+        `<button class="subcat-tab"        data-subcat="frame" onclick="filterSubcat('frame')">🛸 Drone Frames</button>` +
+        `<a class="subcat-tab subcat-link" href="/shop/drone-frames">View Full Catalogue →</a>`;
       subcatTabs.classList.add('visible');
       filterSubcat('all', false);
     } else {
