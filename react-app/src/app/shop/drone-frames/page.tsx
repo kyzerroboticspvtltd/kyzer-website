@@ -19,6 +19,7 @@ interface Frame {
   photos?: string[];
   visible: boolean;
   subcat: string;
+  category: string;
 }
 
 const FRAME_TYPES = [
