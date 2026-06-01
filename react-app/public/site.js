@@ -55,7 +55,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === filter));
     document.querySelectorAll('[data-cat-tile]').forEach(t => t.classList.toggle('active-cat', t.dataset.catTile === filter));
     document.querySelectorAll('.prod-card').forEach(card => {
-      card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
+      card.style.display = (filter !== '__none__' && (filter === 'all' || card.dataset.cat === filter)) ? '' : 'none';
     });
   }
 
@@ -66,11 +66,23 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const grid       = document.getElementById('productsGrid');
     const subcatTabs = document.getElementById('subcatTabs');
     const framePanel = document.getElementById('frameFilterPanel');
-    grid.classList.add('cat-open');
-    applyFilter(cat);
-    if (framePanel) framePanel.style.display = 'none';
+    const dronePicker = document.getElementById('droneSubcatPicker');
 
-    if (cat === '3dprint') {
+    grid.classList.add('cat-open');
+    if (framePanel)  framePanel.style.display  = 'none';
+    if (dronePicker) dronePicker.style.display = 'none';
+    subcatTabs.innerHTML = '';
+    subcatTabs.classList.remove('visible');
+
+    if (cat === 'drone') {
+      // Show subcategory picker — hide products until user picks
+      applyFilter('__none__');
+      if (dronePicker) {
+        dronePicker.style.display = '';
+        setTimeout(() => dronePicker.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    } else if (cat === '3dprint') {
+      applyFilter(cat);
       subcatTabs.innerHTML =
         `<button class="subcat-tab active" data-subcat="all"       onclick="filterSubcat('all')">All</button>` +
         `<button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">🖨️ 3D Printers</button>` +
@@ -78,17 +90,21 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         `<button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">⚙️ Components</button>`;
       subcatTabs.classList.add('visible');
       filterSubcat('all', false);
-    } else if (cat === 'drone') {
-      subcatTabs.innerHTML =
-        `<button class="subcat-tab active" data-subcat="all"   onclick="filterSubcat('all')">All Drones</button>` +
-        `<button class="subcat-tab"        data-subcat="frame" onclick="filterSubcat('frame')">🛸 Drone Frames</button>` +
-        `<a class="subcat-tab subcat-link" href="/shop/drone-frames">View Full Catalogue →</a>`;
-      subcatTabs.classList.add('visible');
-      filterSubcat('all', false);
+      setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     } else {
-      subcatTabs.innerHTML = '';
-      subcatTabs.classList.remove('visible');
+      applyFilter(cat);
+      setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     }
+  }
+
+  function showCompleteDrones() {
+    const dronePicker = document.getElementById('droneSubcatPicker');
+    if (dronePicker) dronePicker.style.display = 'none';
+    applyFilter('drone');
+    document.querySelectorAll('.prod-card[data-cat="drone"]').forEach(card => {
+      if (card.dataset.subcat === 'frame') card.style.display = 'none';
+    });
+    const grid = document.getElementById('productsGrid');
     setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 

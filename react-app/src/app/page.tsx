@@ -292,6 +292,25 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
   </div>
   <div class="cat-tiles reveal" id="catTilesContainer"></div>
 
+  <!-- Drone subcategory picker (shown when Drones tile is clicked) -->
+  <div class="drone-subcat-picker" id="droneSubcatPicker" style="display:none;">
+    <div class="dsp-label">// SELECT CATEGORY</div>
+    <div class="dsp-grid">
+      <a class="dsp-card" href="/shop/drone-frames">
+        <div class="dsp-icon">🛸</div>
+        <div class="dsp-name">Drone Frames</div>
+        <div class="dsp-desc">Racing, quadcopter & hexacopter frames — carbon fiber & glass fiber</div>
+        <div class="dsp-arrow">Browse Frames →</div>
+      </a>
+      <div class="dsp-card" onclick="showCompleteDrones()">
+        <div class="dsp-icon">🚁</div>
+        <div class="dsp-name">Complete Drones</div>
+        <div class="dsp-desc">Ready-to-fly survey, FPV & agricultural drones — fully assembled</div>
+        <div class="dsp-arrow">Browse Drones →</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Subcategory tabs (populated dynamically per category) -->
   <div class="subcat-tabs" id="subcatTabs"></div>
 
