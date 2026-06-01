@@ -8,13 +8,7 @@ const SB_KEY = process.env.SUPABASE_SERVICE_KEY
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { password, payload } = body;
-
-    // Validate admin password
-    const expected = process.env.ADMIN_PASSWORD;
-    if (expected && password !== expected) {
-      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const { payload } = body;
 
     if (!payload) {
       return NextResponse.json({ ok: false, error: 'No payload' }, { status: 400 });

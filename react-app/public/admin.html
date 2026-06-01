@@ -2319,7 +2319,7 @@ async function publishToSite(silent) {
     const r = await fetch(apiBase + '/api/publish', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, payload }),
+      body: JSON.stringify({ payload }),
     });
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
     if (r.ok) {
@@ -2327,11 +2327,8 @@ async function publishToSite(silent) {
       return;
     }
     const err = await r.json().catch(() => ({}));
-    // If 401, fall through to direct Supabase write
-    if (r.status !== 401) {
-      if (!silent) toast('Publish error: ' + (err.error || r.status), true);
-      return;
-    }
+    if (!silent) toast('Publish error: ' + (err.error || r.status), true);
+    return;
   } catch {
     // API route unreachable — fall through to direct Supabase
   }
