@@ -63,14 +63,16 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   function filterCat(cat) {
     _activeCat = cat;
-    const grid       = document.getElementById('productsGrid');
-    const subcatTabs = document.getElementById('subcatTabs');
-    const framePanel = document.getElementById('frameFilterPanel');
+    const grid        = document.getElementById('productsGrid');
+    const subcatTabs  = document.getElementById('subcatTabs');
+    const framePanel  = document.getElementById('frameFilterPanel');
     const dronePicker = document.getElementById('droneSubcatPicker');
+    const printPicker = document.getElementById('printSubcatPicker');
 
     grid.classList.add('cat-open');
     if (framePanel)  framePanel.style.display  = 'none';
     if (dronePicker) dronePicker.style.display = 'none';
+    if (printPicker) printPicker.style.display = 'none';
     subcatTabs.innerHTML = '';
     subcatTabs.classList.remove('visible');
 
@@ -80,6 +82,13 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       if (dronePicker) {
         dronePicker.style.display = '';
         setTimeout(() => dronePicker.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    } else if (cat === 'print' || cat === 'printing') {
+      // Show subcategory picker — hide products until user picks
+      applyFilter('__none__');
+      if (printPicker) {
+        printPicker.style.display = '';
+        setTimeout(() => printPicker.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       }
     } else if (cat === '3dprint') {
       applyFilter(cat);
@@ -160,8 +169,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     { id: '3dprint', emoji: '🖨️', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
   ];
 
+  const PRINT_IDS = ['print', 'proto', '3dprint'];
+
+  function mergePrintCats(list) {
+    const printIdx = list.findIndex(c => PRINT_IDS.includes(c.id));
+    if (printIdx === -1) return list;
+    const merged = { id: 'printing', emoji: '🖨️', name: '3D Printing', desc: 'FDM prints, prototyping & printer supplies' };
+    const rest = list.filter(c => !PRINT_IDS.includes(c.id));
+    rest.splice(printIdx, 0, merged);
+    return rest;
+  }
+
   function renderCategoryTiles(cats) {
-    const list = cats && cats.length ? cats : DEFAULT_CATS;
+    const raw  = cats && cats.length ? cats : DEFAULT_CATS;
+    const list = mergePrintCats(raw);
     const tilesEl = document.getElementById('catTilesContainer');
     const tabsEl  = document.getElementById('catFilterTabs');
     if (!tilesEl) return;
@@ -190,7 +211,12 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   function updateCatCounts() {
     document.querySelectorAll('[id^="catCount-"]').forEach(el => {
       const cat = el.id.replace('catCount-', '');
-      const n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
+      let n;
+      if (cat === 'printing') {
+        n = document.querySelectorAll('.prod-card[data-cat="print"], .prod-card[data-cat="proto"], .prod-card[data-cat="3dprint"]').length;
+      } else {
+        n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
+      }
       el.textContent = n + (n === 1 ? ' product' : ' products');
     });
   }

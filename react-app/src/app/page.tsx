@@ -292,6 +292,31 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
   </div>
   <div class="cat-tiles reveal" id="catTilesContainer"></div>
 
+  <!-- Print subcategory picker (shown when 3D Printing tile is clicked) -->
+  <div class="drone-subcat-picker" id="printSubcatPicker" style="display:none;">
+    <div class="dsp-label">// SELECT CATEGORY</div>
+    <div class="dsp-grid">
+      <a class="dsp-card" href="/shop/3d-printing">
+        <div class="dsp-icon">🖨️</div>
+        <div class="dsp-name">3D Print Services</div>
+        <div class="dsp-desc">Custom FDM prints — PLA, PETG, ABS, Nylon, TPU — any geometry, any spec</div>
+        <div class="dsp-arrow">Browse Prints →</div>
+      </a>
+      <a class="dsp-card" href="/shop/prototyping">
+        <div class="dsp-icon">🔬</div>
+        <div class="dsp-name">Prototyping</div>
+        <div class="dsp-desc">48-hour rapid prototypes and product dev sprints — design to delivery</div>
+        <div class="dsp-arrow">Browse Services →</div>
+      </a>
+      <a class="dsp-card" href="/shop/printers-supplies">
+        <div class="dsp-icon">🛠️</div>
+        <div class="dsp-name">Printers & Supplies</div>
+        <div class="dsp-desc">3D printers, filaments, upgrades & spare components</div>
+        <div class="dsp-arrow">Browse Supplies →</div>
+      </a>
+    </div>
+  </div>
+
   <!-- Drone subcategory picker (shown when Drones tile is clicked) -->
   <div class="drone-subcat-picker" id="droneSubcatPicker" style="display:none;">
     <div class="dsp-label">// SELECT CATEGORY</div>
@@ -302,12 +327,12 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
         <div class="dsp-desc">Racing, quadcopter & hexacopter frames — carbon fiber & glass fiber</div>
         <div class="dsp-arrow">Browse Frames →</div>
       </a>
-      <div class="dsp-card" onclick="showCompleteDrones()">
+      <a class="dsp-card" href="/shop/complete-drones">
         <div class="dsp-icon">🚁</div>
         <div class="dsp-name">Complete Drones</div>
         <div class="dsp-desc">Ready-to-fly survey, FPV & agricultural drones — fully assembled</div>
         <div class="dsp-arrow">Browse Drones →</div>
-      </div>
+      </a>
     </div>
   </div>
 
