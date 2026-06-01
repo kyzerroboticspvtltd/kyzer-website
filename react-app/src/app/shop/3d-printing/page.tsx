@@ -107,22 +107,26 @@ export default function PrintingPage() {
         <span style={{ color: '#FF8C35', fontSize: 13 }}>3D Print Services</span>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 1.5rem' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+      {/* Hero image */}
+      <div style={{ position: 'relative', height: 340, overflow: 'hidden' }}>
+        <img
+          src="/3dprint-cover.webp"
+          alt="3D Printing"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 2.5rem' }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>
             // MANUFACTURING SERVICES
           </div>
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 48, letterSpacing: 2, margin: '0 0 12px' }}>3D Print Services</h1>
-          <p style={{ color: '#555', maxWidth: 780, lineHeight: 1.7, margin: '0 0 6px' }}>
-            From engineering-grade nylon enclosures to flexible TPU gaskets and high-strength PETG brackets — we print your parts
-            on industrial FDM machines with precision layer heights and post-processing. STEP, STL, and DXF files accepted.
-          </p>
-          <p style={{ color: '#555', maxWidth: 780, lineHeight: 1.7 }}>
-            Typical turnaround is 2–3 business days. Same-day turnaround available for simple parts. Custom material, infill, and
-            finish options available on enquiry.
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 56, letterSpacing: 2, margin: '0 0 12px', color: '#fff', lineHeight: 1 }}>3D Print Services</h1>
+          <p style={{ color: 'rgba(255,255,255,0.8)', maxWidth: 520, lineHeight: 1.65, fontSize: 15, margin: 0 }}>
+            Engineering-grade FDM printing — PLA, PETG, ABS, Nylon, TPU. STEP, STL & DXF accepted. 2–3 day turnaround.
           </p>
         </div>
+      </div>
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 1.5rem' }}>
 
         {/* Quick quote CTA */}
         <div style={{ background: '#111', borderRadius: 12, padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
