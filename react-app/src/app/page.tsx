@@ -297,19 +297,16 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
     <div class="dsp-label">// SELECT CATEGORY</div>
     <div class="dsp-grid">
       <a class="dsp-card" href="/shop/3d-printing">
-        <div class="dsp-icon">🖨️</div>
         <div class="dsp-name">3D Print Services</div>
         <div class="dsp-desc">Custom FDM prints — PLA, PETG, ABS, Nylon, TPU — any geometry, any spec</div>
         <div class="dsp-arrow">Browse Prints →</div>
       </a>
       <a class="dsp-card" href="/shop/prototyping">
-        <div class="dsp-icon">🔬</div>
         <div class="dsp-name">Prototyping</div>
         <div class="dsp-desc">48-hour rapid prototypes and product dev sprints — design to delivery</div>
         <div class="dsp-arrow">Browse Services →</div>
       </a>
       <a class="dsp-card" href="/shop/printers-supplies">
-        <div class="dsp-icon">🛠️</div>
         <div class="dsp-name">Printers & Supplies</div>
         <div class="dsp-desc">3D printers, filaments, upgrades & spare components</div>
         <div class="dsp-arrow">Browse Supplies →</div>
@@ -322,13 +319,11 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
     <div class="dsp-label">// SELECT CATEGORY</div>
     <div class="dsp-grid">
       <a class="dsp-card" href="/shop/drone-frames">
-        <div class="dsp-icon">🛸</div>
         <div class="dsp-name">Drone Frames</div>
         <div class="dsp-desc">Racing, quadcopter & hexacopter frames — carbon fiber & glass fiber</div>
         <div class="dsp-arrow">Browse Frames →</div>
       </a>
       <a class="dsp-card" href="/shop/complete-drones">
-        <div class="dsp-icon">🚁</div>
         <div class="dsp-name">Complete Drones</div>
         <div class="dsp-desc">Ready-to-fly survey, FPV & agricultural drones — fully assembled</div>
         <div class="dsp-arrow">Browse Drones →</div>
@@ -345,9 +340,9 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
       <span class="frame-filter-label">Frame Type</span>
       <div class="frame-chips">
         <button class="frame-chip active" data-type="all"        onclick="filterFrame('all',undefined)">All</button>
-        <button class="frame-chip"        data-type="racing"     onclick="filterFrame('racing',undefined)">⚡ Racing</button>
-        <button class="frame-chip"        data-type="quadcopter" onclick="filterFrame('quadcopter',undefined)">🔲 Quadcopter</button>
-        <button class="frame-chip"        data-type="hexacopter" onclick="filterFrame('hexacopter',undefined)">🔷 Hexacopter</button>
+        <button class="frame-chip"        data-type="racing"     onclick="filterFrame('racing',undefined)">Racing</button>
+        <button class="frame-chip"        data-type="quadcopter" onclick="filterFrame('quadcopter',undefined)">Quadcopter</button>
+        <button class="frame-chip"        data-type="hexacopter" onclick="filterFrame('hexacopter',undefined)">Hexacopter</button>
       </div>
     </div>
     <div class="frame-filter-row">

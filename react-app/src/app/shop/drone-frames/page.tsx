@@ -24,9 +24,9 @@ interface Frame {
 
 const FRAME_TYPES = [
   { key: 'all',        label: 'All Types' },
-  { key: 'racing',     label: '⚡ Racing' },
-  { key: 'quadcopter', label: '🔲 Quadcopter' },
-  { key: 'hexacopter', label: '🔷 Hexacopter' },
+  { key: 'racing',     label: 'Racing' },
+  { key: 'quadcopter', label: 'Quadcopter' },
+  { key: 'hexacopter', label: 'Hexacopter' },
 ];
 
 const MATERIALS = [

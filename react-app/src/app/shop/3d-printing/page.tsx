@@ -31,10 +31,10 @@ const MATERIALS = [
 
 const PRINT_TYPES = [
   { key: 'all',        label: 'All Types' },
-  { key: 'functional', label: '⚙️ Functional Parts' },
-  { key: 'enclosure',  label: '📦 Enclosures' },
-  { key: 'prototype',  label: '🔬 Prototype' },
-  { key: 'custom',     label: '✏️ Custom' },
+  { key: 'functional', label: 'Functional Parts' },
+  { key: 'enclosure',  label: 'Enclosures' },
+  { key: 'prototype',  label: 'Prototype' },
+  { key: 'custom',     label: 'Custom' },
 ];
 
 const SORT_OPTIONS = [

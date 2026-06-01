@@ -20,9 +20,9 @@ interface Supply {
 
 const SUBCATS = [
   { key: 'all',       label: 'All' },
-  { key: 'printer',   label: '🖨️ 3D Printers' },
-  { key: 'filament',  label: '🎨 Filaments' },
-  { key: 'component', label: '⚙️ Components' },
+  { key: 'printer',   label: '3D Printers' },
+  { key: 'filament',  label: 'Filaments' },
+  { key: 'component', label: 'Components' },
 ];
 
 const SORT_OPTIONS = [

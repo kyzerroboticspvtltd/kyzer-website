@@ -21,10 +21,10 @@ interface Drone {
 
 const DRONE_TYPES = [
   { key: 'all',         label: 'All Types' },
-  { key: 'survey',      label: '📡 Survey' },
-  { key: 'fpv',         label: '⚡ FPV / Racing' },
-  { key: 'agricultural',label: '🌾 Agricultural' },
-  { key: 'hobby',       label: '🎮 Hobby' },
+  { key: 'survey',      label: 'Survey' },
+  { key: 'fpv',         label: 'FPV / Racing' },
+  { key: 'agricultural',label: 'Agricultural' },
+  { key: 'hobby',       label: 'Hobby' },
 ];
 
 const SORT_OPTIONS = [

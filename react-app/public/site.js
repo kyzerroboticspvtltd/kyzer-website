@@ -94,9 +94,9 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       applyFilter(cat);
       subcatTabs.innerHTML =
         `<button class="subcat-tab active" data-subcat="all"       onclick="filterSubcat('all')">All</button>` +
-        `<button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">🖨️ 3D Printers</button>` +
-        `<button class="subcat-tab"        data-subcat="filament"  onclick="filterSubcat('filament')">🎨 Filaments</button>` +
-        `<button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">⚙️ Components</button>`;
+        `<button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">3D Printers</button>` +
+        `<button class="subcat-tab"        data-subcat="filament"  onclick="filterSubcat('filament')">Filaments</button>` +
+        `<button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">Components</button>`;
       subcatTabs.classList.add('visible');
       filterSubcat('all', false);
       setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
@@ -163,10 +163,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // Default categories used before Supabase data loads
   const DEFAULT_CATS = [
-    { id: 'drone',   emoji: '🚁', name: 'Drones',             desc: 'Survey, FPV & agricultural platforms' },
-    { id: 'print',   emoji: '🛠️', name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures' },
-    { id: 'proto',   emoji: '⚙️', name: 'Prototyping',        desc: 'PCB, enclosures & rapid development' },
-    { id: '3dprint', emoji: '🖨️', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
+    { id: 'drone',   name: 'Drones',             desc: 'Survey, FPV & agricultural platforms' },
+    { id: 'print',   name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures' },
+    { id: 'proto',   name: 'Prototyping',        desc: 'PCB, enclosures & rapid development' },
+    { id: '3dprint', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
   ];
 
   const PRINT_IDS = ['print', 'proto', '3dprint'];
@@ -174,7 +174,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   function mergePrintCats(list) {
     const printIdx = list.findIndex(c => PRINT_IDS.includes(c.id));
     if (printIdx === -1) return list;
-    const merged = { id: 'printing', emoji: '🖨️', name: '3D Printing', desc: 'FDM prints, prototyping & printer supplies' };
+    const merged = { id: 'printing', name: '3D Printing', desc: 'FDM prints, prototyping & printer supplies' };
     const rest = list.filter(c => !PRINT_IDS.includes(c.id));
     rest.splice(printIdx, 0, merged);
     return rest;
