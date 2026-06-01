@@ -174,16 +174,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   function mergePrintCats(list) {
     const printIdx = list.findIndex(c => PRINT_IDS.includes(c.id));
     if (printIdx === -1) return list;
-    const merged = { id: 'printing', name: '3D Printing', desc: 'FDM prints, prototyping & printer supplies' };
+    const printCats = list.filter(c => PRINT_IDS.includes(c.id));
+    // Inherit name, desc, photo and emoji from whichever print cat has them set
+    const baseCat = printCats.find(c => c.photo) || printCats[0];
+    const merged = {
+      id:    'printing',
+      name:  baseCat.name  || '3D Printing',
+      desc:  baseCat.desc  || 'FDM prints, prototyping & printer supplies',
+      emoji: baseCat.emoji || '🖨️',
+      photo: baseCat.photo || null,
+    };
     const rest = list.filter(c => !PRINT_IDS.includes(c.id));
     rest.splice(printIdx, 0, merged);
     return rest;
   }
-
-  const TILE_PHOTOS = {
-    drone:    '/drone-cover.png',
-    printing: '/3dprint-tile.png',
-  };
 
   function renderCategoryTiles(cats) {
     const raw  = cats && cats.length ? cats : DEFAULT_CATS;
@@ -193,9 +197,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (!tilesEl) return;
 
     tilesEl.innerHTML = list.map(cat => {
-      const photo = TILE_PHOTOS[cat.id] || cat.photo || null;
-      const icon = photo
-        ? `<div class="cat-tile-photo"><img src="${photo}" alt="${cat.name}"></div>`
+      const icon = cat.photo
+        ? `<div class="cat-tile-photo"><img src="${cat.photo}" alt="${cat.name}"></div>`
         : `<div class="cat-tile-icon">${cat.emoji || '📦'}</div>`;
       return `<div class="cat-tile" onclick="filterCat('${cat.id}')" data-cat-tile="${cat.id}">
         ${icon}
