@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">
+  <g fill="none" stroke="#FF8C35" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Drone (top-left) -->
+    <g transform="translate(95,105)">
+      <rect x="-18" y="-9" width="36" height="18" rx="5"/>
+      <line x1="-18" y1="-6" x2="-50" y2="-32"/>
+      <line x1="18" y1="-6" x2="50" y2="-32"/>
+      <line x1="-18" y1="6" x2="-50" y2="32"/>
+      <line x1="18" y1="6" x2="50" y2="32"/>
+      <ellipse cx="-53" cy="-34" rx="15" ry="5" transform="rotate(-25,-53,-34)"/>
+      <ellipse cx="53" cy="-34" rx="15" ry="5" transform="rotate(25,53,-34)"/>
+      <ellipse cx="-53" cy="34" rx="15" ry="5" transform="rotate(25,-53,34)"/>
+      <ellipse cx="53" cy="34" rx="15" ry="5" transform="rotate(-25,53,34)"/>
+      <circle cx="0" cy="6" r="5"/>
+      <line x1="0" y1="-9" x2="0" y2="-18"/>
+      <circle cx="0" cy="-20" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    </g>
+
+    <!-- Gear (top-right) -->
+    <g transform="translate(470,85)">
+      <circle r="26"/>
+      <circle r="11"/>
+      <rect x="-5" y="-36" width="10" height="12" rx="2"/>
+      <rect x="-5" y="24" width="10" height="12" rx="2"/>
+      <rect x="24" y="-5" width="12" height="10" rx="2"/>
+      <rect x="-36" y="-5" width="12" height="10" rx="2"/>
+      <g transform="rotate(45)">
+        <rect x="-5" y="-36" width="10" height="12" rx="2"/>
+        <rect x="-5" y="24" width="10" height="12" rx="2"/>
+        <rect x="24" y="-5" width="12" height="10" rx="2"/>
+        <rect x="-36" y="-5" width="12" height="10" rx="2"/>
+      </g>
+    </g>
+
+    <!-- Circuit board (centre) -->
+    <g transform="translate(295,290)">
+      <polyline points="-90,0 -42,0 -42,-44 42,-44 42,0 90,0"/>
+      <line x1="-42" y1="0" x2="-42" y2="44"/>
+      <line x1="42" y1="0" x2="42" y2="44"/>
+      <line x1="0" y1="-44" x2="0" y2="-60" stroke-dasharray="4,3"/>
+      <rect x="-22" y="-22" width="44" height="44" rx="5"/>
+      <line x1="-22" y1="-12" x2="-38" y2="-12"/>
+      <line x1="-22" y1="0"  x2="-38" y2="0"/>
+      <line x1="-22" y1="12" x2="-38" y2="12"/>
+      <line x1="22"  y1="-12" x2="38" y2="-12"/>
+      <line x1="22"  y1="0"   x2="38" y2="0"/>
+      <line x1="22"  y1="12"  x2="38" y2="12"/>
+      <circle cx="-90" cy="0" r="4" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="90"  cy="0" r="4" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="-42" cy="44" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <circle cx="42"  cy="44" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    </g>
+
+    <!-- Isometric cube (bottom-right) -->
+    <g transform="translate(488,448)">
+      <polygon points="0,-36 31,-18 31,18 0,36 -31,18 -31,-18"/>
+      <line x1="0" y1="-36" x2="0" y2="0"/>
+      <line x1="31" y1="-18" x2="0" y2="0"/>
+      <line x1="-31" y1="-18" x2="0" y2="0"/>
+      <line x1="0" y1="0"   x2="0" y2="36"/>
+    </g>
+
+    <!-- 3D printer (bottom-left) -->
+    <g transform="translate(100,445)">
+      <rect x="-38" y="-52" width="76" height="55" rx="5"/>
+      <rect x="-44" y="3" width="88" height="10" rx="3"/>
+      <rect x="-14" y="-42" width="28" height="22" rx="3"/>
+      <polygon points="-9,-20 9,-20 5,4 -5,4"/>
+      <circle cx="0" cy="6" r="3.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+      <line x1="-28" y1="20" x2="28" y2="20"/>
+      <line x1="-28" y1="27" x2="16" y2="27"/>
+      <line x1="-28" y1="34" x2="22" y2="34"/>
+    </g>
+
+    <!-- Wrench (left-middle) -->
+    <g transform="translate(38,310)">
+      <path d="M0,32 L14,10 Q12,-4 4,-10 Q-6,-16 -14,-8 Q-20,0 -16,10 Q-12,16 0,14 Z"/>
+      <circle cx="-10" cy="1" r="9"/>
+    </g>
+
+    <!-- Lightning bolt (right-middle) -->
+    <g transform="translate(560,295)">
+      <polyline points="9,-28 -5,-2 7,-2 -9,28"/>
+    </g>
+
+    <!-- Resistor (mid-right) -->
+    <g transform="translate(440,195)">
+      <line x1="-28" y1="0" x2="-14" y2="0"/>
+      <rect x="-14" y="-7" width="28" height="14" rx="2"/>
+      <line x1="14" y1="0" x2="28" y2="0"/>
+    </g>
+
+    <!-- Small drone (bottom-centre) -->
+    <g transform="translate(300,530)" stroke-opacity="0.12">
+      <rect x="-11" y="-6" width="22" height="12" rx="3"/>
+      <line x1="-11" y1="-4" x2="-28" y2="-18"/>
+      <line x1="11"  y1="-4" x2="28"  y2="-18"/>
+      <line x1="-11" y1="4"  x2="-28" y2="18"/>
+      <line x1="11"  y1="4"  x2="28"  y2="18"/>
+      <ellipse cx="-30" cy="-20" rx="9" ry="3" transform="rotate(-20,-30,-20)"/>
+      <ellipse cx="30"  cy="-20" rx="9" ry="3" transform="rotate(20,30,-20)"/>
+      <ellipse cx="-30" cy="20"  rx="9" ry="3" transform="rotate(20,-30,20)"/>
+      <ellipse cx="30"  cy="20"  rx="9" ry="3" transform="rotate(-20,30,20)"/>
+    </g>
+
+    <!-- Arrow right (top-centre) -->
+    <g transform="translate(295,40)">
+      <line x1="-18" y1="0" x2="18" y2="0"/>
+      <polyline points="10,-7 18,0 10,7"/>
+    </g>
+
+    <!-- Arrow diagonal (mid-left area) -->
+    <g transform="translate(195,195) rotate(45)">
+      <line x1="-14" y1="0" x2="14" y2="0"/>
+      <polyline points="7,-6 14,0 7,6"/>
+    </g>
+
+    <!-- Sparkle / star (top-centre-right) -->
+    <g transform="translate(390,40)">
+      <line x1="0" y1="-13" x2="0" y2="13"/>
+      <line x1="-13" y1="0" x2="13" y2="0"/>
+      <line x1="-9" y1="-9" x2="9" y2="9"/>
+      <line x1="9" y1="-9" x2="-9" y2="9"/>
+    </g>
+
+    <!-- Small sparkle (bottom area) -->
+    <g transform="translate(175,500)">
+      <line x1="0" y1="-9" x2="0" y2="9"/>
+      <line x1="-9" y1="0" x2="9" y2="0"/>
+      <line x1="-6" y1="-6" x2="6" y2="6"/>
+      <line x1="6" y1="-6" x2="-6" y2="6"/>
+    </g>
+
+    <!-- Dashed trace line -->
+    <polyline points="188,380 188,420 240,420" stroke-dasharray="5,4"/>
+    <circle cx="240" cy="420" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+
+    <!-- Scattered solder dots -->
+    <circle cx="210" cy="55"  r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="155" cy="170" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="530" cy="200" r="2.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="395" cy="155" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="370" cy="400" r="3" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="500" cy="360" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="80"  cy="490" r="2.5" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="440" cy="490" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="560" cy="140" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+    <circle cx="30"  cy="155" r="2" fill="#FF8C35" fill-opacity="0.3" stroke="none"/>
+
+  </g>
+</svg>
