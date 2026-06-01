@@ -457,7 +457,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: total,
+            cartItems: cart.map(i => ({ id: i.id, qty: i.qty || 1 })),
             currency: 'INR',
             receipt: orderId,
             notes: { customer: name, email },
@@ -1065,7 +1065,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       const res = await fetch('/api/create-razorpay-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount, currency: 'INR', receipt: 'PRINT-' + Date.now() })
+        body: JSON.stringify({
+          quoteParams: {
+            L: quoteState.L, W: quoteState.W, H: quoteState.H,
+            matName: quoteState.matName, qualName: quoteState.qualName,
+            infill: quoteState.infill,
+            supportLevel: parseInt(document.getElementById('supportSelect').value) || 0,
+            colorExtra: quoteState.colorExtra || 0,
+            qty: quoteState.qty, rush: quoteState.rush || false,
+            delivery: quoteState.delivery,
+          },
+          currency: 'INR', receipt: 'PRINT-' + Date.now()
+        })
       });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || 'Could not create order');

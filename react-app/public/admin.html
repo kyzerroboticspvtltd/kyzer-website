@@ -1225,30 +1225,9 @@ CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);</pre>
 
 <script>
 // ── AUTH ──
-const PASS_KEY = 'kyzer_admin_pass';
+const _TOKEN_KEY = 'kyzer_admin_token';
 
-function doLogin() {
-  const pass   = document.getElementById('loginPass').value;
-  const errEl  = document.getElementById('loginErr');
-  const stored = localStorage.getItem(PASS_KEY);
-
-  // First-time setup: no password saved yet
-  if (!stored) {
-    if (!pass || pass.length < 6) {
-      errEl.textContent = 'First time? Enter a password (min 6 chars) to set it.';
-      errEl.style.display = 'block';
-      return;
-    }
-    localStorage.setItem(PASS_KEY, pass);
-  } else if (pass !== stored) {
-    errEl.textContent = 'Incorrect password.';
-    errEl.style.display = 'block';
-    document.getElementById('loginPass').value = '';
-    return;
-  }
-
-  errEl.style.display = 'none';
-  localStorage.setItem('kyzer_admin_authed', '1');
+function _showAdminPanel() {
   document.getElementById('loginScreen').style.display = 'none';
   const p = document.getElementById('adminPanel');
   p.style.display = 'flex';
@@ -1256,13 +1235,54 @@ function doLogin() {
   initAdmin();
 }
 
+async function doLogin() {
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  const btn   = document.getElementById('loginBtn');
+  if (!pass) { errEl.textContent = 'Enter your password.'; errEl.style.display = 'block'; return; }
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass }),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      errEl.textContent = 'Incorrect password.';
+      errEl.style.display = 'block';
+      document.getElementById('loginPass').value = '';
+      btn.textContent = 'Sign in →'; btn.disabled = false;
+      return;
+    }
+    sessionStorage.setItem(_TOKEN_KEY, data.token);
+    errEl.style.display = 'none';
+    _showAdminPanel();
+  } catch {
+    errEl.textContent = 'Connection error. Try again.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Sign in →'; btn.disabled = false;
+  }
+}
+
 function doLogout() {
-  localStorage.removeItem('kyzer_admin_authed');
+  sessionStorage.removeItem(_TOKEN_KEY);
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginPass').value = '';
   document.getElementById('loginErr').style.display = 'none';
 }
+
+// On page load — restore session if token is still valid
+(async function checkAuth() {
+  const token = sessionStorage.getItem(_TOKEN_KEY);
+  if (!token) return;
+  try {
+    const res = await fetch('/api/admin-verify', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (res.ok) _showAdminPanel();
+    else sessionStorage.removeItem(_TOKEN_KEY);
+  } catch {}
+})();
 
 // ── DEFAULTS ──
 const D_PRODUCTS = [
@@ -2837,16 +2857,7 @@ function _showShopOrderAlert(order) {
 }
 
 function changePass() {
-  const cur  = document.getElementById('secCur').value;
-  const nw   = document.getElementById('secNew').value;
-  const conf = document.getElementById('secConf').value;
-  const stored = localStorage.getItem(PASS_KEY) || '';
-  if (cur !== stored)  { toast('Current password is wrong.', true); return; }
-  if (!nw)             { toast('New password cannot be empty.', true); return; }
-  if (nw !== conf)     { toast('Passwords do not match.', true); return; }
-  localStorage.setItem(PASS_KEY, nw);
-  ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
-  toast('Password updated.');
+  toast('To change your password, update the ADMIN_PASSWORD environment variable in your Vercel project settings.', true);
 }
 </script>
 </body>
