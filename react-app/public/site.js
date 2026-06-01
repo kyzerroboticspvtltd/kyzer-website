@@ -59,15 +59,33 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     });
   }
 
+  let _activeCat = 'all';
+
   function filterCat(cat) {
-    const grid = document.getElementById('productsGrid');
+    _activeCat = cat;
+    const grid       = document.getElementById('productsGrid');
     const subcatTabs = document.getElementById('subcatTabs');
+    const framePanel = document.getElementById('frameFilterPanel');
     grid.classList.add('cat-open');
     applyFilter(cat);
+    if (framePanel) framePanel.style.display = 'none';
+
     if (cat === '3dprint') {
+      subcatTabs.innerHTML =
+        `<button class="subcat-tab active" data-subcat="all"       onclick="filterSubcat('all')">All</button>` +
+        `<button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">🖨️ 3D Printers</button>` +
+        `<button class="subcat-tab"        data-subcat="filament"  onclick="filterSubcat('filament')">🎨 Filaments</button>` +
+        `<button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">⚙️ Components</button>`;
+      subcatTabs.classList.add('visible');
+      filterSubcat('all', false);
+    } else if (cat === 'drone') {
+      subcatTabs.innerHTML =
+        `<button class="subcat-tab active" data-subcat="all"   onclick="filterSubcat('all')">All Drones</button>` +
+        `<button class="subcat-tab"        data-subcat="frame" onclick="filterSubcat('frame')">🛸 Drone Frames</button>`;
       subcatTabs.classList.add('visible');
       filterSubcat('all', false);
     } else {
+      subcatTabs.innerHTML = '';
       subcatTabs.classList.remove('visible');
     }
     setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
@@ -77,8 +95,41 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.querySelectorAll('.subcat-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.subcat === subcat)
     );
-    document.querySelectorAll('.prod-card[data-cat="3dprint"]').forEach(card => {
+    document.querySelectorAll(`.prod-card[data-cat="${_activeCat}"]`).forEach(card => {
       card.style.display = (subcat === 'all' || card.dataset.subcat === subcat) ? '' : 'none';
+    });
+    const framePanel = document.getElementById('frameFilterPanel');
+    if (framePanel) {
+      framePanel.style.display = (subcat === 'frame') ? '' : 'none';
+      if (subcat === 'frame') { window._fType = 'all'; window._fMat = 'all'; window._fSize = 'all'; }
+    }
+  }
+
+  function filterFrame(type, mat, size) {
+    if (type !== undefined) {
+      window._fType = type;
+      document.querySelectorAll('.frame-chip[data-type]').forEach(c => c.classList.toggle('active', c.dataset.type === type));
+    }
+    if (mat !== undefined) {
+      window._fMat = mat;
+      document.querySelectorAll('.frame-chip[data-mat]').forEach(c => c.classList.toggle('active', c.dataset.mat === mat));
+    }
+    if (size !== undefined) {
+      window._fSize = size;
+      document.querySelectorAll('.frame-chip[data-size]').forEach(c => c.classList.toggle('active', c.dataset.size === size));
+    }
+    const ft = window._fType || 'all';
+    const fm = window._fMat  || 'all';
+    const fs = window._fSize || 'all';
+    document.querySelectorAll('.prod-card[data-subcat="frame"]').forEach(card => {
+      const wb = parseInt(card.dataset.wheelbase || '0');
+      const matchType = ft === 'all' || card.dataset.frameType === ft;
+      const matchMat  = fm === 'all' || card.dataset.material  === fm;
+      const matchSize = fs === 'all'
+        || (fs === 'micro' && wb < 250)
+        || (fs === 'mid'   && wb >= 250 && wb <= 500)
+        || (fs === 'large' && wb > 500);
+      card.style.display = (matchType && matchMat && matchSize) ? '' : 'none';
     });
   }
 
@@ -1482,7 +1533,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         const btnLabel = _cnp > 0 ? 'Buy Now →' : (_isFrom ? 'Get Quote →' : (p.btnText || 'Enquire'));
         const btnCls   = _cnp > 0 ? 'prod-btn prod-btn-buy' : 'prod-btn';
         return `
-        <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
+        <div class="prod-card" data-cat="${p.category}" data-subcat="${p.subcat||''}" data-frame-type="${p.frameType||''}" data-material="${p.material||''}" data-wheelbase="${p.wheelbase||''}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
           <div class="prod-body">
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>

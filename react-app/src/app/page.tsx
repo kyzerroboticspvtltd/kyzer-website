@@ -292,12 +292,37 @@ const PAGE_HTML = `<div class="cursor" id="cursor"></div>
   </div>
   <div class="cat-tiles reveal" id="catTilesContainer"></div>
 
-  <!-- Subcategory tabs (shown for 3D Printing) -->
-  <div class="subcat-tabs" id="subcatTabs">
-    <button class="subcat-tab active" data-subcat="all"       onclick="filterSubcat('all')">All</button>
-    <button class="subcat-tab"        data-subcat="printer"   onclick="filterSubcat('printer')">🖨️ 3D Printers</button>
-    <button class="subcat-tab"        data-subcat="filament"  onclick="filterSubcat('filament')">🎨 Filaments</button>
-    <button class="subcat-tab"        data-subcat="component" onclick="filterSubcat('component')">⚙️ Components</button>
+  <!-- Subcategory tabs (populated dynamically per category) -->
+  <div class="subcat-tabs" id="subcatTabs"></div>
+
+  <!-- Drone frame filter panel -->
+  <div class="frame-filter-panel" id="frameFilterPanel" style="display:none;">
+    <div class="frame-filter-row">
+      <span class="frame-filter-label">Frame Type</span>
+      <div class="frame-chips">
+        <button class="frame-chip active" data-type="all"        onclick="filterFrame('all',undefined)">All</button>
+        <button class="frame-chip"        data-type="racing"     onclick="filterFrame('racing',undefined)">⚡ Racing</button>
+        <button class="frame-chip"        data-type="quadcopter" onclick="filterFrame('quadcopter',undefined)">🔲 Quadcopter</button>
+        <button class="frame-chip"        data-type="hexacopter" onclick="filterFrame('hexacopter',undefined)">🔷 Hexacopter</button>
+      </div>
+    </div>
+    <div class="frame-filter-row">
+      <span class="frame-filter-label">Material</span>
+      <div class="frame-chips">
+        <button class="frame-chip active" data-mat="all"          onclick="filterFrame(undefined,'all')">All</button>
+        <button class="frame-chip"        data-mat="carbon-fiber" onclick="filterFrame(undefined,'carbon-fiber')">Carbon Fiber</button>
+        <button class="frame-chip"        data-mat="glass-fiber"  onclick="filterFrame(undefined,'glass-fiber')">Glass Fiber</button>
+      </div>
+    </div>
+    <div class="frame-filter-row">
+      <span class="frame-filter-label">Size</span>
+      <div class="frame-chips">
+        <button class="frame-chip active" data-size="all"    onclick="filterFrame(undefined,undefined,'all')">All</button>
+        <button class="frame-chip"        data-size="micro"  onclick="filterFrame(undefined,undefined,'micro')">Micro &lt;250mm</button>
+        <button class="frame-chip"        data-size="mid"    onclick="filterFrame(undefined,undefined,'mid')">Mid 250–500mm</button>
+        <button class="frame-chip"        data-size="large"  onclick="filterFrame(undefined,undefined,'large')">Large &gt;500mm</button>
+      </div>
+    </div>
   </div>
 
   <div class="products-grid" id="productsGrid">
