@@ -60,9 +60,8 @@ export default function DroneFramesPage() {
   const [selected, setSelected]     = useState<Frame | null>(null);
 
   useEffect(() => {
-    const url  = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key  = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key) { setLoading(false); return; }
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
     fetch(`${url}/rest/v1/site_data?id=eq.1&select=products`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
     })
