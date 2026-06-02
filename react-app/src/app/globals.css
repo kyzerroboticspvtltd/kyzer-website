@@ -251,8 +251,9 @@
   /* Category tiles */
   .cat-tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
     gap: 16px; margin-bottom: 1.5rem;
+    max-width: 900px; margin-left: auto; margin-right: auto;
   }
 
   /* Subcategory tabs */
