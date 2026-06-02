@@ -709,16 +709,16 @@ const PAGE_HTML = `<div id="mainSite">
 <section id="deals">
   <div class="deals-inner reveal">
     <div class="deals-badge">LIMITED OFFERS</div>
-    <h2>Deals you can't resist.</h2>
+    <h2>Exclusive deals, this week only.</h2>
     <div class="deals-items">
-      <span>🖨️ &nbsp;<strong>Bulk 3D prints</strong> — 10% off on 10+ pieces</span>
+      <span>🖨️ &nbsp;<strong>First 3D print 30% off</strong> — new customers only</span>
       <span class="deals-sep"> · </span>
-      <span>🚁 &nbsp;<strong>Drone service package</strong> — save ₹3,000</span>
+      <span>🚁 &nbsp;<strong>Free drone consultation</strong> — 30-min spec call, no charge</span>
       <span class="deals-sep"> · </span>
-      <span>🎨 &nbsp;<strong>Free filament spool</strong> on orders above ₹5,000</span>
+      <span>📦 &nbsp;<strong>Free delivery</strong> on orders above ₹2,000</span>
     </div>
     <div class="deals-ctas">
-      <a href="#contact" class="deals-btn-primary">Claim your deal →</a>
+      <a href="https://wa.me/919049695264?text=Hi%20Kyzer%20Robotics!%20I%27d%20like%20to%20claim%20the%20limited%20offer%20%F0%9F%94%A5" target="_blank" rel="noopener" class="deals-btn-primary">Claim on WhatsApp →</a>
       <a href="#" onclick="showPage('quote'); return false;" class="deals-btn-ghost">Get a 3D quote ⚡</a>
     </div>
   </div>
