@@ -29,9 +29,8 @@ export default function PrintingPage() {
         .sl-heading { font-family:'Bebas Neue',sans-serif; font-size:clamp(48px,8vw,80px); color:#111; line-height:0.95; margin-bottom:10px; }
         .sl-sub { font-size:16px; color:var(--muted); margin-bottom:52px; }
 
-        .sl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-        @media(max-width:720px) { .sl-grid { grid-template-columns:1fr; } }
-        @media(min-width:480px) and (max-width:720px) { .sl-grid { grid-template-columns:1fr 1fr; } }
+        .sl-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        @media(max-width:600px) { .sl-grid { grid-template-columns:1fr; } }
 
         .sl-card {
           display:block; text-decoration:none; color:inherit;
@@ -72,12 +71,6 @@ export default function PrintingPage() {
             <div className="sl-card-name">Print Services</div>
             <div className="sl-card-desc">Custom FDM prints — PLA, PETG, ABS, Nylon, TPU — any geometry, any spec, 48-hr turnaround.</div>
             <div className="sl-card-arrow">Browse Prints →</div>
-          </Link>
-          <Link href="/shop/prototyping" className="sl-card">
-            <div className="sl-card-icon">🧪</div>
-            <div className="sl-card-name">Prototyping</div>
-            <div className="sl-card-desc">48-hour rapid prototypes and product development sprints — design to delivery.</div>
-            <div className="sl-card-arrow">Browse Services →</div>
           </Link>
           <Link href="/shop/printers-supplies" className="sl-card">
             <div className="sl-card-icon">🔧</div>

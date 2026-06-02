@@ -153,11 +153,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     drone:    '/shop/drones',
     printing: '/shop/printing',
     print:    '/shop/printing',
-    proto:    '/shop/printing',
+    proto:    '/shop/prototyping',
     '3dprint':'/shop/printing',
   };
 
-  const PRINT_IDS = ['print', 'proto', '3dprint'];
+  const PRINT_IDS = ['print', '3dprint'];
 
   function mergePrintCats(list) {
     const printIdx = list.findIndex(c => PRINT_IDS.includes(c.id));
