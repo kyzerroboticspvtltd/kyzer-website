@@ -1124,6 +1124,23 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     }
   }
 
+  function qcoWhatsAppDiscuss() {
+    const name    = document.getElementById('qfName')?.value.trim() || '';
+    const mat     = quoteState.matName || '—';
+    const qual    = quoteState.qualName || '—';
+    const colour  = quoteState.colorName || 'White';
+    const qty     = quoteState.qty || 1;
+    const del     = quoteState.delivery === 'sameday' ? 'On Priority' : '7 Days';
+    const total   = document.getElementById('bTotal')?.textContent || '—';
+    const file    = quoteState.fileName ? `\nFile: ${quoteState.fileName}` : '';
+    const msg = encodeURIComponent(
+      `Hi Kyzer Robotics! I'd like to discuss the price for my 3D print order 🖨️\n\n` +
+      `${name ? `Name: ${name}\n` : ''}` +
+      `Material: ${mat}\nQuality: ${qual}\nColour: ${colour}\nQty: ${qty}\nDelivery: ${del}${file}\n\nEstimated Total: ${total}\n\nCould you please check if there's any flexibility on the price?`
+    );
+    window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
+  }
+
   async function qcoPay() {
     const rzpKey = window.__RZP_KEY__ || '';
     if (!rzpKey) {
