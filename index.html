@@ -161,30 +161,7 @@
     font-size: 18px;
     line-height: 1.6;
     overflow-x: hidden;
-    cursor: none;
   }
-
-  /* Custom cursor */
-  .cursor {
-    width: 10px; height: 10px;
-    background: var(--orange);
-    border-radius: 50%;
-    position: fixed; top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.1s ease;
-  }
-  .cursor-ring {
-    width: 36px; height: 36px;
-    border: 1px solid var(--orange);
-    border-radius: 50%;
-    position: fixed; top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9998;
-    opacity: 0.5;
-    transition: transform 0.18s ease, opacity 0.2s;
-  }
-  body:hover .cursor { opacity: 1; }
 
   /* NAV */
   nav {
@@ -229,11 +206,11 @@
     background: var(--orange); color: #111;
     border: none; padding: 9px 22px;
     border-radius: 8px; font-size: 14px; font-weight: 500;
-    cursor: none; transition: transform 0.15s, background 0.2s;
+    cursor: pointer; transition: transform 0.15s, background 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
   .nav-cta:hover { background: #FFa050; transform: scale(1.03); }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
   .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); transition: all 0.3s; }
 
   /* HERO */
@@ -297,7 +274,7 @@
     background: var(--orange); color: #111;
     border: none; padding: 13px 30px;
     border-radius: 8px; font-size: 15px; font-weight: 500;
-    cursor: none; transition: transform 0.15s, background 0.2s;
+    cursor: pointer; transition: transform 0.15s, background 0.2s;
     font-family: 'DM Sans', sans-serif;
     display: inline-flex; align-items: center; gap: 8px;
   }
@@ -306,7 +283,7 @@
     background: transparent; color: var(--text);
     border: 0.5px solid rgba(0,0,0,0.2); padding: 13px 30px;
     border-radius: 8px; font-size: 15px;
-    cursor: none; transition: border-color 0.2s, transform 0.15s;
+    cursor: pointer; transition: border-color 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif;
   }
   .btn-outline:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
@@ -394,7 +371,7 @@
     background: transparent; border: 0.5px solid var(--border);
     color: var(--muted); padding: 7px 16px;
     border-radius: 999px; font-size: 13px;
-    cursor: none; transition: all 0.2s;
+    cursor: pointer; transition: all 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
   .tab.active, .tab:hover {
@@ -427,7 +404,7 @@
   .cat-tile {
     background: var(--bg2); border: 0.5px solid var(--border);
     border-radius: 20px; padding: 2rem 1.5rem;
-    text-align: center; cursor: none;
+    text-align: center; cursor: pointer;
     transition: all 0.25s; position: relative; overflow: hidden;
   }
   .cat-tile::before {
@@ -496,7 +473,7 @@
     border: 0.5px solid var(--border);
     border-radius: 14px; overflow: hidden;
     transition: border-color 0.2s, transform 0.25s;
-    cursor: none;
+    cursor: pointer;
   }
   .prod-card:hover { border-color: rgba(255,140,53,0.4); transform: translateY(-4px); }
   .prod-img {
@@ -577,7 +554,7 @@
     background: var(--orange); color: #111;
     border: none; padding: 14px;
     border-radius: 10px; font-size: 15px; font-weight: 500;
-    cursor: none; transition: background 0.2s, transform 0.15s;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif;
     width: 100%;
   }
@@ -769,13 +746,13 @@
     color: var(--text); padding: 13px;
     border-radius: 0 0 12px 12px;
     font-size: 15px; font-weight: 500;
-    cursor: none; transition: background 0.2s, border-color 0.2s;
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
     font-family: 'DM Sans', sans-serif;
     display: flex; align-items: center; justify-content: center; gap: 8px;
     position: relative;
   }
   .qv2-upload-btn:hover { background: #fff3e8; border-color: #FF8C35; color: #FF8C35; }
-  .qv2-upload-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: none; }
+  .qv2-upload-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .qv2-meta {
     background: var(--bg2); border: 0.5px solid var(--border);
     border-top: none; border-radius: 0 0 12px 12px;
@@ -803,7 +780,7 @@
   .qv2-apply-btn {
     background: var(--bg3); border: 0.5px solid var(--border);
     color: var(--muted); padding: 6px 14px; border-radius: 6px;
-    font-size: 13px; cursor: none; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif;
     transition: all 0.2s;
   }
   .qv2-apply-btn:hover { border-color: #FF8C35; color: #FF8C35; }
@@ -857,7 +834,7 @@
   }
   .accord-header {
     display: flex; align-items: center; gap: 14px;
-    padding: 16px 18px; cursor: none;
+    padding: 16px 18px; cursor: pointer;
     transition: background 0.2s;
     user-select: none;
   }
@@ -914,7 +891,7 @@
     width: 100%; background: #FF8C35; color: #111;
     border: none; padding: 14px;
     border-radius: 10px; font-size: 15px; font-weight: 500;
-    cursor: none; transition: background 0.2s, transform 0.15s;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif; margin-bottom: 8px;
   }
   .qv2-order-btn:hover { background: #FFa050; transform: translateY(-2px); }
@@ -922,7 +899,7 @@
     width: 100%; background: transparent;
     border: 0.5px solid var(--border); color: var(--muted);
     padding: 11px; border-radius: 10px; font-size: 14px;
-    cursor: none; transition: border-color 0.2s, color 0.2s;
+    cursor: pointer; transition: border-color 0.2s, color 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
   .qv2-save-btn:hover { border-color: #FF8C35; color: #FF8C35; }
@@ -942,7 +919,7 @@
   .acc-qty-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .acc-qty-btn {
     width: 34px; height: 34px; background: var(--bg3); border: 0.5px solid var(--border);
-    color: var(--text); border-radius: 8px; font-size: 18px; cursor: none;
+    color: var(--text); border-radius: 8px; font-size: 18px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     font-family: 'DM Sans', sans-serif; transition: all 0.2s;
   }
@@ -952,7 +929,7 @@
   .acc-del-btn {
     background: var(--bg3); border: 0.5px solid var(--border);
     color: var(--muted); padding: 10px 12px; border-radius: 8px;
-    font-size: 14px; cursor: none; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
     text-align: center; transition: all 0.2s;
   }
   .acc-del-btn.selected { background: #fff3e8; border-color: #FF8C35; color: var(--text); }
@@ -988,7 +965,7 @@
     border-radius: 12px;
     padding: 2.5rem 1.5rem;
     text-align: center;
-    cursor: none;
+    cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     margin-bottom: 1.5rem;
     position: relative;
@@ -999,7 +976,7 @@
   }
   .upload-zone input[type="file"] {
     position: absolute; inset: 0;
-    opacity: 0; cursor: none; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
   }
   .upload-icon { font-size: 40px; margin-bottom: 0.75rem; }
   .upload-zone p { font-size: 14px; color: var(--muted); }
@@ -1020,7 +997,7 @@
   .file-preview-name { flex: 1; }
   .file-remove {
     background: none; border: none;
-    color: var(--muted); cursor: none; font-size: 18px;
+    color: var(--muted); cursor: pointer; font-size: 18px;
     transition: color 0.2s;
   }
   .file-remove:hover { color: #ff4444; }
@@ -1063,7 +1040,7 @@
     background: var(--bg3); border: 0.5px solid var(--border);
     color: var(--muted); padding: 10px 12px;
     border-radius: 10px; font-size: 14px;
-    cursor: none; transition: all 0.2s;
+    cursor: pointer; transition: all 0.2s;
     font-family: 'DM Sans', sans-serif;
     text-align: left;
     display: flex; flex-direction: column; gap: 2px;
@@ -1081,7 +1058,7 @@
     background: var(--bg3); border: 0.5px solid var(--border);
     color: var(--muted); padding: 10px 8px;
     border-radius: 10px; font-size: 13px;
-    cursor: none; transition: all 0.2s;
+    cursor: pointer; transition: all 0.2s;
     font-family: 'DM Sans', sans-serif;
     text-align: center;
   }
@@ -1097,7 +1074,7 @@
   input[type="range"] {
     width: 100%; accent-color: #FF8C35;
     height: 4px; border-radius: 2px;
-    background: var(--border); cursor: none;
+    background: var(--border); cursor: pointer;
   }
 
   /* Quantity */
@@ -1109,7 +1086,7 @@
     width: 36px; height: 36px;
     background: var(--bg3); border: 0.5px solid var(--border);
     color: var(--text); border-radius: 8px; font-size: 18px;
-    cursor: none; transition: background 0.2s;
+    cursor: pointer; transition: background 0.2s;
     display: flex; align-items: center; justify-content: center;
     font-family: 'DM Sans', sans-serif;
   }
@@ -1164,7 +1141,7 @@
     width: 100%; background: #FF8C35; color: #111;
     border: none; padding: 14px;
     border-radius: 10px; font-size: 15px; font-weight: 500;
-    cursor: none; transition: background 0.2s, transform 0.15s;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
     font-family: 'DM Sans', sans-serif;
   }
   .btn-quote-order:hover { background: #FFa050; transform: translateY(-2px); }
@@ -1172,7 +1149,7 @@
     width: 100%; background: transparent;
     border: 0.5px solid var(--border); color: var(--muted);
     padding: 12px; border-radius: 10px; font-size: 14px;
-    cursor: none; transition: border-color 0.2s, color 0.2s;
+    cursor: pointer; transition: border-color 0.2s, color 0.2s;
     font-family: 'DM Sans', sans-serif;
   }
   .btn-quote-save:hover { border-color: #FF8C35; color: #FF8C35; }
@@ -1208,7 +1185,7 @@
     background: none; border: 0.5px solid var(--border);
     color: var(--muted); padding: 8px 18px;
     border-radius: 8px; font-size: 14px;
-    cursor: none; transition: all 0.2s;
+    cursor: pointer; transition: all 0.2s;
     font-family: 'DM Sans', sans-serif;
     margin-bottom: 2rem;
     display: inline-flex; align-items: center; gap: 6px;
@@ -2300,8 +2277,6 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
 
 <div id="mainSite">
 
@@ -3464,26 +3439,6 @@
 </div>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
-  });
-  function animateRing() {
-    rx += (mx - rx - 18) * 0.12;
-    ry += (my - ry - 18) * 0.12;
-    ring.style.transform = `translate(${rx}px, ${ry}px)`;
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-  document.querySelectorAll('button, a').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.style.transform += ' scale(2)');
-    el.addEventListener('mouseleave', () => {});
-  });
-
   // Hamburger
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
