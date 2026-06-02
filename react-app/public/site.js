@@ -149,6 +149,14 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     { id: '3dprint', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
   ];
 
+  const CAT_PAGES = {
+    drone:    '/shop/complete-drones',
+    printing: '/shop/3d-printing',
+    print:    '/shop/3d-printing',
+    proto:    '/shop/prototyping',
+    '3dprint':'/shop/printers-supplies',
+  };
+
   const PRINT_IDS = ['print', 'proto', '3dprint'];
 
   function mergePrintCats(list) {
@@ -180,12 +188,13 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       const icon = cat.photo
         ? `<div class="cat-tile-photo"><img src="${cat.photo}" alt="${cat.name}"></div>`
         : `<div class="cat-tile-icon">${cat.emoji || '📦'}</div>`;
-      return `<div class="cat-tile" onclick="filterCat('${cat.id}')" data-cat-tile="${cat.id}">
+      const href = CAT_PAGES[cat.id] || '/get-a-quote';
+      return `<a class="cat-tile" href="${href}" data-cat-tile="${cat.id}">
         ${icon}
         <div class="cat-tile-name">${cat.name}</div>
         <div class="cat-tile-desc">${cat.desc || ''}</div>
         <div class="cat-tile-count" id="catCount-${cat.id}"></div>
-      </div>`;
+      </a>`;
     }).join('');
 
     if (tabsEl) {
