@@ -41,7 +41,8 @@ const PAGE_HTML = `<div id="mainSite">
   <a class="nav-logo" href="#">
     <img src="logo.png" alt="Kyzer Robotics" class="nav-logo-img">
     <div>
-      <div class="nav-logo-text">Kyzer Robotics</div>
+      <div class="nav-logo-text">Kyzer</div>
+      <div class="nav-logo-sub">Robotics</div>
     </div>
   </a>
   <ul class="nav-links" id="navLinks">
