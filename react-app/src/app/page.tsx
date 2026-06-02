@@ -218,31 +218,31 @@ const PAGE_HTML = `<div id="mainSite">
     <div class="sec-sub">Intelligent automation, advanced 3D printing, and custom robotic solutions — all under one roof in Pune.</div>
   </div>
   <div class="services-grid reveal">
-    <div class="service-card">
+    <a class="service-card" href="/shop/complete-drones">
       <div class="sc-num">01</div>
       <h3>Custom Drones</h3>
       <p>FPV racing, survey, and agricultural drones built to your spec — designed, assembled, and tested in Pune with full after-build support.</p>
-    </div>
-    <div class="service-card">
+    </a>
+    <a class="service-card" href="/shop/3d-printing">
       <div class="sc-num">02</div>
       <h3>3D Printing</h3>
       <p>FDM printing in PLA, PETG, ABS, TPU, and Nylon. Functional parts and production-ready prints with a 48-hour turnaround.</p>
-    </div>
-    <div class="service-card">
+    </a>
+    <a class="service-card" href="/shop/prototyping">
       <div class="sc-num">03</div>
       <h3>Rapid Prototyping</h3>
       <p>From sketch or CAD file to physical prototype in as fast as 48 hours — design verification, printing, and assembly all in-house.</p>
-    </div>
-    <div class="service-card">
+    </a>
+    <a class="service-card" href="/get-a-quote">
       <div class="sc-num">04</div>
       <h3>Automation & Robotics</h3>
       <p>Custom robotic platforms and smart control systems for industrial clients, startups, and college R&D teams.</p>
-    </div>
-    <div class="service-card">
+    </a>
+    <a class="service-card" href="/get-a-quote">
       <div class="sc-num">05</div>
       <h3>AI & Computer Vision</h3>
       <p>Embedded AI and computer vision integrated into drones, robots, and automation systems for real-world deployments.</p>
-    </div>
+    </a>
   </div>
 </section>
 
