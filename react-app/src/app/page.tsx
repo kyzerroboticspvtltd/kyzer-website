@@ -640,18 +640,58 @@ const PAGE_HTML = `<div id="mainSite">
     <div class="sec-label">// 04 — TESTIMONIALS</div>
     <div class="sec-title">What clients say</div>
   </div>
-  <div class="testi-grid reveal" style="max-width:520px;margin-left:auto;margin-right:auto;">
-    <div class="testi-card">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-text">"Great quality prints, fast turnaround!"</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:var(--orange);color:#111;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;">R</div>
+  <div class="testi-grid reveal" style="max-width:960px;margin-left:auto;margin-right:auto;">
+
+    <!-- Vinit Kiran Kumbhar -->
+    <div class="testi-card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#5C6BC0;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">V</div>
         <div>
-          <div class="testi-name">Rahul S.</div>
-          <div class="testi-role">Engineering Student · Pune</div>
+          <div class="testi-name" style="font-size:14px;font-weight:600;">Vinit Kiran Kumbhar</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <span style="font-size:11px;color:var(--muted);">Google review</span>
+          </div>
         </div>
       </div>
+      <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:auto;">6 weeks ago</div>
     </div>
+
+    <!-- Raghav Yogi -->
+    <div class="testi-card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#EF5350;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">R</div>
+        <div>
+          <div class="testi-name" style="font-size:14px;font-weight:600;">Raghav Yogi</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <span style="font-size:11px;color:var(--muted);">Google review</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+      <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"Hospitality is very impressive. Service is great."</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:auto;">6 weeks ago</div>
+    </div>
+
+    <!-- Mohammed Ali Shakeel Ashtikar -->
+    <div class="testi-card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#26A69A;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">M</div>
+        <div>
+          <div class="testi-name" style="font-size:14px;font-weight:600;">Mohammed Ali Shakeel</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <span style="font-size:11px;color:var(--muted);">Google review</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+      <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"I had an excellent experience with Kyzer Robotics. Their work truly reflects innovation, precision, and a strong understanding of advanced robotics. The team is highly professional, knowledgeable, and dedicated to delivering top-quality solutions."</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:auto;">6 weeks ago</div>
+    </div>
+
   </div>
   <div class="reveal" style="text-align:center;margin-top:2rem;">
     <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">Worked with us? We'd love your feedback.</p>
