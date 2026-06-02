@@ -2028,14 +2028,14 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
   }
 
   // ── ANNOUNCEMENT BAR ──
-  document.addEventListener('DOMContentLoaded', function() {
+  (function() {
     if (sessionStorage.getItem('ann_dismissed')) {
       const bar = document.getElementById('announcementBar');
       if (bar) bar.style.display = 'none';
     } else {
       document.body.classList.add('has-ann');
     }
-  });
+  })();
 
   function dismissAnnouncement() {
     const bar = document.getElementById('announcementBar');
