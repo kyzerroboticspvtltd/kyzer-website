@@ -40,18 +40,18 @@
     text-decoration: none;
   }
   .nav-logo-img {
-    width: 48px; height: 48px;
+    width: 68px; height: 68px;
     display: block; object-fit: contain; flex-shrink: 0;
     filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%);
     mix-blend-mode: multiply;
   }
   .nav-logo-text {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; line-height: 1; color: var(--orange); letter-spacing: 0.03em;
+    font-size: 30px; line-height: 1; color: var(--orange); letter-spacing: 0.03em;
   }
   .nav-logo-sub {
-    font-size: 10px; font-weight: 500; color: var(--orange);
-    letter-spacing: 0.22em; text-transform: uppercase; margin-top: 1px;
+    font-size: 12px; font-weight: 500; color: var(--orange);
+    letter-spacing: 0.22em; text-transform: uppercase; margin-top: 2px;
   }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
   .nav-links a {
