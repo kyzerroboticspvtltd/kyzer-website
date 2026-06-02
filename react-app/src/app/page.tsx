@@ -898,7 +898,7 @@ const PAGE_HTML = `<div id="mainSite">
         Analysing model... calculating volume
       </div>
 
-      <!-- Meta: file unit + rotation -->
+      <!-- Meta: file unit -->
       <div class="qv2-meta">
         <div class="qv2-meta-row">
           <label>File Unit</label>
@@ -906,33 +906,6 @@ const PAGE_HTML = `<div id="mainSite">
             <label><input type="radio" name="fileUnit" value="mm" checked> MM</label>
             <label><input type="radio" name="fileUnit" value="inch"> Inch</label>
           </div>
-        </div>
-        <div class="qv2-meta-row">
-          <label>Rotation</label>
-          <span style="font-size: 13px;">X</span>
-          <input type="number" id="rotX" value="0" style="width:60px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size: 14px;font-family:'DM Sans',sans-serif;" />
-          <span style="font-size: 13px;">Y</span>
-          <input type="number" id="rotY" value="0" style="width:60px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size: 14px;font-family:'DM Sans',sans-serif;" />
-          <button class="qv2-apply-btn" onclick="applyRotation()">Apply</button>
-        </div>
-      </div>
-
-      <!-- OR divider -->
-      <div class="qv2-divider" style="margin:12px 0;">OR ENTER DIMENSIONS MANUALLY</div>
-
-      <!-- Manual dimensions -->
-      <div class="qv2-dim-row">
-        <div>
-          <div class="qv2-dim-label">LENGTH (mm)</div>
-          <input class="qv2-dim-input" type="number" id="dimL" placeholder="0" min="1" oninput="calculateQuote()" />
-        </div>
-        <div>
-          <div class="qv2-dim-label">WIDTH (mm)</div>
-          <input class="qv2-dim-input" type="number" id="dimW" placeholder="0" min="1" oninput="calculateQuote()" />
-        </div>
-        <div>
-          <div class="qv2-dim-label">HEIGHT (mm)</div>
-          <input class="qv2-dim-input" type="number" id="dimH" placeholder="0" min="1" oninput="calculateQuote()" />
         </div>
       </div>
 
@@ -947,7 +920,7 @@ const PAGE_HTML = `<div id="mainSite">
     <!-- RIGHT: Accordion -->
     <div class="qv2-right">
       <div class="qv2-title">Kyzer 3D Print Service</div>
-      <div class="qv2-subtitle">FDM printing · PLA · ABS · PETG · TPU · Nylon · Same-day available</div>
+      <div class="qv2-subtitle">FDM printing · PLA · ABS · PETG · TPU · Nylon · Priority delivery available</div>
 
       <!-- Step 1: Quality -->
       <div class="accord-section open" id="acc-quality">
@@ -1063,13 +1036,6 @@ const PAGE_HTML = `<div id="mainSite">
             <span style="font-size:11px;color:var(--muted);">+₹20</span>
           </div>
 
-          <div style="font-size: 12px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">SUPPORT STRUCTURES</div>
-          <select class="acc-select" id="supportSelect" onchange="calculateQuote()">
-            <option value="0">None needed</option>
-            <option value="1">Standard supports (+10%)</option>
-            <option value="2">Heavy supports (+20%)</option>
-          </select>
-
           <div style="font-size: 12px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">QUANTITY</div>
           <div class="acc-qty-wrap">
             <button class="acc-qty-btn" onclick="changeQty(-1)">−</button>
@@ -1093,7 +1059,7 @@ const PAGE_HTML = `<div id="mainSite">
           </div>
           <div class="acc-delivery-grid">
             <button class="acc-del-btn" id="delSameDay" onclick="selectDelivery('sameday',this)">
-              Same Day<span>+₹200</span>
+              On Priority<span>+₹200</span>
             </button>
             <button class="acc-del-btn selected" id="del7d" onclick="selectDelivery('7day',this)">
               7 Days<span>+₹150</span>
@@ -1122,7 +1088,6 @@ const PAGE_HTML = `<div id="mainSite">
             <div class="qv2-pb-row"><span>Quality</span><span id="bQual">—</span></div>
             <div class="qv2-pb-row"><span>Infill</span><span id="bInfill">—</span></div>
             <div class="qv2-pb-row"><span>Colour</span><span id="bColor">—</span></div>
-            <div class="qv2-pb-row"><span>Supports</span><span id="bSupport">—</span></div>
             <div class="qv2-pb-row"><span>Setup fee</span><span id="bSetup">—</span></div>
             <div class="qv2-pb-row"><span>Quantity</span><span id="bQty">—</span></div>
             <div class="qv2-pb-row"><span>Rush priority</span><span id="bRush" style="color:#e65100;">—</span></div>

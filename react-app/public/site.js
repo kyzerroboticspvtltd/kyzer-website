@@ -841,16 +841,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     calculateQuote();
   }
 
-  // Rotation apply (stub — orients Three.js model if loaded)
-  function applyRotation() {
-    const rx = parseFloat(document.getElementById('rotX').value) || 0;
-    const ry = parseFloat(document.getElementById('rotY').value) || 0;
-    if (window._threeModel) {
-      window._threeModel.rotation.x = rx * Math.PI / 180;
-      window._threeModel.rotation.y = ry * Math.PI / 180;
-    }
-  }
-
   // Quantity
   function changeQty(delta) {
     quoteState.qty = Math.max(1, Math.min(100, quoteState.qty + delta));
@@ -906,21 +896,19 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // ====== CALCULATE ======
   function calculateQuote() {
-    const L = parseFloat(document.getElementById('dimL').value) || quoteState.L;
-    const W = parseFloat(document.getElementById('dimW').value) || quoteState.W;
-    const H = parseFloat(document.getElementById('dimH').value) || quoteState.H;
-    quoteState.L = L; quoteState.W = W; quoteState.H = H;
+    const L = quoteState.L;
+    const W = quoteState.W;
+    const H = quoteState.H;
     quoteState.infill = parseInt(document.getElementById('infillSlider').value);
-    const suppVal = document.getElementById('supportSelect').value;
-    quoteState.supportMult = suppVal === '1' ? 0.10 : suppVal === '2' ? 0.20 : 0;
+    quoteState.supportMult = 0;
 
     if (!L || !W || !H) {
       document.getElementById('priceAmount').textContent = '₹—';
-      document.getElementById('priceSub').textContent = 'Enter dimensions to get a quote';
-      ['bMat','bTime','bQual','bInfill','bColor','bSupport','bQty','bDelivery','bTotal'].forEach(id => {
+      document.getElementById('priceSub').textContent = 'Upload a file to get a quote';
+      ['bMat','bTime','bQual','bInfill','bColor','bQty','bDelivery','bTotal'].forEach(id => {
         document.getElementById(id).textContent = '—';
       });
-      document.getElementById('turnaroundText').textContent = 'Enter dimensions to see turnaround';
+      document.getElementById('turnaroundText').textContent = 'Upload a file to see turnaround';
       return;
     }
 
@@ -935,7 +923,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const printTimeCost = printHours * (window._MACHINE_RATE || 80);
     const qualityCost = (matCost + printTimeCost) * (quoteState.qualMult - 1);
     let subtotal = matCost + printTimeCost + qualityCost + quoteState.colorExtra;
-    subtotal += subtotal * quoteState.supportMult;
     const setupFee = window._SETUP_FEE || 25;
     subtotal += setupFee;
 
@@ -969,15 +956,14 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('bQual').textContent    = quoteState.qualMult === 1 ? 'Standard (×1.0)' : `${quoteState.qualName} (×${quoteState.qualMult})`;
     document.getElementById('bInfill').textContent  = quoteState.infill + '%';
     document.getElementById('bColor').textContent   = quoteState.colorExtra > 0 ? `${quoteState.colorName} +₹${quoteState.colorExtra}` : `${quoteState.colorName} (included)`;
-    document.getElementById('bSupport').textContent = quoteState.supportMult > 0 ? `+${(quoteState.supportMult*100).toFixed(0)}%` : 'None';
     document.getElementById('bSetup').textContent   = `₹${setupFee}`;
     document.getElementById('bQty').textContent     = `×${quoteState.qty}` + (qtyMultiplier < 1 ? ` (${((1-qtyMultiplier)*100).toFixed(0)}% bulk discount)` : '');
     document.getElementById('bRush').textContent    = quoteState.rush ? `+₹${rushExtra.toFixed(0)} (×${rushMult})` : '—';
-    document.getElementById('bDelivery').textContent = quoteState.delivery === 'sameday' ? `₹${deliveryCost} (Same Day)` : `₹${deliveryCost} (7 Days)`;
+    document.getElementById('bDelivery').textContent = quoteState.delivery === 'sameday' ? `₹${deliveryCost} (On Priority)` : `₹${deliveryCost} (7 Days)`;
     document.getElementById('bTotal').textContent   = '₹' + finalTotal.toLocaleString('en-IN');
 
     // Turnaround
-    const rushDays = quoteState.rush ? '1–2' : (quoteState.delivery === 'sameday' ? 'same' : '5–7');
+    const rushDays = quoteState.rush ? '1–2' : (quoteState.delivery === 'sameday' ? '1–2 (Priority)' : '5–7');
     document.getElementById('turnaroundText').textContent = `Estimated delivery: ${rushDays} working days · ${estimatedGrams.toFixed(0)}g`;
 
     // Animate price
@@ -1118,7 +1104,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('qcoRevQual').textContent    = quoteState.qualName;
     document.getElementById('qcoRevColor').textContent   = quoteState.colorName || 'White';
     document.getElementById('qcoRevQty').textContent     = '×' + quoteState.qty;
-    document.getElementById('qcoRevDel').textContent     = quoteState.delivery === 'sameday' ? 'Same day' : '7 working days';
+    document.getElementById('qcoRevDel').textContent     = quoteState.delivery === 'sameday' ? 'On Priority' : '7 working days';
     document.getElementById('qcoRevDims').textContent    = dims;
     document.getElementById('qcoRevTotal').textContent   = document.getElementById('bTotal').textContent;
   }
@@ -1162,7 +1148,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
             L: quoteState.L, W: quoteState.W, H: quoteState.H,
             matName: quoteState.matName, qualName: quoteState.qualName,
             infill: quoteState.infill,
-            supportLevel: parseInt(document.getElementById('supportSelect').value) || 0,
+            supportLevel: 0,
             colorExtra: quoteState.colorExtra || 0,
             qty: quoteState.qty, rush: quoteState.rush || false,
             delivery: quoteState.delivery,
@@ -1247,7 +1233,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   function _buildQcoOrder(paymentStatus) {
-    const supportEl = document.getElementById('supportSelect');
     const dims = quoteState.L ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm` : '—';
     return {
       id: 'ORD-' + Date.now(), submittedAt: new Date().toISOString(),
@@ -1268,7 +1253,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       material: quoteState.matName, quality: quoteState.qualName,
       infill:   document.getElementById('infillVal').textContent,
       colour:   quoteState.colorName || 'White',
-      support:  supportEl.options[supportEl.selectedIndex].text,
       quantity: quoteState.qty, delivery: quoteState.delivery,
       fileName: quoteState.fileName || '', fileData: quoteState.fileData || null,
       fileSize: quoteState.fileSize || 0, dimensions: dims,
@@ -1421,17 +1405,15 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // Populate the checkout order summary panel
   function updateCheckoutSummary() {
-    const supportEl = document.getElementById('supportSelect');
     const dims = quoteState.L
       ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
       : '—';
-    const del = quoteState.delivery === 'sameday' ? 'Same day' : '7 working days';
+    const del = quoteState.delivery === 'sameday' ? 'On Priority' : '7 working days';
     const txt = (id) => { const el = document.getElementById(id); return el ? el.textContent : '—'; };
     document.getElementById('cs-material').textContent  = quoteState.matName || '—';
     document.getElementById('cs-quality').textContent   = quoteState.qualName || '—';
     document.getElementById('cs-infill').textContent    = txt('infillVal') + '%';
     document.getElementById('cs-colour').textContent    = quoteState.colorName || '—';
-    document.getElementById('cs-support').textContent   = supportEl ? supportEl.options[supportEl.selectedIndex].text : '—';
     document.getElementById('cs-qty').textContent       = quoteState.qty;
     document.getElementById('cs-delivery').textContent  = del;
     document.getElementById('cs-dims').textContent      = dims;
@@ -1462,7 +1444,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     btn.textContent = 'Placing order...';
     btn.disabled = true;
 
-    const supportEl = document.getElementById('supportSelect');
     const dims = quoteState.L
       ? `${Math.round(quoteState.L)}×${Math.round(quoteState.W)}×${Math.round(quoteState.H)} mm`
       : '—';
@@ -1491,7 +1472,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       quality:      quoteState.qualName,
       infill:       document.getElementById('infillVal').textContent,
       colour:       quoteState.colorName || 'White',
-      support:      supportEl.options[supportEl.selectedIndex].text,
       quantity:     quoteState.qty,
       delivery:     quoteState.delivery,
       fileName:     quoteState.fileName || '',
@@ -1531,7 +1511,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
           quality:        quoteState.qualName,
           infill:         document.getElementById('infillVal').textContent + '%',
           colour:         quoteState.colorName || 'White',
-          support:        supportEl.options[supportEl.selectedIndex].text,
           quantity:       quoteState.qty,
           delivery:       quoteState.delivery,
           fileName:       quoteState.fileName || '',
@@ -2025,7 +2004,7 @@ Quality: ${quoteState.qualName}
 Infill: ${quoteState.infill}%
 Dimensions: ${quoteState.L.toFixed(0)}×${quoteState.W.toFixed(0)}×${quoteState.H.toFixed(0)} mm
 Quantity: ${quoteState.qty}
-Delivery: ${quoteState.delivery === 'sameday' ? 'Same Day' : '7 Working Days'}
+Delivery: ${quoteState.delivery === 'sameday' ? 'On Priority' : '7 Working Days'}
 TOTAL: ${total}
 ================================
 Valid for 7 days. Contact: info@kyzerrobotics.com`;
