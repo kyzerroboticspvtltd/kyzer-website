@@ -98,8 +98,9 @@ export default function GetAQuotePage() {
           display: flex; align-items: center; gap: 0; text-decoration: none;
         }
         .gaq-nav-logo img {
-          width: 46px; height: 46px;
-          border-radius: 10px; object-fit: cover; margin-right: 8px;
+          width: auto; height: 44px;
+          filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%);
+          mix-blend-mode: multiply; margin-right: -4px;
         }
         .gaq-nav-wordmark { line-height: 1; }
         .gaq-nav-wordmark .top { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--orange); letter-spacing: 0.03em; }
@@ -199,7 +200,7 @@ export default function GetAQuotePage() {
       {/* NAV */}
       <nav className="gaq-nav">
         <a href="/" className="gaq-nav-logo">
-          <img src="/Kyzer Logo-03.png" alt="Kyzer Robotics" />
+          <img src="/logo.png" alt="Kyzer Robotics" />
           <div className="gaq-nav-wordmark">
             <div className="top">Kyzer</div>
             <div className="sub">Robotics</div>

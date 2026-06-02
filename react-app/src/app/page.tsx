@@ -5,7 +5,7 @@ const PAGE_HTML = `<div id="mainSite">
 
 <!-- COMING SOON OVERLAY -->
 <div id="comingSoonOverlay">
-  <img src="/Kyzer Logo-03.png" class="cs-logo" alt="Kyzer Robotics">
+  <img src="logo.png" class="cs-logo" alt="Kyzer Robotics">
   <div class="cs-brand">Kyzer Robotics</div>
   <div class="cs-headline" id="csHeadline">Coming Soon</div>
   <p class="cs-tagline" id="csTagline">Precision drones, custom 3D printing &amp; rapid prototyping — launching June 2, 2026.</p>
@@ -39,7 +39,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- NAV -->
 <nav id="navbar">
   <a class="nav-logo" href="#">
-    <img src="/Kyzer Logo-03.png" alt="Kyzer Robotics" class="nav-logo-img">
+    <img src="logo.png" alt="Kyzer Robotics" class="nav-logo-img">
     <div>
       <div class="nav-logo-text">Kyzer</div>
       <div class="nav-logo-sub">Robotics</div>
@@ -751,7 +751,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- FOOTER -->
 <footer>
   <div class="footer-left">
-    <img src="/Kyzer Logo-03.png" alt="Kyzer Robotics" class="footer-logo">
+    <img src="logo.png" alt="Kyzer Robotics" class="footer-logo">
     <p>© 2026 Kyzer Robotics Pvt. Ltd. · Pune, India</p>
   </div>
   <div class="footer-links">
