@@ -1,10 +1,7 @@
 ﻿"use client";
 import Script from "next/script";
 
-const PAGE_HTML = `<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<div id="mainSite">
+const PAGE_HTML = `<div id="mainSite">
 
 <!-- COMING SOON OVERLAY -->
 <div id="comingSoonOverlay">
