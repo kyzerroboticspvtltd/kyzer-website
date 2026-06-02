@@ -3,12 +3,12 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 
 const PROJECT_TYPES = [
-  { key: 'drone',      label: 'Custom Drone',       icon: '🚁' },
+  { key: 'drone',      label: 'Custom Drone',       icon: '🛸' },
   { key: '3dprint',    label: '3D Printing',         icon: '🖨️' },
-  { key: 'electronics',label: 'Electronics / PCB',   icon: '⚡' },
-  { key: 'robotics',   label: 'Robotics / Arm',      icon: '🤖' },
-  { key: 'prototype',  label: 'Prototype / R&D',     icon: '🔬' },
-  { key: 'other',      label: 'Other',               icon: '📋' },
+  { key: 'electronics',label: 'Electronics / PCB',   icon: '💡' },
+  { key: 'robotics',   label: 'Robotics / Arm',      icon: '🦾' },
+  { key: 'prototype',  label: 'Prototype / R&D',     icon: '🧪' },
+  { key: 'other',      label: 'Other',               icon: '✨' },
 ];
 
 const BUDGETS = ['Under ₹5,000', '₹5,000 – ₹20,000', '₹20,000 – ₹1,00,000', '₹1,00,000+', 'Not sure yet'];
