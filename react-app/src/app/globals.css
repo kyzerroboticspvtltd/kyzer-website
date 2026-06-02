@@ -480,7 +480,7 @@
   .footer-left { display: flex; align-items: center; gap: 12px; }
   .footer-logo {
     width: 30px; height: 30px; display: block; object-fit: contain; flex-shrink: 0;
-    filter: invert(62%) sepia(80%) saturate(800%) hue-rotate(5deg) brightness(1.05);
+    filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(70%);
   }
   .footer-left p { font-size: 14px; color: var(--muted); }
   .footer-links { display: flex; gap: 1.5rem; }
@@ -1443,7 +1443,7 @@
   /* FLOATING WHATSAPP */
   .wa-fab {
     position: fixed;
-    bottom: 2rem; right: 2rem;
+    bottom: 5rem; right: 2rem;
     width: 56px; height: 56px;
     background: #25D366;
     border-radius: 50%;
