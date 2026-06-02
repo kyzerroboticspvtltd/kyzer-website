@@ -44,7 +44,7 @@
     display: block; object-fit: contain; flex-shrink: 0;
     filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%);
     mix-blend-mode: multiply;
-    margin-right: -8px;
+    margin-right: -4px;
   }
   .nav-logo-text {
     font-family: 'Bebas Neue', sans-serif;
