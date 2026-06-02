@@ -86,7 +86,7 @@ export default function PrintersSuppliesPage() {
           KYZER ROBOTICS
         </Link>
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
-        <Link href="/#shop" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>Shop</Link>
+        <Link href="/shop/printing" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>3D Printing</Link>
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
         <span style={{ color: '#FF8C35', fontSize: 13 }}>Printers & Supplies</span>
       </div>

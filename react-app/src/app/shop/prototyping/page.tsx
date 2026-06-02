@@ -85,7 +85,7 @@ export default function PrototypingPage() {
           KYZER ROBOTICS
         </Link>
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
-        <Link href="/#shop" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>Shop</Link>
+        <Link href="/#products" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>Shop</Link>
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
         <span style={{ color: '#FF8C35', fontSize: 13 }}>Prototyping</span>
       </div>
