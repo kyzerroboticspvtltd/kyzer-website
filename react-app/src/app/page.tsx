@@ -734,7 +734,16 @@ const PAGE_HTML = `<div id="mainSite">
     <div class="contact-info">
       <h3>Get in touch</h3>
       <p>Have a project in mind? Need a quote for a custom drone or prototype? Drop us a message and we'll get back within 24 hours.</p>
-      <div class="ci-row"><div class="ci-icon">📍</div> Pune, Maharashtra, India</div>
+      <div class="ci-row">
+        <div class="ci-icon">📍</div>
+        <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--border);transition:color 0.15s;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color=''">Pune, Maharashtra, India</a>
+      </div>
+      <div style="margin-top:1rem;border-radius:12px;overflow:hidden;border:0.5px solid var(--border);">
+        <iframe
+          src="https://maps.google.com/maps?q=Kyzer+Robotics+Ambegaon+Pathar+Pune+Maharashtra&output=embed&z=15"
+          width="100%" height="200" style="border:0;display:block;" allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
       <div class="ci-row"><div class="ci-icon">✉️</div> <a href="mailto:info@kyzerrobotics.com">info@kyzerrobotics.com</a></div>
       <div class="ci-row"><div class="ci-icon">📞</div> <a href="tel:+919049695264">+91 90496 95264</a></div>
       <div class="ci-row"><div class="ci-icon">📸</div> <a href="https://www.instagram.com/kyzer.robotics?igsh=bjZ3enVqaGk2NXY0" target="_blank" rel="noopener">@Kyzer.robotics</a></div>
