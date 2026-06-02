@@ -40,7 +40,7 @@
     text-decoration: none;
   }
   .nav-logo-img {
-    width: 68px; height: 68px;
+    width: auto; height: 44px;
     display: block; object-fit: contain; flex-shrink: 0;
     filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%);
     mix-blend-mode: multiply;
