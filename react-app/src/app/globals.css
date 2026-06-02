@@ -76,6 +76,7 @@
     border-radius: 8px; font-size: 14px; font-weight: 500;
     cursor: pointer; transition: transform 0.15s, background 0.2s;
     font-family: 'DM Sans', sans-serif;
+    text-decoration: none; display: inline-flex; align-items: center;
   }
   .nav-cta:hover { background: #FFa050; transform: scale(1.03); }
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }

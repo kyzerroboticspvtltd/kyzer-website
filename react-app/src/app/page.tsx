@@ -53,7 +53,7 @@ const PAGE_HTML = `<div id="mainSite">
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
   <div class="nav-right-group">
-    <button class="nav-cta" onclick="showPage('quote')">Get a quote</button>
+    <a class="nav-cta" href="/get-a-quote">Get a quote</a>
     <div class="nav-util-divider"></div>
     <!-- Orders -->
     <button class="nav-util-btn" id="navOrdersBtn" onclick="handleOrdersBtnClick()" title="My Orders">
