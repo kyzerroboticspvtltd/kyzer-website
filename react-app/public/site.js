@@ -2033,23 +2033,145 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   };
 
   function saveQuote() {
-    const total = document.getElementById('bTotal').textContent;
-    const text = `KYZER ROBOTICS — 3D PRINT QUOTE
-================================
-Material: ${quoteState.matName}
-Quality: ${quoteState.qualName}
-Infill: ${quoteState.infill}%
-Dimensions: ${quoteState.L.toFixed(0)}×${quoteState.W.toFixed(0)}×${quoteState.H.toFixed(0)} mm
-Quantity: ${quoteState.qty}
-Delivery: ${quoteState.delivery === 'sameday' ? 'On Priority' : '7 Working Days'}
-TOTAL: ${total}
-================================
-Valid for 7 days. Contact: info@kyzerrobotics.com`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'kyzer-3d-quote.txt';
-    a.click();
+    const quoteNo  = 'KR-' + Date.now().toString().slice(-6);
+    const today    = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    const validTil = new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    const dims     = quoteState.L ? `${Math.round(quoteState.L)} × ${Math.round(quoteState.W)} × ${Math.round(quoteState.H)} mm` : '—';
+    const delivery = quoteState.delivery === 'sameday' ? 'On Priority (+₹200)' : '7 Working Days (+₹150)';
+    const rush     = quoteState.rush ? 'Yes (+50%)' : 'No';
+    const total    = document.getElementById('bTotal').textContent || '—';
+    const mat      = document.getElementById('bMat').textContent  || '—';
+    const time     = document.getElementById('bTime').textContent || '—';
+    const qual     = document.getElementById('bQual').textContent || '—';
+    const infill   = document.getElementById('bInfill').textContent || '—';
+    const colour   = document.getElementById('bColor').textContent || '—';
+    const setup    = document.getElementById('bSetup').textContent || '—';
+    const qty      = document.getElementById('bQty').textContent  || '—';
+
+    const rows = [
+      ['Material cost',   mat],
+      ['Machine time',    time],
+      ['Print quality',   qual],
+      ['Infill density',  infill],
+      ['Colour',          colour],
+      ['Setup fee',       setup],
+      ['Quantity',        qty],
+      ['Rush priority',   rush],
+      ['Delivery',        delivery],
+    ];
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Kyzer Robotics — Quote ${quoteNo}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; background: #fff; }
+  .page { max-width: 780px; margin: 0 auto; padding: 48px 40px; }
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 28px; border-bottom: 3px solid #FF8C35; margin-bottom: 32px; }
+  .brand-name { font-size: 28px; font-weight: 900; letter-spacing: 2px; color: #111; text-transform: uppercase; }
+  .brand-sub  { font-size: 11px; color: #FF8C35; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+  .quote-meta { text-align: right; }
+  .quote-meta .label  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .quote-meta .value  { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .quote-badge { background: #FF8C35; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
+  /* Section */
+  .section-title { font-size: 10px; font-weight: 700; color: #FF8C35; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+  /* Spec block */
+  .spec-block { background: #faf9f6; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 13.5px; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .key { color: #555; }
+  .spec-row .val { font-weight: 600; color: #111; }
+  /* Breakdown */
+  .breakdown { border: 1px solid #e8e8e4; border-radius: 10px; overflow: hidden; margin-bottom: 28px; }
+  .breakdown-row { display: flex; justify-content: space-between; padding: 10px 20px; font-size: 13px; border-bottom: 1px solid #f0f0ee; }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row .k { color: #555; }
+  .breakdown-row .v { font-weight: 500; }
+  /* Total */
+  .total-row { background: #111; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-radius: 10px; margin-bottom: 28px; }
+  .total-row .t-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; }
+  .total-row .t-amount { font-size: 28px; font-weight: 900; color: #FF8C35; }
+  /* Footer */
+  .note { background: #fff8f0; border-left: 3px solid #FF8C35; padding: 12px 16px; font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 28px; border-radius: 0 6px 6px 0; }
+  .footer { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid #e8e8e4; font-size: 12px; color: #888; }
+  .footer strong { color: #111; }
+  @media print {
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .page { padding: 20px; }
+    @page { margin: 0.5in; size: A4; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="brand-name">Kyzer Robotics</div>
+      <div class="brand-sub">Intelligent Automation · Drones · 3D Printing</div>
+    </div>
+    <div class="quote-meta">
+      <div class="quote-badge">Quotation</div>
+      <div class="label">Quote No.</div>
+      <div class="value">${quoteNo}</div>
+      <div class="label">Date</div>
+      <div class="value">${today}</div>
+      <div class="label">Valid Until</div>
+      <div class="value">${validTil}</div>
+    </div>
+  </div>
+
+  <div class="section-title">Print Specifications</div>
+  <div class="spec-block">
+    <div class="spec-row"><span class="key">Material</span><span class="val">${quoteState.matName}</span></div>
+    <div class="spec-row"><span class="key">Print Quality</span><span class="val">${quoteState.qualName}</span></div>
+    <div class="spec-row"><span class="key">Infill Density</span><span class="val">${quoteState.infill}%</span></div>
+    <div class="spec-row"><span class="key">Colour</span><span class="val">${quoteState.colorName || 'White'}</span></div>
+    <div class="spec-row"><span class="key">Dimensions</span><span class="val">${dims}</span></div>
+    <div class="spec-row"><span class="key">Quantity</span><span class="val">${quoteState.qty}</span></div>
+    <div class="spec-row"><span class="key">Delivery</span><span class="val">${delivery}</span></div>
+    ${quoteState.fileName ? `<div class="spec-row"><span class="key">File</span><span class="val">${quoteState.fileName}</span></div>` : ''}
+  </div>
+
+  <div class="section-title">Price Breakdown</div>
+  <div class="breakdown">
+    ${rows.map(([k,v]) => `<div class="breakdown-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+  </div>
+
+  <div class="total-row">
+    <div>
+      <div class="t-label">Estimated Total</div>
+      <div style="font-size:11px;opacity:0.5;margin-top:2px;">Incl. GST · Final confirmed after file review</div>
+    </div>
+    <div class="t-amount">${total}</div>
+  </div>
+
+  <div class="note">
+    ⚠️ This is an <strong>estimated quotation</strong>. Final pricing is confirmed after our team reviews your file and specifications. Prices are inclusive of GST. Shipping charges applied at checkout.
+  </div>
+
+  <div class="footer">
+    <div>
+      <strong>Kyzer Robotics Pvt. Ltd.</strong><br>
+      Pune, Maharashtra, India 411046<br>
+      info@kyzerrobotics.com · +91 90496 95264
+    </div>
+    <div style="text-align:right;">
+      <strong>kyzerrobotics.com</strong><br>
+      Quote valid for 7 days from issue date
+    </div>
+  </div>
+</div>
+<script>window.onload = function(){ window.print(); }<\/script>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
   }
 
   // ── ANNOUNCEMENT BAR ──
