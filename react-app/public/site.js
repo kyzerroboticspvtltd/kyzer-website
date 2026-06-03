@@ -274,6 +274,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       var ap = document.getElementById('accountPage');
       if (ap) ap.classList.add('active');
       loadAccountPage();
+      history.pushState(null, '', '#account');
       window.scrollTo(0, 0);
       return;
     }
@@ -287,15 +288,34 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     product.classList.remove('active');
     if (page === 'quote') {
       quote.classList.add('active');
+      history.pushState(null, '', '#quote');
     } else if (page === 'product') {
       product.classList.add('active');
+      history.pushState(null, '', '#product');
     } else if (page === 'checkout') {
       if (coPage) { coPage.classList.add('active'); loadCheckoutPage(); }
+      history.pushState(null, '', '#checkout');
     } else {
       main.style.display = 'block';
+      history.pushState(null, '', location.pathname);
     }
     window.scrollTo(0, 0);
   }
+
+  // Restore page on refresh based on URL hash
+  (function restorePageFromHash() {
+    const hash = window.location.hash;
+    if (hash === '#quote') showPage('quote');
+    else if (hash === '#account') showPage('account');
+  })();
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', function() {
+    const hash = window.location.hash;
+    if (hash === '#quote') showPage('quote');
+    else if (hash === '#account') showPage('account');
+    else showPage('main');
+  });
 
   // ====== CART ======
   let cart = JSON.parse(localStorage.getItem('kyzer_cart') || '[]');
