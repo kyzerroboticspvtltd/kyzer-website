@@ -2289,6 +2289,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('accDropdown').classList.remove('open');
   }
 
+  function toggleBrandsMenu(e) {
+    e.stopPropagation();
+    const drop = document.getElementById('brandsDrop');
+    const chevron = document.getElementById('brandsChevron');
+    const isOpen = drop.classList.toggle('open');
+    if (chevron) chevron.style.transform = isOpen ? 'rotate(180deg)' : '';
+  }
+  document.addEventListener('click', function() {
+    const drop = document.getElementById('brandsDrop');
+    const chevron = document.getElementById('brandsChevron');
+    if (drop) { drop.classList.remove('open'); }
+    if (chevron) chevron.style.transform = '';
+  });
+
   function updateNavAccount() {
     const c = getCurrentCustomer();
     const label     = document.getElementById('navAccountLabel');

@@ -49,6 +49,12 @@ const PAGE_HTML = `<div id="mainSite">
     <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#products">Shop</a>
+    <div class="nav-brands-wrap">
+      <button class="nav-brands-btn" onclick="toggleBrandsMenu(event)">Our Brands <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="margin-left:4px;transition:transform 0.2s" id="brandsChevron"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="nav-brands-drop" id="brandsDrop">
+        <div class="nav-brands-item nav-brands-soon">✦ Coming Soon</div>
+      </div>
+    </div>
     <a href="#contact">Contact</a>
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>

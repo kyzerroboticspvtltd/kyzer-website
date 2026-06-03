@@ -70,6 +70,33 @@
   }
   .nav-links a:hover { color: var(--text); }
   .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-brands-wrap { position: relative; display: flex; align-items: center; }
+  .nav-brands-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; color: var(--muted); letter-spacing: 0.03em;
+    font-family: inherit; display: flex; align-items: center; padding: 0;
+    transition: color 0.2s;
+  }
+  .nav-brands-btn:hover { color: var(--text); }
+  .nav-brands-drop {
+    display: none; position: absolute; top: calc(100% + 14px); left: 50%;
+    transform: translateX(-50%);
+    background: #fff; border: 1px solid #e8e8e4; border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1); min-width: 160px;
+    overflow: hidden; z-index: 200;
+  }
+  .nav-brands-drop.open { display: block; }
+  .nav-brands-item {
+    padding: 11px 18px; font-size: 13px; color: #333;
+    cursor: pointer; transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .nav-brands-item:hover { background: #f8f8f6; color: var(--orange); }
+  .nav-brands-soon {
+    color: #aaa; cursor: default; font-style: italic; font-size: 12px;
+    padding: 14px 18px; text-align: center; letter-spacing: 0.05em;
+  }
+  .nav-brands-soon:hover { background: none; color: #aaa; }
   .nav-cta {
     background: var(--orange); color: #111;
     border: none; padding: 9px 22px;
@@ -1126,6 +1153,12 @@
       display: block; width: 100%;
     }
     .nav-links.open a:last-child { border-bottom: none; }
+    .nav-brands-wrap { width: 100%; border-bottom: 0.5px solid var(--border); padding: 1rem 0; }
+    .nav-brands-btn { font-size: 17px; color: var(--text); width: 100%; justify-content: space-between; }
+    .nav-brands-drop { position: static; transform: none; box-shadow: none; border: none;
+      border-radius: 0; min-width: unset; background: #f4f4f2; margin-top: 8px; }
+    .nav-brands-drop.open { display: block; }
+    .nav-brands-item { padding: 10px 12px; }
     .hamburger { display: flex; }
     /* Hamburger → X animation */
     .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
