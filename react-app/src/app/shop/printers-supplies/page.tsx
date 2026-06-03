@@ -70,7 +70,7 @@ export default function PrintersSuppliesPage() {
     });
 
   function whatsappOrder(p: Supply) {
-    const msg = encodeURIComponent(`Hi, I'd like to order *${p.name}* (₹${p.price}) from Kyzer Robotics. Please share availability and delivery details.`);
+    const msg = encodeURIComponent(`Hi, I'd like to order *${p.name}* (₹${String(p.price).replace(/^₹/, '')}) from Kyzer Robotics. Please share availability and delivery details.`);
     window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
   }
 

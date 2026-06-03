@@ -101,7 +101,7 @@ export default function DroneFramesPage() {
   const typeLabel: Record<string,string> = { racing: 'Racing', quadcopter: 'Quadcopter', hexacopter: 'Hexacopter' };
 
   function whatsappOrder(f: Frame) {
-    const msg = encodeURIComponent(`Hi, I'd like to order the *${f.name}* (₹${f.price}) from Kyzer Robotics. Please share availability and shipping details.`);
+    const msg = encodeURIComponent(`Hi, I'd like to order the *${f.name}* (₹${String(f.price).replace(/^₹/, '')}) from Kyzer Robotics. Please share availability and shipping details.`);
     window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
   }
 
@@ -256,7 +256,7 @@ export default function DroneFramesPage() {
             </ul>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 1 }}>
-                ₹{parseFloat(selected.price) > 0 ? parseFloat(selected.price).toLocaleString('en-IN') : selected.price}
+                {parseFloat(selected.price) > 0 ? `₹${parseFloat(selected.price).toLocaleString('en-IN')}` : selected.price}
               </span>
               <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
             </div>
