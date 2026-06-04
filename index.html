@@ -2269,10 +2269,17 @@
 </style>
 <script src="supabase-config.js?v=20260527"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+window.THREE = THREE;
+window._STLLoader = STLLoader;
+window._OBJLoader = OBJLoader;
+window._OrbitControls = OrbitControls;
+</script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -4696,7 +4703,7 @@
     camera.position.set(0, 0, 7);
     camera.lookAt(0, 0, 0);
 
-    const controls = new THREE.OrbitControls(camera, canvas);
+    const controls = new window._OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.autoRotate = true;
@@ -4725,7 +4732,7 @@
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const geometry = new THREE.STLLoader().parse(e.target.result);
+        const geometry = new window._STLLoader().parse(e.target.result);
         geometry.computeVertexNormals();
         const mat = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 });
         showThreeModel(new THREE.Mesh(geometry, mat));
@@ -4738,7 +4745,7 @@
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const obj = new THREE.OBJLoader().parse(e.target.result);
+        const obj = new window._OBJLoader().parse(e.target.result);
         obj.traverse(c => {
           if (c.isMesh) { c.geometry.computeVertexNormals(); c.material = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 }); }
         });
