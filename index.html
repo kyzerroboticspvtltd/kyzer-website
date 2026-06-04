@@ -4741,7 +4741,7 @@ window._OrbitControls = OrbitControls;
         geometry.computeVertexNormals();
         const mat = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 });
         showThreeModel(new THREE.Mesh(geometry, mat));
-      } catch { showUnsupportedPreview('stl'); }
+      } catch(err) { console.error('STL preview:', err); showUnsupportedPreview('stl'); }
     };
     reader.readAsArrayBuffer(file);
   }
@@ -4755,12 +4755,13 @@ window._OrbitControls = OrbitControls;
           if (c.isMesh) { c.geometry.computeVertexNormals(); c.material = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 }); }
         });
         showThreeModel(obj);
-      } catch { showUnsupportedPreview('obj'); }
+      } catch(err) { console.error('OBJ preview:', err); showUnsupportedPreview('obj'); }
     };
     reader.readAsText(file);
   }
 
   function showUnsupportedPreview(ext) {
+    document.getElementById('analysingBar').classList.remove('show');
     document.getElementById('modelEmoji').textContent = '📐';
     document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
   }
