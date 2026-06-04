@@ -3040,12 +3040,12 @@ window._OrbitControls = OrbitControls;
     <!-- LEFT: Model viewer -->
     <div class="qv2-left">
       <!-- 3D Viewer -->
-      <div class="model-viewer" id="modelViewer" style="border-radius:12px 12px 0 0;margin-bottom:0;height:380px;">
+      <div class="model-viewer" id="modelViewer" style="border-radius:12px 12px 0 0;margin-bottom:0;height:380px;cursor:pointer;" onclick="if(!window._threeModel)document.getElementById('fileInput').click()">
         <div class="model-viewer-label">// MODEL PREVIEW</div>
         <canvas id="threeCanvas" style="display:none;width:100%;height:100%;"></canvas>
         <div id="modelPlaceholderWrap" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
           <div class="model-placeholder" id="modelEmoji">📦</div>
-          <div class="model-filename" id="modelViewerLabel">No file uploaded</div>
+          <div class="model-filename" id="modelViewerLabel">Click to upload or use button below</div>
         </div>
         <div id="modelViewerHint" style="display:none;position:absolute;bottom:10px;right:12px;font-family:'JetBrains Mono',monospace;font-size: 10px;color:#888;">drag to rotate · scroll to zoom</div>
       </div>
@@ -4659,8 +4659,10 @@ window._OrbitControls = OrbitControls;
     if (_threeControls) { _threeControls.dispose(); _threeControls = null; }
     if (_threeRenderer) { _threeRenderer.dispose(); _threeRenderer = null; }
     document.getElementById('threeCanvas').style.display = 'none';
+    document.getElementById('modelViewer').style.cursor = 'pointer';
     document.getElementById('modelPlaceholderWrap').style.display = 'flex';
     document.getElementById('modelViewerHint').style.display = 'none';
+    window._threeModel = null;
   }
 
   function showThreeModel(object) {
@@ -4713,6 +4715,7 @@ window._OrbitControls = OrbitControls;
     _threeControls = controls;
 
     canvas.style.display = 'block';
+    document.getElementById('modelViewer').style.cursor = 'default';
     document.getElementById('modelPlaceholderWrap').style.display = 'none';
     document.getElementById('modelViewerHint').style.display = 'block';
     document.getElementById('analysingBar').classList.remove('show');
