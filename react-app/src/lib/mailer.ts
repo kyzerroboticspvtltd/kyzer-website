@@ -8,12 +8,29 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export function sendMail({ to, subject, html }: { to: string; subject: string; html: string }) {
+interface Attachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+}
+
+export function sendMail({
+  to,
+  subject,
+  html,
+  attachments,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: Attachment[];
+}) {
   return transporter.sendMail({
-    from: `"Kyzer Robotics Website" <${process.env.GMAIL_USER}>`,
+    from: `"Kyzer Robotics" <${process.env.GMAIL_USER}>`,
     to,
     subject,
     html,
+    attachments,
   });
 }
 
