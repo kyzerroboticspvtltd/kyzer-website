@@ -176,6 +176,14 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   }
   .toggle.on::after { left: 20px; }
   .pi-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .pi-price-wrap { flex-shrink: 0; }
+  .pi-price-input {
+    background: var(--bg3); border: 0.5px solid var(--border); color: var(--text);
+    border-radius: 7px; padding: 5px 9px; font-size: 13px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; width: 120px; transition: border-color 0.2s;
+  }
+  .pi-price-input:focus { outline: none; border-color: var(--orange); background: var(--bg); }
+  .pi-price-input.saved { border-color: #2e7d32; color: #2e7d32; }
 
   /* MODAL */
   .modal-overlay {
@@ -1920,14 +1928,20 @@ function renderProducts() {
           <div class="pi-emoji">${p.emoji}</div>
           <div class="pi-info">
             <div class="pi-name">${p.name}</div>
-            <div class="pi-meta">${p.price} · ${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
+            <div class="pi-meta">${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
+          </div>
+          <div class="pi-price-wrap" onclick="event.stopPropagation()" title="Click to edit price">
+            <input class="pi-price-input" type="text" value="${escHtml(p.price||'')}"
+              onchange="quickEditPrice('${p.id}', this.value)"
+              onblur="quickEditPrice('${p.id}', this.value)"
+              placeholder="e.g. 1499 or From ₹500" />
           </div>
           <div class="toggle-wrap" onclick="event.stopPropagation()">
             <label>${p.visible?'Live':'Hidden'}</label>
             <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
           </div>
           <div class="pi-actions" onclick="event.stopPropagation()">
-            <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit">✏️</button>
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="openEdit('${p.id}')" title="Edit all details">✏️</button>
             <button class="btn btn-danger btn-sm btn-icon" onclick="delProduct('${p.id}')" title="Delete">🗑</button>
           </div>
         </div>`;
@@ -1939,6 +1953,24 @@ function renderProducts() {
 function toggleVis(id) {
   const p = products.find(x => x.id === id);
   if (p) { p.visible = !p.visible; saveP(); renderProducts(); }
+}
+
+function quickEditPrice(id, val) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const newPrice = val.trim();
+  if (newPrice === p.price) return;
+  p.price = newPrice;
+  saveP();
+  // Flash the input green to confirm
+  const inputs = document.querySelectorAll('.pi-price-input');
+  inputs.forEach(inp => {
+    if (inp.value === newPrice || inp.closest('.product-item')?.querySelector(`[onclick*="${id}"]`)) {
+      inp.classList.add('saved');
+      setTimeout(() => inp.classList.remove('saved'), 1200);
+    }
+  });
+  toast('Price updated to ' + (newPrice || '—'));
 }
 function delProduct(id) {
   if (!confirm('Delete this product?')) return;
