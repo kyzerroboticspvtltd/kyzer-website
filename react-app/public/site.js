@@ -302,18 +302,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     window.scrollTo(0, 0);
   }
 
-  // Restore page on refresh based on URL hash
-  (function restorePageFromHash() {
+  function restorePageFromHash() {
     const hash = window.location.hash;
-    if (hash === '#quote') showPage('quote');
-    else if (hash === '#account') showPage('account');
-  })();
+    if (hash === '#quote')         showPage('quote');
+    else if (hash === '#account')  showPage('account');
+    else if (hash === '#checkout') { renderCartDrawer(); goToCheckout(); }
+    else if (hash === '#cart')     openCartDrawer();
+  }
 
   // Handle browser back/forward
   window.addEventListener('popstate', function() {
     const hash = window.location.hash;
-    if (hash === '#quote') showPage('quote');
-    else if (hash === '#account') showPage('account');
+    if (hash === '#quote')         showPage('quote');
+    else if (hash === '#account')  showPage('account');
+    else if (hash === '#checkout') { renderCartDrawer(); goToCheckout(); }
     else showPage('main');
   });
 
@@ -2515,6 +2517,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') registerCustomer(); });
     });
     updateNavAccount();
+    restorePageFromHash();
     setTimeout(initGoogleAuth, 500);
     _enhanceProductCards();
     // Cookie consent banner

@@ -31,5 +31,6 @@ export function addToLocalCart(product: { id?: string; name: string; price: stri
 
 export function buyNow(product: { id?: string; name: string; price: string; emoji?: string }) {
   addToLocalCart(product);
+  // Navigate to homepage with checkout hash — site.js restorePageFromHash() will open checkout
   window.location.href = '/#checkout';
 }
