@@ -2299,6 +2299,66 @@
   .loader-drone { animation: droneLift 1.4s ease-in-out infinite; }
   .loader-prop { transform-origin: center; animation: propSpin 0.3s linear infinite; }
 
+  /* ── COOKIE CONSENT ── */
+  #cookieBanner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9500;
+    background: #111111; color: #f8f8f6;
+    padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    border-top: 1px solid rgba(255,140,53,0.35);
+    animation: slideUp 0.35s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  #cookieBanner p { font-size: 13px; color: #ccc; flex: 1; min-width: 220px; margin: 0; line-height: 1.5; }
+  #cookieBanner p a, .ck-customise { color: var(--orange); background: none; border: none; cursor: pointer; font-size: 13px; text-decoration: underline; font-family: inherit; padding: 0; }
+  .ck-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .ck-reject { background: none; color: #aaa; border: 1px solid rgba(255,255,255,0.2); padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; }
+  .ck-reject:hover { border-color: #aaa; color: #fff; }
+  .ck-accept { background: var(--orange); color: #111; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .ck-accept:hover { background: #e07b20; }
+
+  /* Cookie modal */
+  #cookieModal { position: fixed; inset: 0; z-index: 9600; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
+  #cookieModal.open { display: flex; }
+  .ck-modal-box { background: #fff; border-radius: 14px; width: 100%; max-width: 580px; max-height: 90dvh; overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+  .ck-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px 0; }
+  .ck-modal-title { font-size: 17px; font-weight: 700; color: #111; }
+  .ck-modal-x { background: none; border: none; font-size: 22px; color: #888; cursor: pointer; line-height: 1; padding: 4px; }
+  .ck-modal-x:hover { color: #111; }
+  .ck-modal-desc { padding: 12px 24px 4px; font-size: 13px; color: #555; line-height: 1.65; }
+  .ck-modal-desc a { color: var(--orange); }
+  .ck-category { border-top: 1px solid #f0f0ee; margin: 0 24px; padding: 14px 0; }
+  .ck-cat-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; }
+  .ck-cat-left { display: flex; align-items: center; gap: 8px; }
+  .ck-arrow { font-size: 11px; color: #999; transition: transform 0.2s; display: inline-block; }
+  .ck-cat-row.expanded .ck-arrow { transform: rotate(90deg); }
+  .ck-cat-name { font-size: 14px; font-weight: 600; color: #111; }
+  .ck-always { font-size: 12px; font-weight: 600; color: #25a050; white-space: nowrap; }
+  .ck-cat-body { font-size: 13px; color: #666; line-height: 1.6; margin-top: 10px; padding-left: 20px; display: none; }
+  .ck-cat-body.open { display: block; }
+  /* Toggle switch */
+  .ck-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .ck-slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; cursor: pointer; transition: background 0.2s; }
+  .ck-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .ck-toggle input:checked + .ck-slider { background: #1a5fba; }
+  .ck-toggle input:checked + .ck-slider::before { transform: translateX(20px); }
+  .ck-toggle input:disabled + .ck-slider { opacity: 0.55; cursor: not-allowed; }
+  /* Footer buttons */
+  .ck-modal-footer { display: flex; gap: 8px; padding: 16px 24px 22px; flex-wrap: wrap; }
+  .ck-f-btn { flex: 1; min-width: 100px; padding: 11px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; border: none; transition: background 0.15s; }
+  .ck-f-reject { background: #efefed; color: #333; }
+  .ck-f-reject:hover { background: #e0e0de; }
+  .ck-f-save { background: #222; color: #fff; }
+  .ck-f-save:hover { background: #000; }
+  .ck-f-accept { background: var(--orange); color: #111; }
+  .ck-f-accept:hover { background: #e07b20; }
+  @media (max-width: 480px) {
+    #cookieBanner { padding: 12px 16px; }
+    .ck-modal-head, .ck-modal-desc, .ck-category, .ck-modal-footer { padding-left: 16px; padding-right: 16px; }
+    .ck-category { margin: 0 16px; }
+    .ck-f-btn { min-width: 80px; font-size: 12px; padding: 10px 8px; }
+  }
+
   /* ═══════════════════════════════════════════════
      COMPREHENSIVE MOBILE FIX
      ═══════════════════════════════════════════════ */
@@ -5425,17 +5485,81 @@ window._OrbitControls = OrbitControls;
     document.querySelector('#comingSoonOverlay .cs-notify-wrap button').style.display = 'none';
   }
 
-  // ── GOOGLE ANALYTICS (GA4) ──
-  (function initGA() {
+  // ── GOOGLE ANALYTICS (GA4) — only fires if analytics consent given ──
+  function initGA() {
     const gid = localStorage.getItem('kyzer_ga_id') || '';
-    if (!gid || !gid.startsWith('G-')) return;
+    if (!gid || !gid.startsWith('G-') || window._gaLoaded) return;
+    window._gaLoaded = true;
     const s = document.createElement('script');
     s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gid;
     document.head.appendChild(s);
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){window.dataLayer.push(arguments);}
     window.gtag = gtag;
     gtag('js', new Date()); gtag('config', gid);
+  }
+
+  // ── COOKIE CONSENT ────────────────────────────────────────────────────────
+  const _CK_KEY = 'kyzer_cookie_consent';
+
+  function _ckGet() {
+    try { return JSON.parse(localStorage.getItem(_CK_KEY) || 'null'); } catch { return null; }
+  }
+
+  function _ckSave(prefs) {
+    localStorage.setItem(_CK_KEY, JSON.stringify(prefs));
+    document.getElementById('cookieBanner').style.display = 'none';
+    closeCookieModal();
+    if (prefs.analytics) initGA();
+  }
+
+  function acceptAllCookies() {
+    _ckSave({ necessary: true, functional: true, analytics: true });
+  }
+
+  function rejectAllCookies() {
+    _ckSave({ necessary: true, functional: false, analytics: false });
+  }
+
+  function saveConsentPreferences() {
+    _ckSave({
+      necessary:  true,
+      functional: document.getElementById('ckToggleFunctional').checked,
+      analytics:  document.getElementById('ckToggleAnalytics').checked,
+    });
+  }
+
+  function openCookieModal() {
+    const p = _ckGet();
+    document.getElementById('ckToggleFunctional').checked = !p || p.functional !== false;
+    document.getElementById('ckToggleAnalytics').checked  = p ? !!p.analytics : false;
+    document.getElementById('cookieModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCookieModal() {
+    document.getElementById('cookieModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function toggleCookieCat(cat) {
+    const body   = document.getElementById('ck-body-' + cat);
+    const row    = body.previousElementSibling;
+    const isOpen = body.classList.toggle('open');
+    row.classList.toggle('expanded', isOpen);
+  }
+
+  // On load: check saved consent
+  (function() {
+    const p = _ckGet();
+    if (p) {
+      if (p.analytics) initGA();
+    } else {
+      // First visit — show banner after 1.5s
+      setTimeout(function() {
+        document.getElementById('cookieBanner').style.display = 'flex';
+      }, 1500);
+    }
   })();
 
   // ── VISIT COUNTER ──
@@ -6370,6 +6494,76 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
 </div>
 
 <!-- Floating WhatsApp Button -->
+<!-- ── COOKIE CONSENT BANNER ── -->
+<div id="cookieBanner" style="display:none;">
+  <p>We use cookies to keep your cart, enable login, and (optionally) analyse site traffic. <button class="ck-customise" onclick="openCookieModal()">Customise preferences</button></p>
+  <div class="ck-banner-btns">
+    <button class="ck-reject" onclick="rejectAllCookies()">Reject All</button>
+    <button class="ck-accept" onclick="acceptAllCookies()">Accept All</button>
+  </div>
+</div>
+
+<!-- ── COOKIE CONSENT MODAL ── -->
+<div id="cookieModal">
+  <div class="ck-modal-box">
+    <div class="ck-modal-head">
+      <div class="ck-modal-title">Customise Consent Preferences</div>
+      <button class="ck-modal-x" onclick="closeCookieModal()">&#x2715;</button>
+    </div>
+    <p class="ck-modal-desc">
+      We use cookies to help you navigate efficiently and perform certain functions.
+      You will find detailed information about each category below. Cookies classified
+      as <strong>Necessary</strong> are stored automatically as they are essential for the
+      site to function.
+    </p>
+
+    <!-- Necessary -->
+    <div class="ck-category">
+      <div class="ck-cat-row" onclick="toggleCookieCat('necessary')">
+        <div class="ck-cat-left"><span class="ck-arrow">›</span><span class="ck-cat-name">Necessary</span></div>
+        <span class="ck-always">Always Active</span>
+      </div>
+      <div class="ck-cat-body" id="ck-body-necessary">
+        Necessary cookies enable core site functionality: your shopping cart, account login, order tracking, and security. These cannot be disabled and do not store personally identifiable data beyond what you enter.
+      </div>
+    </div>
+
+    <!-- Functional -->
+    <div class="ck-category">
+      <div class="ck-cat-row" onclick="toggleCookieCat('functional')">
+        <div class="ck-cat-left"><span class="ck-arrow">›</span><span class="ck-cat-name">Functional</span></div>
+        <label class="ck-toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="ckToggleFunctional" checked>
+          <span class="ck-slider"></span>
+        </label>
+      </div>
+      <div class="ck-cat-body" id="ck-body-functional">
+        Functional cookies remember your wishlist, preferences, and recently viewed items to give you a better shopping experience. Disabling these will reset your wishlist on each visit.
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="ck-category">
+      <div class="ck-cat-row" onclick="toggleCookieCat('analytics')">
+        <div class="ck-cat-left"><span class="ck-arrow">›</span><span class="ck-cat-name">Analytics</span></div>
+        <label class="ck-toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" id="ckToggleAnalytics">
+          <span class="ck-slider"></span>
+        </label>
+      </div>
+      <div class="ck-cat-body" id="ck-body-analytics">
+        Analytics cookies (Google Analytics) help us understand how visitors interact with our website. All data is anonymised. Disabling this means we cannot improve the site based on usage data.
+      </div>
+    </div>
+
+    <div class="ck-modal-footer">
+      <button class="ck-f-btn ck-f-reject" onclick="rejectAllCookies()">Reject All</button>
+      <button class="ck-f-btn ck-f-save" onclick="saveConsentPreferences()">Save My Preferences</button>
+      <button class="ck-f-btn ck-f-accept" onclick="acceptAllCookies()">Accept All</button>
+    </div>
+  </div>
+</div>
+
 <a class="wa-fab" href="https://wa.me/919049695264" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
