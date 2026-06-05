@@ -3083,6 +3083,15 @@ function changePass() {
   ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
   toast('Password updated.');
 }
+
+// ── AUTO-LOGIN ON REFRESH ──
+if (localStorage.getItem('kyzer_admin_authed') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  const p = document.getElementById('adminPanel');
+  p.style.display = 'flex';
+  p.style.flexDirection = 'column';
+  initAdmin();
+}
 </script>
 </body>
 </html>
