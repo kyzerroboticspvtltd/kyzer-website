@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { addToLocalCart, buyNow } from '@/lib/shopCart';
 
 interface Frame {
   id: string;
@@ -100,9 +101,12 @@ export default function DroneFramesPage() {
   const matLabel: Record<string,string> = { 'carbon-fiber': 'Carbon Fiber', 'glass-fiber': 'Glass Fiber', 'aluminum': 'Aluminum' };
   const typeLabel: Record<string,string> = { racing: 'Racing', quadcopter: 'Quadcopter', hexacopter: 'Hexacopter' };
 
-  function whatsappOrder(f: Frame) {
-    const msg = encodeURIComponent(`Hi, I'd like to order the *${f.name}* (₹${String(f.price).replace(/^₹/, '')}) from Kyzer Robotics. Please share availability and shipping details.`);
-    window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
+  const [addedId, setAddedId] = useState<string | null>(null);
+
+  function handleAddToCart(f: Frame) {
+    addToLocalCart(f);
+    setAddedId(f.id);
+    setTimeout(() => setAddedId(null), 1500);
   }
 
   return (
@@ -219,10 +223,16 @@ export default function DroneFramesPage() {
                       </span>
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
-                    <button onClick={e => { e.stopPropagation(); whatsappOrder(f); }}
-                      style={{ marginTop: 10, width: '100%', padding: '9px', background: 'transparent', border: '1.5px solid #FF8C35', color: '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                      Order Now →
-                    </button>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                      <button onClick={e => { e.stopPropagation(); handleAddToCart(f); }}
+                        style={{ flex: 1, padding: '9px 6px', background: addedId === f.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === f.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === f.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                        {addedId === f.id ? '✓ Added!' : '+ Cart'}
+                      </button>
+                      <button onClick={e => { e.stopPropagation(); buyNow(f); }}
+                        style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                        Buy Now →
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -260,10 +270,16 @@ export default function DroneFramesPage() {
               </span>
               <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
             </div>
-            <button onClick={() => whatsappOrder(selected)}
-              style={{ width: '100%', padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
-              Order on WhatsApp →
-            </button>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => { addToLocalCart(selected); setAddedId(selected.id); setTimeout(() => setAddedId(null), 1500); }}
+                style={{ flex: 1, padding: '13px', background: addedId === selected.id ? '#e8f5e9' : '#111', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: addedId === selected.id ? '#2e7d32' : '#fff', transition: 'all 0.2s' }}>
+                {addedId === selected.id ? '✓ Added to Cart!' : 'Add to Cart'}
+              </button>
+              <button onClick={() => buyNow(selected)}
+                style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
+                Buy Now →
+              </button>
+            </div>
           </div>
         </div>
       )}
