@@ -398,6 +398,32 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
   .cust-joined { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .cust-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
   .cust-search-bar { margin-bottom: 1rem; }
+
+  /* ── DASHBOARD ── */
+  .dash-kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+  .dash-kpi { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .dash-kpi.primary { background: #fff3e8; border-color: rgba(255,140,53,0.3); }
+  .dash-kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .dash-kpi-num { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--orange); line-height: 1; }
+  .dash-kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .dash-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .dash-mini-stats { display: flex; border-top: 0.5px solid var(--border); margin-top: 12px; }
+  .dash-mini-stats > div { flex: 1; text-align: center; padding: 12px 0; border-right: 0.5px solid var(--border); }
+  .dash-mini-stats > div:last-child { border-right: none; }
+  .dash-mini-num { font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1; }
+  .dash-mini-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dash-feed-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .dash-feed-row:last-child { border-bottom: none; }
+  .dash-feed-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dash-feed-main { flex: 1; min-width: 0; }
+  .dash-feed-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dash-feed-sub { font-size: 11px; color: var(--muted); }
+  .dash-feed-right { font-size: 12px; font-weight: 600; color: var(--orange); text-align: right; white-space: nowrap; }
+  .dash-cust-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; color: var(--orange); border: 0.5px solid var(--border); }
+  @media (max-width: 900px) {
+    .dash-kpi-grid { grid-template-columns: repeat(2,1fr); }
+    .dash-two-col { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -433,8 +459,9 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
   <div class="admin-body">
     <aside class="admin-sidebar">
+      <div class="sidebar-link active" onclick="switchTab('dashboard')" id="tl-dashboard"><span>📊</span> Dashboard</div>
       <div class="sidebar-section">CONTENT</div>
-      <div class="sidebar-link active" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
+      <div class="sidebar-link" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
       <div class="sidebar-link" onclick="switchTab('categories')" id="tl-categories"><span>🗂️</span> Categories</div>
       <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero & Stats</div>
       <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
@@ -451,8 +478,94 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
     <main class="admin-main">
 
+      <!-- DASHBOARD -->
+      <div class="admin-tab active" id="tab-dashboard">
+        <div class="tab-header">
+          <h2>Dashboard</h2>
+          <p>Live overview of revenue, orders, and customers.</p>
+        </div>
+
+        <!-- KPI row -->
+        <div class="dash-kpi-grid">
+          <div class="dash-kpi primary">
+            <div class="dash-kpi-label">Total Revenue</div>
+            <div class="dash-kpi-num" id="dk-revenue">₹0</div>
+            <div class="dash-kpi-sub" id="dk-revenue-sub">all time</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">This Month</div>
+            <div class="dash-kpi-num" id="dk-month">₹0</div>
+            <div class="dash-kpi-sub" id="dk-month-sub">—</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">Today</div>
+            <div class="dash-kpi-num" id="dk-today-rev">₹0</div>
+            <div class="dash-kpi-sub">revenue today</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">Units Sold</div>
+            <div class="dash-kpi-num" id="dk-units">0</div>
+            <div class="dash-kpi-sub">items across all orders</div>
+          </div>
+        </div>
+
+        <!-- Orders + Customers mini panels -->
+        <div class="dash-two-col">
+          <div class="panel">
+            <div class="panel-title">📦 Orders</div>
+            <div class="dash-mini-stats">
+              <div>
+                <div class="dash-mini-num" id="dk-ord-total">0</div>
+                <div class="dash-mini-lbl">Total</div>
+              </div>
+              <div>
+                <div class="dash-mini-num" style="color:#FF8C35" id="dk-ord-new">0</div>
+                <div class="dash-mini-lbl">New</div>
+              </div>
+              <div>
+                <div class="dash-mini-num" style="color:#1a73e8" id="dk-ord-progress">0</div>
+                <div class="dash-mini-lbl">In Progress</div>
+              </div>
+              <div>
+                <div class="dash-mini-num" style="color:#2e7d32" id="dk-ord-done">0</div>
+                <div class="dash-mini-lbl">Completed</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">👤 Customers</div>
+            <div class="dash-mini-stats">
+              <div>
+                <div class="dash-mini-num" id="dk-cust-total">0</div>
+                <div class="dash-mini-lbl">Total</div>
+              </div>
+              <div>
+                <div class="dash-mini-num" style="color:#FF8C35" id="dk-cust-today">0</div>
+                <div class="dash-mini-lbl">Today</div>
+              </div>
+              <div>
+                <div class="dash-mini-num" style="color:#2e7d32" id="dk-cust-orders">0</div>
+                <div class="dash-mini-lbl">Ordered</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent orders + Recent customers -->
+        <div class="dash-two-col">
+          <div class="panel">
+            <div class="panel-title" style="margin-bottom:4px;">🕐 Recent Orders <span style="font-size:11px;color:var(--muted);font-weight:400;">3D + Shop</span></div>
+            <div id="dash-recent-orders" style="margin-top:8px;"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title" style="margin-bottom:4px;">🆕 Recent Customers</div>
+            <div id="dash-recent-customers" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- PRODUCTS -->
-      <div class="admin-tab active" id="tab-products">
+      <div class="admin-tab" id="tab-products">
         <div class="tab-header">
           <h2>Products</h2>
           <p>Manage what appears in the shop section. Toggle visibility without deleting.</p>
@@ -1353,6 +1466,7 @@ function initAdmin() {
   renderPhotoGrid();
   loadOrders();
   renderOrders();
+  renderDashboard();
   startRealtimePolling();
   requestNotificationPermission();
 
@@ -1528,10 +1642,111 @@ function switchTab(name) {
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tl-' + name).classList.add('active');
+  if (name === 'dashboard') renderDashboard();
   if (name === 'security') initSecurity();
   if (name === 'orders') { renderOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseOrders(url,key); }
   if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
   if (name === 'customers') renderCustomers();
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  loadOrders();
+  loadShopOrders();
+  loadCustomers();
+
+  const now = new Date();
+  const todayStr = now.toDateString();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+
+  const printOrds = allOrders;
+  const shopOrds = allShopOrders;
+  const customers = allCustomers;
+
+  let totalRev = 0, monthRev = 0, todayRev = 0, unitsSold = 0;
+
+  shopOrds.forEach(o => {
+    const amt = Number(o.total) || 0;
+    const d = new Date(o.submittedAt);
+    totalRev += amt;
+    if (d.toDateString() === todayStr) todayRev += amt;
+    if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) monthRev += amt;
+    (o.items || []).forEach(i => unitsSold += (Number(i.qty) || 1));
+  });
+
+  printOrds.forEach(o => {
+    const amt = Number(o.estimatedTotal) || 0;
+    const d = new Date(o.submittedAt);
+    totalRev += amt;
+    if (d.toDateString() === todayStr) todayRev += amt;
+    if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) monthRev += amt;
+    unitsSold += Number(o.quantity) || 1;
+  });
+
+  const fmtRs = n => '₹' + Number(n).toLocaleString('en-IN');
+  document.getElementById('dk-revenue').textContent = fmtRs(totalRev);
+  document.getElementById('dk-month').textContent = fmtRs(monthRev);
+  document.getElementById('dk-today-rev').textContent = fmtRs(todayRev);
+  document.getElementById('dk-units').textContent = unitsSold;
+  document.getElementById('dk-month-sub').textContent = now.toLocaleString('en-IN', { month: 'long' });
+
+  const allOrd = [
+    ...printOrds.map(o => ({ ...o, _type: '3d' })),
+    ...shopOrds.map(o => ({ ...o, _type: 'shop' }))
+  ];
+  const IN_PROGRESS = ['reviewing', 'printing', 'ready', 'processing', 'shipped'];
+  document.getElementById('dk-ord-total').textContent = allOrd.length;
+  document.getElementById('dk-ord-new').textContent = allOrd.filter(o => o.status === 'new').length;
+  document.getElementById('dk-ord-progress').textContent = allOrd.filter(o => IN_PROGRESS.includes(o.status)).length;
+  document.getElementById('dk-ord-done').textContent = allOrd.filter(o => o.status === 'completed').length;
+
+  const todayCust = customers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === todayStr).length;
+  const withOrd = customers.filter(c =>
+    shopOrds.some(o => o.email === c.email) || printOrds.some(o => o.email === c.email)
+  ).length;
+  document.getElementById('dk-cust-total').textContent = customers.length;
+  document.getElementById('dk-cust-today').textContent = todayCust;
+  document.getElementById('dk-cust-orders').textContent = withOrd;
+
+  const STATUS_DOT = { new: '#FF8C35', reviewing: '#1a73e8', printing: '#2e7d32', processing: '#1a73e8', shipped: '#9C27B0', ready: '#00796b', completed: '#bbb', cancelled: '#c62828' };
+
+  const recent = allOrd.slice().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 10);
+  const roEl = document.getElementById('dash-recent-orders');
+  roEl.innerHTML = recent.length ? recent.map(o => {
+    const color = STATUS_DOT[o.status] || '#888';
+    const rev = o._type === 'shop'
+      ? (o.total ? fmtRs(o.total) : '—')
+      : (o.estimatedTotal ? '₹' + o.estimatedTotal : '—');
+    const date = new Date(o.submittedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    const icon = o._type === '3d' ? '🖨' : '🛒';
+    return `<div class="dash-feed-row">
+      <div class="dash-feed-dot" style="background:${color}"></div>
+      <div class="dash-feed-main">
+        <div class="dash-feed-name">${icon} ${escHtml(o.name || '—')}</div>
+        <div class="dash-feed-sub">${escHtml(o.email || '')} · ${date} · <span style="text-transform:capitalize;">${o.status || ''}</span></div>
+      </div>
+      <div class="dash-feed-right">${rev}</div>
+    </div>`;
+  }).join('') : '<div class="orders-empty" style="padding:24px 0;font-size:13px;">No orders yet.</div>';
+
+  const recentCust = customers.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 10);
+  const rcEl = document.getElementById('dash-recent-customers');
+  rcEl.innerHTML = recentCust.length ? recentCust.map(c => {
+    const initials = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const joined = c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const ords = shopOrds.filter(o => o.email === c.email).length + printOrds.filter(o => o.email === c.email).length;
+    return `<div class="dash-feed-row">
+      <div class="dash-cust-avatar">${initials}</div>
+      <div class="dash-feed-main">
+        <div class="dash-feed-name">${escHtml(c.name || '—')}</div>
+        <div class="dash-feed-sub">${escHtml(c.email || '')}${c.phone ? ' · ' + c.phone : ''}</div>
+      </div>
+      <div class="dash-feed-right" style="color:var(--muted);font-size:11px;text-align:right;">
+        ${ords} order${ords !== 1 ? 's' : ''}<br>${joined}
+      </div>
+    </div>`;
+  }).join('') : '<div class="orders-empty" style="padding:24px 0;font-size:13px;">No customers yet.</div>';
 }
 
 // ── SHOP ORDERS ──
