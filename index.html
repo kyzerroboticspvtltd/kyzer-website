@@ -507,6 +507,23 @@
   .prod-btn:hover { background: var(--orange); color: #111; }
   .prod-btn-buy { background: var(--orange); color: #111; font-weight: 600; }
   .prod-btn-buy:hover { background: #e07b20; }
+  /* ── Card action row (Buy Now + Add to Cart) ── */
+  .prod-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .prod-cart-btn {
+    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid var(--orange); background: transparent; color: var(--orange);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s, color 0.15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .prod-cart-btn:hover { background: rgba(255,140,53,0.12); }
+  .prod-cart-btn.added { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+  .prod-buy-btn {
+    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    border: none; background: var(--orange); color: #111;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .prod-buy-btn:hover { background: #e07b20; }
   .filament-colors { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 10px; }
   .fc { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); cursor: default; transition: transform 0.15s; }
   .fc:hover { transform: scale(1.35); }
@@ -2406,6 +2423,8 @@
     .prod-img { height: 100px; font-size: 38px; }
     .nav-logo-text { font-size: 13px; }
     section { padding: 2.5rem 0.875rem; }
+    .prod-actions { gap: 4px; }
+    .prod-cart-btn, .prod-buy-btn { font-size: 11px; padding: 7px 4px; }
   }
 </style>
 <script src="supabase-config.js?v=20260527"></script>
@@ -3817,6 +3836,68 @@ window._OrbitControls = OrbitControls;
     renderCartDrawer();
   }
 
+  // ── CARD QUICK-BUY ACTIONS ────────────────────────────────────────────────
+  function _cardGetPd(btn) {
+    const card = btn.closest('[data-product]');
+    if (!card) return null;
+    try { return JSON.parse(card.dataset.product); } catch { return null; }
+  }
+
+  function _cardAddToCart(btn) {
+    const pd = _cardGetPd(btn);
+    if (!pd) return;
+    addToCart(pd, 1);
+    renderCartDrawer();
+    btn.textContent = '✓ Added!';
+    btn.classList.add('added');
+    setTimeout(() => { btn.textContent = '+ Cart'; btn.classList.remove('added'); }, 1600);
+  }
+
+  function _cardBuyNow(btn) {
+    const pd = _cardGetPd(btn);
+    if (!pd) return;
+    addToCart(pd, 1);
+    renderCartDrawer();
+    setTimeout(goToCheckout, 80);
+  }
+
+  function _cardEnquire(btn) {
+    const pd = _cardGetPd(btn);
+    const name = pd ? pd.name : 'your service';
+    window.open('https://wa.me/919049695264?text=' + encodeURIComponent('Hi, I\'d like to enquire about: ' + name), '_blank');
+  }
+
+  function _enhanceProductCards() {
+    document.querySelectorAll('.prod-card').forEach(function(card) {
+      if (card.querySelector('.prod-actions')) return; // already done
+      var btn = card.querySelector('.prod-btn, .prod-btn-buy');
+      var pd;
+      try { pd = JSON.parse(card.dataset.product || 'null'); } catch(e) { return; }
+      if (!pd) return;
+
+      var price = String(pd.price || '');
+      var isFrom = price.toLowerCase().startsWith('from') || price === '';
+
+      if (btn) btn.remove();
+
+      var actions = document.createElement('div');
+      actions.className = 'prod-actions';
+
+      if (isFrom) {
+        actions.innerHTML =
+          '<button class="prod-cart-btn" onclick="event.stopPropagation();showPage(\'quote\')">Get Quote</button>' +
+          '<button class="prod-buy-btn" onclick="event.stopPropagation();_cardEnquire(this)">Order →</button>';
+      } else {
+        actions.innerHTML =
+          '<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>' +
+          '<button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>';
+      }
+
+      var body = card.querySelector('.prod-body');
+      if (body) body.appendChild(actions);
+    });
+  }
+
   function updateCartItemQty(id, delta) {
     const item = cart.find(i => i.id === id);
     if (!item) return;
@@ -5071,8 +5152,11 @@ window._OrbitControls = OrbitControls;
         const priceHtml = p.price
           ? `<span class="prod-price">${_cnp > 0 ? '₹' + _cnp.toLocaleString('en-IN') : p.price}</span>`
           : '';
-        const btnLabel = _cnp > 0 ? 'Buy Now →' : (_isFrom ? 'Get Quote →' : (p.btnText || 'Enquire'));
-        const btnCls   = _cnp > 0 ? 'prod-btn prod-btn-buy' : 'prod-btn';
+        const actionBtns = _isFrom
+          ? `<button class="prod-cart-btn" onclick="event.stopPropagation();showPage('quote')">Get Quote</button>
+             <button class="prod-buy-btn" onclick="event.stopPropagation();_cardEnquire(this)">Order →</button>`
+          : `<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>
+             <button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>`;
         return `
         <div class="prod-card" data-cat="${p.category}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
@@ -5080,14 +5164,13 @@ window._OrbitControls = OrbitControls;
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>
             <h4>${p.name}</h4>
             <p>${p.description}</p>
-            <div class="prod-footer">
-              ${priceHtml}
-              <button class="${btnCls}">${btnLabel}</button>
-            </div>
+            <div class="prod-footer">${priceHtml}</div>
+            <div class="prod-actions">${actionBtns}</div>
           </div>
         </div>`;
       }).join('');
       if (typeof updateCatCounts === 'function') updateCatCounts();
+      if (typeof _enhanceProductCards === 'function') _enhanceProductCards();
     }
 
     // Hero
@@ -5849,6 +5932,8 @@ Valid for 7 days. Contact: info@kyzerrobotics.com`;
     });
     updateNavAccount();
     setTimeout(initGoogleAuth, 500);
+    // Enhance static product cards with Buy Now + Add to Cart buttons
+    setTimeout(_enhanceProductCards, 0);
   });
 
   // ── GOOGLE SIGN-IN ──
