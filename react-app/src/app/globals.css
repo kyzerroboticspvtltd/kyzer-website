@@ -2203,3 +2203,93 @@
   @keyframes propSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   .loader-drone { animation: droneLift 1.4s ease-in-out infinite; }
   .loader-prop { transform-origin: center; animation: propSpin 0.3s linear infinite; }
+
+  /* ── CARD BUY NOW / ADD TO CART ── */
+  .prod-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .prod-cart-btn {
+    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid var(--orange); background: transparent; color: var(--orange);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s, color 0.15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .prod-cart-btn:hover { background: rgba(255,140,53,0.12); }
+  .prod-cart-btn.added { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+  .prod-buy-btn {
+    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    border: none; background: var(--orange); color: #111;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .prod-buy-btn:hover { background: #e07b20; }
+
+  /* ── PDP ACTION AREA ── */
+  .pdp-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .pdp-main-btns { display: flex; gap: 10px; }
+  .pdp-main-btns > button { flex: 1; min-height: 50px; font-size: 15px; border-radius: 10px; padding: 13px 12px; }
+  .pdp-secondary-row { display: flex; gap: 8px; align-items: center; }
+  .pdp-wa-btn {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    background: none; border: 1.5px solid var(--border); color: var(--muted);
+    border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.15s, color 0.15s;
+  }
+  .pdp-wa-btn:hover { border-color: #25D366; color: #25D366; }
+  .pdp-wa-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .pdp-back-link {
+    background: none; border: none; color: var(--muted); font-size: 13px;
+    cursor: pointer; padding: 10px 8px; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  }
+  .pdp-back-link:hover { color: var(--text); }
+
+  /* ── COOKIE CONSENT ── */
+  #cookieBanner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9500;
+    background: #111111; color: #f8f8f6;
+    padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    border-top: 1px solid rgba(255,140,53,0.35);
+    animation: slideUp 0.35s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  #cookieBanner p { font-size: 13px; color: #ccc; flex: 1; min-width: 220px; margin: 0; line-height: 1.5; }
+  .ck-customise { color: var(--orange); background: none; border: none; cursor: pointer; font-size: 13px; text-decoration: underline; font-family: inherit; padding: 0; }
+  .ck-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .ck-reject { background: none; color: #aaa; border: 1px solid rgba(255,255,255,0.2); padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .ck-reject:hover { border-color: #aaa; color: #fff; }
+  .ck-accept { background: var(--orange); color: #111; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .ck-accept:hover { background: #e07b20; }
+  #cookieModal { position: fixed; inset: 0; z-index: 9600; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
+  #cookieModal.open { display: flex; }
+  .ck-modal-box { background: #fff; border-radius: 14px; width: 100%; max-width: 580px; max-height: 90dvh; overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+  .ck-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px 0; }
+  .ck-modal-title { font-size: 17px; font-weight: 700; color: #111; }
+  .ck-modal-x { background: none; border: none; font-size: 22px; color: #888; cursor: pointer; line-height: 1; padding: 4px; }
+  .ck-modal-desc { padding: 12px 24px 4px; font-size: 13px; color: #555; line-height: 1.65; }
+  .ck-category { border-top: 1px solid #f0f0ee; margin: 0 24px; padding: 14px 0; }
+  .ck-cat-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; }
+  .ck-cat-left { display: flex; align-items: center; gap: 8px; }
+  .ck-arrow { font-size: 11px; color: #999; transition: transform 0.2s; display: inline-block; }
+  .ck-cat-row.expanded .ck-arrow { transform: rotate(90deg); }
+  .ck-cat-name { font-size: 14px; font-weight: 600; color: #111; }
+  .ck-always { font-size: 12px; font-weight: 600; color: #25a050; white-space: nowrap; }
+  .ck-cat-body { font-size: 13px; color: #666; line-height: 1.6; margin-top: 10px; padding-left: 20px; display: none; }
+  .ck-cat-body.open { display: block; }
+  .ck-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .ck-slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; cursor: pointer; transition: background 0.2s; }
+  .ck-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .ck-toggle input:checked + .ck-slider { background: #1a5fba; }
+  .ck-toggle input:checked + .ck-slider::before { transform: translateX(20px); }
+  .ck-modal-footer { display: flex; gap: 8px; padding: 16px 24px 22px; flex-wrap: wrap; }
+  .ck-f-btn { flex: 1; min-width: 100px; padding: 11px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; border: none; }
+  .ck-f-reject { background: #efefed; color: #333; }
+  .ck-f-save { background: #222; color: #fff; }
+  .ck-f-accept { background: var(--orange); color: #111; }
+  @media (max-width: 480px) {
+    .prod-actions { gap: 4px; }
+    .prod-cart-btn, .prod-buy-btn { font-size: 11px; padding: 7px 4px; }
+    .pdp-main-btns { gap: 8px; }
+    .pdp-main-btns > button { font-size: 14px; min-height: 48px; }
+    #cookieBanner { padding: 12px 16px; }
+    .ck-modal-head, .ck-modal-desc, .ck-category, .ck-modal-footer { padding-left: 16px; padding-right: 16px; }
+    .ck-category { margin: 0 16px; }
+  }

@@ -758,21 +758,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const numPrice = parseNumericPrice(d.price);
     const isFromPrice = d.price && String(d.price).toLowerCase().startsWith('from');
 
-    // Reset all
-    [addCartBtn, buyNowBtn, getQuoteBtn].forEach(b => b.style.display = 'none');
-    addCartBtn.textContent = 'Add to cart';
+    // Reset all buttons hidden
+    [addCartBtn, buyNowBtn, getQuoteBtn, enquireBtn].forEach(b => b.style.display = 'none');
+    addCartBtn.textContent = 'Add to Cart';
     addCartBtn.classList.remove('added');
-    enquireBtn.style.display = '';
 
     if (d.price && numPrice > 0) {
-      // Fixed-price product: full buy flow
       document.getElementById('pdpPrice').textContent = '₹' + numPrice.toLocaleString('en-IN');
       document.getElementById('pdpPriceNote').textContent = 'Incl. GST · excl. shipping';
       qtyRow.style.display = '';
       priceWrap.style.display = '';
       buyNowBtn.style.display = '';
       addCartBtn.style.display = '';
-      enquireBtn.style.display = 'none';
     } else if (isFromPrice) {
       document.getElementById('pdpPrice').textContent = d.price;
       document.getElementById('pdpPriceNote').textContent = 'Final price confirmed after file review';
@@ -782,6 +779,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       enquireBtn.style.display = '';
     } else {
       priceWrap.style.display = 'none';
+      enquireBtn.style.display = '';
     }
     showPage('product');
   }
@@ -1339,8 +1337,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (_threeControls) { _threeControls.dispose(); _threeControls = null; }
     if (_threeRenderer) { _threeRenderer.dispose(); _threeRenderer = null; }
     document.getElementById('threeCanvas').style.display = 'none';
+    document.getElementById('modelViewer').style.cursor = 'pointer';
     document.getElementById('modelPlaceholderWrap').style.display = 'flex';
     document.getElementById('modelViewerHint').style.display = 'none';
+    window._threeModel = null;
   }
 
   function showThreeModel(object) {
@@ -1380,17 +1380,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     scene.add(object);
     window._threeModel = object;
 
-    camera.position.set(0, 0, 7);
+    const scaledRadius = Math.sqrt(size.x ** 2 + size.y ** 2 + size.z ** 2) / 2 * (4 / maxDim);
+    const dist = (scaledRadius / Math.tan((camera.fov / 2) * Math.PI / 180)) * 1.3;
+    camera.position.copy(new THREE.Vector3(0.6, 0.4, 0.7).normalize().multiplyScalar(dist));
     camera.lookAt(0, 0, 0);
 
-    const controls = new THREE.OrbitControls(camera, canvas);
+    const controls = new window._OrbitControls(camera, canvas);
+    controls.target.set(0, 0, 0);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.5;
+    controls.update();
     _threeControls = controls;
 
     canvas.style.display = 'block';
+    document.getElementById('modelViewer').style.cursor = 'default';
     document.getElementById('modelPlaceholderWrap').style.display = 'none';
     document.getElementById('modelViewerHint').style.display = 'block';
     document.getElementById('analysingBar').classList.remove('show');
@@ -1412,11 +1415,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const geometry = new THREE.STLLoader().parse(e.target.result);
+        const geometry = new window._STLLoader().parse(e.target.result);
         geometry.computeVertexNormals();
         const mat = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 });
         showThreeModel(new THREE.Mesh(geometry, mat));
-      } catch { showUnsupportedPreview('stl'); }
+      } catch(err) { console.error('STL preview:', err); showUnsupportedPreview('stl'); }
     };
     reader.readAsArrayBuffer(file);
   }
@@ -1425,17 +1428,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const obj = new THREE.OBJLoader().parse(e.target.result);
+        const obj = new window._OBJLoader().parse(e.target.result);
         obj.traverse(c => {
           if (c.isMesh) { c.geometry.computeVertexNormals(); c.material = new THREE.MeshStandardMaterial({ color: 0xFF8C35, roughness: 0.4, metalness: 0.1 }); }
         });
         showThreeModel(obj);
-      } catch { showUnsupportedPreview('obj'); }
+      } catch(err) { console.error('OBJ preview:', err); showUnsupportedPreview('obj'); }
     };
     reader.readAsText(file);
   }
 
   function showUnsupportedPreview(ext) {
+    document.getElementById('analysingBar').classList.remove('show');
     document.getElementById('modelEmoji').textContent = '📐';
     document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
   }
@@ -2497,7 +2501,122 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     });
     updateNavAccount();
     setTimeout(initGoogleAuth, 500);
+    setTimeout(_enhanceProductCards, 0);
+    // Cookie consent
+    (function() {
+      const p = _ckGet();
+      if (!p) {
+        setTimeout(function() {
+          var b = document.getElementById('cookieBanner');
+          if (b) b.style.display = 'flex';
+        }, 1500);
+      }
+    })();
   });
+
+  // ── CARD QUICK-BUY ────────────────────────────────────────────────────────
+  function _cardGetPd(btn) {
+    var card = btn.closest('[data-product]');
+    if (!card) return null;
+    try { return JSON.parse(card.dataset.product); } catch(e) { return null; }
+  }
+
+  function _cardAddToCart(btn) {
+    var pd = _cardGetPd(btn);
+    if (!pd) return;
+    addToCart(pd, 1);
+    renderCartDrawer();
+    btn.textContent = '✓ Added!';
+    btn.classList.add('added');
+    setTimeout(function() { btn.textContent = '+ Cart'; btn.classList.remove('added'); }, 1600);
+  }
+
+  function _cardBuyNow(btn) {
+    var pd = _cardGetPd(btn);
+    if (!pd) return;
+    addToCart(pd, 1);
+    renderCartDrawer();
+    setTimeout(goToCheckout, 80);
+  }
+
+  function _cardEnquire(btn) {
+    var pd = _cardGetPd(btn);
+    var name = pd ? pd.name : 'your service';
+    window.open('https://wa.me/919049695264?text=' + encodeURIComponent('Hi, I\'d like to enquire about: ' + name), '_blank');
+  }
+
+  function _enhanceProductCards() {
+    document.querySelectorAll('.prod-card').forEach(function(card) {
+      if (card.querySelector('.prod-actions')) return;
+      var btn = card.querySelector('.prod-btn, .prod-btn-buy');
+      var pd;
+      try { pd = JSON.parse(card.dataset.product || 'null'); } catch(e) { return; }
+      if (!pd) return;
+      var price = String(pd.price || '');
+      var isFrom = price.toLowerCase().startsWith('from') || price === '';
+      if (btn) btn.remove();
+      var actions = document.createElement('div');
+      actions.className = 'prod-actions';
+      if (isFrom) {
+        actions.innerHTML =
+          '<button class="prod-cart-btn" onclick="event.stopPropagation();showPage(\'quote\')">Get Quote</button>' +
+          '<button class="prod-buy-btn" onclick="event.stopPropagation();_cardEnquire(this)">Order →</button>';
+      } else {
+        actions.innerHTML =
+          '<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>' +
+          '<button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>';
+      }
+      var body = card.querySelector('.prod-body');
+      if (body) body.appendChild(actions);
+    });
+  }
+
+  // ── COOKIE CONSENT ────────────────────────────────────────────────────────
+  var _CK_KEY = 'kyzer_cookie_consent';
+
+  function _ckGet() {
+    try { return JSON.parse(localStorage.getItem(_CK_KEY) || 'null'); } catch(e) { return null; }
+  }
+
+  function _ckSave(prefs) {
+    localStorage.setItem(_CK_KEY, JSON.stringify(prefs));
+    var b = document.getElementById('cookieBanner');
+    if (b) b.style.display = 'none';
+    closeCookieModal();
+  }
+
+  function acceptAllCookies() { _ckSave({ necessary: true, functional: true, analytics: true }); }
+  function rejectAllCookies() { _ckSave({ necessary: true, functional: false, analytics: false }); }
+
+  function saveConsentPreferences() {
+    _ckSave({
+      necessary: true,
+      functional: document.getElementById('ckToggleFunctional').checked,
+      analytics:  document.getElementById('ckToggleAnalytics').checked,
+    });
+  }
+
+  function openCookieModal() {
+    var p = _ckGet();
+    document.getElementById('ckToggleFunctional').checked = !p || p.functional !== false;
+    document.getElementById('ckToggleAnalytics').checked  = p ? !!p.analytics : false;
+    document.getElementById('cookieModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCookieModal() {
+    var m = document.getElementById('cookieModal');
+    if (m) m.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function toggleCookieCat(cat) {
+    var body = document.getElementById('ck-body-' + cat);
+    if (!body) return;
+    var row = body.previousElementSibling;
+    var isOpen = body.classList.toggle('open');
+    if (row) row.classList.toggle('expanded', isOpen);
+  }
 
   // ── GOOGLE SIGN-IN ──
   // To enable: go to console.cloud.google.com → APIs & Services → Credentials
