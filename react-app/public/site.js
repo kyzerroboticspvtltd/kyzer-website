@@ -554,13 +554,29 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       total,
     };
 
-    // ── Try Razorpay payment ──
-    const rzpKeyId = window.__RZP_KEY__ || '';
+    // ── Payment method: COD or Online ──
+    const payMethod = window._payMethod || 'online';
+
+    if (payMethod === 'cod') {
+      orderData.paymentMethod = 'cod';
+      orderData.status = 'new';
+      _finaliseOrder(orderData, shippingFull, btn);
+      return;
+    }
+
+    // ── Try Razorpay online payment ──
+    const rzpKeyId = window.__RZP_KEY__ || localStorage.getItem('kyzer_razorpay_key_id') || '';
 
     if (!rzpKeyId || typeof Razorpay === 'undefined') {
-      alert('Online payment is not available right now.\n\nPlease contact us on WhatsApp or email to place your order.');
-      btn.textContent = 'Place Order →';
-      btn.disabled = false;
+      // Auto-fallback: ask user to switch to COD
+      if (confirm('Online payment is not configured yet.\n\nSwitch to Cash on Delivery instead?')) {
+        selectPayMethod('cod');
+        btn.textContent = 'Place Order →';
+        btn.disabled = false;
+      } else {
+        btn.textContent = 'Place Order →';
+        btn.disabled = false;
+      }
       return;
     }
 
@@ -2026,6 +2042,41 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
   function loadCheckoutPayment() {
     renderCheckoutSummary();
+    // Default to online if Razorpay key available, else COD
+    const hasKey = !!(window.__RZP_KEY__ || localStorage.getItem('kyzer_razorpay_key_id'));
+    selectPayMethod(hasKey ? 'online' : 'cod');
+  }
+
+  function selectPayMethod(mode) {
+    window._payMethod = mode;
+    const onlineBtn  = document.getElementById('payMethodOnlineBtn');
+    const codBtn     = document.getElementById('payMethodCODBtn');
+    const note       = document.getElementById('payMethodNote');
+    const badges     = document.getElementById('payOnlineBadges');
+    const submitBtn  = document.getElementById('coSubmitBtn');
+    if (!onlineBtn) return;
+
+    if (mode === 'online') {
+      onlineBtn.style.background = 'var(--orange)';
+      onlineBtn.style.borderColor = 'var(--orange)';
+      onlineBtn.style.color = '#111';
+      codBtn.style.background = 'var(--bg3)';
+      codBtn.style.borderColor = 'var(--border)';
+      codBtn.style.color = 'var(--muted)';
+      if (badges) badges.style.display = 'flex';
+      if (note) note.textContent = 'Card, UPI, Netbanking & Wallets — secured by Razorpay.';
+      if (submitBtn) submitBtn.textContent = 'Pay Online →';
+    } else {
+      codBtn.style.background = 'var(--orange)';
+      codBtn.style.borderColor = 'var(--orange)';
+      codBtn.style.color = '#111';
+      onlineBtn.style.background = 'var(--bg3)';
+      onlineBtn.style.borderColor = 'var(--border)';
+      onlineBtn.style.color = 'var(--muted)';
+      if (badges) badges.style.display = 'none';
+      if (note) note.textContent = 'Pay with cash when your order is delivered.';
+      if (submitBtn) submitBtn.textContent = 'Place Order (COD) →';
+    }
   }
 
   // Re-init step on checkout open
