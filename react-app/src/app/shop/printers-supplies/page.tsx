@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { addToLocalCart, buyNow } from '@/lib/shopCart';
 
@@ -35,13 +34,18 @@ const SORT_OPTIONS = [
 ];
 
 export default function PrintersSuppliesPage() {
-  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Supply[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [fSub, setFSub]         = useState(searchParams.get('subcat') || 'all');
+  const [fSub, setFSub]         = useState('all');
   const [sort, setSort]         = useState('default');
   const [search, setSearch]     = useState('');
   const [selected, setSelected] = useState<Supply | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const subcat = params.get('subcat');
+    if (subcat) setFSub(subcat);
+  }, []);
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
