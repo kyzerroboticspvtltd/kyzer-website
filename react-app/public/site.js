@@ -1344,6 +1344,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   function showThreeModel(object) {
+    if (typeof THREE === 'undefined' || !window._OrbitControls) {
+      showUnsupportedPreview('stl');
+      return;
+    }
     const container = document.getElementById('modelViewer');
     const canvas = document.getElementById('threeCanvas');
     clearThreeViewer();
