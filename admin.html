@@ -432,6 +432,22 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     .dash-kpi-grid { grid-template-columns: repeat(2,1fr); }
     .dash-two-col { grid-template-columns: 1fr; }
   }
+
+  /* BTN MODE SEGMENTED */
+  .btn-mode-seg { display:flex; border-radius:8px; overflow:hidden; border:0.5px solid var(--border); }
+  .btn-mode-seg-opt {
+    flex:1; padding:9px 0; font-size:13px; font-weight:500; cursor:pointer;
+    font-family:'DM Sans',sans-serif; border:none; background:var(--bg3); color:var(--muted);
+    transition:all 0.15s; text-align:center;
+  }
+  .btn-mode-seg-opt:first-child { border-right:0.5px solid var(--border); }
+  .btn-mode-seg-opt.active { background:var(--orange); color:#111; }
+  .pi-mode-badge {
+    font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px;
+    border-radius:5px; border:0.5px solid; cursor:pointer; transition:all 0.15s;
+    flex-shrink:0; white-space:nowrap;
+  }
+  .pi-mode-badge:hover { opacity:0.75; }
 </style>
 </head>
 <body>
@@ -1184,15 +1200,17 @@ CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);</pre>
       <label class="form-label">KEY SPECS (one per line)</label>
       <textarea class="form-input" id="mSpecs" style="height:90px;resize:vertical;" placeholder="4K camera with 3-axis gimbal&#10;35-min flight time&#10;GPS hold and return-to-home"></textarea>
     </div>
-    <div class="form-row-2" style="margin-bottom:14px;">
-      <div class="form-group" style="margin:0;">
-        <label class="form-label">PRICE</label>
-        <input class="form-input" type="text" id="mPrice" placeholder="₹42,000" />
+    <div class="form-group">
+      <label class="form-label">PRICE</label>
+      <input class="form-input" type="text" id="mPrice" placeholder="₹42,000" />
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">BUTTON TYPE</label>
+      <div class="btn-mode-seg">
+        <button type="button" class="btn-mode-seg-opt active" id="mBtnModeBuy" onclick="setBtnMode('buy')">🛒 Buy Now</button>
+        <button type="button" class="btn-mode-seg-opt" id="mBtnModeEnquire" onclick="setBtnMode('enquire')">📩 Enquire Now</button>
       </div>
-      <div class="form-group" style="margin:0;">
-        <label class="form-label">BUTTON TEXT</label>
-        <input class="form-input" type="text" id="mBtn" placeholder="Enquire" />
-      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px;">Buy Now — cart &amp; checkout. Enquire Now — customer messages you via WhatsApp.</div>
     </div>
     <div class="form-row-2" style="margin-bottom:14px;">
       <div class="form-group" style="margin:0;">
@@ -1387,14 +1405,14 @@ function doLogout() {
 
 // ── DEFAULTS ──
 const D_PRODUCTS = [
-  { id:'1', name:'KZ-Recon X1', category:'drone', emoji:'🚁', price:'₹42,000', description:'4K aerial survey drone, 35-min flight, GPS hold', details:'The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform, featuring a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time, and GPS with return-to-home safety.', specs:['4K camera with 3-axis gimbal','35-min flight time per charge','GPS hold and return-to-home','500m control range','Foldable compact design','Hard carrying case included'], badge:'NEW', badgeType:'new', btnText:'Enquire', visible:true },
-  { id:'2', name:'FPV Racing Kit', category:'drone', emoji:'✈️', price:'₹18,500', description:'Full 5" freestyle frame kit with motor mounts and ESC', details:'Complete FPV racing and freestyle kit built around a stiff 5-inch carbon fibre frame. Includes brushless motors, 4-in-1 ESC, and flight controller — all pre-soldered and bench-tested.', specs:['5-inch truX carbon fibre frame','2306 brushless motors 2450KV','45A 4-in-1 BLHeli_32 ESC','F7 flight controller pre-installed','Pre-soldered and bench tested','Supports FrSky, TBS and ExpressLRS'], badge:'POPULAR', badgeType:'', btnText:'Enquire', visible:true },
-  { id:'3', name:'KZ-Agri Sprayer', category:'drone', emoji:'🛸', price:'₹1,20,000', description:'Agricultural spray drone, 10L tank, 15m spray width', details:'Built for modern precision agriculture with a 10-litre tank capacity, 15m spray width per pass, and variable-rate nozzles for even chemical distribution. Hexacopter frame provides stable hover in light wind.', specs:['10-litre chemical tank','15m effective spray width per pass','Hexacopter frame for stable hover','20-min flight time per charge','Variable-rate spray nozzles','Custom field mission planning available'], badge:'IN STOCK', badgeType:'', btnText:'Enquire', visible:true },
-  { id:'4', name:'Nylon enclosure print', category:'print', emoji:'🖨️', price:'From ₹800', description:'High-strength engineering nylon housing, any spec', details:'Engineering-grade PA12 nylon printed on industrial FDM machines. Strong, slightly flexible, and resistant to chemicals and heat. STEP, STL or DXF accepted. Lead time 2–3 business days from file approval.', specs:['PA12 Nylon 12 material','Layer height 0.15–0.3mm','Build volume up to 300×300×400mm','Chemical and heat resistant','STEP, STL or DXF files accepted','2–3 business day lead time'], badge:'CUSTOM', badgeType:'', btnText:'Order', visible:true },
-  { id:'5', name:'Functional gear print', category:'print', emoji:'⚙️', price:'From ₹500', description:'PETG/ABS mechanical gears, brackets, and fixtures', details:'Precision-printed mechanical gears, brackets, and fixtures in PETG or ABS with 40–60% infill for strength, post-processed for dimensional accuracy. Great for drivetrain components, replacement parts, or custom tooling.', specs:['PETG or ABS material options','40–60% infill for strength','Post-processed for accuracy','Spur, bevel and worm gear profiles','STEP, DXF or drawing input','Same-day turnaround for simple parts'], badge:'CUSTOM', badgeType:'', btnText:'Order', visible:true },
-  { id:'6', name:'Rapid prototype pack', category:'proto', emoji:'💡', price:'From ₹3,500', description:'Design + print + assembly, delivered within 48 hours', details:'From concept to physical prototype in under 48 hours. We handle design verification, print, and assemble the final part. Includes up to 3 design revisions. Ideal for pitch demos, investor samples, and user testing.', specs:['48-hour turnaround guaranteed','Design verification included','Up to 3 revisions','Any FDM material available','Full assembly and finishing','Perfect for pitch demos and samples'], badge:'48HR', badgeType:'new', btnText:'Book', visible:true },
-  { id:'7', name:'Product dev sprint', category:'proto', emoji:'🔬', price:'From ₹15,000', description:'3-day iterative design and prototyping sprint for startups', details:'A structured 3-day sprint: Day 1 requirements and CAD, Day 2 print, test and iterate, Day 3 final prototype and documentation. Delivered with build report, BOM, and manufacture-ready files.', specs:['3-day structured sprint','Full CAD design included','Minimum 2 prototype iterations','Build report and BOM delivered','Manufacture-ready files','Post-sprint support available'], badge:'R&D', badgeType:'', btnText:'Book', visible:true },
-  { id:'8', name:'Beginner Micro Drone', category:'drone', emoji:'🎮', price:'₹4,500', description:'Indoor mini drone, perfect for learning and hobby flying', details:'The perfect starter drone for anyone new to flying. Altitude hold, one-key takeoff and landing, and a durable crash-resistant frame. Comes fully assembled with 2.4GHz remote, spare props, and USB charger.', specs:['Altitude hold mode','One-key takeoff and landing','2.4GHz controller included','10-min flight time per battery','Spare propellers in the box','USB charger included'], badge:'IN STOCK', badgeType:'', btnText:'Buy', visible:true },
+  { id:'1', name:'KZ-Recon X1', category:'drone', emoji:'🚁', price:'₹42,000', description:'4K aerial survey drone, 35-min flight, GPS hold', details:'The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform, featuring a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time, and GPS with return-to-home safety.', specs:['4K camera with 3-axis gimbal','35-min flight time per charge','GPS hold and return-to-home','500m control range','Foldable compact design','Hard carrying case included'], badge:'NEW', badgeType:'new', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'2', name:'FPV Racing Kit', category:'drone', emoji:'✈️', price:'₹18,500', description:'Full 5" freestyle frame kit with motor mounts and ESC', details:'Complete FPV racing and freestyle kit built around a stiff 5-inch carbon fibre frame. Includes brushless motors, 4-in-1 ESC, and flight controller — all pre-soldered and bench-tested.', specs:['5-inch truX carbon fibre frame','2306 brushless motors 2450KV','45A 4-in-1 BLHeli_32 ESC','F7 flight controller pre-installed','Pre-soldered and bench tested','Supports FrSky, TBS and ExpressLRS'], badge:'POPULAR', badgeType:'', btnText:'Buy Now', btnMode:'buy', visible:true },
+  { id:'3', name:'KZ-Agri Sprayer', category:'drone', emoji:'🛸', price:'₹1,20,000', description:'Agricultural spray drone, 10L tank, 15m spray width', details:'Built for modern precision agriculture with a 10-litre tank capacity, 15m spray width per pass, and variable-rate nozzles for even chemical distribution. Hexacopter frame provides stable hover in light wind.', specs:['10-litre chemical tank','15m effective spray width per pass','Hexacopter frame for stable hover','20-min flight time per charge','Variable-rate spray nozzles','Custom field mission planning available'], badge:'IN STOCK', badgeType:'', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'4', name:'Nylon enclosure print', category:'print', emoji:'🖨️', price:'From ₹800', description:'High-strength engineering nylon housing, any spec', details:'Engineering-grade PA12 nylon printed on industrial FDM machines. Strong, slightly flexible, and resistant to chemicals and heat. STEP, STL or DXF accepted. Lead time 2–3 business days from file approval.', specs:['PA12 Nylon 12 material','Layer height 0.15–0.3mm','Build volume up to 300×300×400mm','Chemical and heat resistant','STEP, STL or DXF files accepted','2–3 business day lead time'], badge:'CUSTOM', badgeType:'', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'5', name:'Functional gear print', category:'print', emoji:'⚙️', price:'From ₹500', description:'PETG/ABS mechanical gears, brackets, and fixtures', details:'Precision-printed mechanical gears, brackets, and fixtures in PETG or ABS with 40–60% infill for strength, post-processed for dimensional accuracy. Great for drivetrain components, replacement parts, or custom tooling.', specs:['PETG or ABS material options','40–60% infill for strength','Post-processed for accuracy','Spur, bevel and worm gear profiles','STEP, DXF or drawing input','Same-day turnaround for simple parts'], badge:'CUSTOM', badgeType:'', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'6', name:'Rapid prototype pack', category:'proto', emoji:'💡', price:'From ₹3,500', description:'Design + print + assembly, delivered within 48 hours', details:'From concept to physical prototype in under 48 hours. We handle design verification, print, and assemble the final part. Includes up to 3 design revisions. Ideal for pitch demos, investor samples, and user testing.', specs:['48-hour turnaround guaranteed','Design verification included','Up to 3 revisions','Any FDM material available','Full assembly and finishing','Perfect for pitch demos and samples'], badge:'48HR', badgeType:'new', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'7', name:'Product dev sprint', category:'proto', emoji:'🔬', price:'From ₹15,000', description:'3-day iterative design and prototyping sprint for startups', details:'A structured 3-day sprint: Day 1 requirements and CAD, Day 2 print, test and iterate, Day 3 final prototype and documentation. Delivered with build report, BOM, and manufacture-ready files.', specs:['3-day structured sprint','Full CAD design included','Minimum 2 prototype iterations','Build report and BOM delivered','Manufacture-ready files','Post-sprint support available'], badge:'R&D', badgeType:'', btnText:'Enquire Now', btnMode:'enquire', visible:true },
+  { id:'8', name:'Beginner Micro Drone', category:'drone', emoji:'🎮', price:'₹4,500', description:'Indoor mini drone, perfect for learning and hobby flying', details:'The perfect starter drone for anyone new to flying. Altitude hold, one-key takeoff and landing, and a durable crash-resistant frame. Comes fully assembled with 2.4GHz remote, spare props, and USB charger.', specs:['Altitude hold mode','One-key takeoff and landing','2.4GHz controller included','10-min flight time per battery','Spare propellers in the box','USB charger included'], badge:'IN STOCK', badgeType:'', btnText:'Buy Now', btnMode:'buy', visible:true },
 ];
 const D_CATEGORIES = [
   { id: 'drone', emoji: '🚁', name: 'Drones',      desc: 'Survey, FPV & agricultural platforms' },
@@ -1936,6 +1954,13 @@ function renderProducts() {
               onblur="quickEditPrice('${p.id}', this.value)"
               placeholder="e.g. 1499 or From ₹500" />
           </div>
+          <div onclick="event.stopPropagation()">
+            <button class="pi-mode-badge" onclick="toggleBtnMode('${p.id}')"
+              style="border-color:${p.btnMode==='enquire'?'#1a73e8':'var(--orange)'};background:${p.btnMode==='enquire'?'#e8f0fe':'#fff3e8'};color:${p.btnMode==='enquire'?'#1a73e8':'var(--orange)'};"
+              title="Click to toggle button mode">
+              ${p.btnMode==='enquire'?'📩 Enquire':'🛒 Buy Now'}
+            </button>
+          </div>
           <div class="toggle-wrap" onclick="event.stopPropagation()">
             <label>${p.visible?'Live':'Hidden'}</label>
             <button class="toggle ${p.visible?'on':''}" onclick="toggleVis('${p.id}')"></button>
@@ -2103,7 +2128,7 @@ function openAddProduct() {
   document.getElementById('modalTitle').textContent = 'Add product';
   ['mEmoji','mName','mDesc','mDetails','mSpecs','mPrice','mBadge'].forEach(id => document.getElementById(id).value = '');
   fillCatDropdown(categories[0]?.id || '');
-  document.getElementById('mBtn').value = 'Enquire';
+  setBtnMode('buy');
   document.getElementById('mBadgeType').value = '';
   document.getElementById('mVisible').className = 'toggle on';
   prodPhotosData = [];
@@ -2121,7 +2146,8 @@ function openEdit(id) {
   document.getElementById('mDetails').value = p.details || '';
   document.getElementById('mSpecs').value   = (p.specs || []).join('\n');
   document.getElementById('mPrice').value   = p.price;
-  document.getElementById('mBtn').value     = p.btnText;
+  const _mode = p.btnMode || (/enquire|order|book/i.test(p.btnText||'') ? 'enquire' : 'buy');
+  setBtnMode(_mode);
   document.getElementById('mBadge').value   = p.badge;
   document.getElementById('mBadgeType').value = p.badgeType;
   document.getElementById('mVisible').className = 'toggle' + (p.visible ? ' on' : '');
@@ -2130,6 +2156,20 @@ function openEdit(id) {
   document.getElementById('prodModal').classList.add('open');
 }
 function closeProdModal() { document.getElementById('prodModal').classList.remove('open'); }
+
+function setBtnMode(mode) {
+  document.getElementById('mBtnModeBuy').classList.toggle('active', mode === 'buy');
+  document.getElementById('mBtnModeEnquire').classList.toggle('active', mode === 'enquire');
+}
+
+function toggleBtnMode(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  p.btnMode = p.btnMode === 'enquire' ? 'buy' : 'enquire';
+  p.btnText = p.btnMode === 'buy' ? 'Buy Now' : 'Enquire Now';
+  saveP(); renderProducts();
+  toast(p.name + ': button set to ' + (p.btnMode === 'buy' ? 'Buy Now' : 'Enquire Now') + '.');
+}
 function saveProduct() {
   const name = document.getElementById('mName').value.trim();
   if (!name) { toast('Product name is required.', true); return; }
@@ -2144,7 +2184,8 @@ function saveProduct() {
     details: document.getElementById('mDetails').value.trim(),
     specs: document.getElementById('mSpecs').value.split('\n').map(s => s.trim()).filter(Boolean),
     price: document.getElementById('mPrice').value.trim() || 'Contact us',
-    btnText: document.getElementById('mBtn').value.trim() || 'Enquire',
+    btnMode: document.getElementById('mBtnModeEnquire').classList.contains('active') ? 'enquire' : 'buy',
+    btnText: document.getElementById('mBtnModeEnquire').classList.contains('active') ? 'Enquire Now' : 'Buy Now',
     badge: document.getElementById('mBadge').value.trim(),
     badgeType: document.getElementById('mBadgeType').value,
     visible: document.getElementById('mVisible').classList.contains('on'),
