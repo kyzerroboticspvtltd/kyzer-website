@@ -30,7 +30,9 @@ export default function PrintingPage() {
         .sl-sub { font-size:16px; color:var(--muted); margin-bottom:52px; }
 
         .sl-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-        @media(max-width:600px) { .sl-grid { grid-template-columns:1fr; } }
+        .sl-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:20px; }
+        @media(max-width:700px) { .sl-grid { grid-template-columns:1fr; } .sl-grid-3 { grid-template-columns:1fr; } }
+        @media(min-width:701px) and (max-width:900px) { .sl-grid-3 { grid-template-columns:1fr 1fr; } }
 
         .sl-card {
           display:block; text-decoration:none; color:inherit;
@@ -73,10 +75,31 @@ export default function PrintingPage() {
             <div className="sl-card-arrow">Browse Prints →</div>
           </Link>
           <Link href="/shop/printers-supplies" className="sl-card">
-            <div className="sl-card-icon">🔧</div>
-            <div className="sl-card-name">Printers & Supplies</div>
-            <div className="sl-card-desc">3D printers, filaments, upgrades & spare components for your workshop.</div>
-            <div className="sl-card-arrow">Browse Supplies →</div>
+            <div className="sl-card-icon">🛒</div>
+            <div className="sl-card-name">All Supplies</div>
+            <div className="sl-card-desc">Browse everything — printers, filaments, and spare parts in one place.</div>
+            <div className="sl-card-arrow">Browse All →</div>
+          </Link>
+        </div>
+
+        <div className="sl-grid-3">
+          <Link href="/shop/printers-supplies?subcat=printer" className="sl-card">
+            <div className="sl-card-icon">🖨️</div>
+            <div className="sl-card-name">Printers</div>
+            <div className="sl-card-desc">FDM and resin 3D printers for hobbyists, makers, and professionals.</div>
+            <div className="sl-card-arrow">Browse Printers →</div>
+          </Link>
+          <Link href="/shop/printers-supplies?subcat=filament" className="sl-card">
+            <div className="sl-card-icon">🧵</div>
+            <div className="sl-card-name">Filaments</div>
+            <div className="sl-card-desc">PLA, PETG, ABS, TPU, Nylon and specialty filaments in multiple colours.</div>
+            <div className="sl-card-arrow">Browse Filaments →</div>
+          </Link>
+          <Link href="/shop/printers-supplies?subcat=component" className="sl-card">
+            <div className="sl-card-icon">🔩</div>
+            <div className="sl-card-name">Spare Parts</div>
+            <div className="sl-card-desc">Nozzles, beds, extruders, and spare components to keep your printer running.</div>
+            <div className="sl-card-arrow">Browse Parts →</div>
           </Link>
         </div>
       </div>
