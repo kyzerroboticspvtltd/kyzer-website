@@ -1591,8 +1591,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         const priceHtml = p.price
           ? `<span class="prod-price">${_cnp > 0 ? '₹' + _cnp.toLocaleString('en-IN') : p.price}</span>`
           : '';
-        const btnLabel = _cnp > 0 ? 'Buy Now →' : (_isFrom ? 'Get Quote →' : (p.btnText || 'Enquire'));
-        const btnCls   = _cnp > 0 ? 'prod-btn prod-btn-buy' : 'prod-btn';
+        const actionBtns = _isFrom
+          ? `<button class="prod-cart-btn" onclick="event.stopPropagation();showPage('quote')">Get Quote</button>
+             <button class="prod-buy-btn" onclick="event.stopPropagation();_cardEnquire(this)">Order →</button>`
+          : `<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>
+             <button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>`;
         return `
         <div class="prod-card" data-cat="${p.category}" data-subcat="${p.subcat||''}" data-frame-type="${p.frameType||''}" data-material="${p.material||''}" data-wheelbase="${p.wheelbase||''}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
@@ -1600,10 +1603,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>
             <h4>${p.name}</h4>
             <p>${p.description}</p>
-            <div class="prod-footer">
-              ${priceHtml}
-              <button class="${btnCls}">${btnLabel}</button>
-            </div>
+            <div class="prod-footer">${priceHtml}</div>
+            <div class="prod-actions">${actionBtns}</div>
           </div>
         </div>`;
       }).join('');
@@ -2481,13 +2482,23 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   // Close dropdown when clicking outside
-  document.addEventListener('DOMContentLoaded', function() {
+  // Works whether DOMContentLoaded already fired (Next.js afterInteractive) or not
+  function _domReady(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn);
+    } else {
+      fn();
+    }
+  }
+
+  _domReady(function() {
     document.addEventListener('click', function(e) {
       const wrap = document.getElementById('navAccountWrap');
       if (wrap && !wrap.contains(e.target)) closeAccDropdown();
     });
     // Close auth modal on overlay click
-    document.getElementById('authOverlay').addEventListener('click', function(e) {
+    const authOv = document.getElementById('authOverlay');
+    if (authOv) authOv.addEventListener('click', function(e) {
       if (e.target === this) closeAuthModal(e);
     });
     // Enter key in auth inputs
@@ -2501,17 +2512,14 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     });
     updateNavAccount();
     setTimeout(initGoogleAuth, 500);
-    setTimeout(_enhanceProductCards, 0);
-    // Cookie consent
-    (function() {
-      const p = _ckGet();
-      if (!p) {
-        setTimeout(function() {
-          var b = document.getElementById('cookieBanner');
-          if (b) b.style.display = 'flex';
-        }, 1500);
-      }
-    })();
+    _enhanceProductCards();
+    // Cookie consent banner
+    if (!_ckGet()) {
+      setTimeout(function() {
+        var b = document.getElementById('cookieBanner');
+        if (b) b.style.display = 'flex';
+      }, 1500);
+    }
   });
 
   // ── CARD QUICK-BUY ────────────────────────────────────────────────────────
