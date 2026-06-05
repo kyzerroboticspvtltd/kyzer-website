@@ -18,6 +18,7 @@ interface Drone {
   visible: boolean;
   subcat: string;
   category: string;
+  btnMode?: string;
 }
 
 const DRONE_TYPES = [
@@ -78,6 +79,11 @@ export default function CompleteDronesPage() {
     addToLocalCart(d);
     setAddedId(d.id);
     setTimeout(() => setAddedId(null), 1500);
+  }
+
+  function enquireNow(d: Drone) {
+    const msg = encodeURIComponent(`Hi, I'd like to enquire about: ${d.name} (${d.price})`);
+    window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
   }
 
   const typeLabel: Record<string, string> = {
@@ -188,14 +194,23 @@ export default function CompleteDronesPage() {
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                      <button onClick={e => { e.stopPropagation(); handleAddToCart(d); }}
-                        style={{ flex: 1, padding: '9px 6px', background: addedId === d.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === d.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === d.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
-                        {addedId === d.id ? '✓ Added!' : '+ Cart'}
-                      </button>
-                      <button onClick={e => { e.stopPropagation(); buyNow(d); }}
-                        style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                        Buy Now →
-                      </button>
+                      {d.btnMode === 'enquire' ? (
+                        <button onClick={e => { e.stopPropagation(); enquireNow(d); }}
+                          style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                          Enquire Now →
+                        </button>
+                      ) : (
+                        <>
+                          <button onClick={e => { e.stopPropagation(); handleAddToCart(d); }}
+                            style={{ flex: 1, padding: '9px 6px', background: addedId === d.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === d.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === d.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                            {addedId === d.id ? '✓ Added!' : '+ Cart'}
+                          </button>
+                          <button onClick={e => { e.stopPropagation(); buyNow(d); }}
+                            style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                            Buy Now →
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -245,14 +260,23 @@ export default function CompleteDronesPage() {
               <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => { addToLocalCart(selected); setAddedId(selected.id); setTimeout(() => setAddedId(null), 1500); }}
-                style={{ flex: 1, padding: '13px', background: addedId === selected.id ? '#e8f5e9' : '#111', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: addedId === selected.id ? '#2e7d32' : '#fff', transition: 'all 0.2s' }}>
-                {addedId === selected.id ? '✓ Added to Cart!' : 'Add to Cart'}
-              </button>
-              <button onClick={() => buyNow(selected)}
-                style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
-                Buy Now →
-              </button>
+              {selected.btnMode === 'enquire' ? (
+                <button onClick={() => enquireNow(selected)}
+                  style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
+                  Enquire Now →
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => { addToLocalCart(selected); setAddedId(selected.id); setTimeout(() => setAddedId(null), 1500); }}
+                    style={{ flex: 1, padding: '13px', background: addedId === selected.id ? '#e8f5e9' : '#111', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: addedId === selected.id ? '#2e7d32' : '#fff', transition: 'all 0.2s' }}>
+                    {addedId === selected.id ? '✓ Added to Cart!' : 'Add to Cart'}
+                  </button>
+                  <button onClick={() => buyNow(selected)}
+                    style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
+                    Buy Now →
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
