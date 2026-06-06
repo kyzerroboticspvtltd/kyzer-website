@@ -152,11 +152,12 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   ];
 
   const CAT_PAGES = {
-    drone:    '/shop/drones',
-    printing: '/shop/printing',
-    print:    '/shop/printing',
-    proto:    '/shop/prototyping',
-    '3dprint':'/shop/printing',
+    drone:       '/shop/drones',
+    printing:    '/shop/printing',
+    print:       '/shop/printing',
+    proto:       '/shop/prototyping',
+    '3dprint':   '/shop/printing',
+    electronics: '/shop/electronics',
   };
 
   const PRINT_IDS = ['print', '3dprint'];

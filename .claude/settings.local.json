@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(start chrome *)"
+      "Bash(start chrome *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git push *)",
+      "Bash(npx vercel *)",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__get_deployment_build_logs"
     ]
   }
 }
