@@ -32,14 +32,16 @@ export async function POST(req: NextRequest) {
     // 1. Save to Supabase (primary — admin visibility)
     const sb = getSupabase();
     if (sb) {
-      await sb.from('quote_inquiries').insert({
-        id: inquiryId,
-        submitted_at: submittedAt,
-        status: 'new',
-        name, email, phone, org,
-        project_type: projectType,
-        description, timeline, budget,
-      }).catch(() => {});
+      try {
+        await sb.from('quote_inquiries').insert({
+          id: inquiryId,
+          submitted_at: submittedAt,
+          status: 'new',
+          name, email, phone, org,
+          project_type: projectType,
+          description, timeline, budget,
+        });
+      } catch {}
     }
 
     // 2. Send emails (non-fatal — don't fail the request if email is unconfigured)
