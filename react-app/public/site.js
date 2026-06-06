@@ -1066,6 +1066,21 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+  // Click on the Upload Model button opens the file picker
+  uploadZone.addEventListener('click', e => {
+    if (e.target !== fileInput) fileInput.click();
+  });
+
+  // Click anywhere on the model viewer box also opens the file picker
+  const modelViewerEl = document.getElementById('modelViewer');
+  if (modelViewerEl) {
+    modelViewerEl.addEventListener('click', () => {
+      if (!window._threeModel) fileInput.click();
+    });
+    modelViewerEl.removeAttribute('onclick');
+  }
+
   uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
   uploadZone.addEventListener('drop', e => {
