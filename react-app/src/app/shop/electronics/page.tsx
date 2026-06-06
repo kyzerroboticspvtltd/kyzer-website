@@ -7,7 +7,7 @@ const CATEGORIES = [
     name: 'Arduino & Microcontrollers',
     icon: '🔵',
     desc: 'Arduino boards, clones, shields and accessories for prototyping and embedded projects.',
-    link: '/shop/electronics/products?cat=arduino',
+    link: '/shop/electronics/arduino',
     browse: 'Browse Arduino →',
   },
   {
