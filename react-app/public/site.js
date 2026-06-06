@@ -932,6 +932,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // ====== CALCULATE ======
   function calculateQuote() {
+    // Read manual dimension inputs if no file has set dimensions
+    const dimLEl = document.getElementById('dimL');
+    const dimWEl = document.getElementById('dimW');
+    const dimHEl = document.getElementById('dimH');
+    const manualL = dimLEl ? (parseFloat(dimLEl.value) || 0) : 0;
+    const manualW = dimWEl ? (parseFloat(dimWEl.value) || 0) : 0;
+    const manualH = dimHEl ? (parseFloat(dimHEl.value) || 0) : 0;
+    if (manualL && manualW && manualH) {
+      quoteState.L = manualL;
+      quoteState.W = manualW;
+      quoteState.H = manualH;
+    }
     const L = quoteState.L;
     const W = quoteState.W;
     const H = quoteState.H;
@@ -940,11 +952,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
     if (!L || !W || !H) {
       document.getElementById('priceAmount').textContent = '₹—';
-      document.getElementById('priceSub').textContent = 'Upload a file to get a quote';
+      document.getElementById('priceSub').textContent = 'Upload a file or enter dimensions above to get a quote';
       ['bMat','bTime','bQual','bInfill','bColor','bQty','bDelivery','bTotal'].forEach(id => {
         document.getElementById(id).textContent = '—';
       });
-      document.getElementById('turnaroundText').textContent = 'Upload a file to see turnaround';
+      document.getElementById('turnaroundText').textContent = 'Enter dimensions to see turnaround';
       return;
     }
 
