@@ -910,7 +910,22 @@ ALTER TABLE shop_orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "customers_insert_shop_orders" ON shop_orders;
 DROP POLICY IF EXISTS "read_shop_orders" ON shop_orders;
 CREATE POLICY "customers_insert_shop_orders" ON shop_orders FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);</pre>
+CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);
+
+-- ── CUSTOMERS TABLE ──
+CREATE TABLE IF NOT EXISTS customers (
+  id TEXT PRIMARY KEY,
+  name TEXT,
+  email TEXT UNIQUE,
+  phone TEXT,
+  address JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "customers_insert" ON customers;
+DROP POLICY IF EXISTS "customers_read" ON customers;
+CREATE POLICY "customers_insert" ON customers FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           </details>
           <button class="btn btn-primary" onclick="saveSupabase()">Save Supabase config →</button>
         </div>
@@ -1530,6 +1545,29 @@ function loadCustomers() {
   allCustomers = JSON.parse(localStorage.getItem('kyzer_customers') || '[]');
 }
 
+async function _fetchSupabaseCustomers() {
+  const { url, key } = _sbCreds();
+  if (!url || !key) return;
+  try {
+    const r = await fetch(url + '/rest/v1/customers?select=*&order=created_at.desc', {
+      headers: { apikey: key, Authorization: 'Bearer ' + key }
+    });
+    if (!r.ok) return;
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows.length) return;
+    const local = JSON.parse(localStorage.getItem('kyzer_customers') || '[]');
+    const seen = new Set(local.map(c => c.id));
+    rows.forEach(row => {
+      if (!seen.has(row.id)) {
+        local.push({ id: row.id, name: row.name, email: row.email, phone: row.phone || '', address: row.address || {}, createdAt: row.created_at });
+        seen.add(row.id);
+      }
+    });
+    localStorage.setItem('kyzer_customers', JSON.stringify(local));
+    allCustomers = local;
+  } catch(e) {}
+}
+
 function renderCustomers(filter) {
   loadCustomers();
   const list = document.getElementById('customerList');
@@ -1672,7 +1710,7 @@ function switchTab(name) {
   if (name === 'security') initSecurity();
   if (name === 'orders') { renderOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseOrders(url,key); }
   if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
-  if (name === 'customers') renderCustomers();
+  if (name === 'customers') { _fetchSupabaseCustomers().then(() => renderCustomers()); }
 }
 
 // ── DASHBOARD ──
@@ -2987,6 +3025,7 @@ async function startRealtimePolling() {
 
   await _fetchAllSupabaseOrders(url, key);
   await _fetchAllSupabaseShopOrders(url, key);
+  await _fetchSupabaseCustomers();
 
   _lastPollTime = new Date().toISOString();
   _lastShopPollTime = _lastPollTime;
@@ -2994,6 +3033,7 @@ async function startRealtimePolling() {
   _rtInterval = setInterval(() => {
     _pollNewOrders(url, key);
     _pollNewShopOrders(url, key);
+    _fetchSupabaseCustomers().then(() => {});
   }, 15000);
   document.getElementById('liveIndicator').style.display = 'flex';
 }

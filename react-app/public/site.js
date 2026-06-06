@@ -2329,6 +2329,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const customer = { id: 'CUS-' + Date.now(), name, email, phone, password: hashed, address: {}, createdAt: new Date().toISOString() };
     customers.push(customer);
     saveCustomers(customers);
+
+    // Sync to Supabase so admin panel can see new signups cross-device
+    const _sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) || '';
+    const _sbKey = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY) || '';
+    if (_sbUrl && _sbKey) {
+      fetch(_sbUrl + '/rest/v1/customers', {
+        method: 'POST',
+        headers: { 'apikey': _sbKey, 'Authorization': 'Bearer ' + _sbKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=ignore-duplicates' },
+        body: JSON.stringify({ id: customer.id, name: customer.name, email: customer.email, phone: customer.phone || null, created_at: customer.createdAt, address: customer.address })
+      }).catch(() => {});
+    }
+
     const session = { id: customer.id, name, email };
     setCurrentCustomer(session);
     updateNavAccount();
