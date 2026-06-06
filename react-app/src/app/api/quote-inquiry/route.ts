@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
+import { createClient } from '@supabase/supabase-js';
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,10 +26,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Missing required fields.' }, { status: 400 });
     }
 
+    const inquiryId = 'QI-' + Date.now();
+    const submittedAt = new Date().toISOString();
+
+    // 1. Save to Supabase (primary — admin visibility)
+    const sb = getSupabase();
+    if (sb) {
+      await sb.from('quote_inquiries').insert({
+        id: inquiryId,
+        submitted_at: submittedAt,
+        status: 'new',
+        name, email, phone, org,
+        project_type: projectType,
+        description, timeline, budget,
+      }).catch(() => {});
+    }
+
+    // 2. Send emails (non-fatal — don't fail the request if email is unconfigured)
     const html = `
       <div style="font-family:sans-serif;max-width:620px;margin:auto;">
         <h2 style="color:#FF8C35;margin-bottom:4px;">New Project Quote Request</h2>
-        <p style="color:#888;font-size:13px;margin-bottom:24px;">Submitted via kyzerrobotics.com</p>
+        <p style="color:#888;font-size:13px;margin-bottom:24px;">Submitted via kyzerrobotics.com · ${inquiryId}</p>
 
         <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:8px;">Contact</h3>
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
@@ -46,25 +71,28 @@ export async function POST(req: NextRequest) {
         <p style="font-size:12px;color:#bbb;">Kyzer Robotics · Quote Inquiry Form</p>
       </div>`;
 
-    await sendMail({ to: NOTIFY_EMAIL(), subject: `[Kyzer Quote] ${projectType ? projectType + ' — ' : ''}${name}`, html });
-
-    await sendMail({
-      to: email,
-      subject: 'We received your project request — Kyzer Robotics',
-      html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:auto;">
-          <h2 style="color:#FF8C35;">Got it, ${name}!</h2>
-          <p>Thanks for reaching out. We've received your project details and will get back to you within <strong>a few hours</strong>.</p>
-          <p>In the meantime, feel free to chat with us on WhatsApp for a faster response:</p>
-          <a href="https://wa.me/919049695264" style="display:inline-block;margin:12px 0;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Chat on WhatsApp →</a>
-          <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
-          <p style="font-size:13px;color:#888;">Kyzer Robotics · Pune, Maharashtra<br>info@kyzerrobotics.com</p>
-        </div>`,
-    });
+    try {
+      await sendMail({ to: NOTIFY_EMAIL(), subject: `[Kyzer Quote] ${projectType ? projectType + ' — ' : ''}${name}`, html });
+      await sendMail({
+        to: email,
+        subject: 'We received your project request — Kyzer Robotics',
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:auto;">
+            <h2 style="color:#FF8C35;">Got it, ${name}!</h2>
+            <p>Thanks for reaching out. We've received your project details and will get back to you within <strong>a few hours</strong>.</p>
+            <p>In the meantime, feel free to chat with us on WhatsApp for a faster response:</p>
+            <a href="https://wa.me/919049695264" style="display:inline-block;margin:12px 0;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Chat on WhatsApp →</a>
+            <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+            <p style="font-size:13px;color:#888;">Kyzer Robotics · Pune, Maharashtra<br>info@kyzerrobotics.com</p>
+          </div>`,
+      });
+    } catch {
+      // Email failed — inquiry is already saved to Supabase, so return success
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err: unknown) {
     console.error('Quote inquiry error:', err);
-    return NextResponse.json({ ok: false, error: 'Failed to send.' }, { status: 500 });
+    return NextResponse.json({ ok: false, error: 'Failed to save inquiry.' }, { status: 500 });
   }
 }

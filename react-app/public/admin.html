@@ -495,6 +495,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>📄</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-link" onclick="switchTab('shoporders')" id="tl-shoporders" style="display:flex;align-items:center;"><span>🛒</span> Shop Orders <span id="shopOrdersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-link" onclick="switchTab('customers')" id="tl-customers"><span>👤</span> Customers</div>
+      <div class="sidebar-link" onclick="switchTab('quotes')" id="tl-quotes" style="display:flex;align-items:center;"><span>💬</span> Quote Inquiries <span id="quotesNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
       <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
@@ -912,6 +913,20 @@ DROP POLICY IF EXISTS "read_shop_orders" ON shop_orders;
 CREATE POLICY "customers_insert_shop_orders" ON shop_orders FOR INSERT TO anon WITH CHECK (true);
 CREATE POLICY "read_shop_orders" ON shop_orders FOR SELECT USING (true);
 
+-- ── QUOTE INQUIRIES TABLE ──
+CREATE TABLE IF NOT EXISTS quote_inquiries (
+  id TEXT PRIMARY KEY,
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT DEFAULT 'new',
+  name TEXT, email TEXT, phone TEXT, org TEXT,
+  project_type TEXT, description TEXT, timeline TEXT, budget TEXT
+);
+ALTER TABLE quote_inquiries ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "qi_insert" ON quote_inquiries;
+DROP POLICY IF EXISTS "qi_read" ON quote_inquiries;
+CREATE POLICY "qi_insert" ON quote_inquiries FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "qi_read"   ON quote_inquiries FOR SELECT USING (true);
+
 -- ── CUSTOMERS TABLE ──
 CREATE TABLE IF NOT EXISTS customers (
   id TEXT PRIMARY KEY,
@@ -1102,8 +1117,30 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
         <div id="customerList" class="cust-list"></div>
       </div>
 
+      <!-- QUOTE INQUIRIES TAB -->
+      <div class="admin-tab" id="tab-quotes">
+        <div class="tab-header">
+          <h2>Quote Inquiries</h2>
+          <p>Project quote requests submitted via the Get a Quote page.</p>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="loadQuoteInquiries()">↻ Refresh</button>
+        </div>
+
+        <div class="orders-stats" style="grid-template-columns:repeat(3,1fr);">
+          <div class="ostat-card"><div class="ostat-num" id="qistat-total">0</div><div class="ostat-label">Total inquiries</div></div>
+          <div class="ostat-card new"><div class="ostat-num" id="qistat-new">0</div><div class="ostat-label">New</div></div>
+          <div class="ostat-card done"><div class="ostat-num" id="qistat-responded">0</div><div class="ostat-label">Responded</div></div>
+        </div>
+
+        <div id="quoteInquiryList" class="order-list"></div>
+      </div>
+
     </main>
   </div>
+</div>
+
+<!-- QUOTE INQUIRY MODAL -->
+<div id="quoteModal" class="omodal-backdrop" onclick="if(event.target===this)closeQuoteModal()">
+  <div class="omodal"></div>
 </div>
 
 <!-- ORDER DETAIL MODAL -->
@@ -1702,6 +1739,147 @@ function deleteCustomer() {
   renderCustomers(document.getElementById('custSearchInput').value);
 }
 
+// ── QUOTE INQUIRIES ──
+let allQuoteInquiries = [];
+
+async function loadQuoteInquiries() {
+  const { url, key } = _sbCreds();
+  const list = document.getElementById('quoteInquiryList');
+  if (!url || !key) {
+    if (list) list.innerHTML = '<div class="orders-empty">Supabase not configured — run the setup SQL first.</div>';
+    return;
+  }
+  try {
+    const r = await fetch(`${url}/rest/v1/quote_inquiries?select=*&order=submitted_at.desc`, {
+      headers: { apikey: key, Authorization: 'Bearer ' + key }
+    });
+    if (!r.ok) { if (list) list.innerHTML = '<div class="orders-empty">Could not load — check Supabase setup SQL.</div>'; return; }
+    allQuoteInquiries = await r.json();
+  } catch(e) {
+    if (list) list.innerHTML = '<div class="orders-empty">Error loading inquiries.</div>';
+    return;
+  }
+  renderQuoteInquiries();
+}
+
+function renderQuoteInquiries() {
+  const list = document.getElementById('quoteInquiryList');
+  if (!list) return;
+  const total = allQuoteInquiries.length;
+  const newC  = allQuoteInquiries.filter(q => q.status === 'new').length;
+  const resp  = allQuoteInquiries.filter(q => q.status === 'responded').length;
+  document.getElementById('qistat-total').textContent     = total;
+  document.getElementById('qistat-new').textContent       = newC;
+  document.getElementById('qistat-responded').textContent = resp;
+
+  const badge = document.getElementById('quotesNewBadge');
+  if (newC > 0) { badge.textContent = newC; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+
+  if (!total) { list.innerHTML = '<div class="orders-empty">No quote inquiries yet.</div>'; return; }
+
+  const TYPE_ICONS = { drone:'🛸', '3dprint':'🖨️', electronics:'💡', robotics:'🦾', prototype:'🧪', other:'✨' };
+  const STATUS_COLORS = { new:'#FF8C35', responded:'#2e7d32', closed:'#888' };
+
+  list.innerHTML = allQuoteInquiries.map(q => {
+    const color = STATUS_COLORS[q.status] || '#888';
+    const icon  = TYPE_ICONS[q.project_type] || '✨';
+    const date  = new Date(q.submitted_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+    return `<div class="order-item${q.status==='new'?' is-new':''}" onclick="openQuoteModal('${q.id}')">
+      <div class="order-status-dot" style="background:${color}"></div>
+      <div class="oi-main">
+        <div class="oi-name">${icon} ${escHtml(q.name)} <span style="font-size:11px;color:var(--muted);font-weight:400">${escHtml(q.email)}</span></div>
+        <div class="oi-meta">${escHtml(q.project_type||'—')} · ${escHtml(q.budget||'—')} · ${escHtml(q.timeline||'—')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="order-status-badge" style="background:${color}22;color:${color};">${q.status}</span>
+        <div class="oi-date">${date}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let _currentQuoteId = null;
+
+function openQuoteModal(id) {
+  const q = allQuoteInquiries.find(x => x.id === id);
+  if (!q) return;
+  _currentQuoteId = id;
+  const date = new Date(q.submitted_at).toLocaleString('en-IN');
+  const TYPE_ICONS = { drone:'🛸', '3dprint':'🖨️', electronics:'💡', robotics:'🦾', prototype:'🧪', other:'✨' };
+  const icon = TYPE_ICONS[q.project_type] || '✨';
+  const html = `
+    <div class="omodal-header">
+      <div>
+        <div class="omodal-id">${escHtml(q.id)}</div>
+        <div class="omodal-date">${date}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <select class="form-input" onchange="updateQuoteStatus('${q.id}',this.value)" style="font-size:12px;padding:6px 10px;width:auto;">
+          <option value="new"${q.status==='new'?' selected':''}>New</option>
+          <option value="in_review"${q.status==='in_review'?' selected':''}>In Review</option>
+          <option value="responded"${q.status==='responded'?' selected':''}>Responded</option>
+          <option value="closed"${q.status==='closed'?' selected':''}>Closed</option>
+        </select>
+        <button class="topbar-btn" onclick="closeQuoteModal()">✕ Close</button>
+      </div>
+    </div>
+    <div class="omodal-body">
+      <div class="omod-section">
+        <div class="omod-section-title">Contact</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Name</label><div>${escHtml(q.name)}</div></div>
+          <div class="omod-field"><label>Email</label><div><a href="mailto:${escHtml(q.email)}" style="color:var(--orange);text-decoration:none;">${escHtml(q.email)}</a></div></div>
+          <div class="omod-field"><label>Phone</label><div><a href="https://wa.me/${(q.phone||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;">${escHtml(q.phone||'—')}</a></div></div>
+          <div class="omod-field"><label>Org / College</label><div>${escHtml(q.org||'—')}</div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Project</div>
+        <div class="omod-grid">
+          <div class="omod-field"><label>Type</label><div>${icon} ${escHtml(q.project_type||'—')}</div></div>
+          <div class="omod-field"><label>Timeline</label><div>${escHtml(q.timeline||'—')}</div></div>
+          <div class="omod-field"><label>Budget</label><div>${escHtml(q.budget||'—')}</div></div>
+        </div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Description</div>
+        <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;background:var(--bg3);border-radius:8px;padding:14px;">${escHtml(q.description||'—')}</div>
+      </div>
+      <div class="omod-section" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="mailto:${escHtml(q.email)}" class="btn btn-primary">✉️ Reply by Email</a>
+        <a href="https://wa.me/${(q.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-ghost" style="border-color:#25D366;color:#25D366;">💬 WhatsApp</a>
+      </div>
+    </div>`;
+  const modal = document.getElementById('quoteModal');
+  modal.querySelector('.omodal').innerHTML = html;
+  modal.classList.add('open');
+
+  // Mark as in_review automatically if new
+  if (q.status === 'new') updateQuoteStatus(id, 'in_review');
+}
+
+async function updateQuoteStatus(id, status) {
+  const q = allQuoteInquiries.find(x => x.id === id);
+  if (!q) return;
+  q.status = status;
+  const { url, key } = _sbCreds();
+  if (url && key) {
+    fetch(`${url}/rest/v1/quote_inquiries?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ status })
+    }).catch(() => {});
+  }
+  renderQuoteInquiries();
+}
+
+function closeQuoteModal() {
+  document.getElementById('quoteModal').classList.remove('open');
+  _currentQuoteId = null;
+  renderQuoteInquiries();
+}
+
 function switchTab(name) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -1712,6 +1890,7 @@ function switchTab(name) {
   if (name === 'orders') { renderOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseOrders(url,key); }
   if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
   if (name === 'customers') { _fetchSupabaseCustomers().then(() => renderCustomers()); }
+  if (name === 'quotes') { loadQuoteInquiries(); }
 }
 
 // ── DASHBOARD ──
@@ -3031,10 +3210,12 @@ async function startRealtimePolling() {
   _lastPollTime = new Date().toISOString();
   _lastShopPollTime = _lastPollTime;
   if (_rtInterval) clearInterval(_rtInterval);
+  await loadQuoteInquiries();
   _rtInterval = setInterval(() => {
     _pollNewOrders(url, key);
     _pollNewShopOrders(url, key);
     _fetchSupabaseCustomers().then(() => {});
+    loadQuoteInquiries();
   }, 15000);
   document.getElementById('liveIndicator').style.display = 'flex';
 }
