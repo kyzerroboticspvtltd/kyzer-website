@@ -42,6 +42,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   let _activeCat = 'all';
 
   function filterCat(cat) {
+    const CAT_PAGES = { electronics: '/shop/electronics' };
+    if (CAT_PAGES[cat]) { window.location.href = CAT_PAGES[cat]; return; }
     _activeCat = cat;
     const grid        = document.getElementById('productsGrid');
     const subcatTabs  = document.getElementById('subcatTabs');
