@@ -20,7 +20,7 @@ export function addToLocalCart(product: { id?: string; name: string; price: stri
       cart.push({
         id: pid,
         name: product.name,
-        price: String(parseFloat(product.price) || 0),
+        price: String(parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0),
         emoji: product.emoji || '📦',
         qty: 1,
       });
