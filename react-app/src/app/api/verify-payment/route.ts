@@ -28,14 +28,19 @@ export async function POST(req: NextRequest) {
     if (orderData && orderData.email) {
       const o = { ...orderData, paymentId: razorpay_payment_id } as Record<string, unknown>;
 
-      // Generate tax invoice PDF (payment confirmed = final invoice, not proforma)
+      // Generate tax invoice PDF (non-fatal — email sends even if PDF fails)
       const invoiceData = shopOrderToInvoice(o, true);
-      const pdfBuffer   = await generateInvoicePDF(invoiceData);
-      const attachment  = {
-        filename:    `Kyzer-Invoice-${invoiceData.invoiceNumber}.pdf`,
-        content:     pdfBuffer,
-        contentType: 'application/pdf',
-      };
+      let attachment: { filename: string; content: Buffer; contentType: string } | undefined;
+      try {
+        const pdfBuffer = await generateInvoicePDF(invoiceData);
+        attachment = {
+          filename:    `Kyzer-Invoice-${invoiceData.invoiceNumber}.pdf`,
+          content:     pdfBuffer,
+          contentType: 'application/pdf',
+        };
+      } catch (pdfErr) {
+        console.error('PDF generation failed (email will send without attachment):', pdfErr);
+      }
 
       const fmt = (n: number | string) => '₹' + Number(n || 0).toLocaleString('en-IN');
 
@@ -102,7 +107,7 @@ export async function POST(req: NextRequest) {
             </table>
 
             <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
-            <p style="font-size:12px;color:#aaa;">📎 Your tax invoice (PDF) is attached to this email.</p>
+            <p style="font-size:12px;color:#aaa;">${attachment ? '📎 Your tax invoice (PDF) is attached to this email.' : 'Your invoice will be sent separately shortly.'}</p>
             <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at <a href="https://wa.me/919049695264" style="color:#FF8C35;">+91 90496 95264</a> or reply to this email.</p>
             <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra · kyzerrobotics.com</p>
           </div>
@@ -118,7 +123,7 @@ export async function POST(req: NextRequest) {
           to:          orderData.email,
           subject:     `Order confirmed — Kyzer Robotics (#${orderData.id || ''})`,
           html:        customerHtml,
-          attachments: [attachment],
+          attachments: attachment ? [attachment] : undefined,
         });
       } catch (mailErr) {
         console.error('Order confirmation mail error:', mailErr);

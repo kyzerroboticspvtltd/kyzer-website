@@ -9,14 +9,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Missing order data.' }, { status: 400 });
     }
 
-    // Build invoice data and generate PDF
+    // Build invoice data and generate PDF (non-fatal — email sends even if PDF fails)
     const invoiceData = shopOrderToInvoice(o as Record<string, unknown>, false);
-    const pdfBuffer   = await generateInvoicePDF(invoiceData);
-    const attachment  = {
-      filename:    `Kyzer-Invoice-${invoiceData.invoiceNumber}.pdf`,
-      content:     pdfBuffer,
-      contentType: 'application/pdf',
-    };
+    let attachment: { filename: string; content: Buffer; contentType: string } | undefined;
+    try {
+      const pdfBuffer = await generateInvoicePDF(invoiceData);
+      attachment = {
+        filename:    `Kyzer-Invoice-${invoiceData.invoiceNumber}.pdf`,
+        content:     pdfBuffer,
+        contentType: 'application/pdf',
+      };
+    } catch (pdfErr) {
+      console.error('PDF generation failed (email will send without attachment):', pdfErr);
+    }
 
     const itemRows = (o.items || []).map((i: { name: string; qty: number; price: string }) =>
       `<tr>
@@ -48,11 +53,11 @@ export async function POST(req: NextRequest) {
       </div>`,
     });
 
-    // Customer confirmation with proforma invoice PDF attached
+    // Customer confirmation (with proforma invoice PDF if generated successfully)
     await sendMail({
       to:          o.email,
       subject:     `Order received — Kyzer Robotics (#${o.id || ''})`,
-      attachments: [attachment],
+      attachments: attachment ? [attachment] : undefined,
       html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
         <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
           <h2 style="color:#111;margin:0;font-size:22px;">Order Received ✓</h2>
@@ -83,7 +88,7 @@ export async function POST(req: NextRequest) {
           </table>
 
           <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
-          <p style="font-size:12px;color:#aaa;">📎 Your proforma invoice is attached as a PDF to this email.</p>
+          <p style="font-size:12px;color:#aaa;">${attachment ? '📎 Your proforma invoice is attached as a PDF to this email.' : 'We will send your invoice separately once the order is confirmed.'}</p>
           <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at <a href="https://wa.me/919049695264" style="color:#FF8C35;">+91 90496 95264</a> or reply to this email.</p>
           <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra · kyzerrobotics.com</p>
         </div>
