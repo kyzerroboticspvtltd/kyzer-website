@@ -96,6 +96,25 @@ export default function ElectronicsProductsPage() {
     motors: 'Motors & Actuators', components: 'Components', tools: 'Tools & Equipment',
   };
 
+  const typeLabel: Record<string, string> = {
+    'arduino-official':    'Arduino Official Boards',
+    'arduino-accessories': 'Arduino Accessories',
+    'arduino-displays':    'TFT / Screens / Displays',
+    'arduino-boards':      'Arduino Boards',
+    'arduino-shields':     'Arduino Shields',
+  };
+
+  const ARDUINO_TYPES = [
+    { key: 'arduino-official',    label: 'Official Boards' },
+    { key: 'arduino-accessories', label: 'Accessories' },
+    { key: 'arduino-displays',    label: 'TFT / Displays' },
+    { key: 'arduino-boards',      label: 'Boards' },
+    { key: 'arduino-shields',     label: 'Shields' },
+  ];
+
+  const pageTitle = fType ? (typeLabel[fType] || fType) : (fSub === 'all' ? 'All Electronics' : (subcatLabel[fSub] || fSub));
+  const crumbLabel = fType ? (typeLabel[fType] || fType) : (fSub === 'all' ? 'All Products' : (subcatLabel[fSub] || fSub));
+
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#f8f8f6', minHeight: '100vh', color: '#111' }}>
       {/* Top bar */}
@@ -103,28 +122,52 @@ export default function ElectronicsProductsPage() {
         <Link href="/" style={{ color: '#FF8C35', fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, textDecoration: 'none', letterSpacing: 1 }}>KYZER ROBOTICS</Link>
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
         <Link href="/shop/electronics" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>Electronics</Link>
+        {fType && (
+          <>
+            <span style={{ color: '#444', fontSize: 18 }}>›</span>
+            <Link href="/shop/electronics/arduino" style={{ color: '#999', fontSize: 13, textDecoration: 'none' }}>Arduino</Link>
+          </>
+        )}
         <span style={{ color: '#444', fontSize: 18 }}>›</span>
-        <span style={{ color: '#FF8C35', fontSize: 13 }}>{fSub === 'all' ? 'All Products' : (subcatLabel[fSub] || fSub)}</span>
+        <span style={{ color: '#FF8C35', fontSize: 13 }}>{crumbLabel}</span>
       </div>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 1.5rem' }}>
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>// Electronics</div>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 48, letterSpacing: 2, margin: '0 0 12px' }}>
-            {fSub === 'all' ? 'All Electronics' : (subcatLabel[fSub] || fSub)}
+            {pageTitle}
           </h1>
         </div>
 
         {/* Category filter tabs */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: fSub === 'arduino' ? '0.5rem' : '1.25rem' }}>
           {SUBCATS.map(s => (
-            <button key={s.key} onClick={() => setFSub(s.key)}
-              style={{ padding: '7px 16px', borderRadius: 20, border: '1.5px solid', fontSize: 13, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: fSub === s.key ? 600 : 400,
-                background: fSub === s.key ? '#FF8C35' : '#fff', borderColor: fSub === s.key ? '#FF8C35' : '#ddd', color: fSub === s.key ? '#111' : '#555', transition: 'all 0.15s' }}>
+            <button key={s.key} onClick={() => { setFSub(s.key); setFType(''); }}
+              style={{ padding: '7px 16px', borderRadius: 20, border: '1.5px solid', fontSize: 13, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: fSub === s.key && !fType ? 600 : 400,
+                background: fSub === s.key && !fType ? '#FF8C35' : '#fff', borderColor: fSub === s.key && !fType ? '#FF8C35' : '#ddd', color: fSub === s.key && !fType ? '#111' : '#555', transition: 'all 0.15s' }}>
               {s.label}
             </button>
           ))}
         </div>
+
+        {/* Arduino sub-type tabs — shown when Arduino tab is active */}
+        {fSub === 'arduino' && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: '1.25rem', paddingLeft: 4 }}>
+            <button onClick={() => setFType('')}
+              style={{ padding: '5px 13px', borderRadius: 16, border: '1px solid', fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: !fType ? 600 : 400,
+                background: !fType ? '#111' : '#f0f0ee', borderColor: !fType ? '#111' : '#ddd', color: !fType ? '#fff' : '#666', transition: 'all 0.15s' }}>
+              All Arduino
+            </button>
+            {ARDUINO_TYPES.map(t => (
+              <button key={t.key} onClick={() => setFType(t.key)}
+                style={{ padding: '5px 13px', borderRadius: 16, border: '1px solid', fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: fType === t.key ? 600 : 400,
+                  background: fType === t.key ? '#111' : '#f0f0ee', borderColor: fType === t.key ? '#111' : '#ddd', color: fType === t.key ? '#fff' : '#666', transition: 'all 0.15s' }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Search + Sort */}
         <div style={{ display: 'flex', gap: 12, marginBottom: '1.5rem', flexWrap: 'wrap' }}>
