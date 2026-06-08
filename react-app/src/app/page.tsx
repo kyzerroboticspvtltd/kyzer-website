@@ -1656,6 +1656,7 @@ window._OBJLoader = OBJLoader;
 window._OrbitControls = OrbitControls;
 ` }} />
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="afterInteractive" />
       <div dangerouslySetInnerHTML={{ __html: PAGE_HTML }} />
       <Script src="/site.js" strategy="afterInteractive" />
     </>

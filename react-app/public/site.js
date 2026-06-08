@@ -716,14 +716,132 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       setTimeout(() => window.open('https://wa.me/919049695264?text=' + waMsg, '_blank'), 400);
     }
 
-    document.getElementById('coSuccess').style.display = '';
-    document.getElementById('coSuccess').textContent =
-      orderData.paymentId
-        ? `✓ Payment successful! Order ${orderData.id} confirmed. Check your email for details.`
-        : `✓ Order placed! We'll be in touch soon to confirm your order.`;
+    const successEl = document.getElementById('coSuccess');
+    successEl.style.display = '';
+    successEl.innerHTML = `
+      <div style="font-size:15px;font-weight:600;margin-bottom:8px;">
+        ${orderData.paymentId ? '✓ Payment successful! Order confirmed.' : '✓ Order placed! We\'ll confirm shortly.'}
+      </div>
+      <div style="font-size:13px;color:#2e7d32;margin-bottom:14px;">Order ID: <strong>${orderData.id}</strong></div>
+      <button onclick="generateClientInvoice(${JSON.stringify(orderData).replace(/</g,'\\u003c')})"
+        style="background:#FF8C35;color:#111;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">
+        📄 Download Invoice
+      </button>`;
     btn.textContent = '✓ Done!';
     btn.disabled = true;
   }
+
+  // ── Client-side invoice generator (jsPDF) ──────────────────────────────────
+  window.generateClientInvoice = function(o) {
+    const jsPDF = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDF) { alert('PDF library not loaded yet. Please try again in a moment.'); return; }
+
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const PW = 515, L = 40;
+    const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+
+    // Title
+    doc.setFont('helvetica','bold').setFontSize(13)
+       .text(o.paymentId ? 'Tax Invoice' : 'Proforma Invoice (Estimate)', L + PW/2, 50, { align:'center' });
+
+    // Company box
+    doc.setDrawColor('#cccccc').rect(L, 62, PW, 76);
+    doc.setFont('helvetica','bold').setFontSize(10).setTextColor('#111').text('KYZER ROBOTICS PVT. LTD.', L+8, 78);
+    doc.setFont('helvetica','normal').setFontSize(7.5).setTextColor('#444')
+       .text('Shop No. 3, Abhang Society, Beside New Poona English Medium School,', L+8, 91)
+       .text('Pandurang Nagar, Ambegaon Pathar, Pune, Maharashtra 411046', L+8, 101)
+       .text('Phone: +91 90496 95264  |  Email: info@kyzerrobotics.com  |  kyzerrobotics.com', L+8, 111);
+
+    // Info row
+    const cw = Math.floor(PW/3);
+    doc.setDrawColor('#cccccc');
+    for (let i=0;i<3;i++) doc.rect(L+i*cw, 140, cw, 80);
+    doc.setFont('helvetica','bold').setFontSize(7.5).setTextColor('#333');
+    doc.text('Invoice Details', L+6, 153);
+    doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#111');
+    doc.text('Invoice #: '+o.id, L+6, 165)
+       .text('Date: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}), L+6, 175)
+       .text('Payment: '+(o.paymentId ? 'Online (Razorpay)' : (o.paymentMethod==='cod'?'Cash on Delivery':'Pending')), L+6, 185);
+    if (o.paymentId) doc.text('Ref: '+o.paymentId, L+6, 195);
+
+    doc.setFont('helvetica','bold').setFontSize(7.5).setTextColor('#333').text('Bill To', L+cw+6, 153);
+    doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#111');
+    doc.text(o.name||'', L+cw+6, 165, {maxWidth:cw-12})
+       .text(o.email||'', L+cw+6, 175, {maxWidth:cw-12})
+       .text(o.phone||'', L+cw+6, 185, {maxWidth:cw-12});
+
+    doc.setFont('helvetica','bold').setFontSize(7.5).setTextColor('#333').text('Ship To', L+cw*2+6, 153);
+    doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#111');
+    const s = o.shipping||{};
+    doc.text(o.name||'', L+cw*2+6, 165, {maxWidth:cw-12})
+       .text([s.addr1,s.addr2].filter(Boolean).join(', ')||'', L+cw*2+6, 175, {maxWidth:cw-12})
+       .text([s.city,s.state,s.pincode].filter(Boolean).join(', ')||'', L+cw*2+6, 185, {maxWidth:cw-12});
+
+    // Items table
+    let y = 228;
+    const colW = [28,265,72,40,110];
+    doc.setFillColor('#e5e5e5').setDrawColor('#aaa').rect(L,y,PW,20,'FD');
+    const hdrs=['#','Description','Unit Price','Qty','Amount'];
+    let cx=L;
+    hdrs.forEach((h,i)=>{
+      doc.setFont('helvetica','bold').setFontSize(7).setTextColor('#111')
+         .text(h, cx+3+(i>=2?colW[i]-6:0), y+13, {align:i>=2?'right':'left'});
+      cx+=colW[i];
+    });
+    y+=20;
+
+    let grand=0;
+    (o.items||[]).forEach((item,idx)=>{
+      const up=Number(item.price||0), amt=up*item.qty;
+      grand+=amt;
+      doc.setFillColor(idx%2===0?'#fff':'#f9f9f9').setDrawColor('#ddd').rect(L,y,PW,16,'FD');
+      cx=L;
+      [String(idx+1),item.name,fmt(up),String(item.qty),fmt(amt)].forEach((cell,i)=>{
+        doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#111')
+           .text(String(cell), cx+3+(i>=2?colW[i]-6:0), y+11, {align:i>=2?'right':'left', maxWidth:colW[i]-6});
+        cx+=colW[i];
+      });
+      y+=16;
+    });
+
+    // Totals
+    const rows = [
+      ['Subtotal', fmt(o.subtotal||grand)],
+      ['GST (18%)', fmt(o.gst||0)],
+      ['Delivery', o.delivery===0?'FREE':fmt(o.delivery||0)],
+      ['TOTAL', fmt(o.total||grand)],
+    ];
+    rows.forEach((row,i)=>{
+      const isTot=i===rows.length-1;
+      doc.setFillColor(isTot?'#e5e5e5':'#fff').setDrawColor('#ccc').rect(L,y,PW,16,'FD');
+      doc.setFont('helvetica',isTot?'bold':'normal').setFontSize(isTot?8:7).setTextColor('#111')
+         .text(row[0], L+PW-110+3, y+11, {align:'left'})
+         .text(row[1], L+PW-3, y+11, {align:'right'});
+      y+=16;
+    });
+
+    y+=10;
+    if (!o.paymentId) {
+      doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#e07000')
+         .text('* This is an estimated proforma invoice. Final pricing confirmed after order review.', L, y);
+      y+=12;
+    }
+
+    // Terms
+    y+=6;
+    doc.setDrawColor('#ccc').line(L, y, L+PW, y); y+=8;
+    doc.setFont('helvetica','bold').setFontSize(7).setTextColor('#333').text('Terms & Conditions:', L, y); y+=10;
+    [
+      '• All orders are non-cancellable, non-returnable and non-replaceable unless a manufacturing defect is proven.',
+      '• Warranty covers manufacturing defects only.',
+      '• This is a Computer Generated Invoice. No Stamp or Signature Required.',
+      '• Subject to Pune, Maharashtra jurisdiction.',
+    ].forEach(t=>{
+      doc.setFont('helvetica','normal').setFontSize(6.5).setTextColor('#555').text(t, L, y, {maxWidth:PW}); y+=9;
+    });
+
+    doc.save('Kyzer-Invoice-' + o.id + '.pdf');
+  };
 
   // Init cart badge on load
   updateCartBadge();
