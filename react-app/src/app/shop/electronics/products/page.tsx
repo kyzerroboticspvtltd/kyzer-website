@@ -97,19 +97,17 @@ export default function ElectronicsProductsPage() {
   };
 
   const typeLabel: Record<string, string> = {
-    'arduino-official':    'Arduino Official Boards',
-    'arduino-accessories': 'Arduino Accessories',
-    'arduino-displays':    'TFT / Screens / Displays',
     'arduino-boards':      'Arduino Boards',
     'arduino-shields':     'Arduino Shields',
+    'arduino-displays':    'TFT / Screens / Displays',
+    'arduino-accessories': 'Arduino Accessories',
   };
 
   const ARDUINO_TYPES = [
-    { key: 'arduino-official',    label: 'Official Boards' },
-    { key: 'arduino-accessories', label: 'Accessories' },
-    { key: 'arduino-displays',    label: 'TFT / Displays' },
     { key: 'arduino-boards',      label: 'Boards' },
     { key: 'arduino-shields',     label: 'Shields' },
+    { key: 'arduino-displays',    label: 'TFT / Displays' },
+    { key: 'arduino-accessories', label: 'Accessories' },
   ];
 
   const pageTitle = fType ? (typeLabel[fType] || fType) : (fSub === 'all' ? 'All Electronics' : (subcatLabel[fSub] || fSub));

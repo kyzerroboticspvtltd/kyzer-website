@@ -3,19 +3,20 @@ import Link from 'next/link';
 
 const SUBCATS = [
   {
-    key: 'arduino-official',
-    name: 'Arduino Official Boards',
-    desc: 'Genuine Arduino boards — Uno, Mega, Nano, Leonardo, MKR and more from the original manufacturer.',
-    img: 'https://store.arduino.cc/cdn/shop/files/A000066_03.front_643x483.jpg',
-    link: '/shop/electronics/products?cat=arduino&type=arduino-official',
+    key: 'arduino-boards',
+    name: 'Arduino Boards',
+    desc: 'Official Arduino boards, clones and compatible — Uno, Mega, Nano, LilyPad, Leonardo, Due and more.',
+    img: null,
+    emoji: '🔵',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-boards',
   },
   {
-    key: 'arduino-accessories',
-    name: 'Arduino Accessories',
-    desc: 'Add-ons, connectors, cables, breadboards and everything else that goes with your Arduino.',
+    key: 'arduino-shields',
+    name: 'Arduino Shields',
+    desc: 'Motor shields, relay shields, WiFi shields, sensor shields and expansion modules.',
     img: null,
-    emoji: '🧩',
-    link: '/shop/electronics/products?cat=arduino&type=arduino-accessories',
+    emoji: '🛡️',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-shields',
   },
   {
     key: 'arduino-displays',
@@ -26,20 +27,12 @@ const SUBCATS = [
     link: '/shop/electronics/products?cat=arduino&type=arduino-displays',
   },
   {
-    key: 'arduino-boards',
-    name: 'Arduino Boards',
-    desc: 'Arduino-compatible and clone boards — Nano clones, Pro Mini, ESP32, STM32 and more.',
+    key: 'arduino-accessories',
+    name: 'Arduino Accessories',
+    desc: 'Cases, cables, starter kits and everything else that goes with your Arduino.',
     img: null,
-    emoji: '📟',
-    link: '/shop/electronics/products?cat=arduino&type=arduino-boards',
-  },
-  {
-    key: 'arduino-shields',
-    name: 'Arduino Shields',
-    desc: 'Motor shields, WiFi shields, sensor shields, relay shields and expansion modules.',
-    img: null,
-    emoji: '🛡️',
-    link: '/shop/electronics/products?cat=arduino&type=arduino-shields',
+    emoji: '🧩',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-accessories',
   },
 ];
 
