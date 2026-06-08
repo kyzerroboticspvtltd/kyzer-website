@@ -1505,6 +1505,7 @@ const PAGE_HTML = `<div id="mainSite">
             <div class="checkout-step-num">03</div>
             <div class="checkout-step-title">Payment</div>
           </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Accepted payment methods — select inside the Razorpay popup:</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
             <div class="trust-badge"><span>🔒</span> Secured by Razorpay</div>
             <div class="trust-badge"><span>💳</span> Card / UPI</div>
