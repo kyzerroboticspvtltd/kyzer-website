@@ -11,6 +11,7 @@ interface ElecProduct {
   details: string;
   specs: string[];
   subcat: string;
+  type?: string;
   badge: string;
   badgeType: string;
   emoji: string;
@@ -34,6 +35,7 @@ export default function ElectronicsProductsPage() {
   const [products, setProducts] = useState<ElecProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [fSub, setFSub]         = useState('all');
+  const [fType, setFType]       = useState('');
   const [search, setSearch]     = useState('');
   const [sort, setSort]         = useState('default');
   const [selected, setSelected] = useState<ElecProduct | null>(null);
@@ -41,8 +43,10 @@ export default function ElectronicsProductsPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const cat = params.get('cat');
-    if (cat) setFSub(cat);
+    const cat  = params.get('cat');
+    const type = params.get('type');
+    if (cat)  setFSub(cat);
+    if (type) setFType(type);
   }, []);
 
   useEffect(() => {
@@ -65,6 +69,7 @@ export default function ElectronicsProductsPage() {
   const filtered = products
     .filter(p => {
       if (fSub !== 'all' && p.subcat !== fSub) return false;
+      if (fType && p.type !== fType) return false;
       if (search && !p.name.toLowerCase().includes(search.toLowerCase()) &&
           !p.description.toLowerCase().includes(search.toLowerCase())) return false;
       return true;

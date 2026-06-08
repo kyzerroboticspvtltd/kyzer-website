@@ -7,7 +7,7 @@ const SUBCATS = [
     name: 'Arduino Official Boards',
     desc: 'Genuine Arduino boards — Uno, Mega, Nano, Leonardo, MKR and more from the original manufacturer.',
     img: 'https://store.arduino.cc/cdn/shop/files/A000066_03.front_643x483.jpg',
-    link: '/shop/electronics/products?cat=arduino&subcat=arduino-official',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-official',
   },
   {
     key: 'arduino-accessories',
@@ -15,7 +15,7 @@ const SUBCATS = [
     desc: 'Add-ons, connectors, cables, breadboards and everything else that goes with your Arduino.',
     img: null,
     emoji: '🧩',
-    link: '/shop/electronics/products?cat=arduino&subcat=arduino-accessories',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-accessories',
   },
   {
     key: 'arduino-displays',
@@ -23,7 +23,7 @@ const SUBCATS = [
     desc: 'TFT LCD displays, OLED modules, e-ink screens and character LCDs for Arduino projects.',
     img: null,
     emoji: '🖥️',
-    link: '/shop/electronics/products?cat=arduino&subcat=arduino-displays',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-displays',
   },
   {
     key: 'arduino-boards',
@@ -31,7 +31,7 @@ const SUBCATS = [
     desc: 'Arduino-compatible and clone boards — Nano clones, Pro Mini, ESP32, STM32 and more.',
     img: null,
     emoji: '📟',
-    link: '/shop/electronics/products?cat=arduino&subcat=arduino-boards',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-boards',
   },
   {
     key: 'arduino-shields',
@@ -39,7 +39,7 @@ const SUBCATS = [
     desc: 'Motor shields, WiFi shields, sensor shields, relay shields and expansion modules.',
     img: null,
     emoji: '🛡️',
-    link: '/shop/electronics/products?cat=arduino&subcat=arduino-shields',
+    link: '/shop/electronics/products?cat=arduino&type=arduino-shields',
   },
 ];
 
