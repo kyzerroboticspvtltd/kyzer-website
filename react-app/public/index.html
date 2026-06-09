@@ -507,20 +507,27 @@
   .prod-btn:hover { background: var(--orange); color: #111; }
   .prod-btn-buy { background: var(--orange); color: #111; font-weight: 600; }
   .prod-btn-buy:hover { background: #e07b20; }
-  /* ── Card action row (Buy Now + Add to Cart) ── */
-  .prod-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  /* ── Card action row — flush footer bar ── */
+  .prod-actions {
+    display: grid; grid-template-columns: 1fr 1fr;
+    margin: 12px -1.1rem -1.1rem;
+    border-top: 0.5px solid var(--border);
+  }
   .prod-cart-btn {
-    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 600;
-    border: 1.5px solid var(--orange); background: transparent; color: var(--orange);
-    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s, color 0.15s;
+    padding: 10px 6px; font-size: 12px; font-weight: 600;
+    border: none; border-right: 0.5px solid var(--border);
+    background: transparent; color: var(--orange);
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s, color 0.15s;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .prod-cart-btn:hover { background: rgba(255,140,53,0.12); }
-  .prod-cart-btn.added { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+  .prod-cart-btn:hover { background: rgba(255,140,53,0.08); }
+  .prod-cart-btn.added { background: #e8f5e9; color: #2e7d32; border-right-color: #c8e6c9; }
   .prod-buy-btn {
-    padding: 8px 6px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    padding: 10px 6px; font-size: 12px; font-weight: 700;
     border: none; background: var(--orange); color: #111;
-    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .prod-buy-btn:hover { background: #e07b20; }
@@ -2497,8 +2504,7 @@
     .prod-img { height: 100px; font-size: 38px; }
     .nav-logo-text { font-size: 13px; }
     section { padding: 2.5rem 0.875rem; }
-    .prod-actions { gap: 4px; }
-    .prod-cart-btn, .prod-buy-btn { font-size: 11px; padding: 7px 4px; }
+    .prod-cart-btn, .prod-buy-btn { font-size: 11px; padding: 8px 4px; }
   }
 </style>
 <script src="supabase-config.js?v=20260527"></script>

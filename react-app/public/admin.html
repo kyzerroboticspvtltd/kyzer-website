@@ -1237,6 +1237,10 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
       </div>
     </div>
     <div class="form-group">
+      <label class="form-label">SUBCATEGORY <span style="font-weight:400;color:var(--muted);">(optional — used for sub-filters)</span></label>
+      <input class="form-input" type="text" id="mSubcat" placeholder="e.g. frame, printer, filament, component" />
+    </div>
+    <div class="form-group">
       <label class="form-label">PRODUCT NAME</label>
       <input class="form-input" type="text" id="mName" />
     </div>
@@ -2164,7 +2168,7 @@ function renderProducts() {
           <div class="pi-emoji">${p.emoji}</div>
           <div class="pi-info">
             <div class="pi-name">${p.name}</div>
-            <div class="pi-meta">${p.description.slice(0,55)}${p.description.length>55?'…':''}</div>
+            <div class="pi-meta">${p.description.slice(0,55)}${p.description.length>55?'…':''}${p.subcat ? ` <span style="font-size:10px;background:var(--faint);color:var(--orange);border-radius:3px;padding:1px 5px;margin-left:4px;font-family:'JetBrains Mono',monospace;">${p.subcat}</span>` : ''}</div>
           </div>
           <div class="pi-price-wrap" onclick="event.stopPropagation()" title="Click to edit price">
             <input class="pi-price-input" type="text" value="${escHtml(p.price||'')}"
@@ -2344,7 +2348,7 @@ function fillCatDropdown(currentVal) {
 function openAddProduct() {
   editId = null;
   document.getElementById('modalTitle').textContent = 'Add product';
-  ['mEmoji','mName','mDesc','mDetails','mSpecs','mPrice','mBadge'].forEach(id => document.getElementById(id).value = '');
+  ['mEmoji','mName','mDesc','mDetails','mSpecs','mPrice','mBadge','mSubcat'].forEach(id => document.getElementById(id).value = '');
   fillCatDropdown(categories[0]?.id || '');
   setBtnMode('buy');
   document.getElementById('mBadgeType').value = '';
@@ -2366,6 +2370,7 @@ function openEdit(id) {
   document.getElementById('mPrice').value   = p.price;
   const _mode = p.btnMode || (/enquire|order|book/i.test(p.btnText||'') ? 'enquire' : 'buy');
   setBtnMode(_mode);
+  document.getElementById('mSubcat').value   = p.subcat || '';
   document.getElementById('mBadge').value   = p.badge;
   document.getElementById('mBadgeType').value = p.badgeType;
   document.getElementById('mVisible').className = 'toggle' + (p.visible ? ' on' : '');
@@ -2397,6 +2402,7 @@ function saveProduct() {
     photos: [...prodPhotosData],
     photo: prodPhotosData[0] || null,
     category: document.getElementById('mCat').value,
+    subcat: document.getElementById('mSubcat').value.trim(),
     name,
     description: document.getElementById('mDesc').value.trim(),
     details: document.getElementById('mDetails').value.trim(),

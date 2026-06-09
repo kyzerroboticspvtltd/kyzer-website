@@ -716,6 +716,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       setTimeout(() => window.open('https://wa.me/919049695264?text=' + waMsg, '_blank'), 400);
     }
 
+    window._pendingInvoiceData = orderData;
     const successEl = document.getElementById('coSuccess');
     successEl.style.display = '';
     successEl.innerHTML = `
@@ -723,7 +724,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         ${orderData.paymentId ? '✓ Payment successful! Order confirmed.' : '✓ Order placed! We\'ll confirm shortly.'}
       </div>
       <div style="font-size:13px;color:#2e7d32;margin-bottom:14px;">Order ID: <strong>${orderData.id}</strong></div>
-      <button onclick="generateClientInvoice(${JSON.stringify(orderData).replace(/</g,'\\u003c')})"
+      <button onclick="generateClientInvoice(window._pendingInvoiceData)"
         style="background:#FF8C35;color:#111;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">
         📄 Download Invoice
       </button>`;
