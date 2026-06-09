@@ -229,20 +229,20 @@ export default function DroneFramesPage() {
                       </span>
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                    <div style={{ display: 'flex', marginTop: 10, marginLeft: -16, marginRight: -16, marginBottom: -14, borderTop: '1px solid #e8e8e8' }}>
                       {f.btnMode === 'enquire' ? (
                         <button onClick={e => { e.stopPropagation(); enquireNow(f); }}
-                          style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                          style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                           Enquire Now →
                         </button>
                       ) : (
                         <>
                           <button onClick={e => { e.stopPropagation(); handleAddToCart(f); }}
-                            style={{ flex: 1, padding: '9px 6px', background: addedId === f.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === f.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === f.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                            style={{ flex: 1, padding: '10px 6px', background: addedId === f.id ? '#e8f5e9' : 'transparent', border: 'none', borderRight: `1px solid ${addedId === f.id ? '#c8e6c9' : '#e8e8e8'}`, color: addedId === f.id ? '#2e7d32' : '#FF8C35', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
                             {addedId === f.id ? '✓ Added!' : '+ Cart'}
                           </button>
                           <button onClick={e => { e.stopPropagation(); buyNow(f); }}
-                            style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                            style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                             Buy Now →
                           </button>
                         </>
