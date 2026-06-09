@@ -215,7 +215,7 @@ export default function DroneFramesPage() {
                     {photo ? <img src={photo} alt={f.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16 }} /> : f.emoji}
                   </div>
                   {/* Body */}
-                  <div style={{ padding: '14px 16px' }}>
+                  <div style={{ padding: '14px 16px 12px' }}>
                     <div style={{ fontSize: 11, color: '#FF8C35', fontFamily: "'JetBrains Mono', monospace", marginBottom: 4 }}>Drone Frames</div>
                     <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4, lineHeight: 1.3 }}>{f.name}</div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
@@ -223,31 +223,32 @@ export default function DroneFramesPage() {
                       {f.material  && <span style={{ fontSize: 11, background: '#f0f0ee', padding: '2px 8px', borderRadius: 4, color: '#555' }}>{matLabel[f.material] || f.material}</span>}
                       {f.frameType && <span style={{ fontSize: 11, background: '#f0f0ee', padding: '2px 8px', borderRadius: 4, color: '#555' }}>{typeLabel[f.frameType] || f.frameType}</span>}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontWeight: 700, fontSize: 17, color: '#111' }}>
                         {priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : f.price}
                       </span>
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
-                    <div style={{ display: 'flex', marginTop: 10, marginLeft: -16, marginRight: -16, marginBottom: -14, borderTop: '1px solid #e8e8e8' }}>
-                      {f.btnMode === 'enquire' ? (
-                        <button onClick={e => { e.stopPropagation(); enquireNow(f); }}
-                          style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                          Enquire Now →
+                  </div>
+                  {/* Action footer — direct child of card so it spans full width */}
+                  <div style={{ display: 'flex', borderTop: '1px solid #e8e8e8' }}>
+                    {f.btnMode === 'enquire' ? (
+                      <button onClick={e => { e.stopPropagation(); enquireNow(f); }}
+                        style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                        Enquire Now →
+                      </button>
+                    ) : (
+                      <>
+                        <button onClick={e => { e.stopPropagation(); handleAddToCart(f); }}
+                          style={{ flex: 1, padding: '10px 6px', background: addedId === f.id ? '#e8f5e9' : 'transparent', border: 'none', borderRight: `1px solid ${addedId === f.id ? '#c8e6c9' : '#e8e8e8'}`, color: addedId === f.id ? '#2e7d32' : '#FF8C35', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                          {addedId === f.id ? '✓ Added!' : '+ Cart'}
                         </button>
-                      ) : (
-                        <>
-                          <button onClick={e => { e.stopPropagation(); handleAddToCart(f); }}
-                            style={{ flex: 1, padding: '10px 6px', background: addedId === f.id ? '#e8f5e9' : 'transparent', border: 'none', borderRight: `1px solid ${addedId === f.id ? '#c8e6c9' : '#e8e8e8'}`, color: addedId === f.id ? '#2e7d32' : '#FF8C35', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
-                            {addedId === f.id ? '✓ Added!' : '+ Cart'}
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); buyNow(f); }}
-                            style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                            Buy Now →
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button onClick={e => { e.stopPropagation(); buyNow(f); }}
+                          style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                          Buy Now →
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               );

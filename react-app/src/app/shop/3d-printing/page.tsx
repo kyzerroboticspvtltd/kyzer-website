@@ -217,37 +217,37 @@ export default function PrintingPage() {
                   <div style={{ height: 160, background: '#f4f4f2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
                     {photo ? <img src={photo} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16 }} /> : p.emoji}
                   </div>
-                  <div style={{ padding: '14px 16px' }}>
+                  <div style={{ padding: '14px 16px 12px' }}>
                     <div style={{ fontSize: 11, color: '#FF8C35', fontFamily: "'JetBrains Mono', monospace", marginBottom: 4 }}>3D Print Services</div>
                     <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4, lineHeight: 1.3 }}>{p.name}</div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
                       {p.material && <span style={{ fontSize: 11, background: '#f0f0ee', padding: '2px 8px', borderRadius: 4, color: '#555' }}>{matLabel[p.material] || p.material}</span>}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontWeight: 700, fontSize: 17, color: '#111' }}>
                         {priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : p.price || 'Quote on request'}
                       </span>
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
-                    <div style={{ display: 'flex', marginTop: 10, marginLeft: -16, marginRight: -16, marginBottom: -14, borderTop: '1px solid #e8e8e8' }}>
-                      {p.btnMode === 'enquire' ? (
-                        <button onClick={e => { e.stopPropagation(); enquireNow(p); }}
-                          style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                          Enquire Now →
+                  </div>
+                  <div style={{ display: 'flex', borderTop: '1px solid #e8e8e8' }}>
+                    {p.btnMode === 'enquire' ? (
+                      <button onClick={e => { e.stopPropagation(); enquireNow(p); }}
+                        style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                        Enquire Now →
+                      </button>
+                    ) : (
+                      <>
+                        <button onClick={e => { e.stopPropagation(); handleAddToCart(p); }}
+                          style={{ flex: 1, padding: '10px 6px', background: addedId === p.id ? '#e8f5e9' : 'transparent', border: 'none', borderRight: `1px solid ${addedId === p.id ? '#c8e6c9' : '#e8e8e8'}`, color: addedId === p.id ? '#2e7d32' : '#FF8C35', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                          {addedId === p.id ? '✓ Added!' : '+ Cart'}
                         </button>
-                      ) : (
-                        <>
-                          <button onClick={e => { e.stopPropagation(); handleAddToCart(p); }}
-                            style={{ flex: 1, padding: '10px 6px', background: addedId === p.id ? '#e8f5e9' : 'transparent', border: 'none', borderRight: `1px solid ${addedId === p.id ? '#c8e6c9' : '#e8e8e8'}`, color: addedId === p.id ? '#2e7d32' : '#FF8C35', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
-                            {addedId === p.id ? '✓ Added!' : '+ Cart'}
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); buyNow(p); }}
-                            style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                            Buy Now →
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button onClick={e => { e.stopPropagation(); buyNow(p); }}
+                          style={{ flex: 1, padding: '10px 6px', background: '#FF8C35', border: 'none', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                          Buy Now →
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               );
