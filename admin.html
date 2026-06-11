@@ -1422,23 +1422,37 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
 // ── AUTH ──
 const PASS_KEY = 'kyzer_admin_pass';
 
-function doLogin() {
+async function doLogin() {
   const pass   = document.getElementById('loginPass').value;
   const errEl  = document.getElementById('loginErr');
-  const stored = localStorage.getItem(PASS_KEY);
 
-  // First-time setup: no password saved yet
-  if (!stored) {
-    if (!pass || pass.length < 6) {
-      errEl.textContent = 'First time? Enter a password (min 6 chars) to set it.';
+  if (!pass) {
+    errEl.textContent = 'Enter your admin password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Authenticate against the server (password lives in the ADMIN_PASSWORD env var).
+  // On success we receive a signed token used to authorise publishing.
+  const apiBase = localStorage.getItem('kyzer_backend_url') || window.location.origin;
+  try {
+    const r = await fetch(apiBase + '/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.ok || !data.token) {
+      errEl.textContent = 'Incorrect password.';
       errEl.style.display = 'block';
+      document.getElementById('loginPass').value = '';
       return;
     }
+    localStorage.setItem('kyzer_admin_token', data.token);
     localStorage.setItem(PASS_KEY, pass);
-  } else if (pass !== stored) {
-    errEl.textContent = 'Incorrect password.';
+  } catch {
+    errEl.textContent = 'Could not reach the server. Check your connection and try again.';
     errEl.style.display = 'block';
-    document.getElementById('loginPass').value = '';
     return;
   }
 
@@ -1449,6 +1463,31 @@ function doLogin() {
   p.style.display = 'flex';
   p.style.flexDirection = 'column';
   initAdmin();
+}
+
+// Returns a valid admin token, transparently re-logging in if it has expired.
+async function getAdminToken() {
+  const token = localStorage.getItem('kyzer_admin_token');
+  if (token) {
+    const ts = Number((token.split('.')[0]) || 0);     // token = "<unixSeconds>.<sig>"
+    if (ts && (Date.now() / 1000 - ts) < 82800) return token;   // refresh if older than ~23h
+  }
+  const pass = localStorage.getItem(PASS_KEY) || '';
+  if (!pass) return null;
+  const apiBase = localStorage.getItem('kyzer_backend_url') || window.location.origin;
+  try {
+    const r = await fetch(apiBase + '/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.ok && data.token) {
+      localStorage.setItem('kyzer_admin_token', data.token);
+      return data.token;
+    }
+  } catch {}
+  return null;
 }
 
 function doLogout() {
@@ -2825,17 +2864,24 @@ async function publishToSite(silent) {
 
   // Try the secure server-side API route first
   const apiBase = localStorage.getItem('kyzer_backend_url') || window.location.origin;
-  const password = localStorage.getItem('kyzer_admin_pass') || '';
+  const token = await getAdminToken();
 
   try {
     const r = await fetch(apiBase + '/api/publish', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+      },
       body: JSON.stringify({ payload }),
     });
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
     if (r.ok) {
       if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
+      return;
+    }
+    if (r.status === 401) {
+      if (!silent) toast('Session expired — please log out and log back in to publish.', true);
       return;
     }
     const err = await r.json().catch(() => ({}));
