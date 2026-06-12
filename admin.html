@@ -1717,8 +1717,8 @@ function openCustomerModal(id) {
     ? 'Joined ' + new Date(c.createdAt).toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' })
     : 'Join date unknown';
   document.getElementById('cmod-name').textContent = c.name || '—';
-  document.getElementById('cmod-email').innerHTML = c.email ? `<a href="mailto:${c.email}" style="color:var(--orange);text-decoration:none;">${c.email}</a>` : '—';
-  document.getElementById('cmod-phone').innerHTML = c.phone ? `<a href="tel:${c.phone}" style="color:var(--orange);text-decoration:none;">${c.phone}</a>` : '—';
+  document.getElementById('cmod-email').innerHTML = c.email ? `<a href="mailto:${encodeURIComponent(c.email)}" style="color:var(--orange);text-decoration:none;">${escHtml(c.email)}</a>` : '—';
+  document.getElementById('cmod-phone').innerHTML = c.phone ? `<a href="tel:${encodeURIComponent(c.phone)}" style="color:var(--orange);text-decoration:none;">${escHtml(c.phone)}</a>` : '—';
   document.getElementById('cmod-since').textContent = c.createdAt
     ? new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
     : '—';
@@ -1726,7 +1726,7 @@ function openCustomerModal(id) {
   const addr = c.address || {};
   const parts = [addr.line1, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean);
   document.getElementById('cmod-address').innerHTML = parts.length
-    ? parts.join(', ') + (addr.landmark ? '<br><span style="color:var(--muted);font-size:12px;">Near: ' + addr.landmark + '</span>' : '')
+    ? parts.map(escHtml).join(', ') + (addr.landmark ? '<br><span style="color:var(--muted);font-size:12px;">Near: ' + escHtml(addr.landmark) + '</span>' : '')
     : '<span style="color:var(--muted);">No address saved yet.</span>';
 
   const shopOrds = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');

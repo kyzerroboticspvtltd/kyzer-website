@@ -1,5 +1,11 @@
-const SUPABASE_URL = 'https://alrgkykezmlcagovkkdl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTYyMjEyMywiZXhwIjoyMDk1MTk4MTIzfQ.9oBXsGb66gRKKkEt7WZvJSCX2K0GT8ay7M5d13Oe-Ks';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
+// Service-role key must be supplied at runtime, never committed to source.
+// Run with: SUPABASE_SERVICE_KEY=... node setup-supabase.js
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+if (!SUPABASE_KEY) {
+  console.error('Missing SUPABASE_SERVICE_KEY environment variable. Aborting.');
+  process.exit(1);
+}
 
 const products = [
   { id:'1', name:'KZ-Recon X1', category:'drone', emoji:'🚁', price:'42000', description:'4K aerial survey drone, 35-min flight, GPS hold', details:'The KZ-Recon X1 is Kyzer Robotics flagship aerial survey platform, featuring a 4K Sony sensor with 3-axis gimbal stabilization, 35-minute flight time, and GPS with return-to-home safety.', specs:['4K camera with 3-axis gimbal','35-min flight time per charge','GPS hold and return-to-home','500m control range','Foldable compact design','Hard carrying case included'], badge:'NEW', badgeType:'new', btnText:'Buy', visible:true },

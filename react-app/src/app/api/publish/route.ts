@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
-const SB_KEY = process.env.SUPABASE_SERVICE_KEY
-  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
+// Never fall back to a committed key. Writing to site_data must use the
+// service-role key supplied via env at deploy time.
+const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +12,10 @@ export async function POST(req: NextRequest) {
 
     if (!payload) {
       return NextResponse.json({ ok: false, error: 'No payload' }, { status: 400 });
+    }
+
+    if (!SB_KEY) {
+      return NextResponse.json({ ok: false, error: 'Server not configured: SUPABASE_SERVICE_KEY missing.' }, { status: 500 });
     }
 
     const r = await fetch(`${SB_URL}/rest/v1/site_data`, {
