@@ -14,6 +14,12 @@ interface Attachment {
   contentType: string;
 }
 
+// Collapse CR/LF and other control characters in header values to prevent
+// header injection (e.g. a crafted subject smuggling a "Bcc:" line).
+function sanitizeHeader(value: string): string {
+  return String(value || '').replace(/[\x00-\x1F\x7F]+/g, ' ').trim();
+}
+
 export function sendMail({
   to,
   subject,
@@ -27,8 +33,8 @@ export function sendMail({
 }) {
   return transporter.sendMail({
     from: `"Kyzer Robotics" <${process.env.GMAIL_USER}>`,
-    to,
-    subject,
+    to: sanitizeHeader(to),
+    subject: sanitizeHeader(subject),
     html,
     attachments,
   });

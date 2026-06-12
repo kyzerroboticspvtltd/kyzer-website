@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminToken, bearerToken } from '@/lib/admin-auth';
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
 // Never fall back to a committed key. Writing to site_data must use the
@@ -7,6 +8,12 @@ const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 export async function POST(req: NextRequest) {
   try {
+    // Publishing overwrites the entire public site (row id=1). Require a
+    // valid admin session token — the admin panel already sends one.
+    if (!verifyAdminToken(bearerToken(req.headers.get('authorization')))) {
+      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { payload } = body;
 

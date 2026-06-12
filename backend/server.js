@@ -88,11 +88,27 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Strip CR/LF and other control characters from header values to prevent
+// header injection (e.g. a crafted subject smuggling a "Bcc:" line).
+function sanitizeHeader(value) {
+  return String(value || '').replace(/[\x00-\x1F\x7F]+/g, ' ').trim();
+}
+
+// Escape user-supplied values before embedding them in HTML email bodies.
+function escHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function sendMail({ to, subject, html }) {
   return transporter.sendMail({
     from: `"Kyzer Robotics Website" <${process.env.GMAIL_USER}>`,
-    to,
-    subject,
+    to: sanitizeHeader(to),
+    subject: sanitizeHeader(subject),
     html,
   });
 }
@@ -157,13 +173,13 @@ app.post('/api/contact', formLimiter, async (req, res) => {
     <div style="font-family:sans-serif;max-width:600px;margin:auto;">
       <h2 style="color:#FF8C35;">New Contact Message — Kyzer Robotics</h2>
       <table style="width:100%;border-collapse:collapse;">
-        <tr><td style="padding:8px;color:#888;width:120px;">Name</td><td style="padding:8px;font-weight:500;">${name}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${email}">${email}</a></td></tr>
-        <tr><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${phone || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Subject</td><td style="padding:8px;">${subject || '—'}</td></tr>
+        <tr><td style="padding:8px;color:#888;width:120px;">Name</td><td style="padding:8px;font-weight:500;">${escHtml(name)}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${encodeURIComponent(email)}">${escHtml(email)}</a></td></tr>
+        <tr><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${escHtml(phone || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Subject</td><td style="padding:8px;">${escHtml(subject || '—')}</td></tr>
       </table>
       <div style="margin-top:20px;padding:16px;background:#f4f4f4;border-radius:8px;">
-        <p style="margin:0;color:#333;">${message.replace(/\n/g, '<br>')}</p>
+        <p style="margin:0;color:#333;">${escHtml(message).replace(/\n/g, '<br>')}</p>
       </div>
       <p style="margin-top:16px;font-size:12px;color:#aaa;">Submitted from kyzerrobotics.in contact form</p>
     </div>`;
@@ -179,9 +195,9 @@ app.post('/api/contact', formLimiter, async (req, res) => {
       subject: 'We received your message — Kyzer Robotics',
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:auto;">
-          <h2 style="color:#FF8C35;">Thanks, ${name}!</h2>
+          <h2 style="color:#FF8C35;">Thanks, ${escHtml(name)}!</h2>
           <p>We received your message and will get back to you within <strong>24 hours</strong>.</p>
-          <p style="color:#888;">Your message:<br><em>${message.replace(/\n/g, '<br>')}</em></p>
+          <p style="color:#888;">Your message:<br><em>${escHtml(message).replace(/\n/g, '<br>')}</em></p>
           <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
           <p style="font-size:13px;color:#888;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra</p>
         </div>`,
@@ -207,25 +223,25 @@ app.post('/api/quote', formLimiter, async (req, res) => {
       <h2 style="color:#FF8C35;">New 3D Print Quote Request — Kyzer Robotics</h2>
       <h3 style="margin-bottom:8px;">Customer</h3>
       <table style="width:100%;border-collapse:collapse;">
-        <tr><td style="padding:8px;color:#888;width:120px;">Name</td><td style="padding:8px;font-weight:500;">${name}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${email}">${email}</a></td></tr>
-        <tr><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${phone || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Company</td><td style="padding:8px;">${company || '—'}</td></tr>
+        <tr><td style="padding:8px;color:#888;width:120px;">Name</td><td style="padding:8px;font-weight:500;">${escHtml(name)}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${encodeURIComponent(email)}">${escHtml(email)}</a></td></tr>
+        <tr><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${escHtml(phone || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Company</td><td style="padding:8px;">${escHtml(company || '—')}</td></tr>
       </table>
       <h3 style="margin:20px 0 8px;">Quote Details</h3>
       <table style="width:100%;border-collapse:collapse;">
-        <tr><td style="padding:8px;color:#888;width:140px;">Material</td><td style="padding:8px;">${q.material || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Quality</td><td style="padding:8px;">${q.quality || '—'}</td></tr>
-        <tr><td style="padding:8px;color:#888;">Infill</td><td style="padding:8px;">${q.infill || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Colour/Finish</td><td style="padding:8px;">${q.colour || '—'}</td></tr>
-        <tr><td style="padding:8px;color:#888;">Support</td><td style="padding:8px;">${q.support || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Quantity</td><td style="padding:8px;">${q.qty || '—'}</td></tr>
-        <tr><td style="padding:8px;color:#888;">Delivery</td><td style="padding:8px;">${q.delivery || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">File</td><td style="padding:8px;">${q.fileName || 'No file / manual dims'}</td></tr>
-        <tr><td style="padding:8px;color:#888;">Dimensions</td><td style="padding:8px;">${q.dimensions || '—'}</td></tr>
-        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;font-weight:600;">Est. Total</td><td style="padding:8px;font-weight:600;color:#FF8C35;">${q.total || '—'}</td></tr>
+        <tr><td style="padding:8px;color:#888;width:140px;">Material</td><td style="padding:8px;">${escHtml(q.material || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Quality</td><td style="padding:8px;">${escHtml(q.quality || '—')}</td></tr>
+        <tr><td style="padding:8px;color:#888;">Infill</td><td style="padding:8px;">${escHtml(q.infill || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Colour/Finish</td><td style="padding:8px;">${escHtml(q.colour || '—')}</td></tr>
+        <tr><td style="padding:8px;color:#888;">Support</td><td style="padding:8px;">${escHtml(q.support || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">Quantity</td><td style="padding:8px;">${escHtml(q.qty || '—')}</td></tr>
+        <tr><td style="padding:8px;color:#888;">Delivery</td><td style="padding:8px;">${escHtml(q.delivery || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;">File</td><td style="padding:8px;">${escHtml(q.fileName || 'No file / manual dims')}</td></tr>
+        <tr><td style="padding:8px;color:#888;">Dimensions</td><td style="padding:8px;">${escHtml(q.dimensions || '—')}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:8px;color:#888;font-weight:600;">Est. Total</td><td style="padding:8px;font-weight:600;color:#FF8C35;">${escHtml(q.total || '—')}</td></tr>
       </table>
-      ${notes ? `<div style="margin-top:16px;padding:14px;background:#f4f4f4;border-radius:8px;"><p style="margin:0;color:#555;"><strong>Notes:</strong><br>${notes.replace(/\n/g, '<br>')}</p></div>` : ''}
+      ${notes ? `<div style="margin-top:16px;padding:14px;background:#f4f4f4;border-radius:8px;"><p style="margin:0;color:#555;"><strong>Notes:</strong><br>${escHtml(notes).replace(/\n/g, '<br>')}</p></div>` : ''}
       <p style="margin-top:16px;font-size:12px;color:#aaa;">Submitted from kyzerrobotics.in 3D quote page</p>
     </div>`;
 
@@ -240,10 +256,10 @@ app.post('/api/quote', formLimiter, async (req, res) => {
       subject: 'Your 3D print quote request — Kyzer Robotics',
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:auto;">
-          <h2 style="color:#FF8C35;">Thanks, ${name}!</h2>
+          <h2 style="color:#FF8C35;">Thanks, ${escHtml(name)}!</h2>
           <p>We received your 3D print quote request. Our team will review it and confirm the final pricing within <strong>a few hours</strong>.</p>
-          <p><strong>Estimated total:</strong> <span style="color:#FF8C35;">${q.total || '—'}</span></p>
-          <p style="color:#888;font-size:13px;">Material: ${q.material || '—'} · Quality: ${q.quality || '—'} · Qty: ${q.qty || '—'}</p>
+          <p><strong>Estimated total:</strong> <span style="color:#FF8C35;">${escHtml(q.total || '—')}</span></p>
+          <p style="color:#888;font-size:13px;">Material: ${escHtml(q.material || '—')} · Quality: ${escHtml(q.quality || '—')} · Qty: ${escHtml(q.qty || '—')}</p>
           <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
           <p style="font-size:13px;color:#888;">Questions? Reply to this email or WhatsApp us at <a href="https://wa.me/919049695264">+91 90496 95264</a></p>
           <p style="font-size:13px;color:#888;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra</p>
