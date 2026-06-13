@@ -1168,23 +1168,22 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
     const ext = file.name.split('.').pop().toLowerCase();
     if (ext === 'stl') {
-      loadSTLFile(file);
+      loadSTLFile(file);        // real dimensions/volume come from the parsed mesh
     } else if (ext === 'obj') {
       loadOBJFile(file);
     } else {
+      // STEP/3MF/IGES can't be parsed in the browser — fall back to a rough
+      // size-based estimate so the customer still sees an indicative price.
       modelEmoji.textContent = '📐';
       document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
       document.getElementById('analysingBar').classList.remove('show');
+      window._modelRaw = null;
+      const estimatedGrams = Math.max(5, Math.round(file.size / 5000));
+      quoteState.L = Math.cbrt(estimatedGrams / 1.2 * 1000) * 1.5;
+      quoteState.W = quoteState.L * 0.8;
+      quoteState.H = quoteState.L * 0.6;
+      calculateQuote();
     }
-
-    const estimatedGrams = Math.max(5, Math.round(file.size / 5000));
-    document.getElementById('dimL').value = '';
-    document.getElementById('dimW').value = '';
-    document.getElementById('dimH').value = '';
-    quoteState.L = Math.cbrt(estimatedGrams / 1.2 * 1000) * 1.5;
-    quoteState.W = quoteState.L * 0.8;
-    quoteState.H = quoteState.L * 0.6;
-    calculateQuote();
   }
 
   fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
@@ -1222,10 +1221,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     quoteState.fileData = null;
     quoteState.fileSize = 0;
     quoteState.L = quoteState.W = quoteState.H = 0;
+    window._modelRaw = null;
+    document.getElementById('modelStats').classList.remove('show');
+    ['statVol', 'statDims', 'statWeight'].forEach(id => { document.getElementById(id).textContent = '—'; });
     modelEmoji.textContent = '📦';
     modelViewerLabel.textContent = 'No file uploaded';
     calculateQuote();
   });
+
+  // Re-measure when the customer switches the file unit (mm ↔ inch)
+  document.querySelectorAll('input[name="fileUnit"]').forEach(r =>
+    r.addEventListener('change', () => { if (window._modelRaw) applyModelMeasurements(); })
+  );
 
   // ====== ORDER / SAVE ======
   function orderNow() {
@@ -1498,11 +1505,15 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // ====== THREE.JS MODEL VIEWER ======
   let _threeRenderer = null, _threeAnimId = null, _threeControls = null;
+  let _threeCamera = null, _threeDist = 0;
 
   function clearThreeViewer() {
     if (_threeAnimId) { cancelAnimationFrame(_threeAnimId); _threeAnimId = null; }
     if (_threeControls) { _threeControls.dispose(); _threeControls = null; }
     if (_threeRenderer) { _threeRenderer.dispose(); _threeRenderer = null; }
+    _threeCamera = null;
+    const viewBtns = document.getElementById('viewBtns');
+    if (viewBtns) viewBtns.remove();
     document.getElementById('threeCanvas').style.display = 'none';
     document.getElementById('modelViewer').style.cursor = 'pointer';
     document.getElementById('modelPlaceholderWrap').style.display = 'flex';
@@ -1542,16 +1553,35 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     back.position.set(0, -10, -5);
     scene.add(back);
 
+    // Rotate from Z-up (CAD convention) to Y-up (Three.js) so models sit
+    // upright on the plate instead of facing down.
+    object.rotateX(-Math.PI / 2);
+    object.updateMatrixWorld(true);
+
+    // Measure the (rotated) model, then scale so its largest side ≈ 4 units.
     const box = new THREE.Box3().setFromObject(object);
-    const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
-    object.position.sub(center);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    object.scale.setScalar(4 / maxDim);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const scale = 4 / maxDim;
+    object.scale.setScalar(scale);
+    object.updateMatrixWorld(true);
+
+    // Re-measure in scaled world space and recentre on the origin. Centring
+    // must happen AFTER scaling — position is applied in world units, so
+    // subtracting a pre-scale centre pushes off-origin models out of view.
+    const scaledBox = new THREE.Box3().setFromObject(object);
+    const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+    object.position.sub(scaledCenter);
     scene.add(object);
     window._threeModel = object;
 
-    const scaledRadius = Math.sqrt(size.x ** 2 + size.y ** 2 + size.z ** 2) / 2 * (4 / maxDim);
+    // Build-plate grid sitting at the base of the (now centred) model
+    const scaledSize = size.clone().multiplyScalar(scale);
+    const grid = new THREE.GridHelper(8, 16, 0x555555, 0x383838);
+    grid.position.y = -scaledSize.y / 2;
+    scene.add(grid);
+
+    const scaledRadius = Math.sqrt(scaledSize.x ** 2 + scaledSize.y ** 2 + scaledSize.z ** 2) / 2;
     const dist = (scaledRadius / Math.tan((camera.fov / 2) * Math.PI / 180)) * 1.3;
     camera.position.copy(new THREE.Vector3(0.6, 0.4, 0.7).normalize().multiplyScalar(dist));
     camera.lookAt(0, 0, 0);
@@ -1562,17 +1592,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     controls.dampingFactor = 0.08;
     controls.update();
     _threeControls = controls;
+    _threeCamera = camera;
+    _threeDist = dist;
+    _addViewButtons(container);
 
     canvas.style.display = 'block';
     document.getElementById('modelViewer').style.cursor = 'default';
     document.getElementById('modelPlaceholderWrap').style.display = 'none';
     document.getElementById('modelViewerHint').style.display = 'block';
     document.getElementById('analysingBar').classList.remove('show');
-    document.getElementById('modelStats').classList.add('show');
-    document.getElementById('statDims').textContent = size.x.toFixed(1)+'×'+size.y.toFixed(1)+'×'+size.z.toFixed(1)+' mm';
-    const vol = (size.x * size.y * size.z * 0.2).toFixed(1);
-    document.getElementById('statVol').textContent = vol + ' cm³';
-    document.getElementById('statWeight').textContent = (vol * 1.24).toFixed(1) + ' g (PLA est.)';
+
+    // Measure the model for the quote: bounding box (mm) + exact mesh volume
+    // via the signed-tetrahedron method (not a bounding-box guess).
+    window._modelRaw = { x: size.x, y: size.y, z: size.z, volMm3: _objectVolumeMm3(object) };
+    applyModelMeasurements();
 
     function animate() {
       _threeAnimId = requestAnimationFrame(animate);
@@ -1580,6 +1613,88 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       renderer.render(scene, camera);
     }
     animate();
+  }
+
+  // Exact mesh volume (mm³) — sums signed tetrahedron volumes over every
+  // triangle, so hollow/irregular models measure correctly (unlike L×W×H).
+  function _objectVolumeMm3(object) {
+    let total = 0;
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), bc = new THREE.Vector3();
+    object.traverse(node => {
+      if (!node.isMesh || !node.geometry) return;
+      const pos = node.geometry.getAttribute('position');
+      if (!pos) return;
+      const idx = node.geometry.getIndex();
+      const triCount = Math.floor((idx ? idx.count : pos.count) / 3);
+      let vol = 0;
+      for (let t = 0; t < triCount; t++) {
+        const i0 = idx ? idx.getX(t * 3) : t * 3;
+        const i1 = idx ? idx.getX(t * 3 + 1) : t * 3 + 1;
+        const i2 = idx ? idx.getX(t * 3 + 2) : t * 3 + 2;
+        a.fromBufferAttribute(pos, i0);
+        b.fromBufferAttribute(pos, i1);
+        c.fromBufferAttribute(pos, i2);
+        vol += a.dot(bc.copy(b).cross(c));
+      }
+      total += Math.abs(vol / 6);
+    });
+    return total;
+  }
+
+  // Push the measured model dimensions into the quote and the stats panel,
+  // honouring the mm/inch file-unit toggle. Pricing stays dimension-based so
+  // the client estimate matches the server-side recalculation exactly.
+  function applyModelMeasurements() {
+    const raw = window._modelRaw;
+    if (!raw) return;
+    const unitEl = document.querySelector('input[name="fileUnit"]:checked');
+    const f = (unitEl && unitEl.value === 'inch') ? 25.4 : 1;
+    quoteState.L = raw.x * f;
+    quoteState.W = raw.z * f;
+    quoteState.H = raw.y * f;
+    const volCm3 = raw.volMm3 * f * f * f / 1000;
+    const grams = volCm3 * 1.24; // PLA density g/cm³
+    document.getElementById('statDims').textContent =
+      quoteState.L.toFixed(1) + '×' + quoteState.W.toFixed(1) + '×' + quoteState.H.toFixed(1) + ' mm';
+    document.getElementById('statVol').textContent =
+      (volCm3 >= 100 ? volCm3.toFixed(0) : volCm3.toFixed(2)) + ' cm³';
+    document.getElementById('statWeight').textContent =
+      (grams >= 100 ? grams.toFixed(0) : grams.toFixed(1)) + ' g (PLA, solid)';
+    document.getElementById('modelStats').classList.add('show');
+    calculateQuote();
+  }
+
+  // Camera view presets (Cura-style): home / front / top / right
+  function _setThreeView(which) {
+    if (!_threeCamera || !_threeControls) return;
+    const d = _threeDist;
+    const pos = {
+      home:  new THREE.Vector3(0.6, 0.4, 0.7).normalize().multiplyScalar(d),
+      front: new THREE.Vector3(0, 0, d),
+      top:   new THREE.Vector3(0, d, 0.001),
+      right: new THREE.Vector3(d, 0, 0),
+    }[which];
+    if (!pos) return;
+    _threeCamera.position.copy(pos);
+    _threeControls.target.set(0, 0, 0);
+    _threeControls.update();
+  }
+
+  function _addViewButtons(container) {
+    let wrap = document.getElementById('viewBtns');
+    if (wrap) return;
+    wrap = document.createElement('div');
+    wrap.id = 'viewBtns';
+    wrap.style.cssText = 'position:absolute;top:34px;right:10px;display:flex;flex-direction:column;gap:4px;z-index:5;';
+    [['⌂', 'home', 'Reset view'], ['F', 'front', 'Front'], ['T', 'top', 'Top'], ['R', 'right', 'Right']].forEach(([label, view, title]) => {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.title = title;
+      b.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;width:26px;height:24px;background:rgba(0,0,0,0.5);border:0.5px solid #444;color:#ccc;border-radius:6px;cursor:pointer;line-height:1;";
+      b.addEventListener('click', e => { e.stopPropagation(); _setThreeView(view); });
+      wrap.appendChild(b);
+    });
+    container.appendChild(wrap);
   }
 
   function loadSTLFile(file) {
@@ -1613,6 +1728,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('analysingBar').classList.remove('show');
     document.getElementById('modelEmoji').textContent = '📐';
     document.getElementById('modelViewerLabel').textContent = 'Preview unavailable for .' + ext;
+    window._modelRaw = null;
   }
 
   // Populate the checkout order summary panel
