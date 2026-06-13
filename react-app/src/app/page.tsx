@@ -55,6 +55,7 @@ const PAGE_HTML = `<div id="mainSite">
         <div class="nav-brands-item nav-brands-soon">✦ Coming Soon</div>
       </div>
     </div>
+    <a href="/studio">Studio <span style="display:inline-block;background:#FF8C35;color:#111;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 5px;border-radius:4px;vertical-align:middle;margin-left:3px;">SOON</span></a>
     <a href="#contact">Contact</a>
     <a href="#" onclick="showPage('quote'); return false;" style="color:#FF8C35;font-weight:500;">3D Quote ⚡</a>
   </ul>
