@@ -1503,6 +1503,61 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     });
   }
 
+  // ====== INSTAGRAM REELS ======
+  // 👉 Paste your Instagram reel/post links here (full URLs, comma-separated).
+  //    They appear automatically in the "Straight from our reels" carousel.
+  //    Example:
+  //      'https://www.instagram.com/reel/ABCdef123/',
+  window.IG_REELS = window.IG_REELS || [
+    // (empty → shows a "Follow us on Instagram" card until reels are added)
+  ];
+
+  // Turn a reel/post URL into its official embed iframe source.
+  function _igEmbedSrc(url) {
+    const m = String(url).match(/instagram\.com\/(reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);
+    if (!m) return null;
+    const type = m[1] === 'reels' ? 'reel' : m[1];
+    return 'https://www.instagram.com/' + type + '/' + m[2] + '/embed/';
+  }
+
+  function renderIgReels() {
+    const track = document.getElementById('igReelsTrack');
+    if (!track) return;
+    const srcs = (window.IG_REELS || []).map(_igEmbedSrc).filter(Boolean);
+    const navBtns = document.querySelectorAll('#reels .ig-nav');
+
+    if (!srcs.length) {
+      track.innerHTML =
+        '<div class="ig-reel-cta">' +
+          '<div style="font-size:36px;">📸</div>' +
+          '<div style="font-weight:700;font-size:17px;">Follow us on Instagram</div>' +
+          '<div style="font-size:13px;color:var(--muted);max-width:240px;">Our latest reels, builds and prints land here first.</div>' +
+          '<a href="https://www.instagram.com/kyzer.robotics" target="_blank" rel="noopener">@kyzer.robotics →</a>' +
+        '</div>';
+      navBtns.forEach(b => { b.style.display = 'none'; });
+      return;
+    }
+
+    track.innerHTML = srcs.map(src =>
+      '<div class="ig-reel-card">' +
+        '<iframe loading="lazy" src="' + src + '" height="600" scrolling="no" ' +
+        'frameborder="0" allowtransparency="true" allowfullscreen></iframe>' +
+      '</div>'
+    ).join('');
+    navBtns.forEach(b => { b.style.display = srcs.length > 1 ? '' : 'none'; });
+  }
+
+  function igScroll(dir) {
+    const track = document.getElementById('igReelsTrack');
+    if (!track) return;
+    const card = track.querySelector('.ig-reel-card, .ig-reel-cta');
+    const step = card ? card.offsetWidth + 18 : 340;
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+  }
+  window.igScroll = igScroll;
+  window.renderIgReels = renderIgReels;
+  renderIgReels();
+
   // ====== THREE.JS MODEL VIEWER ======
   let _threeRenderer = null, _threeAnimId = null, _threeControls = null;
   let _threeCamera = null, _threeDist = 0;

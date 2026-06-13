@@ -711,6 +711,45 @@ const PAGE_HTML = `<div id="mainSite">
   </div>
 </section>
 
+<!-- INSTAGRAM REELS -->
+<section id="reels">
+  <div class="reveal" style="text-align:center;">
+    <div class="sec-label" style="justify-content:center;">// IN THE FIELD</div>
+    <div class="sec-title">Straight from our reels</div>
+    <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0.75rem auto 0;">Builds, prints and behind-the-scenes from the Kyzer Robotics workshop.</p>
+  </div>
+
+  <div class="ig-reels-wrap reveal">
+    <button class="ig-nav ig-prev" type="button" aria-label="Scroll left" onclick="igScroll(-1)">&#8249;</button>
+    <div class="ig-reels-track" id="igReelsTrack"></div>
+    <button class="ig-nav ig-next" type="button" aria-label="Scroll right" onclick="igScroll(1)">&#8250;</button>
+  </div>
+
+  <div class="reveal" style="text-align:center;margin-top:1.75rem;">
+    <a href="https://www.instagram.com/kyzer.robotics" target="_blank" rel="noopener" class="ig-more-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07zm0 3.24A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.89A4.29 4.29 0 1 1 16.29 12 4.29 4.29 0 0 1 12 16.29zm6.85-11.15a1.54 1.54 0 1 0 1.54 1.54 1.54 1.54 0 0 0-1.54-1.54z"/></svg>
+      See more on Instagram
+    </a>
+  </div>
+
+  <style>
+    .ig-reels-wrap{position:relative;max-width:1180px;margin:2rem auto 0;padding:0 8px;}
+    .ig-reels-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:6px 4px 14px;-ms-overflow-style:none;scrollbar-width:none;}
+    .ig-reels-track::-webkit-scrollbar{display:none;}
+    .ig-reel-card{flex:0 0 auto;width:340px;scroll-snap-align:start;border:2px solid #FF8C35;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 28px rgba(0,0,0,.18);}
+    .ig-reel-card iframe{display:block;width:100%;border:0;background:#000;}
+    .ig-reel-cta{flex:0 0 auto;width:340px;min-height:460px;scroll-snap-align:start;border:2px dashed #FF8C35;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:28px;color:var(--text);background:linear-gradient(160deg,rgba(255,140,53,.10),transparent);}
+    .ig-reel-cta a{color:#FF8C35;font-weight:600;text-decoration:none;}
+    .ig-nav{position:absolute;top:45%;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.15);transition:border-color .2s,color .2s;}
+    .ig-nav:hover{border-color:#FF8C35;color:#FF8C35;}
+    .ig-prev{left:-6px;}
+    .ig-next{right:-6px;}
+    .ig-more-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#FF8C35;color:#111;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;transition:transform .15s,box-shadow .2s;}
+    .ig-more-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,140,53,.35);}
+    @media(max-width:600px){.ig-reel-card,.ig-reel-cta{width:82vw;}.ig-nav{display:none;}}
+  </style>
+</section>
+
 <!-- DEALS -->
 <section id="deals">
   <div class="deals-inner reveal">
@@ -770,7 +809,7 @@ const PAGE_HTML = `<div id="mainSite">
           <option>Product development sprint</option>
           <option>Other</option>
         </select>
-        <textarea id="contactMessage" placeholder="Tell us about your project..."></textarea>
+        <textarea id="contactMessage" placeholder="Tell us about your project..." required></textarea>
         <button type="submit" class="form-submit">Send message →</button>
         <div class="form-success" id="formSuccess">
           ✓ Message sent! We'll get back to you within 24 hours.
@@ -814,7 +853,10 @@ const PAGE_HTML = `<div id="mainSite">
     <a href="#services">Services</a>
     <a href="#products">Products</a>
     <a href="#contact">Contact</a>
-    <a href="#" onclick="openPrivacyModal();return false;">Privacy</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="/refund-policy">Refunds</a>
+    <a href="/shipping-policy">Shipping</a>
   </div>
 </footer>
 </div><!-- end #mainSite -->
