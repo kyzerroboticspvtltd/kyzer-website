@@ -2,6 +2,22 @@
 window.SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
 window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.googleusercontent.com';
 
+  // Escape admin-authored content before embedding it in innerHTML to prevent
+  // stored XSS via site_data fields (product names, hero/contact text, etc.).
+  function _esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  // Allow only safe URL schemes in admin-authored links (blocks javascript:/data:).
+  function _safeUrl(u) {
+    const s = String(u == null ? '' : u).trim();
+    return /^(https?:|mailto:|tel:|\/|#)/i.test(s) ? _esc(s) : '#';
+  }
+
   // Hamburger
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
@@ -884,7 +900,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('pdpShort').textContent  = d.description;
     document.getElementById('pdpLong').textContent   = d.details || '';
     const specsList = document.getElementById('pdpSpecs');
-    specsList.innerHTML = (d.specs || []).map(s => `<li>${s}</li>`).join('');
+    specsList.innerHTML = (d.specs || []).map(s => `<li>${_esc(s)}</li>`).join('');
     // Price + buttons — three modes:
     // 1. Numeric price  → Buy Now + Add to Cart
     // 2. "From ₹X"      → price shown + Get Quote (redirect to quote page)
@@ -1756,7 +1772,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
           details: p.details || '', specs: p.specs || [],
         }).replace(/'/g, '&#39;');
         const firstPhoto = (p.photos && p.photos.length > 0) ? p.photos[0] : (p.photo || null);
-        const cardImg = firstPhoto ? `<img src="${firstPhoto}" alt="${p.name}">` : p.emoji;
+        const cardImg = firstPhoto ? `<img src="${_esc(firstPhoto)}" alt="${_esc(p.name)}">` : _esc(p.emoji);
         const _cnp = parseNumericPrice(p.price);
         const _isFrom = p.price && String(p.price).toLowerCase().startsWith('from');
         const priceHtml = p.price
@@ -1768,12 +1784,12 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
           : `<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>
              <button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>`;
         return `
-        <div class="prod-card" data-cat="${p.category}" data-subcat="${p.subcat||''}" data-frame-type="${p.frameType||''}" data-material="${p.material||''}" data-wheelbase="${p.wheelbase||''}" onclick="openProduct(this)" data-product='${pd}'>
+        <div class="prod-card" data-cat="${_esc(p.category)}" data-subcat="${_esc(p.subcat||'')}" data-frame-type="${_esc(p.frameType||'')}" data-material="${_esc(p.material||'')}" data-wheelbase="${_esc(p.wheelbase||'')}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
           <div class="prod-body">
-            <span class="prod-badge ${p.badgeType}">${p.badge}</span>
-            <h4>${p.name}</h4>
-            <p>${p.description}</p>
+            <span class="prod-badge ${_esc(p.badgeType)}">${_esc(p.badge)}</span>
+            <h4>${_esc(p.name)}</h4>
+            <p>${_esc(p.description)}</p>
             <div class="prod-footer">${priceHtml}</div>
             <div class="prod-actions">${actionBtns}</div>
           </div>
@@ -1788,7 +1804,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       if (hero.tag) document.querySelector('.hero-tag').textContent = hero.tag;
       if (hero.l1 || hero.l2 || hero.l3) {
         document.querySelector('.hero h1').innerHTML =
-          `${hero.l1 || 'Build.'}<br>${hero.l2 || 'Fly.'}<br><span class="accent">${hero.l3 || 'Innovate.'}</span>`;
+          `${_esc(hero.l1 || 'Build.')}<br>${_esc(hero.l2 || 'Fly.')}<br><span class="accent">${_esc(hero.l3 || 'Innovate.')}</span>`;
       }
       if (hero.sub) document.querySelector('.hero-sub').textContent = hero.sub;
       if (hero.stats) {
@@ -1822,7 +1838,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       const secTitle = document.querySelector('#contact .sec-title');
       if (secLbl  && ci.secLabel) secLbl.textContent = ci.secLabel;
       if (secTitle && (ci.title1 || ci.title2))
-        secTitle.innerHTML = (ci.title1 || "Let's build") + '<br>' + (ci.title2 || 'something.');
+        secTitle.innerHTML = _esc(ci.title1 || "Let's build") + '<br>' + _esc(ci.title2 || 'something.');
       // Heading & description
       const ciH3 = document.querySelector('.contact-info h3');
       const descEl = document.querySelector('.contact-info p');
@@ -1831,9 +1847,9 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       // Contact info rows
       const rows = document.querySelectorAll('.ci-row');
       const icon = r => r.querySelector('.ci-icon').outerHTML;
-      if (rows[0] && ci.loc)    rows[0].innerHTML = icon(rows[0]) + ' ' + ci.loc;
-      if (rows[1] && ci.email)  rows[1].innerHTML = icon(rows[1]) + ' <a href="mailto:' + ci.email + '">' + ci.email + '</a>';
-      if (rows[2] && ci.phone)  rows[2].innerHTML = icon(rows[2]) + ' <a href="tel:' + ci.phone.replace(/\D/g,'') + '">' + ci.phone + '</a>';
+      if (rows[0] && ci.loc)    rows[0].innerHTML = icon(rows[0]) + ' ' + _esc(ci.loc);
+      if (rows[1] && ci.email)  rows[1].innerHTML = icon(rows[1]) + ' <a href="mailto:' + encodeURIComponent(ci.email) + '">' + _esc(ci.email) + '</a>';
+      if (rows[2] && ci.phone)  rows[2].innerHTML = icon(rows[2]) + ' <a href="tel:' + _esc(ci.phone.replace(/\D/g,'')) + '">' + _esc(ci.phone) + '</a>';
       // Form subjects dropdown
       if (ci.subjects && ci.subjects.length) {
         const sel = document.getElementById('contactSubject');
@@ -1857,8 +1873,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (lk) {
       const ph = (lk.phone || '').replace(/\D/g,'');
       const em = lk.email || '';
-      if (ciRows[1] && em  && !(ci && ci.email))  ciRows[1].innerHTML = ciIcon(ciRows[1]) + ' <a href="mailto:' + em + '">' + em + '</a>';
-      if (ciRows[2] && ph  && !(ci && ci.phone))  ciRows[2].innerHTML = ciIcon(ciRows[2]) + ' <a href="tel:+' + ph + '">' + lk.phone + '</a>';
+      if (ciRows[1] && em  && !(ci && ci.email))  ciRows[1].innerHTML = ciIcon(ciRows[1]) + ' <a href="mailto:' + encodeURIComponent(em) + '">' + _esc(em) + '</a>';
+      if (ciRows[2] && ph  && !(ci && ci.phone))  ciRows[2].innerHTML = ciIcon(ciRows[2]) + ' <a href="tel:+' + _esc(ph) + '">' + _esc(lk.phone) + '</a>';
       // rebuild social rows from the socials array
       const socialWrap = document.querySelector('.contact-info');
       if (socialWrap && lk.socials) {
@@ -1868,7 +1884,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         lk.socials.filter(s => s.visible && !/instagram/i.test(s.label)).forEach(s => {
           const row = document.createElement('div');
           row.className = 'ci-row';
-          row.innerHTML = '<div class="ci-icon">' + s.icon + '</div> <a href="' + s.url + '" target="_blank" rel="noopener">' + s.label + '</a>';
+          row.innerHTML = '<div class="ci-icon">' + s.icon + '</div> <a href="' + _safeUrl(s.url) + '" target="_blank" rel="noopener">' + _esc(s.label) + '</a>';
           socialWrap.appendChild(row);
         });
       }
