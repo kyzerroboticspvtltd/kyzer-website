@@ -853,10 +853,13 @@ const PAGE_HTML = `<div id="mainSite">
     <a href="#home">Home</a>
     <a href="#services">Services</a>
     <a href="#products">Products</a>
-    <a href="#contact">Contact</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/pricing">Pricing</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
     <a href="/refund-policy">Refunds</a>
+    <a href="/cancellation">Cancellation</a>
     <a href="/shipping-policy">Shipping</a>
   </div>
 </footer>
