@@ -4,7 +4,7 @@ import LegalLayout from '../_components/LegalLayout';
 export const metadata: Metadata = {
   title: 'Product Pricing — Kyzer Robotics',
   description:
-    'How pricing works at Kyzer Robotics Pvt. Ltd. — product prices, custom 3D printing quotes, taxes, currency, and accepted payment methods.',
+    'How pricing works at Kyzer Robotics Pvt. Ltd. — product prices, custom 3D printing quotes, currency, and accepted payment methods.',
   alternates: { canonical: 'https://kyzerrobotics.com/pricing' },
   robots: 'index, follow',
 };
@@ -40,12 +40,6 @@ export default function PricingPage() {
         <li>The quoted amount is confirmed with you before any production begins.</li>
       </ul>
 
-      <h2>Taxes</h2>
-      <p>
-        Applicable taxes (GST) are charged as per Indian law. Whether tax is included in or added to the listed price is
-        shown at checkout. A valid invoice is provided for every order.
-      </p>
-
       <h2>Shipping Charges</h2>
       <p>
         Shipping charges, if any, are calculated at checkout based on weight, size, and destination. See our{' '}
@@ -61,8 +55,8 @@ export default function PricingPage() {
 
       <h2>No Hidden Charges</h2>
       <p>
-        The total shown at checkout — product price plus any applicable tax and shipping — is what you pay. For refunds
-        and cancellations, see our <a href="/refund-policy">Refund Policy</a> and{' '}
+        The total shown at checkout — product price plus any applicable shipping — is what you pay. A valid invoice is
+        provided for every order. For refunds and cancellations, see our <a href="/refund-policy">Refund Policy</a> and{' '}
         <a href="/cancellation">Cancellation Policy</a>.
       </p>
     </LegalLayout>
