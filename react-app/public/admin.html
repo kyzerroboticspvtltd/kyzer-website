@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kyzer Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>/* Apply saved theme before first paint to avoid a flash */
+(function(){try{var t=localStorage.getItem('kyzer_admin_theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <script src="supabase-config.js"></script>
 <style>
 :root {
@@ -448,6 +450,73 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     flex-shrink:0; white-space:nowrap;
   }
   .pi-mode-badge:hover { opacity:0.75; }
+
+  /* ── DARK THEME ── */
+  :root[data-theme="dark"] {
+    --bg: #1a1a17; --bg2: #232320; --bg3: #2c2c28;
+    --border: rgba(255,255,255,0.14); --text: #ece9e3; --muted: #989488;
+    --faint: #34332e; --red: #ff6a52; --green: #5bd07a;
+  }
+  :root[data-theme="dark"] .admin-badge { background: rgba(255,140,53,0.16); border-color: rgba(255,140,53,0.3); }
+  :root[data-theme="dark"] .sidebar-link.active { background: rgba(255,140,53,0.13); }
+  :root[data-theme="dark"] .sidebar-link.active { border-bottom-color: var(--orange); }
+  :root[data-theme="dark"] .dash-kpi.primary { background: rgba(255,140,53,0.12); border-color: rgba(255,140,53,0.32); }
+  :root[data-theme="dark"] .photo-upload-zone:hover,
+  :root[data-theme="dark"] .photo-upload-zone.drag-over { background: rgba(255,140,53,0.1); }
+  :root[data-theme="dark"] .cat-badge,
+  :root[data-theme="dark"] .pi-meta span { color: var(--orange); }
+  :root[data-theme="dark"] .toast { background: #1f3324; border-color: rgba(91,208,122,0.35); color: #7fe39a; }
+  :root[data-theme="dark"] .toast.err { background: #3a201c; border-color: rgba(255,106,82,0.35); color: #ff8c78; }
+  :root[data-theme="dark"] .osb-new        { background: rgba(255,140,53,0.16); color: #ffb079; }
+  :root[data-theme="dark"] .osb-reviewing   { background: rgba(26,115,232,0.18); color: #7eb3ff; }
+  :root[data-theme="dark"] .osb-printing,
+  :root[data-theme="dark"] .osb-processing  { background: rgba(46,125,50,0.2); color: #7fd98f; }
+  :root[data-theme="dark"] .osb-ready,
+  :root[data-theme="dark"] .osb-shipped     { background: rgba(0,121,107,0.22); color: #6fd6c8; }
+  :root[data-theme="dark"] .osb-completed   { background: rgba(255,255,255,0.08); color: #bbb; }
+  :root[data-theme="dark"] .osb-cancelled   { background: rgba(198,40,40,0.2); color: #ff8a80; }
+  :root[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.78); }
+
+  /* ── LIST TOOLBAR (search / sort / export) ── */
+  .list-toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .list-search { flex:1; min-width:200px; max-width:420px; position:relative; }
+  .list-search input { width:100%; padding-left:34px; }
+  .list-search::before { content:'🔍'; position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.6; pointer-events:none; }
+  .list-sort { width:auto; cursor:pointer; }
+
+  /* ── ORDER TIMELINE & NOTES ── */
+  .otimeline { list-style:none; margin:4px 0 0; padding:0; }
+  .otimeline li { display:flex; gap:10px; align-items:flex-start; padding:5px 0; font-size:12px; }
+  .otl-dot { width:8px; height:8px; border-radius:50%; background:var(--orange); margin-top:4px; flex-shrink:0; }
+  .otl-text { flex:1; }
+  .otl-text b { font-weight:600; text-transform:capitalize; }
+  .otl-time { color:var(--muted); font-size:11px; }
+  .onotes-box { width:100%; background:var(--bg3); border:0.5px solid var(--border); color:var(--text);
+    border-radius:8px; padding:10px 12px; font-size:13px; font-family:'DM Sans',sans-serif; resize:vertical; min-height:64px; }
+  .onotes-box:focus { outline:none; border-color:var(--orange); }
+  .omod-quick-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .oqa { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; font-size:12px;
+    font-weight:500; text-decoration:none; border:0.5px solid var(--border); background:var(--bg3); color:var(--text); cursor:pointer; transition:all .15s; }
+  .oqa:hover { border-color:var(--orange); }
+  .oqa.wa { border-color:rgba(37,211,102,0.5); color:#1faa54; }
+  .oqa.mail { border-color:rgba(255,140,53,0.5); color:var(--orange); }
+
+  /* ── DASHBOARD CHART & TOP PRODUCTS ── */
+  .dash-range { display:flex; gap:6px; margin-bottom:14px; }
+  .dash-range button { background:var(--bg3); border:0.5px solid var(--border); color:var(--muted);
+    padding:5px 14px; border-radius:20px; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
+  .dash-range button.active { background:var(--orange); color:#111; border-color:var(--orange); font-weight:500; }
+  .chart-bars { display:flex; align-items:flex-end; gap:4px; height:130px; padding-top:10px; }
+  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
+  .chart-bar { width:100%; max-width:30px; background:var(--orange); border-radius:4px 4px 0 0; min-height:2px;
+    transition:height .3s, opacity .15s; opacity:.85; }
+  .chart-bar-wrap:hover .chart-bar { opacity:1; }
+  .chart-bar-lbl { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; white-space:nowrap; }
+  .topprod-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:0.5px solid var(--border); }
+  .topprod-row:last-child { border-bottom:none; }
+  .topprod-rank { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--muted); width:22px; flex-shrink:0; }
+  .topprod-name { flex:1; font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topprod-count { font-size:12px; color:var(--orange); font-weight:600; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -475,6 +544,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     </div>
     <div class="admin-topbar-right">
       <span class="live-indicator" id="liveIndicator"><span class="live-dot"></span>LIVE</span>
+      <button class="topbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
       <button class="topbar-btn" id="publishBtn" onclick="publishToSite()" style="background:var(--orange);color:#111;font-weight:600;border-color:var(--orange);">🚀 Publish to site</button>
       <a href="./" target="_blank" class="topbar-btn">View site ↗</a>
       <button class="topbar-btn danger" onclick="doLogout()">Logout</button>
@@ -483,22 +553,29 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
   <div class="admin-body">
     <aside class="admin-sidebar">
+      <div class="sidebar-section">OVERVIEW</div>
       <div class="sidebar-link active" onclick="switchTab('dashboard')" id="tl-dashboard"><span>📊</span> Dashboard</div>
-      <div class="sidebar-section">CONTENT</div>
+
+      <div class="sidebar-section" style="margin-top:1.25rem;">SALES</div>
+      <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>🖨️</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
+      <div class="sidebar-link" onclick="switchTab('shoporders')" id="tl-shoporders" style="display:flex;align-items:center;"><span>🛒</span> Shop Orders <span id="shopOrdersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
+      <div class="sidebar-link" onclick="switchTab('quotes')" id="tl-quotes" style="display:flex;align-items:center;"><span>💬</span> Quote Inquiries <span id="quotesNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
+      <div class="sidebar-link" onclick="switchTab('customers')" id="tl-customers"><span>👤</span> Customers</div>
+
+      <div class="sidebar-section" style="margin-top:1.25rem;">CATALOG</div>
       <div class="sidebar-link" onclick="switchTab('products')" id="tl-products"><span>📦</span> Products</div>
       <div class="sidebar-link" onclick="switchTab('categories')" id="tl-categories"><span>🗂️</span> Categories</div>
-      <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero & Stats</div>
-      <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>⚙️</span> Services</div>
+      <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
+
+      <div class="sidebar-section" style="margin-top:1.25rem;">WEBSITE</div>
+      <div class="sidebar-link" onclick="switchTab('hero')" id="tl-hero"><span>🏠</span> Hero &amp; Stats</div>
+      <div class="sidebar-link" onclick="switchTab('services')" id="tl-services"><span>🧩</span> Services</div>
+      <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
       <div class="sidebar-link" onclick="switchTab('contact')" id="tl-contact"><span>📬</span> Contact Us</div>
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
-      <div class="sidebar-link" onclick="switchTab('photos')" id="tl-photos"><span>🖼️</span> Photos</div>
-      <div class="sidebar-link" onclick="switchTab('orders')" id="tl-orders" style="display:flex;align-items:center;"><span>📄</span> 3D Orders <span id="ordersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
-      <div class="sidebar-link" onclick="switchTab('shoporders')" id="tl-shoporders" style="display:flex;align-items:center;"><span>🛒</span> Shop Orders <span id="shopOrdersNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
-      <div class="sidebar-link" onclick="switchTab('customers')" id="tl-customers"><span>👤</span> Customers</div>
-      <div class="sidebar-link" onclick="switchTab('quotes')" id="tl-quotes" style="display:flex;align-items:center;"><span>💬</span> Quote Inquiries <span id="quotesNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
-      <div class="sidebar-section" style="margin-top:1.5rem;">SETTINGS</div>
-      <div class="sidebar-link" onclick="switchTab('quote')" id="tl-quote"><span>💰</span> Quote Pricing</div>
-      <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>🔒</span> Security</div>
+
+      <div class="sidebar-section" style="margin-top:1.25rem;">SETTINGS</div>
+      <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>⚙️</span> Settings</div>
     </aside>
 
     <main class="admin-main">
@@ -510,27 +587,47 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
           <p>Live overview of revenue, orders, and customers.</p>
         </div>
 
-        <!-- KPI row -->
+        <!-- Date range toggle -->
+        <div class="dash-range">
+          <button data-range="today" onclick="setDashRange('today',this)">Today</button>
+          <button data-range="7d" onclick="setDashRange('7d',this)">7 days</button>
+          <button data-range="30d" class="active" onclick="setDashRange('30d',this)">30 days</button>
+          <button data-range="all" onclick="setDashRange('all',this)">All time</button>
+        </div>
+
+        <!-- KPI row (reflects selected range) -->
         <div class="dash-kpi-grid">
           <div class="dash-kpi primary">
-            <div class="dash-kpi-label">Total Revenue</div>
+            <div class="dash-kpi-label">Revenue</div>
             <div class="dash-kpi-num" id="dk-revenue">₹0</div>
-            <div class="dash-kpi-sub" id="dk-revenue-sub">all time</div>
+            <div class="dash-kpi-sub" id="dk-revenue-sub">last 30 days</div>
           </div>
           <div class="dash-kpi">
-            <div class="dash-kpi-label">This Month</div>
-            <div class="dash-kpi-num" id="dk-month">₹0</div>
-            <div class="dash-kpi-sub" id="dk-month-sub">—</div>
-          </div>
-          <div class="dash-kpi">
-            <div class="dash-kpi-label">Today</div>
-            <div class="dash-kpi-num" id="dk-today-rev">₹0</div>
-            <div class="dash-kpi-sub">revenue today</div>
+            <div class="dash-kpi-label">Orders</div>
+            <div class="dash-kpi-num" id="dk-orders">0</div>
+            <div class="dash-kpi-sub" id="dk-orders-sub">in range</div>
           </div>
           <div class="dash-kpi">
             <div class="dash-kpi-label">Units Sold</div>
             <div class="dash-kpi-num" id="dk-units">0</div>
-            <div class="dash-kpi-sub">items across all orders</div>
+            <div class="dash-kpi-sub">items in range</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">New Customers</div>
+            <div class="dash-kpi-num" id="dk-newcust">0</div>
+            <div class="dash-kpi-sub">in range</div>
+          </div>
+        </div>
+
+        <!-- Revenue trend + top products -->
+        <div class="dash-two-col">
+          <div class="panel">
+            <div class="panel-title">📈 Revenue — last 14 days <span class="sub" id="dk-trend-total"></span></div>
+            <div class="chart-bars" id="dash-chart"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">🏆 Top Products <span class="sub">in range</span></div>
+            <div id="dash-top-products" style="margin-top:6px;"></div>
           </div>
         </div>
 
@@ -599,9 +696,13 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
           <div class="panel-title">
             All products
             <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="exportProductsCSV()">⬇ Export CSV</button>
               <button class="btn btn-ghost btn-sm" onclick="resetProducts()">Reset defaults</button>
               <button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ Add product</button>
             </div>
+          </div>
+          <div class="list-toolbar">
+            <div class="list-search"><input class="form-input" id="productSearch" placeholder="Search products by name or description…" oninput="setProductSearch(this.value)"></div>
           </div>
           <div class="product-list" id="productList"></div>
         </div>
@@ -839,26 +940,19 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
       <!-- SECURITY -->
       <div class="admin-tab" id="tab-security">
-        <div class="tab-header"><h2>Security</h2><p>Configure Supabase cross-device sync and change your admin password.</p></div>
+        <div class="tab-header"><h2>Settings</h2><p>Integrations, site mode, and account. Publishing and order updates are handled securely on the server — no secret keys are stored in this browser.</p></div>
 
         <div class="panel" style="max-width:520px;margin-bottom:20px;">
-          <div class="panel-title">☁️ Supabase Setup (cross-device sync)</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Supabase syncs your admin changes to all devices instantly — no backend server needed. The free tier is plenty for this site.</p>
+          <div class="panel-title">☁️ Supabase (cross-device sync)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Supabase syncs your catalog, orders, and customers across all devices. These are the <strong>public</strong> read credentials — the secret service key lives only on the server, so it's safe if this browser is shared.</p>
           <div class="form-group">
             <label class="form-label">SUPABASE PROJECT URL</label>
             <input class="form-input" type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" />
           </div>
           <div class="form-group">
-            <label class="form-label">SUPABASE ANON KEY <span style="color:var(--muted);font-weight:400;">(public — safe to share)</span></label>
+            <label class="form-label">SUPABASE ANON KEY <span style="color:var(--muted);font-weight:400;">(public — read only)</span></label>
             <input class="form-input" type="password" id="sbKey" placeholder="eyJ..." />
-          </div>
-          <div class="form-group">
-            <label class="form-label">SUPABASE SERVICE ROLE KEY <span style="color:#cc2200;font-weight:400;">(secret — never share)</span></label>
-            <input class="form-input" type="password" id="sbServiceKey" placeholder="eyJ..." />
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
-              Used only for publishing from this admin panel. Keeps your data safe — anon key can read but cannot write.<br>
-              <strong>supabase.com</strong> → Project Settings → API → copy <strong>service_role</strong> key (the secret one)
-            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">Leave blank to use the built-in defaults. This key can only read data — it cannot modify anything.</div>
           </div>
           <details style="margin-bottom:14px;">
             <summary style="font-size:12px;color:var(--orange);cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">Show one-time setup SQL →</summary>
@@ -994,14 +1088,6 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div id="gaSaveMsg" style="display:none;font-size:12px;color:#1a8f4f;margin-top:8px;">✓ Saved — reload the live site to activate</div>
         </div>
 
-        <!-- VISIT COUNTER -->
-        <div class="panel" style="max-width:520px;margin-bottom:20px;">
-          <div class="panel-title">👁️ Visit Counter</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Basic visit count tracked via your backend. Requires backend URL to be configured.</p>
-          <div id="visitStats" style="font-size:13px;color:var(--muted);">Loading...</div>
-          <button class="btn btn-ghost btn-sm" onclick="loadVisitStats()" style="margin-top:10px;">Refresh →</button>
-        </div>
-
         <div class="panel" style="max-width:520px;margin-bottom:20px;">
           <div class="panel-title">💳 Razorpay Payment Gateway</div>
           <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Enables real online payments on the checkout page. Use test keys while testing — swap to live keys when ready to accept real payments.</p>
@@ -1013,33 +1099,24 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
               1. Sign up at <strong>dashboard.razorpay.com</strong><br>
               2. Settings → API Keys → Generate Test Key<br>
               3. Copy the <em>Key ID</em> here (starts with <code>rzp_test_</code>)<br>
-              4. Put the <em>Key Secret</em> in your backend <code>.env</code> as <code>RAZORPAY_KEY_SECRET</code>
+              4. Add the <em>Key Secret</em> as <code>RAZORPAY_KEY_SECRET</code> in your Vercel environment variables
             </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">BACKEND URL <span style="color:var(--muted);font-weight:400;">(your Node server)</span></label>
-            <input class="form-input" type="text" id="rzpBackendUrl" placeholder="http://localhost:3000  or  https://your-app.railway.app" />
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Use <code>http://localhost:3000</code> while developing locally.</div>
           </div>
           <button class="btn btn-primary" onclick="saveRazorpayConfig()">Save payment config →</button>
           <div id="rzpSaveMsg" style="display:none;font-size:12px;color:#1a8f4f;margin-top:8px;">✓ Saved</div>
         </div>
 
-        <div class="panel" style="max-width:380px;">
-          <div class="panel-title">🔒 Change password</div>
-          <div class="form-group">
-            <label class="form-label">CURRENT PASSWORD</label>
-            <input class="form-input" type="password" id="secCur" />
+        <div class="panel" style="max-width:520px;">
+          <div class="panel-title">🔒 Account &amp; Security</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+            Your admin password is stored securely on the server, never in this browser. To change it,
+            update the <code>ADMIN_PASSWORD</code> environment variable in your Vercel project settings,
+            then redeploy. Everyone is signed out automatically when the password changes.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="doLogout()">Sign out of this device →</button>
+            <a class="btn btn-ghost" href="https://vercel.com/dashboard" target="_blank" rel="noopener">Open Vercel ↗</a>
           </div>
-          <div class="form-group">
-            <label class="form-label">NEW PASSWORD</label>
-            <input class="form-input" type="password" id="secNew" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">CONFIRM NEW PASSWORD</label>
-            <input class="form-input" type="password" id="secConf" />
-          </div>
-          <button class="btn btn-primary" onclick="changePass()">Update password →</button>
         </div>
       </div>
 
@@ -1056,6 +1133,17 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="ostat-card new"><div class="ostat-num" id="ostat-new">0</div><div class="ostat-label">New</div></div>
           <div class="ostat-card ip"><div class="ostat-num" id="ostat-inprogress">0</div><div class="ostat-label">In progress</div></div>
           <div class="ostat-card done"><div class="ostat-num" id="ostat-completed">0</div><div class="ostat-label">Completed</div></div>
+        </div>
+
+        <div class="list-toolbar">
+          <div class="list-search"><input class="form-input" id="orderSearch" placeholder="Search name, email, ID, material…" oninput="setOrderSearch(this.value)"></div>
+          <select class="form-input list-sort" id="orderSort" onchange="setOrderSort(this.value)">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="high">Value: high → low</option>
+            <option value="low">Value: low → high</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportOrdersCSV()">⬇ Export CSV</button>
         </div>
 
         <div class="orders-filter-bar">
@@ -1085,6 +1173,17 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="ostat-card done"><div class="ostat-num" id="sostat-completed">0</div><div class="ostat-label">Completed</div></div>
         </div>
 
+        <div class="list-toolbar">
+          <div class="list-search"><input class="form-input" id="shopSearch" placeholder="Search name, email, ID, product…" oninput="setShopSearch(this.value)"></div>
+          <select class="form-input list-sort" id="shopSort" onchange="setShopSort(this.value)">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="high">Value: high → low</option>
+            <option value="low">Value: low → high</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportShopOrdersCSV()">⬇ Export CSV</button>
+        </div>
+
         <div class="orders-filter-bar">
           <button class="ofb active" id="sofb-all" onclick="filterShopOrders('all',this)">All</button>
           <button class="ofb" onclick="filterShopOrders('new',this)">New</button>
@@ -1110,8 +1209,15 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="ostat-card done"><div class="ostat-num" id="cstat-ordered">0</div><div class="ostat-label">Have placed orders</div></div>
         </div>
 
-        <div class="cust-search-bar">
-          <input type="text" class="form-input" id="custSearchInput" placeholder="Search by name, email or phone…" oninput="filterCustomers(this.value)" style="max-width:400px;">
+        <div class="list-toolbar">
+          <div class="list-search"><input type="text" class="form-input" id="custSearchInput" placeholder="Search by name, email or phone…" oninput="filterCustomers(this.value)"></div>
+          <select class="form-input list-sort" id="custSort" onchange="setCustSort(this.value)">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="name">Name A–Z</option>
+            <option value="orders">Most orders</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportCustomersCSV()">⬇ Export CSV</button>
         </div>
 
         <div id="customerList" class="cust-list"></div>
@@ -1129,6 +1235,18 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="ostat-card"><div class="ostat-num" id="qistat-total">0</div><div class="ostat-label">Total inquiries</div></div>
           <div class="ostat-card new"><div class="ostat-num" id="qistat-new">0</div><div class="ostat-label">New</div></div>
           <div class="ostat-card done"><div class="ostat-num" id="qistat-responded">0</div><div class="ostat-label">Responded</div></div>
+        </div>
+
+        <div class="list-toolbar">
+          <div class="list-search"><input class="form-input" id="quoteSearch" placeholder="Search name, email, type, budget…" oninput="setQuoteSearch(this.value)"></div>
+          <select class="form-input list-sort" id="quoteFilter" onchange="setQuoteFilter(this.value)">
+            <option value="all">All statuses</option>
+            <option value="new">New</option>
+            <option value="in_review">In review</option>
+            <option value="responded">Responded</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportQuotesCSV()">⬇ Export CSV</button>
         </div>
 
         <div id="quoteInquiryList" class="order-list"></div>
@@ -1173,6 +1291,7 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="omod-field"><label>Phone</label><div id="omod-phone"></div></div>
           <div class="omod-field"><label>Company</label><div id="omod-company"></div></div>
         </div>
+        <div class="omod-quick-actions" id="omod-actions" style="margin-top:12px;"></div>
       </div>
       <div class="omod-section">
         <div class="omod-section-title">Shipping Address</div>
@@ -1206,8 +1325,17 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
         <div id="omod-file-section"></div>
       </div>
       <div class="omod-section" id="omod-notes-section">
-        <div class="omod-section-title">Notes</div>
+        <div class="omod-section-title">Customer Notes</div>
         <div id="omod-notes" style="font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;"></div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Internal Notes <span style="text-transform:none;letter-spacing:0;color:var(--muted);">(only you see these)</span></div>
+        <textarea class="onotes-box" id="omod-internal-notes" placeholder="Add a private note about this order…"></textarea>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="saveInternalNotes('orders','omod-internal-notes')">Save note</button>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Status Timeline</div>
+        <ul class="otimeline" id="omod-timeline"></ul>
       </div>
     </div>
   </div>
@@ -1320,6 +1448,7 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
           <div class="omod-field"><label>Phone</label><div id="somod-phone"></div></div>
           <div class="omod-field"><label>Company</label><div id="somod-company"></div></div>
         </div>
+        <div class="omod-quick-actions" id="somod-actions" style="margin-top:12px;"></div>
       </div>
       <div class="omod-section">
         <div class="omod-section-title">Shipping Address</div>
@@ -1350,8 +1479,17 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
         </div>
       </div>
       <div class="omod-section" id="somod-notes-section" style="display:none;">
-        <div class="omod-section-title">Notes</div>
+        <div class="omod-section-title">Customer Notes</div>
         <div id="somod-notes" style="font-size:13px;color:var(--muted);"></div>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Internal Notes <span style="text-transform:none;letter-spacing:0;color:var(--muted);">(only you see these)</span></div>
+        <textarea class="onotes-box" id="somod-internal-notes" placeholder="Add a private note about this order…"></textarea>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="saveInternalNotes('shop_orders','somod-internal-notes')">Save note</button>
+      </div>
+      <div class="omod-section">
+        <div class="omod-section-title">Status Timeline</div>
+        <ul class="otimeline" id="somod-timeline"></ul>
       </div>
     </div>
   </div>
@@ -1420,25 +1558,36 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
 
 <script>
 // ── AUTH ──
-const PASS_KEY = 'kyzer_admin_pass';
-
-function doLogin() {
+async function doLogin() {
   const pass   = document.getElementById('loginPass').value;
   const errEl  = document.getElementById('loginErr');
-  const stored = localStorage.getItem(PASS_KEY);
 
-  // First-time setup: no password saved yet
-  if (!stored) {
-    if (!pass || pass.length < 6) {
-      errEl.textContent = 'First time? Enter a password (min 6 chars) to set it.';
+  if (!pass) {
+    errEl.textContent = 'Enter your admin password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Authenticate against the server (password lives in the ADMIN_PASSWORD env var).
+  // On success we receive a signed token used to authorise publishing.
+  const apiBase = window.location.origin;
+  try {
+    const r = await fetch(apiBase + '/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.ok || !data.token) {
+      errEl.textContent = 'Incorrect password.';
       errEl.style.display = 'block';
+      document.getElementById('loginPass').value = '';
       return;
     }
-    localStorage.setItem(PASS_KEY, pass);
-  } else if (pass !== stored) {
-    errEl.textContent = 'Incorrect password.';
+    localStorage.setItem('kyzer_admin_token', data.token);
+  } catch {
+    errEl.textContent = 'Could not reach the server. Check your connection and try again.';
     errEl.style.display = 'block';
-    document.getElementById('loginPass').value = '';
     return;
   }
 
@@ -1449,6 +1598,18 @@ function doLogin() {
   p.style.display = 'flex';
   p.style.flexDirection = 'column';
   initAdmin();
+}
+
+// Returns the current admin token if it is still valid, else null.
+// The password is never stored in the browser, so an expired session simply
+// requires signing in again (callers surface a clear prompt).
+async function getAdminToken() {
+  const token = localStorage.getItem('kyzer_admin_token');
+  if (token) {
+    const ts = Number((token.split('.')[0]) || 0);     // token = "<unixSeconds>.<sig>"
+    if (ts && (Date.now() / 1000 - ts) < 82800) return token;   // valid for ~23h
+  }
+  return null;
 }
 
 function doLogout() {
@@ -1536,6 +1697,7 @@ function loadAll() {
 }
 
 function initAdmin() {
+  applyThemeIcon();
   loadAll();
   renderProducts();
   fillCategories();
@@ -1622,7 +1784,7 @@ function renderCustomers(filter) {
     : allCustomers;
 
   const shopOrds = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
-  const printOrds = JSON.parse(localStorage.getItem('kyzer_orders') || '[]');
+  const printOrds = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
 
   const today = new Date().toDateString();
   const todayNew = allCustomers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === today).length;
@@ -1640,7 +1802,15 @@ function renderCustomers(filter) {
     return;
   }
 
-  list.innerHTML = shown.slice().reverse().map(c => {
+  const ocount = c => shopOrds.filter(o => o.contact && o.contact.email === c.email).length
+                    + printOrds.filter(o => o.email === c.email).length;
+  const sorted = shown.slice();
+  if (custSortMode === 'oldest')      sorted.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+  else if (custSortMode === 'name')   sorted.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  else if (custSortMode === 'orders') sorted.sort((a, b) => ocount(b) - ocount(a));
+  else                                sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+  list.innerHTML = sorted.map(c => {
     const initials = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     const shopCount = shopOrds.filter(o => o.contact && o.contact.email === c.email).length;
     const printCount = printOrds.filter(o => o.email === c.email).length;
@@ -1691,7 +1861,7 @@ function openCustomerModal(id) {
     : '<span style="color:var(--muted);">No address saved yet.</span>';
 
   const shopOrds = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
-  const printOrds = JSON.parse(localStorage.getItem('kyzer_orders') || '[]');
+  const printOrds = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
   const myShop  = shopOrds.filter(o => o.contact && o.contact.email === c.email);
   const myPrint = printOrds.filter(o => o.email === c.email);
 
@@ -1783,9 +1953,18 @@ function renderQuoteInquiries() {
   if (!total) { list.innerHTML = '<div class="orders-empty">No quote inquiries yet.</div>'; return; }
 
   const TYPE_ICONS = { drone:'🛸', '3dprint':'🖨️', electronics:'💡', robotics:'🦾', prototype:'🧪', other:'✨' };
-  const STATUS_COLORS = { new:'#FF8C35', responded:'#2e7d32', closed:'#888' };
+  const STATUS_COLORS = { new:'#FF8C35', in_review:'#1a73e8', responded:'#2e7d32', closed:'#888' };
 
-  list.innerHTML = allQuoteInquiries.map(q => {
+  let shown = allQuoteInquiries.slice();
+  if (currentQuoteFilter !== 'all') shown = shown.filter(q => q.status === currentQuoteFilter);
+  if (currentQuoteSearch) {
+    const sq = currentQuoteSearch;
+    shown = shown.filter(q => [q.name, q.email, q.phone, q.project_type, q.budget, q.org]
+      .some(f => String(f || '').toLowerCase().includes(sq)));
+  }
+  if (!shown.length) { list.innerHTML = '<div class="orders-empty">No inquiries match your filters.</div>'; return; }
+
+  list.innerHTML = shown.map(q => {
     const color = STATUS_COLORS[q.status] || '#888';
     const icon  = TYPE_ICONS[q.project_type] || '✨';
     const date  = new Date(q.submitted_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
@@ -1867,15 +2046,8 @@ async function updateQuoteStatus(id, status) {
   const q = allQuoteInquiries.find(x => x.id === id);
   if (!q) return;
   q.status = status;
-  const { url, key } = _sbCreds();
-  if (url && key) {
-    fetch(`${url}/rest/v1/quote_inquiries?id=eq.${encodeURIComponent(id)}`, {
-      method: 'PATCH',
-      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ status })
-    }).catch(() => {});
-  }
   renderQuoteInquiries();
+  _persistOrder('quote_inquiries', id, status);
 }
 
 function closeQuoteModal() {
@@ -1903,42 +2075,36 @@ function renderDashboard() {
   loadShopOrders();
   loadCustomers();
 
-  const now = new Date();
-  const todayStr = now.toDateString();
-  const thisMonth = now.getMonth();
-  const thisYear = now.getFullYear();
-
   const printOrds = allOrders;
-  const shopOrds = allShopOrders;
+  const shopOrds  = allShopOrders;
   const customers = allCustomers;
-
-  let totalRev = 0, monthRev = 0, todayRev = 0, unitsSold = 0;
-
-  shopOrds.forEach(o => {
-    const amt = Number(o.total) || 0;
-    const d = new Date(o.submittedAt);
-    totalRev += amt;
-    if (d.toDateString() === todayStr) todayRev += amt;
-    if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) monthRev += amt;
-    (o.items || []).forEach(i => unitsSold += (Number(i.qty) || 1));
-  });
-
-  printOrds.forEach(o => {
-    const amt = Number(o.estimatedTotal) || 0;
-    const d = new Date(o.submittedAt);
-    totalRev += amt;
-    if (d.toDateString() === todayStr) todayRev += amt;
-    if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) monthRev += amt;
-    unitsSold += Number(o.quantity) || 1;
-  });
-
   const fmtRs = n => '₹' + Number(n).toLocaleString('en-IN');
-  document.getElementById('dk-revenue').textContent = fmtRs(totalRev);
-  document.getElementById('dk-month').textContent = fmtRs(monthRev);
-  document.getElementById('dk-today-rev').textContent = fmtRs(todayRev);
-  document.getElementById('dk-units').textContent = unitsSold;
-  document.getElementById('dk-month-sub').textContent = now.toLocaleString('en-IN', { month: 'long' });
 
+  // Selected date range → cutoff timestamp
+  const now = new Date();
+  const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const DAYS = { today: 1, '7d': 7, '30d': 30, all: Infinity };
+  const days = DAYS[dashRange] != null ? DAYS[dashRange] : 30;
+  const cutoff = dashRange === 'today' ? startToday
+              : days === Infinity ? 0
+              : now.getTime() - days * 86400000;
+  const inRange = d => { const t = new Date(d).getTime(); return isFinite(t) && t >= cutoff; };
+
+  // Range-aware KPIs
+  let rev = 0, ordCount = 0, units = 0;
+  shopOrds.forEach(o => { if (!inRange(o.submittedAt)) return; rev += Number(o.total) || 0; ordCount++; (o.items || []).forEach(i => units += Number(i.qty) || 1); });
+  printOrds.forEach(o => { if (!inRange(o.submittedAt)) return; rev += Number(o.estimatedTotal) || 0; ordCount++; units += Number(o.quantity) || 1; });
+  const newCust = customers.filter(c => c.createdAt && inRange(c.createdAt)).length;
+  const rangeLbl = { today: 'today', '7d': 'last 7 days', '30d': 'last 30 days', all: 'all time' }[dashRange] || 'last 30 days';
+
+  document.getElementById('dk-revenue').textContent = fmtRs(rev);
+  document.getElementById('dk-revenue-sub').textContent = rangeLbl;
+  document.getElementById('dk-orders').textContent = ordCount;
+  document.getElementById('dk-orders-sub').textContent = rangeLbl;
+  document.getElementById('dk-units').textContent = units;
+  document.getElementById('dk-newcust').textContent = newCust;
+
+  // All-time mini stats
   const allOrd = [
     ...printOrds.map(o => ({ ...o, _type: '3d' })),
     ...shopOrds.map(o => ({ ...o, _type: 'shop' }))
@@ -1949,15 +2115,13 @@ function renderDashboard() {
   document.getElementById('dk-ord-progress').textContent = allOrd.filter(o => IN_PROGRESS.includes(o.status)).length;
   document.getElementById('dk-ord-done').textContent = allOrd.filter(o => o.status === 'completed').length;
 
-  const todayCust = customers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === todayStr).length;
-  const withOrd = customers.filter(c =>
-    shopOrds.some(o => o.email === c.email) || printOrds.some(o => o.email === c.email)
-  ).length;
+  const todayStr = now.toDateString();
   document.getElementById('dk-cust-total').textContent = customers.length;
-  document.getElementById('dk-cust-today').textContent = todayCust;
-  document.getElementById('dk-cust-orders').textContent = withOrd;
+  document.getElementById('dk-cust-today').textContent = customers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === todayStr).length;
+  document.getElementById('dk-cust-orders').textContent = customers.filter(c => shopOrds.some(o => o.email === c.email) || printOrds.some(o => o.email === c.email)).length;
 
-  const STATUS_DOT = { new: '#FF8C35', reviewing: '#1a73e8', printing: '#2e7d32', processing: '#1a73e8', shipped: '#9C27B0', ready: '#00796b', completed: '#bbb', cancelled: '#c62828' };
+  _renderRevenueChart(allOrd);
+  _renderTopProducts(shopOrds, printOrds, inRange);
 
   const recent = allOrd.slice().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 10);
   const roEl = document.getElementById('dash-recent-orders');
@@ -1997,6 +2161,46 @@ function renderDashboard() {
   }).join('') : '<div class="orders-empty" style="padding:24px 0;font-size:13px;">No customers yet.</div>';
 }
 
+// Revenue trend — fixed last-14-days window (independent of the KPI range)
+function _renderRevenueChart(allOrd) {
+  const el = document.getElementById('dash-chart');
+  if (!el) return;
+  const N = 14, now = new Date(), buckets = [];
+  for (let i = N - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    buckets.push({ key: d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(), short: d.getDate(), label: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), total: 0 });
+  }
+  const map = {}; buckets.forEach(b => map[b.key] = b);
+  allOrd.forEach(o => {
+    const dt = new Date(o.submittedAt);
+    if (!isFinite(dt.getTime())) return;
+    const b = map[dt.getFullYear() + '-' + dt.getMonth() + '-' + dt.getDate()];
+    if (b) b.total += o._type === 'shop' ? (Number(o.total) || 0) : (Number(o.estimatedTotal) || 0);
+  });
+  const max = Math.max(1, ...buckets.map(b => b.total));
+  const sum = buckets.reduce((s, b) => s + b.total, 0);
+  const totEl = document.getElementById('dk-trend-total');
+  if (totEl) totEl.textContent = sum ? '₹' + sum.toLocaleString('en-IN') : '';
+  el.innerHTML = buckets.map(b => {
+    const h = Math.round((b.total / max) * 100);
+    return `<div class="chart-bar-wrap" title="${b.label}: ₹${b.total.toLocaleString('en-IN')}"><div class="chart-bar" style="height:${h}%"></div><div class="chart-bar-lbl">${b.short}</div></div>`;
+  }).join('');
+}
+
+// Top products by units sold within the selected range
+function _renderTopProducts(shopOrds, printOrds, inRange) {
+  const el = document.getElementById('dash-top-products');
+  if (!el) return;
+  const counts = {};
+  shopOrds.forEach(o => { if (!inRange(o.submittedAt)) return; (o.items || []).forEach(i => { const n = i.name || 'Item'; counts[n] = (counts[n] || 0) + (Number(i.qty) || 1); }); });
+  let print3d = 0; printOrds.forEach(o => { if (!inRange(o.submittedAt)) return; print3d += Number(o.quantity) || 1; });
+  if (print3d > 0) counts['3D Print orders'] = (counts['3D Print orders'] || 0) + print3d;
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  el.innerHTML = sorted.length
+    ? sorted.map((e, i) => `<div class="topprod-row"><div class="topprod-rank">${i + 1}</div><div class="topprod-name">${escHtml(e[0])}</div><div class="topprod-count">${e[1]} sold</div></div>`).join('')
+    : '<div class="orders-empty" style="padding:20px 0;font-size:13px;">No sales in this range yet.</div>';
+}
+
 // ── SHOP ORDERS ──
 let allShopOrders = [];
 let currentShopOrderFilter = 'all';
@@ -2013,9 +2217,16 @@ function loadShopOrders() {
 
 function renderShopOrders() {
   loadShopOrders();
-  const filtered = currentShopOrderFilter === 'all'
-    ? allShopOrders
+  let filtered = currentShopOrderFilter === 'all'
+    ? allShopOrders.slice()
     : allShopOrders.filter(o => o.status === currentShopOrderFilter);
+  if (currentShopSearch) {
+    const q = currentShopSearch;
+    filtered = filtered.filter(o => [o.name, o.email, o.id, o.phone]
+      .some(f => String(f || '').toLowerCase().includes(q))
+      || (o.items || []).some(i => String(i.name || '').toLowerCase().includes(q)));
+  }
+  filtered = _sortList(filtered, currentShopSort, o => _num(o.total));
 
   document.getElementById('sostat-total').textContent = allShopOrders.length;
   document.getElementById('sostat-new').textContent = allShopOrders.filter(o => o.status === 'new').length;
@@ -2029,7 +2240,7 @@ function renderShopOrders() {
 
   const list = document.getElementById('shopOrderList');
   if (!filtered.length) {
-    list.innerHTML = '<div class="orders-empty">No shop orders yet.</div>';
+    list.innerHTML = '<div class="orders-empty">' + (currentShopSearch ? 'No orders match your search.' : 'No shop orders yet.') + '</div>';
     return;
   }
 
@@ -2075,6 +2286,7 @@ function openShopOrderModal(id) {
   document.getElementById('somod-email').textContent = o.email || '—';
   document.getElementById('somod-phone').textContent = o.phone || '—';
   document.getElementById('somod-company').textContent = o.company || '—';
+  document.getElementById('somod-actions').innerHTML = _quickActions(o);
 
   const s = o.shipping || {};
   document.getElementById('somod-addr').textContent = [s.addr1, s.addr2].filter(Boolean).join(', ') || '—';
@@ -2111,6 +2323,10 @@ function openShopOrderModal(id) {
     saveShopOrderStatus(id, 'processing');
   }
 
+  const fresh = allShopOrders.find(x => x.id === id) || o;
+  document.getElementById('somod-internal-notes').value = fresh.adminNotes || '';
+  _renderTimeline('somod-timeline', fresh);
+
   document.getElementById('shopOrderModal').classList.add('open');
 }
 
@@ -2128,9 +2344,12 @@ function updateShopOrderStatus() {
 function saveShopOrderStatus(id, status) {
   const orders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
   const idx = orders.findIndex(o => o.id === id);
-  if (idx !== -1) orders[idx].status = status;
+  let hist;
+  if (idx !== -1) { orders[idx].status = status; hist = _appendTimeline(orders[idx], status); }
   localStorage.setItem('kyzer_product_orders', JSON.stringify(orders));
   allShopOrders = orders;
+  if (currentShopOrderId === id && idx !== -1) _renderTimeline('somod-timeline', orders[idx]);
+  _persistOrder('shop_orders', id, status, hist ? { statusHistory: hist } : undefined);
 }
 
 // ── TOAST ──
@@ -2141,17 +2360,203 @@ function toast(msg, err) {
   setTimeout(() => el.className = 'toast', 2800);
 }
 
+// ── THEME ──
+function applyThemeIcon() {
+  const t = document.documentElement.getAttribute('data-theme') || 'light';
+  const b = document.getElementById('themeBtn');
+  if (b) { b.textContent = t === 'dark' ? '☀️' : '🌙'; b.title = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'; }
+}
+function toggleTheme() {
+  const cur  = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('kyzer_admin_theme', next); } catch (e) {}
+  applyThemeIcon();
+}
+
+// ── CSV EXPORT ──
+function _csvCell(v) {
+  v = v == null ? '' : String(v);
+  return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+function downloadCSV(filename, rows) {
+  const csv  = rows.map(r => r.map(_csvCell).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a    = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+function _todayStamp() { return new Date().toISOString().slice(0, 10); }
+function _num(v) { return Number(String(v == null ? '' : v).replace(/[^\d.]/g, '')) || 0; }
+
+// Shared status → dot colour map (used by timelines and the dashboard feed)
+const STATUS_DOT = {
+  received:'#FF8C35', new:'#FF8C35', reviewing:'#1a73e8', in_review:'#1a73e8',
+  printing:'#2e7d32', processing:'#1a73e8', shipped:'#9C27B0', ready:'#00796b',
+  completed:'#888', cancelled:'#c62828', responded:'#2e7d32', closed:'#888'
+};
+
+// ── SECURE ORDER MUTATIONS (status / notes go through the server) ──
+async function _persistOrder(table, id, status, dataPatch) {
+  const token = await getAdminToken();
+  if (!token) { toast('Session expired — please sign in again to save changes.', true); return false; }
+  try {
+    const r = await fetch(window.location.origin + '/api/order-update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ table, id, status, dataPatch }),
+    });
+    if (r.ok) return true;
+    if (r.status === 401) toast('Session expired — please sign in again to save changes.', true);
+    else { const e = await r.json().catch(() => ({})); toast('Save failed: ' + (e.error || r.status), true); }
+  } catch (e) { toast('Could not reach the server to save.', true); }
+  return false;
+}
+
+function _appendTimeline(o, status) {
+  if (!Array.isArray(o.statusHistory)) o.statusHistory = [];
+  const last = o.statusHistory[o.statusHistory.length - 1];
+  if (last && last.status === status) return o.statusHistory;
+  o.statusHistory.push({ status, at: new Date().toISOString() });
+  return o.statusHistory;
+}
+function _renderTimeline(elId, o) {
+  const el = document.getElementById(elId);
+  if (!el || !o) return;
+  const items = [{ status: 'received', at: o.submittedAt }];
+  (Array.isArray(o.statusHistory) ? o.statusHistory : []).forEach(h => items.push(h));
+  el.innerHTML = items.map(h => {
+    const c = STATUS_DOT[h.status] || '#FF8C35';
+    const t = h.at ? new Date(h.at).toLocaleString('en-IN') : '';
+    return `<li><span class="otl-dot" style="background:${c}"></span><div class="otl-text"><b>${escHtml(h.status)}</b><div class="otl-time">${t}</div></div></li>`;
+  }).join('');
+}
+function _quickActions(o) {
+  const email = o.email || '';
+  const raw   = String(o.phone || '').replace(/\D/g, '');
+  const wa    = raw ? (raw.length === 10 ? '91' + raw : raw) : '';
+  let h = '';
+  if (email) h += `<a class="oqa mail" href="mailto:${escHtml(email)}">✉️ Email</a>`;
+  if (wa)    h += `<a class="oqa wa" href="https://wa.me/${wa}" target="_blank" rel="noopener">💬 WhatsApp</a>`;
+  if (raw)   h += `<a class="oqa" href="tel:${escHtml(o.phone)}">📞 Call</a>`;
+  return h || '<span style="font-size:12px;color:var(--muted);">No contact details on file.</span>';
+}
+function saveInternalNotes(table, taId) {
+  const id  = table === 'orders' ? currentOrderId : currentShopOrderId;
+  if (!id) return;
+  const val   = document.getElementById(taId).value;
+  const lsKey = table === 'orders' ? 'kyzer_print_orders' : 'kyzer_product_orders';
+  const arr = JSON.parse(localStorage.getItem(lsKey) || '[]');
+  const idx = arr.findIndex(o => o.id === id);
+  if (idx !== -1) { arr[idx].adminNotes = val; localStorage.setItem(lsKey, JSON.stringify(arr)); }
+  if (table === 'orders') allOrders = arr; else allShopOrders = arr;
+  _persistOrder(table, id, undefined, { adminNotes: val }).then(ok => { if (ok) toast('Note saved.'); });
+}
+
+// ── LIST SEARCH / SORT / EXPORT STATE ──
+function _sortList(arr, sort, valFn) {
+  const a = arr.slice();
+  if (sort === 'oldest')    a.sort((x, y) => new Date(x.submittedAt || 0) - new Date(y.submittedAt || 0));
+  else if (sort === 'high') a.sort((x, y) => valFn(y) - valFn(x));
+  else if (sort === 'low')  a.sort((x, y) => valFn(x) - valFn(y));
+  else                      a.sort((x, y) => new Date(y.submittedAt || 0) - new Date(x.submittedAt || 0));
+  return a;
+}
+
+let currentOrderSearch = '', currentOrderSort = 'newest';
+function setOrderSearch(v) { currentOrderSearch = v.trim().toLowerCase(); renderOrders(); }
+function setOrderSort(v)   { currentOrderSort = v; renderOrders(); }
+function exportOrdersCSV() {
+  const rows = [['Order ID','Date','Status','Name','Email','Phone','Material','Quality','Infill','Colour','Quantity','Delivery','Est. Total','File','Internal Notes']];
+  allOrders.forEach(o => rows.push([o.id, o.submittedAt ? new Date(o.submittedAt).toLocaleString('en-IN') : '', o.status, o.name, o.email, o.phone, o.material, o.quality, o.infill, o.colour, o.quantity, o.delivery, o.estimatedTotal, o.fileName || '', o.adminNotes || '']));
+  if (rows.length < 2) return toast('No orders to export.', true);
+  downloadCSV('kyzer-3d-orders-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + (rows.length - 1) + ' orders.');
+}
+
+let currentShopSearch = '', currentShopSort = 'newest';
+function setShopSearch(v) { currentShopSearch = v.trim().toLowerCase(); renderShopOrders(); }
+function setShopSort(v)   { currentShopSort = v; renderShopOrders(); }
+function exportShopOrdersCSV() {
+  const rows = [['Order ID','Date','Status','Name','Email','Phone','Items','Subtotal','GST','Delivery','Total','Internal Notes']];
+  allShopOrders.forEach(o => {
+    const items = (o.items || []).map(i => `${i.name} x${i.qty}`).join(' | ');
+    rows.push([o.id, o.submittedAt ? new Date(o.submittedAt).toLocaleString('en-IN') : '', o.status, o.name, o.email, o.phone, items, o.subtotal, o.gst, o.delivery, o.total, o.adminNotes || '']);
+  });
+  if (rows.length < 2) return toast('No orders to export.', true);
+  downloadCSV('kyzer-shop-orders-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + (rows.length - 1) + ' orders.');
+}
+
+let currentQuoteSearch = '', currentQuoteFilter = 'all';
+function setQuoteSearch(v) { currentQuoteSearch = v.trim().toLowerCase(); renderQuoteInquiries(); }
+function setQuoteFilter(v) { currentQuoteFilter = v; renderQuoteInquiries(); }
+function exportQuotesCSV() {
+  const rows = [['ID','Date','Status','Name','Email','Phone','Org','Type','Timeline','Budget','Description']];
+  allQuoteInquiries.forEach(q => rows.push([q.id, q.submitted_at ? new Date(q.submitted_at).toLocaleString('en-IN') : '', q.status, q.name, q.email, q.phone, q.org, q.project_type, q.timeline, q.budget, q.description]));
+  if (rows.length < 2) return toast('No inquiries to export.', true);
+  downloadCSV('kyzer-quote-inquiries-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + (rows.length - 1) + ' inquiries.');
+}
+
+let custSortMode = 'newest';
+function setCustSort(v) { custSortMode = v; renderCustomers(document.getElementById('custSearchInput').value); }
+function exportCustomersCSV() {
+  const shopOrds  = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+  const printOrds = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
+  const rows = [['ID','Name','Email','Phone','Joined','Address','Orders']];
+  allCustomers.forEach(c => {
+    const a = c.address || {};
+    const addr = [a.line1, a.line2, a.city, a.state, a.pincode].filter(Boolean).join(', ');
+    const orders = shopOrds.filter(o => (o.contact && o.contact.email) === c.email || o.email === c.email).length
+                 + printOrds.filter(o => o.email === c.email).length;
+    rows.push([c.id, c.name, c.email, c.phone, c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN') : '', addr, orders]);
+  });
+  if (rows.length < 2) return toast('No customers to export.', true);
+  downloadCSV('kyzer-customers-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + (rows.length - 1) + ' customers.');
+}
+
+let productSearch = '';
+function setProductSearch(v) { productSearch = v.trim().toLowerCase(); renderProducts(); }
+function exportProductsCSV() {
+  const catMap = {}; categories.forEach(c => catMap[c.id] = c.name);
+  const rows = [['ID','Name','Category','Subcategory','Price','Button','Visible','Badge','Short description']];
+  products.forEach(p => rows.push([p.id, p.name, catMap[p.category] || p.category || '', p.subcat || '', p.price, p.btnMode === 'enquire' ? 'Enquire' : 'Buy', p.visible ? 'Yes' : 'No', p.badge || '', p.description || '']));
+  if (rows.length < 2) return toast('No products to export.', true);
+  downloadCSV('kyzer-products-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + products.length + ' products.');
+}
+
+// ── DASHBOARD date range ──
+let dashRange = '30d';
+function setDashRange(r, btn) {
+  dashRange = r;
+  document.querySelectorAll('.dash-range button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderDashboard();
+}
+
 // ── PRODUCTS ──
 function renderProducts() {
   if (!products.length) {
     document.getElementById('productList').innerHTML = '<p style="color:var(--muted);font-size:13px;">No products yet.</p>';
     return;
   }
+  const list = productSearch
+    ? products.filter(p => [p.name, p.description, p.subcat].some(f => String(f || '').toLowerCase().includes(productSearch)))
+    : products;
+  if (!list.length) {
+    document.getElementById('productList').innerHTML = '<p style="color:var(--muted);font-size:13px;">No products match your search.</p>';
+    return;
+  }
   const catMap = {};
   categories.forEach(c => { catMap[c.id] = c.name; });
   const grouped = {};
   const uncatKey = '__uncat__';
-  products.forEach(p => {
+  list.forEach(p => {
     const key = (p.category && catMap[p.category]) ? p.category : uncatKey;
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(p);
@@ -2824,13 +3229,16 @@ async function publishToSite(silent) {
   };
 
   // Try the secure server-side API route first
-  const apiBase = localStorage.getItem('kyzer_backend_url') || window.location.origin;
-  const password = localStorage.getItem('kyzer_admin_pass') || '';
+  const apiBase = window.location.origin;
+  const token = await getAdminToken();
 
   try {
     const r = await fetch(apiBase + '/api/publish', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+      },
       body: JSON.stringify({ payload }),
     });
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
@@ -2838,47 +3246,16 @@ async function publishToSite(silent) {
       if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
       return;
     }
+    if (r.status === 401) {
+      if (!silent) toast('Session expired — please log out and log back in to publish.', true);
+      return;
+    }
     const err = await r.json().catch(() => ({}));
     if (!silent) toast('Publish error: ' + (err.error || r.status), true);
     return;
   } catch {
-    // API route unreachable — fall through to direct Supabase
-  }
-
-  // Fallback: write directly to Supabase (requires service key in Security tab)
-  const sbUrl = localStorage.getItem('kyzer_supabase_url')
-    || (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : '');
-  const sbKey = localStorage.getItem('kyzer_supabase_key')
-    || (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY ? SUPABASE_KEY : '');
-  const writeKey = localStorage.getItem('kyzer_supabase_service_key') || sbKey;
-
-  if (!sbUrl || !writeKey) {
-    if (!silent) toast('Could not publish. Set your Supabase service key in Security tab.', true);
     if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
-    return;
-  }
-
-  try {
-    const r2 = await fetch(sbUrl + '/rest/v1/site_data', {
-      method: 'POST',
-      headers: {
-        'apikey': writeKey,
-        'Authorization': 'Bearer ' + writeKey,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates',
-      },
-      body: JSON.stringify({ ...payload, id: 1, updated_at: new Date().toISOString() }),
-    });
-    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
-    if (r2.ok) {
-      if (!silent) toast('✓ Published! All devices will see the changes within seconds.');
-    } else {
-      const err = await r2.text();
-      if (!silent) toast('Supabase error: ' + err, true);
-    }
-  } catch {
-    if (!silent) { btn.textContent = '🚀 Publish to site'; btn.disabled = false; }
-    if (!silent) toast('Cannot reach Supabase. Check Security tab config.', true);
+    if (!silent) toast('Could not reach the server to publish. Check your connection and try again.', true);
   }
 }
 
@@ -2890,18 +3267,13 @@ function initSecurity() {
     || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
   const urlEl = document.getElementById('sbUrl');
   const keyEl = document.getElementById('sbKey');
-  const svcEl = document.getElementById('sbServiceKey');
   if (urlEl) urlEl.value = savedUrl || '';
   if (keyEl) keyEl.value = savedKey || '';
-  if (svcEl) svcEl.value = localStorage.getItem('kyzer_supabase_service_key') || '';
 
   const rzpId = document.getElementById('rzpKeyId');
-  const rzpUrl = document.getElementById('rzpBackendUrl');
   if (rzpId) rzpId.value = localStorage.getItem('kyzer_razorpay_key_id') || '';
-  if (rzpUrl) rzpUrl.value = localStorage.getItem('kyzer_backend_url') || '';
   initCS();
   initGA();
-  loadVisitStats();
 }
 
 // ── COMING SOON ──
@@ -2952,40 +3324,10 @@ function saveGA() {
   toast('GA4 ID saved.');
 }
 
-// ── VISIT COUNTER ──
-async function loadVisitStats() {
-  const bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/,'');
-  const el = document.getElementById('visitStats');
-  if (!bu) { el.textContent = 'No backend URL configured — set it in Razorpay settings.'; return; }
-  el.textContent = 'Loading…';
-  try {
-    const res = await fetch(bu + '/api/analytics');
-    const d = await res.json();
-    if (d.ok) {
-      el.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;">
-          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.total||0}</div>
-            <div style="font-size:11px;color:var(--muted);">Total visits</div>
-          </div>
-          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.today||0}</div>
-            <div style="font-size:11px;color:var(--muted);">Today</div>
-          </div>
-          <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#FF8C35;">${d.week||0}</div>
-            <div style="font-size:11px;color:var(--muted);">This week</div>
-          </div>
-        </div>`;
-    } else { el.textContent = 'Could not load stats.'; }
-  } catch { el.textContent = 'Backend not reachable.'; }
-}
-
 function saveRazorpayConfig() {
   const keyId  = document.getElementById('rzpKeyId').value.trim();
-  const backUrl = document.getElementById('rzpBackendUrl').value.trim().replace(/\/$/, '');
   if (keyId)  localStorage.setItem('kyzer_razorpay_key_id', keyId);
-  if (backUrl) localStorage.setItem('kyzer_backend_url', backUrl);
+  else localStorage.removeItem('kyzer_razorpay_key_id');
   const msg = document.getElementById('rzpSaveMsg');
   msg.style.display = '';
   setTimeout(() => msg.style.display = 'none', 2500);
@@ -2995,16 +3337,11 @@ function saveRazorpayConfig() {
 function saveSupabase() {
   const url = document.getElementById('sbUrl').value.trim();
   const key = document.getElementById('sbKey').value.trim();
-  const svc = document.getElementById('sbServiceKey').value.trim();
   if (url) localStorage.setItem('kyzer_supabase_url', url);
+  else localStorage.removeItem('kyzer_supabase_url');
   if (key) localStorage.setItem('kyzer_supabase_key', key);
-  if (svc) localStorage.setItem('kyzer_supabase_service_key', svc);
-  else localStorage.removeItem('kyzer_supabase_service_key');
-  if (url && key) {
-    toast('Supabase config saved. Click Publish to sync all devices.');
-  } else {
-    toast('Saved — but enter both URL and key before publishing.', true);
-  }
+  else localStorage.removeItem('kyzer_supabase_key');
+  toast('Supabase config saved.');
 }
 
 // ── 3D PRINT ORDERS ──
@@ -3023,9 +3360,15 @@ function loadOrders() {
 
 function renderOrders() {
   loadOrders();
-  const filtered = currentOrderFilter === 'all'
-    ? allOrders
+  let filtered = currentOrderFilter === 'all'
+    ? allOrders.slice()
     : allOrders.filter(o => o.status === currentOrderFilter);
+  if (currentOrderSearch) {
+    const q = currentOrderSearch;
+    filtered = filtered.filter(o => [o.name, o.email, o.id, o.material, o.phone]
+      .some(f => String(f || '').toLowerCase().includes(q)));
+  }
+  filtered = _sortList(filtered, currentOrderSort, o => _num(o.estimatedTotal));
 
   document.getElementById('ostat-total').textContent = allOrders.length;
   document.getElementById('ostat-new').textContent = allOrders.filter(o => o.status === 'new').length;
@@ -3039,7 +3382,7 @@ function renderOrders() {
 
   const list = document.getElementById('orderList');
   if (!filtered.length) {
-    list.innerHTML = '<div class="orders-empty">No orders here yet.</div>';
+    list.innerHTML = '<div class="orders-empty">' + (currentOrderSearch ? 'No orders match your search.' : 'No orders here yet.') + '</div>';
     return;
   }
 
@@ -3089,6 +3432,7 @@ function openOrderModal(id) {
   document.getElementById('omod-email').textContent = o.email || '—';
   document.getElementById('omod-phone').textContent = o.phone || '—';
   document.getElementById('omod-company').textContent = o.company || '—';
+  document.getElementById('omod-actions').innerHTML = _quickActions(o);
 
   // Shipping address
   const s = o.shipping || {};
@@ -3140,6 +3484,10 @@ function openOrderModal(id) {
     saveOrderStatus(id, 'reviewing');
   }
 
+  const fresh = allOrders.find(x => x.id === id) || o;
+  document.getElementById('omod-internal-notes').value = fresh.adminNotes || '';
+  _renderTimeline('omod-timeline', fresh);
+
   document.getElementById('orderModal').classList.add('open');
 }
 
@@ -3157,21 +3505,12 @@ function updateOrderStatus() {
 function saveOrderStatus(id, status) {
   const orders = JSON.parse(localStorage.getItem('kyzer_print_orders') || '[]');
   const idx = orders.findIndex(o => o.id === id);
-  if (idx !== -1) orders[idx].status = status;
+  let hist;
+  if (idx !== -1) { orders[idx].status = status; hist = _appendTimeline(orders[idx], status); }
   localStorage.setItem('kyzer_print_orders', JSON.stringify(orders));
   allOrders = orders;
-  // Sync status to Supabase
-  const { url, key } = _sbCreds();
-  if (url && key) {
-    fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(id)}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': key, 'Authorization': 'Bearer ' + key,
-        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ status })
-    }).catch(() => {});
-  }
+  if (currentOrderId === id && idx !== -1) _renderTimeline('omod-timeline', orders[idx]);
+  _persistOrder('orders', id, status, hist ? { statusHistory: hist } : undefined);
 }
 
 function deleteCurrentOrder() {
@@ -3198,10 +3537,11 @@ let _lastPollTime = null;
 let _lastShopPollTime = null;
 
 function _sbCreds() {
+  // Read-only anon credentials. All privileged writes go through server API
+  // routes (/api/publish, /api/order-update) — the service key never touches
+  // the browser.
   const url = localStorage.getItem('kyzer_supabase_url') || (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '');
-  const key  = localStorage.getItem('kyzer_supabase_service_key')
-            || localStorage.getItem('kyzer_supabase_key')
-            || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
+  const key = localStorage.getItem('kyzer_supabase_key') || (typeof SUPABASE_KEY !== 'undefined' ? SUPABASE_KEY : '');
   return { url, key };
 }
 
@@ -3370,19 +3710,6 @@ function _showShopOrderAlert(order) {
       });
     } catch(e) {}
   }
-}
-
-function changePass() {
-  const cur  = document.getElementById('secCur').value;
-  const nw   = document.getElementById('secNew').value;
-  const conf = document.getElementById('secConf').value;
-  const stored = localStorage.getItem(PASS_KEY) || '';
-  if (cur !== stored)  { toast('Current password is wrong.', true); return; }
-  if (!nw)             { toast('New password cannot be empty.', true); return; }
-  if (nw !== conf)     { toast('Passwords do not match.', true); return; }
-  localStorage.setItem(PASS_KEY, nw);
-  ['secCur','secNew','secConf'].forEach(id => document.getElementById(id).value = '');
-  toast('Password updated.');
 }
 
 // ── AUTO-LOGIN ON REFRESH ──
