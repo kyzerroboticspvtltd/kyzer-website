@@ -1429,15 +1429,19 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
       <button class="modal-close" onclick="closeBulkImport()">✕</button>
     </div>
     <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">
-      Add many products at once. Load a ready pack or paste a JSON array — each item needs a
-      <code>name</code>; <code>price</code>, <code>category</code>, <code>subcat</code>, <code>type</code> and
-      <code>description</code> are optional. Importing merges into your catalog (items with the same ID are updated).
-      After importing, click <strong>Publish to site</strong> to make them live.
+      Add many products at once — upload an <strong>Excel/CSV file</strong>, load a ready pack, or paste JSON.
+      Each row needs a <code>name</code>; price, category, subcat, type, description, emoji, button and visible are
+      optional. Importing merges into your catalog (rows with the same ID update existing products). After importing,
+      click <strong>Publish to site</strong> to go live.
     </p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-      <button class="btn btn-ghost btn-sm" onclick="loadArduinoPack()">⚡ Load Arduino pack (40)</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('bulkFile').click()">📄 Upload Excel / CSV</button>
+      <button class="btn btn-ghost btn-sm" onclick="downloadTemplate()">⬇ Download template</button>
+      <button class="btn btn-ghost btn-sm" onclick="loadArduinoPack()">⚡ Arduino pack (40)</button>
       <button class="btn btn-ghost btn-sm" onclick="document.getElementById('bulkJson').value='';document.getElementById('bulkPreview').textContent='';">Clear</button>
+      <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleSheetUpload(this)">
     </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Download the template, fill it in Excel, save, then upload it here. The box below previews exactly what will be imported — you can edit it before importing.</div>
     <textarea id="bulkJson" class="form-input" spellcheck="false" style="height:240px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical;" placeholder='[ { &quot;name&quot;: &quot;Arduino UNO R3&quot;, &quot;price&quot;: &quot;446&quot;, &quot;category&quot;: &quot;electronics&quot;, &quot;subcat&quot;: &quot;arduino&quot;, &quot;type&quot;: &quot;arduino-boards&quot;, &quot;description&quot;: &quot;...&quot; } ]'></textarea>
     <div id="bulkPreview" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
     <div class="modal-footer">
@@ -2664,8 +2668,84 @@ function resetProducts() {
 function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); publishToSite(true); }
 
 // ── BULK IMPORT ──
-function openBulkImport() { document.getElementById('bulkModal').classList.add('open'); }
+function openBulkImport() { _ensureXLSX().catch(() => {}); document.getElementById('bulkModal').classList.add('open'); }
 function closeBulkImport() { document.getElementById('bulkModal').classList.remove('open'); }
+
+// Lazy-load the SheetJS library (only when the importer is used)
+let _xlsxPromise = null;
+function _ensureXLSX() {
+  if (window.XLSX) return Promise.resolve();
+  if (_xlsxPromise) return _xlsxPromise;
+  _xlsxPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    s.onload = () => resolve();
+    s.onerror = () => { _xlsxPromise = null; reject(new Error('cdn')); };
+    document.head.appendChild(s);
+  });
+  return _xlsxPromise;
+}
+
+// Map one spreadsheet row (object keyed by header) to a product
+function _rowToProduct(r) {
+  const o = {};
+  Object.keys(r).forEach(k => { o[String(k).trim().toLowerCase()] = r[k]; });
+  const name = o.name || o.product || o['product name'] || '';
+  if (!String(name).trim()) return null;
+  const btn = String(o.button || o.btn || o.mode || 'buy').toLowerCase().indexOf('enq') !== -1 ? 'enquire' : 'buy';
+  const vis = String(o.visible == null ? '' : o.visible).trim().toLowerCase();
+  return {
+    id: o.id ? String(o.id).trim() : undefined,
+    name: String(name).trim(),
+    price: o.price,
+    category: o.category ? String(o.category).trim() : 'electronics',
+    subcat: o.subcat || o.subcategory || '',
+    type: o.type || '',
+    emoji: o.emoji || '',
+    description: o.description || o.desc || '',
+    btnMode: btn,
+    visible: !(vis === 'no' || vis === 'false' || vis === '0' || vis === 'hidden'),
+  };
+}
+
+function handleSheetUpload(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  document.getElementById('bulkPreview').textContent = 'Reading ' + file.name + '…';
+  _ensureXLSX().then(() => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        const prods = rows.map(_rowToProduct).filter(Boolean);
+        if (!prods.length) { document.getElementById('bulkPreview').textContent = ''; toast('No product rows found — check the column headers match the template.', true); return; }
+        document.getElementById('bulkJson').value = JSON.stringify(prods, null, 2);
+        document.getElementById('bulkPreview').textContent = prods.length + ' products read from "' + file.name + '" — click Import → then Publish to site.';
+      } catch (err) { document.getElementById('bulkPreview').textContent = ''; toast('Could not read that file. Use the Download template format.', true); }
+    };
+    reader.readAsArrayBuffer(file);
+  }).catch(() => { document.getElementById('bulkPreview').textContent = ''; toast('Could not load the spreadsheet engine — check your internet and try again.', true); });
+}
+
+function downloadTemplate() {
+  _ensureXLSX().then(() => {
+    const headers = ['name', 'price', 'category', 'subcat', 'type', 'description', 'emoji', 'button', 'visible'];
+    const examples = [
+      ['Arduino UNO R3', '446', 'electronics', 'arduino', 'arduino-boards', 'Industry-standard microcontroller board for robotics and IoT.', '🔵', 'buy', 'yes'],
+      ['Raspberry Pi 5 8GB', '7999', 'electronics', 'raspberry-pi', '', 'Single-board computer for advanced projects.', '🍓', 'buy', 'yes'],
+      ['Custom Drone Build', '', 'drone', '', '', 'Built to your spec — enquire for a quote.', '🚁', 'enquire', 'yes'],
+    ];
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...examples]);
+    ws['!cols'] = [{ wch: 24 }, { wch: 8 }, { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 44 }, { wch: 7 }, { wch: 9 }, { wch: 8 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Products');
+    XLSX.writeFile(wb, 'kyzer-products-template.xlsx');
+    toast('Template downloaded — fill it in Excel, then upload it here.');
+  }).catch(() => toast('Could not load the spreadsheet engine — check your internet and try again.', true));
+}
 
 function loadArduinoPack() {
   const B = 'arduino-boards', D = 'arduino-displays', S = 'arduino-shields';
