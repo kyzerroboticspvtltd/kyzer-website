@@ -2,6 +2,11 @@
 window.SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
 window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.googleusercontent.com';
 
+  // Cookie consent storage key — declared up front so the on-load consent
+  // check (which runs synchronously under Next.js afterInteractive) reads the
+  // correct localStorage key instead of `undefined`.
+  var _CK_KEY = 'kyzer_cookie_consent';
+
   // Hamburger
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
@@ -2903,9 +2908,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     restorePageFromHash();
     setTimeout(initGoogleAuth, 500);
     _enhanceProductCards();
-    // Cookie consent banner
+    // Cookie consent banner — show only if the visitor hasn't chosen yet.
+    // Re-checked inside the timeout so a saved choice is always respected.
     if (!_ckGet()) {
       setTimeout(function() {
+        if (_ckGet()) return;
         var b = document.getElementById('cookieBanner');
         if (b) b.style.display = 'flex';
       }, 1500);
@@ -2970,7 +2977,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   // ── COOKIE CONSENT ────────────────────────────────────────────────────────
-  var _CK_KEY = 'kyzer_cookie_consent';
+  // _CK_KEY is declared near the top of the file (see note there) so the
+  // on-load consent check reads the right key even when it runs synchronously.
 
   function _ckGet() {
     try { return JSON.parse(localStorage.getItem(_CK_KEY) || 'null'); } catch(e) { return null; }
