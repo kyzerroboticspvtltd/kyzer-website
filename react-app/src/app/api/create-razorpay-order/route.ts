@@ -106,12 +106,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Missing cart or quote data.' }, { status: 400 });
     }
 
+    const amountPaise = Math.round(amount * 100);
     const order = await rzp.orders.create({
-      amount: Math.round(amount * 100),
+      amount: amountPaise,
       currency,
       receipt: receipt || ('SHOP-' + Date.now()),
       notes: notes || {},
     });
+
+    // Store the authoritative server-calculated amount keyed by Razorpay order ID.
+    // verify-payment will fetch this and use it as the true total — the client
+    // cannot tamper with the amount by sending different values in orderData.
+    const sb = getSupabase();
+    if (sb) {
+      await sb.from('pending_payments').upsert({
+        razorpay_order_id: order.id,
+        server_amount_paise: amountPaise,
+      });
+    }
 
     return NextResponse.json({ ok: true, order, serverAmount: amount });
   } catch (err: unknown) {

@@ -4,6 +4,7 @@ import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized, esc, str, isValidEmail } from '@/lib/sanitize';
 import { generateInvoicePDF, shopOrderToInvoice } from '@/lib/invoice';
 import { saveOrder } from '@/lib/orders';
+import { verifyCheckoutToken } from '@/app/api/checkout-token/route';
 
 export async function POST(req: NextRequest) {
   const rl = rateLimit(`order-notify:${getIp(req)}`, 10, 60_000);
@@ -14,6 +15,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+
+    // Require a valid checkout token — prevents automated email spam on this
+    // unauthenticated endpoint. Tokens are issued by GET /api/checkout-token
+    // when the checkout page loads and are valid for 30 minutes.
+    if (!verifyCheckoutToken(body?.checkoutToken)) {
+      return NextResponse.json({ ok: false, error: 'Invalid or expired checkout session.' }, { status: 403 });
+    }
+
     const o = body?.orderData;
     if (!o || !o.email) {
       return NextResponse.json({ ok: false, error: 'Missing order data.' }, { status: 400 });

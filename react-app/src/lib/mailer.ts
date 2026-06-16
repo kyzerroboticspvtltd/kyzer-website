@@ -19,14 +19,20 @@ export function sendMail({
   subject,
   html,
   attachments,
+  replyTo,
 }: {
   to: string;
   subject: string;
   html: string;
   attachments?: Attachment[];
+  replyTo?: string;
 }) {
   return transporter.sendMail({
     from: `"Kyzer Robotics" <${process.env.GMAIL_USER}>`,
+    // Replies go to the business inbox by default so customer responses are not
+    // lost to a send-only Gmail address. Callers can override (e.g. admin
+    // notifications can set the customer's address as reply-to).
+    replyTo: replyTo || NOTIFY_EMAIL() || undefined,
     to,
     subject,
     html,
