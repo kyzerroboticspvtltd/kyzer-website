@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
+import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
 import { createClient } from '@supabase/supabase-js';
 
 const GST_RATE = 0.18;
@@ -82,6 +83,9 @@ async function calcQuoteAmount(params: Record<string, unknown>): Promise<number>
 export async function POST(req: NextRequest) {
   const rl = rateLimit(`razorpay-order:${getIp(req)}`, 10, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
+  const oversize = rejectOversized(req, BODY_LIMIT.MEDIUM);
+  if (oversize) return oversize;
 
   const rzp = getRazorpay();
   if (!rzp) {

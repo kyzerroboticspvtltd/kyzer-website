@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthedAdmin } from '@/lib/adminAuth';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
+import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
 
 /**
  * Admin-only mutations for order-like tables.
@@ -17,7 +18,7 @@ import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
  *               (orders / shop_orders only; quote_inquiries has no data column)
  */
 
-const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://alrgkykezmlcagovkkdl.supabase.co';
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const SB_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 const ALLOWED_TABLES = new Set(['orders', 'shop_orders', 'quote_inquiries']);
@@ -26,6 +27,9 @@ const HAS_DATA_COLUMN = new Set(['orders', 'shop_orders']);
 export async function POST(req: NextRequest) {
   const rl = rateLimit(`order-update:${getIp(req)}`, 20, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
+  const oversize = rejectOversized(req, BODY_LIMIT.MEDIUM);
+  if (oversize) return oversize;
 
   if (!isAuthedAdmin(req)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
