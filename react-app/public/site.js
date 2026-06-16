@@ -694,7 +694,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       fetch('/api/order-notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderData }),
+        body: JSON.stringify({ orderData, checkoutToken: _checkoutToken }),
       }).catch(() => {});
     }
 
@@ -2405,6 +2405,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   // Re-init step on checkout open
+  var _checkoutToken = null;
   const _origShowPage = showPage;
   window.showPage = function(p) {
     _origShowPage(p);
@@ -2412,6 +2413,9 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       _coCurrentStep = 1;
       loadCheckoutPage();
       coGoStep(1);
+      // Pre-fetch a short-lived HMAC token so the COD submit can prove it came
+      // from a real checkout session (not a bot hitting /api/order-notify directly).
+      fetch('/api/checkout-token').then(function(r){ return r.json(); }).then(function(d){ if (d.ok) _checkoutToken = d.token; }).catch(function(){});
     }
     if (p !== 'main') {
       const loader = document.getElementById('pageLoader');

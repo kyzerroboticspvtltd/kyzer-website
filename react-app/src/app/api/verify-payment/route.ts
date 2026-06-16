@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized, esc } from '@/lib/sanitize';
 import { sendMail, NOTIFY_EMAIL, NOTIFY_PHONE } from '@/lib/mailer';
 import { generateInvoicePDF, shopOrderToInvoice } from '@/lib/invoice';
 import { saveOrder } from '@/lib/orders';
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
 export async function POST(req: NextRequest) {
   const rl = rateLimit(`verify-payment:${getIp(req)}`, 10, 60_000);
@@ -38,8 +46,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Payment verification failed.' }, { status: 400 });
     }
 
+    // Fetch the server-calculated amount so the client cannot manipulate the total.
+    let serverTotal: number | null = null;
+    const sb = getSupabase();
+    if (sb) {
+      const { data } = await sb
+        .from('pending_payments')
+        .select('server_amount_paise')
+        .eq('razorpay_order_id', razorpay_order_id)
+        .single();
+      if (data?.server_amount_paise) {
+        serverTotal = data.server_amount_paise / 100;
+        await sb.from('pending_payments').delete().eq('razorpay_order_id', razorpay_order_id);
+      }
+    }
+
     if (orderData && orderData.email) {
-      const o = { ...orderData, paymentId: razorpay_payment_id } as Record<string, unknown>;
+      // Override the client-supplied total with the server-authoritative value.
+      const authorisedTotal = serverTotal ?? orderData.total;
+      const o = { ...orderData, total: authorisedTotal, paymentId: razorpay_payment_id } as Record<string, unknown>;
 
       // 💾 Persist the paid order first — the server is the source of truth even
       // if the confirmation email or the customer's browser fails afterwards.
@@ -86,7 +111,7 @@ export async function POST(req: NextRequest) {
             ).join('')}
             <tr style="border-top:2px solid #eee;font-weight:700;font-size:15px;color:#FF8C35;">
               <td colspan="2" style="padding:10px;">Total (incl. GST)</td>
-              <td style="padding:10px;text-align:right;">${fmt(orderData.total || 0)}</td>
+              <td style="padding:10px;text-align:right;">${fmt(authorisedTotal || 0)}</td>
             </tr>
           </table>
           ${orderData.notes ? `<p style="margin-top:14px;font-size:13px;color:#555;"><strong>Notes:</strong> ${esc(String(orderData.notes).slice(0, 2000))}</p>` : ''}
@@ -122,7 +147,7 @@ export async function POST(req: NextRequest) {
               ).join('')}
               <tr style="border-top:2px solid #eee;">
                 <td colspan="2" style="padding:10px;font-weight:700;font-size:15px;">Total (incl. GST)</td>
-                <td style="padding:10px;font-weight:700;font-size:15px;text-align:right;color:#FF8C35;">${fmt(orderData.total || 0)}</td>
+                <td style="padding:10px;font-weight:700;font-size:15px;text-align:right;color:#FF8C35;">${fmt(authorisedTotal || 0)}</td>
               </tr>
             </table>
 
@@ -136,7 +161,7 @@ export async function POST(req: NextRequest) {
       try {
         await sendMail({
           to:      NOTIFY_EMAIL(),
-          subject: `[Kyzer] Paid Order ${orderData.id || ''} — ${fmt(orderData.total || 0)} — ${orderData.name}`,
+          subject: `[Kyzer] Paid Order ${orderData.id || ''} — ${fmt(authorisedTotal || 0)} — ${orderData.name}`,
           html:    adminHtml,
         });
         await sendMail({
