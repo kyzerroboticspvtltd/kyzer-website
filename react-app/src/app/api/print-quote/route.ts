@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
+import { saveOrder } from '@/lib/orders';
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`print-quote:${getIp(req)}`, 10, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const o = await req.json();
     if (!o || !o.email || !o.name) {
       return NextResponse.json({ ok: false, error: 'Missing required fields.' }, { status: 400 });
     }
+
+    // 💾 Persist the print order server-side (idempotent upsert on id).
+    await saveOrder({ ...o, status: o.status || 'new' }, 'print');
 
     const ship = o.shipping || {};
     const shippingFull = [ship.addr1, ship.addr2, ship.city, ship.state, ship.pincode, ship.landmark]

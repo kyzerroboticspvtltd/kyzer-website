@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`contact:${getIp(req)}`, 5, 60 * 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const { name, email, phone, subject, message } = await req.json();
 

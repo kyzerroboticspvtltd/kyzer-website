@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
 import { createClient } from '@supabase/supabase-js';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -10,6 +11,9 @@ function getSupabase() {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`quote-inquiry:${getIp(req)}`, 5, 60 * 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const data = await req.formData();
 

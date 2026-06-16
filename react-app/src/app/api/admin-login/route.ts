@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 function sign(ts: string): string {
   const secret = process.env.ADMIN_PASSWORD || '';
@@ -7,6 +8,9 @@ function sign(ts: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`login:${getIp(req)}`, 5, 15 * 60 * 1000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const { password } = await req.json();
     const expected = process.env.ADMIN_PASSWORD;

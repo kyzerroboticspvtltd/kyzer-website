@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 /**
  * Sheet-sync endpoint — receives product rows from a Google Sheets Apps Script
@@ -53,6 +54,9 @@ function normalise(p: SheetProduct) {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`sheet-sync:${getIp(req)}`, 60, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   if (!isAuthed(req)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }

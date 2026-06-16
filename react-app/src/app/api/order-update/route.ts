@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthedAdmin } from '@/lib/adminAuth';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 /**
  * Admin-only mutations for order-like tables.
@@ -23,6 +24,9 @@ const ALLOWED_TABLES = new Set(['orders', 'shop_orders', 'quote_inquiries']);
 const HAS_DATA_COLUMN = new Set(['orders', 'shop_orders']);
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`order-update:${getIp(req)}`, 20, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   if (!isAuthedAdmin(req)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }

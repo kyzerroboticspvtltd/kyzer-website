@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { generateInvoicePDF, shopOrderToInvoice } from '@/lib/invoice';
+import { saveOrder } from '@/lib/orders';
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`order-notify:${getIp(req)}`, 10, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const { orderData: o } = await req.json();
     if (!o || !o.email) {
       return NextResponse.json({ ok: false, error: 'Missing order data.' }, { status: 400 });
     }
+
+    // 💾 Persist the COD order server-side before sending notifications.
+    await saveOrder({ ...o, status: o.status || 'new', paymentMethod: 'cod' }, 'cod');
 
     // Build invoice data and generate PDF (non-fatal — email sends even if PDF fails)
     const invoiceData = shopOrderToInvoice(o as Record<string, unknown>, false);

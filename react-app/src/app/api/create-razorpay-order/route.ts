@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { createClient } from '@supabase/supabase-js';
 
 const GST_RATE = 0.18;
@@ -79,6 +80,9 @@ async function calcQuoteAmount(params: Record<string, unknown>): Promise<number>
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`razorpay-order:${getIp(req)}`, 10, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   const rzp = getRazorpay();
   if (!rzp) {
     return NextResponse.json({ ok: false, error: 'Payment gateway not configured.' }, { status: 503 });

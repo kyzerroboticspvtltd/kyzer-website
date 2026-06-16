@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const CORS = { 'Access-Control-Allow-Origin': '*' };
 
@@ -7,7 +8,9 @@ export async function OPTIONS() {
   return new NextResponse(null, { headers: { ...CORS, 'Access-Control-Allow-Methods': 'GET' } });
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const rl = rateLimit(`analytics:${getIp(req)}`, 60, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

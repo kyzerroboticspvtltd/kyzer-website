@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
 import { generateInvoicePDF, shopOrderToInvoice } from '@/lib/invoice';
+import { saveOrder } from '@/lib/orders';
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`verify-payment:${getIp(req)}`, 10, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
+
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderData } = await req.json();
 
@@ -27,6 +32,13 @@ export async function POST(req: NextRequest) {
 
     if (orderData && orderData.email) {
       const o = { ...orderData, paymentId: razorpay_payment_id } as Record<string, unknown>;
+
+      // 💾 Persist the paid order first — the server is the source of truth even
+      // if the confirmation email or the customer's browser fails afterwards.
+      await saveOrder(
+        { ...o, status: 'paid', paymentStatus: 'paid', razorpayOrderId: razorpay_order_id },
+        'shop',
+      );
 
       // Generate tax invoice PDF (non-fatal — email sends even if PDF fails)
       const invoiceData = shopOrderToInvoice(o, true);
