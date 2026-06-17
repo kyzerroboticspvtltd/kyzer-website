@@ -62,12 +62,6 @@ const PAGE_HTML = `<div id="mainSite">
   <div class="nav-right-group">
     <a class="nav-cta" href="/get-a-quote">Get a quote</a>
     <div class="nav-util-divider"></div>
-    <!-- Orders -->
-    <button class="nav-util-btn" id="navOrdersBtn" onclick="handleOrdersBtnClick()" title="My Orders">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 9H6.5L5 8z"/><path d="M5 8L4 4H2"/><circle cx="9" cy="20" r="1"/><circle cx="15" cy="20" r="1"/></svg>
-      <span class="nav-util-label">Orders</span>
-      <span class="nav-util-badge" id="navOrdersBadge" style="display:none;"></span>
-    </button>
     <!-- Account -->
     <div class="nav-account-wrap" id="navAccountWrap">
       <button class="nav-util-btn" id="navAccountBtn" onclick="handleAccountBtnClick()" title="Account">
@@ -1422,6 +1416,7 @@ const PAGE_HTML = `<div id="mainSite">
         <div class="account-display-name" id="accDispName">—</div>
         <div class="account-display-email" id="accDispEmail">—</div>
         <div class="account-nav-item active" id="accnav-profile" onclick="setAccountSection('profile')">&#128100; Profile</div>
+        <div class="account-nav-item" id="accnav-orders" onclick="setAccountSection('orders')">&#128230; My Orders</div>
         <div class="account-nav-item logout-item" onclick="logoutCustomer()">&#128275; Sign out</div>
       </div>
       <!-- Main panel -->
