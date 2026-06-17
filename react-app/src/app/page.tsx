@@ -1422,7 +1422,6 @@ const PAGE_HTML = `<div id="mainSite">
         <div class="account-display-name" id="accDispName">—</div>
         <div class="account-display-email" id="accDispEmail">—</div>
         <div class="account-nav-item active" id="accnav-profile" onclick="setAccountSection('profile')">&#128100; Profile</div>
-        <div class="account-nav-item" id="accnav-orders" onclick="setAccountSection('orders')">&#128230; My Orders</div>
         <div class="account-nav-item logout-item" onclick="logoutCustomer()">&#128275; Sign out</div>
       </div>
       <!-- Main panel -->
@@ -1522,15 +1521,15 @@ const PAGE_HTML = `<div id="mainSite">
   <div class="co-steps" id="coSteps">
     <div class="co-step active" id="coStep1" onclick="coGoStep(1)">
       <div class="co-step-num"><span class="co-step-num-txt">1</span></div>
-      <span class="co-step-label">Delivery</span>
+      <span class="co-step-label">Review</span>
     </div>
     <div class="co-step" id="coStep2" onclick="coGoStep(2)">
       <div class="co-step-num"><span class="co-step-num-txt">2</span></div>
-      <span class="co-step-label">Review</span>
+      <span class="co-step-label">Payment</span>
     </div>
     <div class="co-step" id="coStep3" onclick="coGoStep(3)">
       <div class="co-step-num"><span class="co-step-num-txt">3</span></div>
-      <span class="co-step-label">Payment</span>
+      <span class="co-step-label">Delivery</span>
     </div>
   </div>
   <div class="checkout-wrap">
@@ -1538,11 +1537,54 @@ const PAGE_HTML = `<div id="mainSite">
     <!-- LEFT: multi-step panels -->
     <div class="checkout-form">
 
-      <!-- STEP 1: Delivery details -->
+      <!-- STEP 1: Review order -->
       <div class="co-panel active" id="coPanel1">
         <div class="checkout-section">
           <div class="checkout-section-header">
             <div class="checkout-step-num">01</div>
+            <div class="checkout-step-title">Your order</div>
+          </div>
+          <div id="coReviewItems"></div>
+        </div>
+        <button class="qv2-order-btn" onclick="coAdvance()">Choose Payment →</button>
+      </div>
+
+      <!-- STEP 2: Payment method -->
+      <div class="co-panel" id="coPanel2">
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">02</div>
+            <div class="checkout-step-title">Payment</div>
+          </div>
+          <div style="margin-bottom:18px;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;">Select payment method</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button id="payMethodOnlineBtn" onclick="selectPayMethod('online')"
+                style="flex:1;min-width:140px;padding:13px 10px;border-radius:12px;border:1.5px solid var(--orange);background:var(--orange);color:#111;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;">
+                💳 Pay Online
+              </button>
+              <button id="payMethodCODBtn" onclick="selectPayMethod('cod')"
+                style="flex:1;min-width:140px;padding:13px 10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg3,#f2f0eb);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;">
+                📦 Cash on Delivery
+              </button>
+            </div>
+            <div id="payMethodNote" style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Card, UPI, Netbanking &amp; Wallets — secured by Razorpay.</div>
+          </div>
+          <div id="payOnlineBadges" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <div class="trust-badge"><span>🔒</span> Secured by Razorpay</div>
+            <div class="trust-badge"><span>💳</span> Card / UPI</div>
+            <div class="trust-badge"><span>🏦</span> Netbanking</div>
+            <div class="trust-badge"><span>👛</span> Wallets</div>
+          </div>
+        </div>
+        <button class="qv2-order-btn" onclick="coAdvance()">Enter Delivery Details →</button>
+      </div>
+
+      <!-- STEP 3: Delivery details -->
+      <div class="co-panel" id="coPanel3">
+        <div class="checkout-section">
+          <div class="checkout-section-header">
+            <div class="checkout-step-num">03</div>
             <div class="checkout-step-title">Contact details</div>
           </div>
           <div class="qcp-grid-2">
@@ -1556,7 +1598,7 @@ const PAGE_HTML = `<div id="mainSite">
         </div>
         <div class="checkout-section">
           <div class="checkout-section-header">
-            <div class="checkout-step-num">02</div>
+            <div class="checkout-step-num">04</div>
             <div class="checkout-step-title">Shipping address</div>
           </div>
           <input class="qcp-input qcp-full" type="text" placeholder="Address line 1 (house / flat / building) *" id="coAddr1" />
@@ -1569,47 +1611,9 @@ const PAGE_HTML = `<div id="mainSite">
           <input class="qcp-input qcp-full" type="text" placeholder="Landmark (optional)" id="coLandmark" />
           <textarea class="qcp-input qcp-full" style="height:70px;resize:none;margin-top:10px;" placeholder="Delivery instructions (optional)" id="coNotes"></textarea>
         </div>
-        <button class="qv2-order-btn" onclick="coAdvance()">Continue to Review →</button>
-      </div>
-
-      <!-- STEP 2: Review order -->
-      <div class="co-panel" id="coPanel2">
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">✓</div>
-            <div class="checkout-step-title">Your order</div>
-          </div>
-          <div id="coReviewItems"></div>
-        </div>
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">✓</div>
-            <div class="checkout-step-title">Delivering to</div>
-          </div>
-          <div id="coReviewAddress" style="font-size:14px;color:var(--muted);line-height:1.7;"></div>
-          <button onclick="coGoStep(1)" style="margin-top:8px;background:none;border:none;color:var(--orange);font-size:13px;cursor:pointer;padding:0;">Edit address ↗</button>
-        </div>
-        <button class="qv2-order-btn" onclick="coAdvance()">Continue to Payment →</button>
-      </div>
-
-      <!-- STEP 3: Payment -->
-      <div class="co-panel" id="coPanel3">
-        <div class="checkout-section">
-          <div class="checkout-section-header">
-            <div class="checkout-step-num">03</div>
-            <div class="checkout-step-title">Payment</div>
-          </div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Accepted payment methods — select inside the Razorpay popup:</div>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-            <div class="trust-badge"><span>🔒</span> Secured by Razorpay</div>
-            <div class="trust-badge"><span>💳</span> Card / UPI</div>
-            <div class="trust-badge"><span>🏦</span> Netbanking</div>
-            <div class="trust-badge"><span>👛</span> Wallets</div>
-          </div>
-          <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Pay now →</button>
-          <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:12px;"></div>
-          <div class="qv2-note" style="margin-top:10px;">Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
-        </div>
+        <button class="qv2-order-btn" id="coSubmitBtn" onclick="submitProductOrder()">Place Order →</button>
+        <div id="coSuccess" style="display:none;background:#e8f5e9;border:0.5px solid rgba(76,175,80,0.4);color:#2e7d32;border-radius:10px;padding:14px;font-size:15px;text-align:center;margin-top:12px;"></div>
+        <div class="qv2-note" style="margin-top:10px;">Questions? <a href="https://wa.me/919049695264" target="_blank" style="color:#FF8C35;">WhatsApp us</a></div>
       </div>
 
     </div>

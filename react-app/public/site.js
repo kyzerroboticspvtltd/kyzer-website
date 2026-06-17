@@ -2319,26 +2319,14 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       if (step) { step.classList.remove('active','done'); if (i < n) step.classList.add('done'); else if (i === n) step.classList.add('active'); }
       if (panel) { panel.classList.remove('active'); if (i === n) panel.classList.add('active'); }
     });
-    if (n === 2) loadCheckoutReview();
-    if (n === 3) loadCheckoutPayment();
+    if (n === 1) loadCheckoutReview();
+    if (n === 2) loadCheckoutPayment();
     document.getElementById('checkoutPage')?.scrollTo({ top: 0, behavior: 'smooth' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function coAdvance() {
-    if (_coCurrentStep === 1) {
-      const name = document.getElementById('coName').value.trim();
-      const email = document.getElementById('coEmail').value.trim();
-      const phone = document.getElementById('coPhone').value.trim();
-      const addr1 = document.getElementById('coAddr1').value.trim();
-      const city  = document.getElementById('coCity').value.trim();
-      const pin   = document.getElementById('coPincode').value.trim();
-      if (!name || !email || !phone || !addr1 || !city || !pin) {
-        alert('Please fill in all required fields (*)'); return;
-      }
-      coGoStep(2);
-    } else if (_coCurrentStep === 2) {
-      coGoStep(3);
-    }
+    if (_coCurrentStep === 1) { coGoStep(2); }
+    else if (_coCurrentStep === 2) { coGoStep(3); }
   }
   function loadCheckoutReview() {
     const items = cart.map(i => {
@@ -2351,18 +2339,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     }).join('');
     const rev = document.getElementById('coReviewItems');
     if (rev) rev.innerHTML = items || '<p style="color:var(--muted);font-size:14px;">Cart is empty.</p>';
-    const addrEl = document.getElementById('coReviewAddress');
-    if (addrEl) {
-      const parts = [
-        document.getElementById('coName')?.value,
-        document.getElementById('coPhone')?.value,
-        document.getElementById('coAddr1')?.value,
-        document.getElementById('coAddr2')?.value,
-        [document.getElementById('coCity')?.value, document.getElementById('coState')?.value, document.getElementById('coPincode')?.value].filter(Boolean).join(', '),
-        document.getElementById('coLandmark')?.value,
-      ].filter(Boolean);
-      addrEl.innerHTML = parts.join('<br>');
-    }
     renderCheckoutSummary();
   }
   function loadCheckoutPayment() {

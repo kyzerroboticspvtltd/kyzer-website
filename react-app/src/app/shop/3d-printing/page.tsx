@@ -144,7 +144,7 @@ export default function PrintingPage() {
             <div style={{ color: '#fff', fontWeight: 600, fontSize: 15 }}>Have a file ready? Get a quote in minutes.</div>
             <div style={{ color: '#999', fontSize: 13, marginTop: 2 }}>Upload your STL, STEP, or DXF — we'll quote within an hour.</div>
           </div>
-          <a href="/#" onClick={e => { e.preventDefault(); window.history.back(); }}
+          <a href="/get-a-quote"
             style={{ padding: '10px 20px', background: '#FF8C35', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', cursor: 'pointer' }}>
             Get 3D Quote ⚡
           </a>
