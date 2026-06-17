@@ -414,12 +414,12 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         : item.emoji;
       const _np = parseNumericPrice(item.price);
       const _unit = _np ? '₹' + _np.toLocaleString('en-IN') : (item.price || '');
-      const _sub  = _np ? '₹' + (_np * item.qty).toLocaleString('en-IN') : '—';
+      const _sub  = _np && item.qty > 1 ? ' · ₹' + (_np * item.qty).toLocaleString('en-IN') : '';
       return `<div class="cart-item">
         <div class="cart-item-img">${thumb}</div>
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">${_unit ? _unit + ' · ' + _sub : ''}</div>
+          <div class="cart-item-price">${_unit ? _unit + _sub : ''}</div>
           <div class="cart-item-controls">
             <button class="cart-qty-btn" onclick="updateCartItemQty('${item.id}', -1)">&#8722;</button>
             <span class="cart-item-qty">${item.qty}</span>
