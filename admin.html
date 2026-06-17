@@ -599,6 +599,8 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
           <div class="panel-title">
             All products
             <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="openBulkImport()">⬆ Bulk import</button>
+              <button class="btn btn-ghost btn-sm" onclick="exportProductsCSV()">⬇ Export CSV</button>
               <button class="btn btn-ghost btn-sm" onclick="resetProducts()">Reset defaults</button>
               <button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ Add product</button>
             </div>
@@ -1209,6 +1211,36 @@ CREATE POLICY "customers_read" ON customers FOR SELECT USING (true);</pre>
         <div class="omod-section-title">Notes</div>
         <div id="omod-notes" style="font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- BULK IMPORT MODAL -->
+<div class="modal-overlay" id="bulkModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Bulk import products</h3>
+      <button class="modal-close" onclick="closeBulkImport()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">
+      Add many products at once — upload an <strong>Excel/CSV file</strong>, load a ready pack, or paste JSON.
+      Each row needs a <code>name</code>; price, category, subcat, type, description, emoji, button and visible are
+      optional. Importing merges into your catalog (rows with the same ID update existing products). After importing,
+      click <strong>Publish to site</strong> to go live.
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('bulkFile').click()">📄 Upload Excel / CSV</button>
+      <button class="btn btn-ghost btn-sm" onclick="downloadTemplate()">⬇ Download template</button>
+      <button class="btn btn-ghost btn-sm" onclick="loadArduinoPack()">⚡ Arduino pack (40)</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('bulkJson').value='';document.getElementById('bulkPreview').textContent='';">Clear</button>
+      <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleSheetUpload(this)">
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Download the template, fill it in Excel, save, then upload it here. The box below previews exactly what will be imported — you can edit it before importing.</div>
+    <textarea id="bulkJson" class="form-input" spellcheck="false" style="height:240px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical;" placeholder='[ { &quot;name&quot;: &quot;Arduino UNO R3&quot;, &quot;price&quot;: &quot;446&quot;, &quot;category&quot;: &quot;electronics&quot;, &quot;subcat&quot;: &quot;arduino&quot;, &quot;type&quot;: &quot;arduino-boards&quot;, &quot;description&quot;: &quot;...&quot; } ]'></textarea>
+    <div id="bulkPreview" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeBulkImport()">Cancel</button>
+      <button class="btn btn-primary" onclick="doBulkImport()">Import →</button>
     </div>
   </div>
 </div>
@@ -2269,6 +2301,178 @@ function resetProducts() {
   saveP(); renderProducts(); toast('Reset to defaults.');
 }
 function saveP() { localStorage.setItem('kyzer_products', JSON.stringify(products)); publishToSite(true); }
+
+// ── BULK IMPORT ──
+function openBulkImport() { _ensureXLSX().catch(() => {}); document.getElementById('bulkModal').classList.add('open'); }
+function closeBulkImport() { document.getElementById('bulkModal').classList.remove('open'); }
+
+let _xlsxPromise = null;
+function _ensureXLSX() {
+  if (window.XLSX) return Promise.resolve();
+  if (_xlsxPromise) return _xlsxPromise;
+  _xlsxPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    s.onload = () => resolve();
+    s.onerror = () => { _xlsxPromise = null; reject(new Error('cdn')); };
+    document.head.appendChild(s);
+  });
+  return _xlsxPromise;
+}
+
+function _rowToProduct(r) {
+  const o = {};
+  Object.keys(r).forEach(k => { o[String(k).trim().toLowerCase()] = r[k]; });
+  const name = o.name || o.product || o['product name'] || '';
+  if (!String(name).trim()) return null;
+  const btn = String(o.button || o.btn || o.mode || 'buy').toLowerCase().indexOf('enq') !== -1 ? 'enquire' : 'buy';
+  const vis = String(o.visible == null ? '' : o.visible).trim().toLowerCase();
+  return {
+    id: o.id ? String(o.id).trim() : undefined,
+    name: String(name).trim(),
+    price: o.price,
+    category: o.category ? String(o.category).trim() : 'electronics',
+    subcat: o.subcat || o.subcategory || '',
+    type: o.type || '',
+    emoji: o.emoji || '',
+    description: o.description || o.desc || '',
+    btnMode: btn,
+    visible: !(vis === 'no' || vis === 'false' || vis === '0' || vis === 'hidden'),
+  };
+}
+
+function handleSheetUpload(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  document.getElementById('bulkPreview').textContent = 'Reading ' + file.name + '…';
+  _ensureXLSX().then(() => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        const prods = rows.map(_rowToProduct).filter(Boolean);
+        if (!prods.length) { document.getElementById('bulkPreview').textContent = ''; toast('No product rows found — check the column headers match the template.', true); return; }
+        document.getElementById('bulkJson').value = JSON.stringify(prods, null, 2);
+        document.getElementById('bulkPreview').textContent = prods.length + ' products read from "' + file.name + '" — click Import → then Publish to site.';
+      } catch (err) { document.getElementById('bulkPreview').textContent = ''; toast('Could not read that file. Use the Download template format.', true); }
+    };
+    reader.readAsArrayBuffer(file);
+  }).catch(() => { document.getElementById('bulkPreview').textContent = ''; toast('Could not load the spreadsheet engine — check your internet and try again.', true); });
+}
+
+function downloadTemplate() {
+  _ensureXLSX().then(() => {
+    const headers = ['name', 'price', 'category', 'subcat', 'type', 'description', 'emoji', 'button', 'visible'];
+    const examples = [
+      ['Arduino UNO R3', '446', 'electronics', 'arduino', 'arduino-boards', 'Industry-standard microcontroller board for robotics and IoT.', '🔵', 'buy', 'yes'],
+      ['Raspberry Pi 5 8GB', '7999', 'electronics', 'raspberry-pi', '', 'Single-board computer for advanced projects.', '🍓', 'buy', 'yes'],
+      ['Custom Drone Build', '', 'drone', '', '', 'Built to your spec — enquire for a quote.', '🚁', 'enquire', 'yes'],
+    ];
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...examples]);
+    ws['!cols'] = [{ wch: 24 }, { wch: 8 }, { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 44 }, { wch: 7 }, { wch: 9 }, { wch: 8 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Products');
+    XLSX.writeFile(wb, 'kyzer-products-template.xlsx');
+    toast('Template downloaded — fill it in Excel, then upload it here.');
+  }).catch(() => toast('Could not load the spreadsheet engine — check your internet and try again.', true));
+}
+
+function loadArduinoPack() {
+  const B = 'arduino-boards', D = 'arduino-displays', S = 'arduino-shields';
+  const raw = [
+    ['rb-ard-b01','Arduino UNO R3','446',B,'🔵','Industry-standard microcontroller board ideal for robotics, automation, and IoT projects.'],
+    ['rb-ard-b02','Arduino Nano V3.0 Type-C','341',B,'🔵','Compact development board perfect for embedded systems and space-constrained applications.'],
+    ['rb-ard-b03','Arduino Mega 2560 R3','1179',B,'🔵','High I/O microcontroller board designed for complex robotics and automation systems.'],
+    ['rb-ard-b04','Arduino Due ARM Cortex-M3','3350',B,'🔵','32-bit ARM-based board offering high processing power for advanced projects.'],
+    ['rb-ard-b05','Arduino Leonardo R3','448',B,'🔵','USB-enabled microcontroller board capable of acting as a keyboard or mouse.'],
+    ['rb-ard-b06','Arduino Micro','531',B,'🔵','Small form-factor board suitable for wearable and compact electronics projects.'],
+    ['rb-ard-b07','ATTINY85 USB Development Board','243',B,'🔵','Low-cost microcontroller board for simple automation and control applications.'],
+    ['rb-ard-b08','Pro Micro ATmega32U4','465',B,'🔵','Miniature development board with native USB support for custom HID devices.'],
+    ['rb-ard-b09','Pro Mini ATmega328P 3.3V','199',B,'🔵','Lightweight board designed for battery-powered and embedded applications.'],
+    ['rb-ard-b10','Mega + WiFi R3 (ESP8266)','1335',B,'🔵','Combines Arduino Mega and WiFi connectivity for IoT and smart automation systems.'],
+    ['rb-ard-b11','UNO Based ESP8266 Development Board','235',B,'🔵','Arduino-compatible board with integrated WiFi for connected devices.'],
+    ['rb-ard-b12','BPiDuino UNO Board','765',B,'🔵','Banana Pi compatible board with Arduino UNO form factor.'],
+    ['rb-ard-b13','Arduino Portenta X8','24580',B,'🔵','Industrial-grade edge computing and AI development platform.'],
+    ['rb-ard-b14','Arduino Nano CH340','247',B,'🔵','Budget-friendly Nano board for prototyping and educational projects.'],
+    ['rb-ard-b15','Uno R3 CH340G','312',B,'🔵','Cost-effective Arduino UNO compatible board for beginners and makers.'],
+    ['rb-ard-d01','1.44" TFT LCD Color Screen SPI','383',D,'🖥️','Compact color display module ideal for Arduino dashboards, sensor data, and GUI projects.'],
+    ['rb-ard-d02','1.8" TFT LCD 128×160 SPI with Touch','531',D,'🖥️','Small touchscreen display suitable for interactive embedded systems and IoT devices.'],
+    ['rb-ard-d03','1.8" TFT LCD 128×160 SPI','389',D,'🖥️','Cost-effective color TFT display for robotics, automation, and monitoring applications.'],
+    ['rb-ard-d04','2.4" TFT Touch Screen Module for UNO R3','769',D,'🖥️','Plug-and-play touchscreen shield designed for Arduino UNO-based HMI projects.'],
+    ['rb-ard-d05','2.4" Touch TFT LCD Shield with Pen','970',D,'🖥️','Interactive touch display with stylus support for control panels and smart interfaces.'],
+    ['rb-ard-d06','2.8" ILI9341 TFT Touch Display 320×240','1332',D,'🖥️','High-resolution color touchscreen compatible with Arduino UNO and Mega boards.'],
+    ['rb-ard-d07','3.5" ILI9486 TFT Touch Shield 480×320','1449',D,'🖥️','Large display shield for advanced HMI, industrial monitoring, and automation systems.'],
+    ['rb-ard-d08','3.5" ILI9486 TFT Touch Shield Red PCB','1086',D,'🖥️','Large-format TFT display offering rich graphical user interfaces and touch controls.'],
+    ['rb-ard-d09','Adafruit 3.5" TFT Capacitive Touch Display','5769',D,'🖥️','Premium industrial-grade TFT display with capacitive touch and EYESPI connectivity.'],
+    ['rb-ard-d10','TFT LCD Mega Shield V2.2','175',D,'🖥️','Interface shield for connecting TFT displays directly to Arduino Mega boards.'],
+    ['rb-ard-s01','1602 LCD Keyboard Shield','210',S,'🧩','LCD display shield with keypad for menu systems, monitoring, and user interfaces.'],
+    ['rb-ard-s02','Arduino Sensor Shield V5','116',S,'🧩','Expands Arduino I/O connections for easy sensor and servo integration.'],
+    ['rb-ard-s03','CNC Shield V3','157',S,'🧩','Stepper motor control shield for CNC machines, laser engravers, and 3D printers.'],
+    ['rb-ard-s04','CNC Shield V4.0','189',S,'🧩','Compact 3-axis controller shield for CNC and motion control projects.'],
+    ['rb-ard-s05','Ethernet W5100 Shield','959',S,'🧩','Adds Ethernet and network connectivity with MicroSD card support.'],
+    ['rb-ard-s06','Data Logger Shield','152',S,'🧩','Records sensor and project data to SD cards with real-time monitoring capabilities.'],
+    ['rb-ard-s07','Joystick Shield Module','132',S,'🧩','Gamepad-style control shield for robotics, drones, and RC projects.'],
+    ['rb-ard-s08','Joystick PS2 Control Shield','295',S,'🧩','Advanced joystick controller for robot navigation and motor control applications.'],
+    ['rb-ard-s09','L293D Motor Driver Shield','185',S,'🧩','Controls DC motors and servos for robotics and automation projects.'],
+    ['rb-ard-s10','USB Host Shield ADK','750',S,'🧩','Enables Arduino to communicate with USB devices such as keyboards and game controllers.'],
+    ['rb-ard-s11','Mini USB Host Shield 2.0','1230',S,'🧩','Compact USB host expansion board for embedded USB applications.'],
+    ['rb-ard-s12','Proto Screw Shield 1.0','210',S,'🧩','Screw-terminal prototyping shield for secure wiring and circuit development.'],
+    ['rb-ard-s13','Screw Shield V2 Terminal Board','300',S,'🧩','Provides easy terminal connections for industrial and testing applications.'],
+    ['rb-ard-s14','SIM900 GSM GPRS Shield','1200',S,'🧩','Adds SMS, call, and GPRS communication capabilities to Arduino projects.'],
+    ['rb-ard-s15','Multifunction Shield','135',S,'🧩','All-in-one shield featuring LEDs, buzzer, buttons, and display components for learning and prototyping.'],
+  ];
+  const pack = raw.map(r => ({
+    id: r[0], name: r[1], price: r[2], category: 'electronics', subcat: 'arduino',
+    type: r[3], emoji: r[4], description: r[5], btnMode: 'buy', visible: true,
+  }));
+  document.getElementById('bulkJson').value = JSON.stringify(pack, null, 2);
+  document.getElementById('bulkPreview').textContent = pack.length + ' products loaded — click Import → to add them, then Publish to site.';
+}
+
+function doBulkImport() {
+  const raw = document.getElementById('bulkJson').value.trim();
+  if (!raw) { toast('Load a pack or paste product JSON first.', true); return; }
+  let arr;
+  try { arr = JSON.parse(raw); } catch (e) { toast('That is not valid JSON — check for typos.', true); return; }
+  if (!Array.isArray(arr) || !arr.length) { toast('Expected a non-empty JSON array.', true); return; }
+  let added = 0, updated = 0, skipped = 0;
+  arr.forEach((p, i) => {
+    if (!p || !p.name) { skipped++; return; }
+    const prod = {
+      id: p.id || ('imp-' + Date.now() + '-' + i),
+      name: String(p.name),
+      category: p.category || 'electronics',
+      subcat: p.subcat || '',
+      type: p.type || '',
+      emoji: p.emoji || '📦',
+      price: String(p.price == null ? '' : p.price).replace(/[^\d.]/g, ''),
+      description: p.description || '',
+      details: p.details || p.description || '',
+      specs: Array.isArray(p.specs) ? p.specs : [],
+      badge: p.badge || '',
+      badgeType: p.badgeType || '',
+      btnText: p.btnMode === 'enquire' ? 'Enquire Now' : 'Buy Now',
+      btnMode: p.btnMode === 'enquire' ? 'enquire' : 'buy',
+      visible: p.visible !== false,
+    };
+    const idx = products.findIndex(x => x.id === prod.id);
+    if (idx !== -1) { products[idx] = prod; updated++; } else { products.push(prod); added++; }
+  });
+  saveP(); renderProducts(); closeBulkImport();
+  toast(`Imported: ${added} new, ${updated} updated${skipped ? ', ' + skipped + ' skipped' : ''}. Now click "Publish to site".`);
+}
+
+function exportProductsCSV() {
+  const catMap = {}; categories.forEach(c => catMap[c.id] = c.name);
+  const rows = [['ID','Name','Category','Subcategory','Price','Button','Visible','Badge','Short description']];
+  products.forEach(p => rows.push([p.id, p.name, catMap[p.category] || p.category || '', p.subcat || '', p.price, p.btnMode === 'enquire' ? 'Enquire' : 'Buy', p.visible ? 'Yes' : 'No', p.badge || '', p.description || '']));
+  if (rows.length < 2) return toast('No products to export.', true);
+  downloadCSV('kyzer-products-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + products.length + ' products.');
+}
 
 // ── PRODUCT PREVIEW ──
 let _prevPhotos = [];
