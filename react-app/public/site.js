@@ -313,8 +313,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   function restorePageFromHash() {
     const hash = window.location.hash;
     if (hash === '#quote')         showPage('quote');
-    else if (hash === '#account')  showPage('account');
-    else if (hash === '#checkout') { renderCartDrawer(); goToCheckout(); }
+    else if (hash === '#account')  window.location.href = '/profile';
+    else if (hash === '#checkout') { window.location.href = '/checkout'; }
     else if (hash === '#cart')     openCartDrawer();
   }
 
@@ -322,8 +322,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   window.addEventListener('popstate', function() {
     const hash = window.location.hash;
     if (hash === '#quote')         showPage('quote');
-    else if (hash === '#account')  showPage('account');
-    else if (hash === '#checkout') { renderCartDrawer(); goToCheckout(); }
+    else if (hash === '#account')  window.location.href = '/profile';
+    else if (hash === '#checkout') { window.location.href = '/checkout'; }
     else showPage('main');
   });
 
@@ -436,7 +436,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   function goToCheckout() {
     closeCartDrawer();
-    showPage('checkout');
+    window.location.href = '/checkout';
   }
 
   // ====== PDP CART HELPERS ======
@@ -2658,7 +2658,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   function handleAccountBtnClick() {
     const c = getCurrentCustomer();
-    if (c) { toggleAccDropdown(); } else { openAuthModal('login'); }
+    if (c) { toggleAccDropdown(); } else { window.location.href = '/login'; }
   }
 
   function toggleAccDropdown() {
@@ -2731,8 +2731,8 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   function handleOrdersBtnClick() {
     const c = getCurrentCustomer();
-    if (c) { showPage('account'); setAccountSection('orders'); }
-    else   { openAuthModal('login'); }
+    if (c) { window.location.href = '/customer/dashboard'; }
+    else   { window.location.href = '/login'; }
   }
 
   // ── WISHLIST ──

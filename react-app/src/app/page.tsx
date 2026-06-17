@@ -74,8 +74,8 @@ const PAGE_HTML = `<div id="mainSite">
           <div class="acc-dropdown-name" id="accDropName"></div>
           <div class="acc-dropdown-email" id="accDropEmail"></div>
         </div>
-        <div class="acc-dropdown-item" onclick="showPage('account'); closeAccDropdown();">&#128100; My Account</div>
-        <div class="acc-dropdown-item" onclick="showPage('account'); setAccountSection('orders'); closeAccDropdown();">&#128230; My Orders</div>
+        <div class="acc-dropdown-item" onclick="window.location.href='/profile'">&#128100; My Account</div>
+        <div class="acc-dropdown-item" onclick="window.location.href='/customer/dashboard'">&#128230; My Orders</div>
         <div class="acc-dropdown-item logout" onclick="logoutCustomer()">Sign out</div>
       </div>
     </div>
