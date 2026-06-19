@@ -1494,8 +1494,10 @@
     animation: testi-scroll 28s linear infinite;
   }
   @keyframes testi-scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0%        { transform: translateX(0); }
+    90%       { transform: translateX(calc(-100% + 100vw - 80px)); }
+    90.001%   { transform: translateX(calc(-100% + 100vw - 80px)); }
+    100%      { transform: translateX(0); }
   }
   .testi-grid { display: contents; }
   .testi-card {
