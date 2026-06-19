@@ -23,7 +23,21 @@ const DIVIDER = <div style={{ display: 'flex', alignItems: 'center', gap: 10, ma
 type Tab = 'email' | 'phone';
 
 function cleanFirebaseError(msg: string) {
-  return msg.replace('Firebase: ', '').replace(/ \(auth\/.*\)\.?/, '');
+  const code = msg.match(/\(auth\/(.*?)\)/)?.[1];
+  const codeMessages: Record<string, string> = {
+    'email-already-in-use': 'An account with this email already exists.',
+    'weak-password': 'Password is too weak. Use at least 6 characters.',
+    'invalid-email': 'Invalid email address.',
+    'operation-not-allowed': 'This sign-in method is not enabled. Please contact support.',
+    'too-many-requests': 'Too many attempts. Please try again later.',
+    'network-request-failed': 'Network error. Check your connection.',
+    'popup-closed-by-user': 'Sign-in cancelled.',
+    'invalid-phone-number': 'Invalid phone number.',
+    'invalid-verification-code': 'Incorrect OTP. Please try again.',
+    'session-expired': 'OTP expired. Please request a new one.',
+  };
+  if (code && codeMessages[code]) return codeMessages[code];
+  return msg.replace('Firebase: ', '').replace(/ \(auth\/.*\)\.?/, '') || 'Sign up failed. Please try again.';
 }
 
 export default function SignupPage() {

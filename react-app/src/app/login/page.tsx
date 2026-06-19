@@ -22,7 +22,23 @@ const DIVIDER = <div style={{ display: 'flex', alignItems: 'center', gap: 10, ma
 type Tab = 'email' | 'phone';
 
 function cleanFirebaseError(msg: string) {
-  return msg.replace('Firebase: ', '').replace(/ \(auth\/.*\)\.?/, '');
+  const code = msg.match(/\(auth\/(.*?)\)/)?.[1];
+  const codeMessages: Record<string, string> = {
+    'user-not-found': 'No account found with this email.',
+    'wrong-password': 'Incorrect password.',
+    'invalid-credential': 'Incorrect email or password.',
+    'too-many-requests': 'Too many attempts. Please try again later.',
+    'operation-not-allowed': 'This sign-in method is not enabled. Please contact support.',
+    'user-disabled': 'This account has been disabled.',
+    'invalid-email': 'Invalid email address.',
+    'network-request-failed': 'Network error. Check your connection.',
+    'popup-closed-by-user': 'Sign-in cancelled.',
+    'invalid-phone-number': 'Invalid phone number.',
+    'invalid-verification-code': 'Incorrect OTP. Please try again.',
+    'session-expired': 'OTP expired. Please request a new one.',
+  };
+  if (code && codeMessages[code]) return codeMessages[code];
+  return msg.replace('Firebase: ', '').replace(/ \(auth\/.*\)\.?/, '') || 'Sign in failed. Please try again.';
 }
 
 function LoginForm() {
