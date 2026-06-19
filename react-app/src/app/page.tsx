@@ -1622,7 +1622,6 @@ const PAGE_HTML = `<div id="mainSite">
       <div id="coSummaryItems"></div>
       <div style="border-top:0.5px solid var(--border);margin:10px 0 8px;"></div>
       <div class="cs-row"><span class="cs-label">Subtotal</span><span class="cs-val" id="coSummarySubtotal">—</span></div>
-      <div class="cs-row"><span class="cs-label">GST (18%)</span><span class="cs-val" id="coSummaryGST">—</span></div>
       <div class="cs-row"><span class="cs-label">Delivery</span><span class="cs-val" id="coSummaryDelivery">—</span></div>
       <div class="cs-total-row" style="margin-top:0.75rem;border-top:0.5px solid var(--border);padding-top:0.75rem;">
         <span class="cs-total-label">Total</span>

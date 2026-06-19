@@ -483,7 +483,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   const DELIVERY_FREE_ABOVE = 999;
   const DELIVERY_CHARGE    = 99;
-  const GST_RATE           = 0.18;
+  const GST_RATE           = 0;
 
   function orderBreakdown() {
     const subtotal = cartTotal();
@@ -712,7 +712,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
         `*Customer:* ${orderData.name}\n*Phone:* ${orderData.phone}\n*Email:* ${orderData.email}\n\n` +
         `*Items:*\n${itemLines}\n\n` +
         `*Subtotal:* ₹${(orderData.subtotal||orderData.total||0).toLocaleString('en-IN')}\n` +
-        `*GST (18%):* ₹${(orderData.gst||0).toLocaleString('en-IN')}\n` +
         `*Delivery:* ${orderData.delivery===0?'FREE':'₹'+(orderData.delivery||0).toLocaleString('en-IN')}\n` +
         `*Total:* ₹${(orderData.total||0).toLocaleString('en-IN')}\n\n` +
         `*Ship to:* ${shippingFull}` +
@@ -813,7 +812,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     // Totals
     const rows = [
       ['Subtotal', fmt(o.subtotal||grand)],
-      ['GST (18%)', fmt(o.gst||0)],
       ['Delivery', o.delivery===0?'FREE':fmt(o.delivery||0)],
       ['TOTAL', fmt(o.total||grand)],
     ];
@@ -910,7 +908,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
     if (d.price && numPrice > 0) {
       document.getElementById('pdpPrice').textContent = '₹' + numPrice.toLocaleString('en-IN');
-      document.getElementById('pdpPriceNote').textContent = 'Incl. GST · excl. shipping';
+      document.getElementById('pdpPriceNote').textContent = 'Excl. shipping';
       qtyRow.style.display = '';
       priceWrap.style.display = '';
       buyNowBtn.style.display = '';
