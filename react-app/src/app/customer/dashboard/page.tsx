@@ -52,21 +52,24 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = '/login?redirect=/customer/dashboard';
-        return;
-      }
-      const email = user.email || '';
-      setUserEmail(email);
-      setUserName(user.displayName || email.split('@')[0] || 'Customer');
+    let unsubscribe: (() => void) | undefined;
+    auth.authStateReady().then(() => {
+      unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = '/login?redirect=/customer/dashboard';
+          return;
+        }
+        const email = user.email || '';
+        setUserEmail(email);
+        setUserName(user.displayName || email.split('@')[0] || 'Customer');
 
-      const res = await fetch(`/api/my-orders?email=${encodeURIComponent(email)}`);
-      const json = await res.json();
-      if (json.orders) setOrders(json.orders as Order[]);
-      setLoading(false);
+        const res = await fetch(`/api/my-orders?email=${encodeURIComponent(email)}`);
+        const json = await res.json();
+        if (json.orders) setOrders(json.orders as Order[]);
+        setLoading(false);
+      });
     });
-    return () => unsubscribe();
+    return () => unsubscribe?.();
   }, []);
 
   function formatDate(iso: string) {

@@ -91,11 +91,13 @@ export default function PaymentPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = '/login?redirect=/checkout/payment';
-        return;
-      }
+    let unsubscribe: (() => void) | undefined;
+    auth.authStateReady().then(() => {
+      unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = '/login?redirect=/checkout/payment';
+          return;
+        }
       try {
         const cartRaw = localStorage.getItem('kyzer_cart');
         if (cartRaw) setCart(JSON.parse(cartRaw));
@@ -106,8 +108,9 @@ export default function PaymentPage() {
         }
       } catch { /* ignore */ }
       setMounted(true);
+      });
     });
-    return () => unsubscribe();
+    return () => unsubscribe?.();
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);

@@ -82,7 +82,9 @@ export default function AddressPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribe: (() => void) | undefined;
+    auth.authStateReady().then(() => {
+    unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = '/login?redirect=/checkout/address';
         return;
@@ -103,7 +105,8 @@ export default function AddressPage() {
       }
       setLoading(false);
     });
-    return () => unsubscribe();
+    });
+    return () => unsubscribe?.();
   }, []);
 
   function field(key: keyof typeof form, value: string) {

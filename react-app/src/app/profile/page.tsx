@@ -51,22 +51,25 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = '/login?redirect=/profile';
-        return;
-      }
-      setUserId(user.uid);
-      setUserEmail(user.email || '');
-      setUserName(user.displayName || user.email?.split('@')[0] || 'User');
+    let unsubscribe: (() => void) | undefined;
+    auth.authStateReady().then(() => {
+      unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = '/login?redirect=/profile';
+          return;
+        }
+        setUserId(user.uid);
+        setUserEmail(user.email || '');
+        setUserName(user.displayName || user.email?.split('@')[0] || 'User');
 
-      const { data: cust } = await supabase.from('customers').select('address').eq('id', user.uid).single();
-      if (cust && Array.isArray(cust.address)) {
-        setAddresses(cust.address as Address[]);
-      }
-      setLoading(false);
+        const { data: cust } = await supabase.from('customers').select('address').eq('id', user.uid).single();
+        if (cust && Array.isArray(cust.address)) {
+          setAddresses(cust.address as Address[]);
+        }
+        setLoading(false);
+      });
     });
-    return () => unsubscribe();
+    return () => unsubscribe?.();
   }, []);
 
   async function saveAddresses(updated: Address[]) {

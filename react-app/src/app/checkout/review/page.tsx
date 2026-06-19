@@ -75,11 +75,13 @@ export default function ReviewPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = '/login?redirect=/checkout/review';
-        return;
-      }
+    let unsubscribe: (() => void) | undefined;
+    auth.authStateReady().then(() => {
+      unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = '/login?redirect=/checkout/review';
+          return;
+        }
       try {
         const cartRaw = localStorage.getItem('kyzer_cart');
         if (cartRaw) setCart(JSON.parse(cartRaw));
@@ -90,8 +92,9 @@ export default function ReviewPage() {
         }
       } catch { /* ignore */ }
       setMounted(true);
+      });
     });
-    return () => unsubscribe();
+    return () => unsubscribe?.();
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
