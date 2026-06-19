@@ -83,7 +83,7 @@ export default function CheckoutPage() {
   }
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
-  const gst = Math.round(subtotal * 0.18);
+  const gst = 0;
   const delivery = subtotal >= 999 ? 0 : 99;
   const grandTotal = subtotal + gst + delivery;
 
@@ -171,10 +171,7 @@ export default function CheckoutPage() {
                       <span>Subtotal</span>
                       <span>₹{subtotal.toLocaleString('en-IN')}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#555' }}>
-                      <span>GST (18%)</span>
-                      <span>₹{gst.toLocaleString('en-IN')}</span>
-                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#555' }}>
                       <span>Delivery</span>
                       <span style={{ color: delivery === 0 ? '#27ae60' : '#111' }}>{delivery === 0 ? 'FREE' : `₹${delivery}`}</span>
