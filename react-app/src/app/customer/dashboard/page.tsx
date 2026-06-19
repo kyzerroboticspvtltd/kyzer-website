@@ -62,18 +62,13 @@ export default function DashboardPage() {
       setUserEmail(email);
       setUserName(user.user_metadata?.full_name || email.split('@')[0] || 'Customer');
 
+      // RLS policy filters to only this user's orders server-side
       const { data: ordersData } = await supabase
         .from('shop_orders')
         .select('*')
         .order('submitted_at', { ascending: false });
 
-      if (ordersData) {
-        // Filter by email client-side
-        const filtered = (ordersData as Order[]).filter(
-          o => o.data && (o.data as OrderData).email === email
-        );
-        setOrders(filtered);
-      }
+      if (ordersData) setOrders(ordersData as Order[]);
       setLoading(false);
     }
     init();
