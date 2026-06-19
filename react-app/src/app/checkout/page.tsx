@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
 import { supabase } from '@/lib/supabase';
 
 const FONT_URL =
@@ -87,8 +88,8 @@ export default function CheckoutPage() {
   const grandTotal = subtotal + gst + delivery;
 
   async function handleProceed() {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) {
+    const user = auth.currentUser;
+    if (user) {
       window.location.href = '/checkout/address';
     } else {
       window.location.href = '/login?redirect=/checkout/address';

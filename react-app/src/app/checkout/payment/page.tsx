@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -90,9 +91,8 @@ export default function PaymentPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    async function init() {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
         window.location.href = '/login?redirect=/checkout/payment';
         return;
       }
@@ -106,8 +106,8 @@ export default function PaymentPage() {
         }
       } catch { /* ignore */ }
       setMounted(true);
-    }
-    init();
+    });
+    return () => unsubscribe();
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);

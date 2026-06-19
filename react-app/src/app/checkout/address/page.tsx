@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { supabase } from '@/lib/supabase';
 
 const FONT_URL =
@@ -80,17 +82,15 @@ export default function AddressPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function init() {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         window.location.href = '/login?redirect=/checkout/address';
         return;
       }
-      const uid = data.session.user.id;
-      const email = data.session.user.email || '';
+      const uid = user.uid;
+      const email = user.email || '';
       setUserId(uid);
       setUserEmail(email);
-      // Load saved addresses
       const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
       if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
         setSavedAddresses(cust.address as Address[]);
@@ -102,8 +102,8 @@ export default function AddressPage() {
         setForm(prev => ({ ...prev, email }));
       }
       setLoading(false);
-    }
-    init();
+    });
+    return () => unsubscribe();
   }, []);
 
   function field(key: keyof typeof form, value: string) {

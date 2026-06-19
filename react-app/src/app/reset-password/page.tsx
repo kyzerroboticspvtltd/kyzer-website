@@ -1,25 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import { verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap';
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [invalidLink, setInvalidLink] = useState(false);
+
+  const oobCode = searchParams.get('oobCode');
 
   useEffect(() => {
-    // Supabase puts the recovery token in the URL hash — exchange it for a session
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') setReady(true);
-    });
-  }, []);
+    if (!oobCode) { setInvalidLink(true); return; }
+    verifyPasswordResetCode(auth, oobCode)
+      .then(() => setReady(true))
+      .catch(() => setInvalidLink(true));
+  }, [oobCode]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,11 +33,16 @@ export default function ResetPasswordPage() {
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     if (password !== confirm) { setError('Passwords do not match.'); return; }
     setLoading(true);
-    const { error: err } = await supabase.auth.updateUser({ password });
-    setLoading(false);
-    if (err) { setError(err.message); return; }
-    setDone(true);
-    setTimeout(() => { window.location.href = '/customer/dashboard'; }, 2000);
+    try {
+      await confirmPasswordReset(auth, oobCode!, password);
+      setDone(true);
+      setTimeout(() => { window.location.href = '/login'; }, 2000);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to reset password';
+      setError(msg.replace('Firebase: ', '').replace(/ \(auth\/.*\)\.?/, ''));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -57,7 +68,14 @@ export default function ResetPasswordPage() {
                 <div style={{ textAlign: 'center', padding: '8px 0' }}>
                   <div style={{ fontSize: 44, marginBottom: 12 }}>✅</div>
                   <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#111', marginBottom: 8 }}>Password updated!</h2>
-                  <p style={{ fontSize: 14, color: '#666' }}>Redirecting you to your dashboard…</p>
+                  <p style={{ fontSize: 14, color: '#666' }}>Redirecting you to sign in…</p>
+                </div>
+              ) : invalidLink ? (
+                <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                  <div style={{ fontSize: 44, marginBottom: 12 }}>❌</div>
+                  <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#111', marginBottom: 8 }}>Invalid or expired link</h2>
+                  <p style={{ fontSize: 14, color: '#666', marginBottom: 20 }}>Please request a new password reset link.</p>
+                  <a href="/forgot-password" style={{ color: '#FF8C35', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Request new link →</a>
                 </div>
               ) : !ready ? (
                 <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -108,5 +126,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#f8f8f6' }} />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

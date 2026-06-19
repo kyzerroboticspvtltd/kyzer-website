@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { supabase } from '@/lib/supabase';
 
 const FONT_URL =
@@ -49,24 +51,22 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function init() {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         window.location.href = '/login?redirect=/profile';
         return;
       }
-      const user = data.session.user;
-      setUserId(user.id);
+      setUserId(user.uid);
       setUserEmail(user.email || '');
-      setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'User');
+      setUserName(user.displayName || user.email?.split('@')[0] || 'User');
 
-      const { data: cust } = await supabase.from('customers').select('address').eq('id', user.id).single();
+      const { data: cust } = await supabase.from('customers').select('address').eq('id', user.uid).single();
       if (cust && Array.isArray(cust.address)) {
         setAddresses(cust.address as Address[]);
       }
       setLoading(false);
-    }
-    init();
+    });
+    return () => unsubscribe();
   }, []);
 
   async function saveAddresses(updated: Address[]) {
@@ -130,7 +130,7 @@ export default function ProfilePage() {
   }
 
   async function handleSignOut() {
-    await supabase.auth.signOut();
+    await signOut(auth);
     window.location.href = '/';
   }
 

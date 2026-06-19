@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -51,27 +52,21 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function init() {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         window.location.href = '/login?redirect=/customer/dashboard';
         return;
       }
-      const user = data.session.user;
       const email = user.email || '';
       setUserEmail(email);
-      setUserName(user.user_metadata?.full_name || email.split('@')[0] || 'Customer');
+      setUserName(user.displayName || email.split('@')[0] || 'Customer');
 
-      // RLS policy filters to only this user's orders server-side
-      const { data: ordersData } = await supabase
-        .from('shop_orders')
-        .select('*')
-        .order('submitted_at', { ascending: false });
-
-      if (ordersData) setOrders(ordersData as Order[]);
+      const res = await fetch(`/api/my-orders?email=${encodeURIComponent(email)}`);
+      const json = await res.json();
+      if (json.orders) setOrders(json.orders as Order[]);
       setLoading(false);
-    }
-    init();
+    });
+    return () => unsubscribe();
   }, []);
 
   function formatDate(iso: string) {
