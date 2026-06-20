@@ -211,8 +211,8 @@ export default function DroneFramesPage() {
                     </div>
                   )}
                   {/* Image */}
-                  <div style={{ height: 180, background: '#f4f4f2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
-                    {photo ? <img src={photo} alt={f.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16 }} /> : f.emoji}
+                  <div style={{ height: 180, background: '#f4f4f2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56, overflow: 'hidden' }}>
+                    <img src={photo || 'https://images.unsplash.com/photo-1495811853829-7f743aca3770?w=400&q=70&auto=format&fit=crop'} alt={f.name} style={{ width: '100%', height: '100%', objectFit: photo ? 'contain' : 'cover', padding: photo ? 16 : 0 }} />
                   </div>
                   {/* Body */}
                   <div style={{ padding: '14px 16px 12px' }}>
@@ -267,8 +267,8 @@ export default function DroneFramesPage() {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', textTransform: 'uppercase' }}>Drone Frames</span>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }}>✕</button>
             </div>
-            <div style={{ height: 220, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16 }}>
-              {selected.photos?.[0] ? <img src={selected.photos[0]} alt={selected.name} style={{ height: '100%', objectFit: 'contain' }} /> : selected.emoji}
+            <div style={{ height: 220, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16, overflow: 'hidden' }}>
+              <img src={selected.photos?.[0] || 'https://images.unsplash.com/photo-1495811853829-7f743aca3770?w=400&q=70&auto=format&fit=crop'} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: selected.photos?.[0] ? 'contain' : 'cover' }} />
             </div>
             <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: 1, margin: '0 0 8px' }}>{selected.name}</h2>
             <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>{selected.details}</p>

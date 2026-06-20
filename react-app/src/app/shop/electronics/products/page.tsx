@@ -110,6 +110,15 @@ export default function ElectronicsProductsPage() {
     { key: 'arduino-accessories', label: 'Accessories' },
   ];
 
+  const subcatFallbackImg: Record<string, string> = {
+    'arduino':      'https://images.unsplash.com/photo-1586920740099-f3ceb65bc51e?w=400&q=70&auto=format&fit=crop',
+    'raspberry-pi': 'https://images.unsplash.com/photo-1610812387871-806d3db9f5aa?w=400&q=70&auto=format&fit=crop',
+    'sensors':      'https://images.unsplash.com/photo-1603732551658-5fabbafa84eb?w=400&q=70&auto=format&fit=crop',
+    'motors':       'https://images.unsplash.com/photo-1723730741647-caaea47ac90f?w=400&q=70&auto=format&fit=crop',
+    'components':   'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=400&q=70&auto=format&fit=crop',
+    'tools':        'https://images.unsplash.com/photo-1560846389-8c7e1d88eca8?w=400&q=70&auto=format&fit=crop',
+  };
+
   const pageTitle = fType ? (typeLabel[fType] || fType) : (fSub === 'all' ? 'All Electronics' : (subcatLabel[fSub] || fSub));
   const crumbLabel = fType ? (typeLabel[fType] || fType) : (fSub === 'all' ? 'All Products' : (subcatLabel[fSub] || fSub));
 
@@ -202,8 +211,8 @@ export default function ElectronicsProductsPage() {
                   {p.badge && (
                     <div style={{ position: 'absolute', top: 10, left: 10, background: p.badgeType === 'new' ? '#FF8C35' : '#111', color: '#fff', fontSize: 10, fontFamily: "'JetBrains Mono', monospace", padding: '3px 8px', borderRadius: 4, zIndex: 1 }}>{p.badge}</div>
                   )}
-                  <div style={{ height: 170, background: '#f4f4f2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
-                    {photo ? <img src={photo} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16 }} /> : p.emoji || '🔌'}
+                  <div style={{ height: 170, background: '#f4f4f2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56, overflow: 'hidden' }}>
+                    <img src={photo || subcatFallbackImg[p.subcat] || subcatFallbackImg['components']} alt={p.name} style={{ width: '100%', height: '100%', objectFit: photo ? 'contain' : 'cover', padding: photo ? 16 : 0 }} />
                   </div>
                   <div style={{ padding: '14px 16px' }}>
                     <div style={{ fontSize: 10, color: '#FF8C35', fontFamily: "'JetBrains Mono', monospace", marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -250,8 +259,8 @@ export default function ElectronicsProductsPage() {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', textTransform: 'uppercase' }}>{subcatLabel[selected.subcat] || 'Electronics'}</span>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }}>✕</button>
             </div>
-            <div style={{ height: 200, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16 }}>
-              {selected.photos?.[0] ? <img src={selected.photos[0]} alt={selected.name} style={{ height: '100%', objectFit: 'contain' }} /> : selected.emoji || '🔌'}
+            <div style={{ height: 200, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16, overflow: 'hidden' }}>
+              {(() => { const sp = selected.photos?.[0]; const fb = subcatFallbackImg[selected.subcat] || subcatFallbackImg['components']; return <img src={sp || fb} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: sp ? 'contain' : 'cover' }} />; })()}
             </div>
             <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: 1, margin: '0 0 8px' }}>{selected.name}</h2>
             <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>{selected.details}</p>
