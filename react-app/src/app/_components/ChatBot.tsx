@@ -162,13 +162,14 @@ export default function ChatBot() {
       setTicketStep('ask_message');
       setMessages(prev => [...prev, { from: 'bot', text: "Please describe your issue in detail." }]);
     } else if (ticketStep === 'ask_message') {
-      const finalData = { ...ticketData, message: value, source: 'chatbot' };
+      const finalData: Record<string, string> = { ...ticketData, message: value, source: 'chatbot' };
       setTicketData(finalData);
       setTicketStep('done');
       submitTicket(finalData);
+      const customerEmail = ticketData['email'] ?? '';
       setMessages(prev => [...prev, {
         from: 'bot',
-        text: `✅ Ticket raised! We'll get back to you at <strong>${finalData.email}</strong> shortly. You can also WhatsApp us for faster support.`,
+        text: `✅ Ticket raised! We'll get back to you at <strong>${customerEmail}</strong> shortly. You can also WhatsApp us for faster support.`,
       }]);
     }
   }
