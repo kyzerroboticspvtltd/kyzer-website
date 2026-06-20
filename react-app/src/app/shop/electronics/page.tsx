@@ -6,6 +6,7 @@ const CATEGORIES = [
     key: 'arduino',
     name: 'Arduino & Microcontrollers',
     icon: '🔵',
+    img: 'https://images.unsplash.com/photo-1586920740099-f3ceb65bc51e?w=600&q=80&auto=format&fit=crop',
     desc: 'Arduino boards, clones, shields and accessories for prototyping and embedded projects.',
     link: '/shop/electronics/arduino',
     browse: 'Browse Arduino →',
@@ -14,6 +15,7 @@ const CATEGORIES = [
     key: 'raspberry-pi',
     name: 'Raspberry Pi & SBCs',
     icon: '🍓',
+    img: 'https://images.unsplash.com/photo-1610812387871-806d3db9f5aa?w=600&q=80&auto=format&fit=crop',
     desc: 'Raspberry Pi boards, accessories, and other single-board computers for your projects.',
     link: '/shop/electronics/products?cat=raspberry-pi',
     browse: 'Browse SBCs →',
@@ -22,6 +24,7 @@ const CATEGORIES = [
     key: 'sensors',
     name: 'Sensors & Modules',
     icon: '📡',
+    img: 'https://images.unsplash.com/photo-1603732551658-5fabbafa84eb?w=600&q=80&auto=format&fit=crop',
     desc: 'Temperature, humidity, distance, IMU, GPS, cameras and more — ready to plug in.',
     link: '/shop/electronics/products?cat=sensors',
     browse: 'Browse Sensors →',
@@ -30,6 +33,7 @@ const CATEGORIES = [
     key: 'motors',
     name: 'Motors & Actuators',
     icon: '⚙️',
+    img: 'https://images.unsplash.com/photo-1723730741647-caaea47ac90f?w=600&q=80&auto=format&fit=crop',
     desc: 'DC motors, servo motors, stepper motors, ESCs and motor drivers for robotics builds.',
     link: '/shop/electronics/products?cat=motors',
     browse: 'Browse Motors →',
@@ -38,6 +42,7 @@ const CATEGORIES = [
     key: 'components',
     name: 'Electronic Components',
     icon: '🔌',
+    img: 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600&q=80&auto=format&fit=crop',
     desc: 'Resistors, capacitors, transistors, ICs, LEDs, breadboards and passive components.',
     link: '/shop/electronics/products?cat=components',
     browse: 'Browse Components →',
@@ -46,6 +51,7 @@ const CATEGORIES = [
     key: 'tools',
     name: 'Tools & Equipment',
     icon: '🔧',
+    img: 'https://images.unsplash.com/photo-1560846389-8c7e1d88eca8?w=600&q=80&auto=format&fit=crop',
     desc: 'Soldering irons, multimeters, oscilloscopes, helping hands and workshop essentials.',
     link: '/shop/electronics/products?cat=tools',
     browse: 'Browse Tools →',
@@ -98,7 +104,9 @@ export default function ElectronicsPage() {
           height:160px; background:var(--bg2);
           display:flex; align-items:center; justify-content:center;
           font-size:64px; border-bottom:1px solid var(--border);
+          overflow:hidden;
         }
+        .cat-card-img img { width:100%; height:100%; object-fit:cover; }
         .cat-card-body { padding:18px 20px 20px; }
         .cat-card-name { font-weight:700; font-size:16px; margin-bottom:6px; color:var(--text); }
         .cat-card-desc { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:14px; }
@@ -148,7 +156,9 @@ export default function ElectronicsPage() {
         <div className="cat-grid">
           {CATEGORIES.map(c => (
             <Link key={c.key} href={c.link} className="cat-card">
-              <div className="cat-card-img">{c.icon}</div>
+              <div className="cat-card-img">
+                {c.img ? <img src={c.img} alt={c.name} /> : c.icon}
+              </div>
               <div className="cat-card-body">
                 <div className="cat-card-name">{c.name}</div>
                 <div className="cat-card-desc">{c.desc}</div>

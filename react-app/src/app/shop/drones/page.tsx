@@ -42,6 +42,7 @@ export default function DronesPage() {
         .sl-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(255,140,53,0.07) 0%,transparent 70%); opacity:0; transition:opacity 0.3s; }
         .sl-card:hover::before { opacity:1; }
 
+        .sl-card-img { width:100%; height:180px; object-fit:cover; border-radius:12px; margin-bottom:1.25rem; }
         .sl-card-icon { font-size:48px; margin-bottom:1.25rem; }
         .sl-card-name { font-family:'Bebas Neue',sans-serif; font-size:32px; color:#111; letter-spacing:0.02em; margin-bottom:10px; }
         .sl-card-desc { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:1.5rem; }
@@ -67,13 +68,13 @@ export default function DronesPage() {
 
         <div className="sl-grid">
           <Link href="/shop/drone-frames" className="sl-card">
-            <div className="sl-card-icon">🏗️</div>
+            <img className="sl-card-img" src="https://images.unsplash.com/photo-1495811853829-7f743aca3770?w=600&q=80&auto=format&fit=crop" alt="Drone Frame" />
             <div className="sl-card-name">Drone Frames</div>
             <div className="sl-card-desc">Racing, quadcopter & hexacopter frames — carbon fiber & glass fiber. Pick your geometry and build weight.</div>
             <div className="sl-card-arrow">Browse Frames →</div>
           </Link>
           <Link href="/shop/complete-drones" className="sl-card">
-            <div className="sl-card-icon">🛸</div>
+            <img className="sl-card-img" src="https://images.unsplash.com/photo-1610812387871-806d3db9f5aa?w=600&q=80&auto=format&fit=crop" alt="Complete Drones" />
             <div className="sl-card-name">Complete Drones</div>
             <div className="sl-card-desc">Ready-to-fly survey, FPV & agricultural drones — fully assembled and tested before shipping.</div>
             <div className="sl-card-arrow">Browse Drones →</div>
