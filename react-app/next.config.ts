@@ -12,7 +12,7 @@ const securityHeaders = [
       // Fonts: own origin + Google Fonts static assets + data URIs (Firebase SDK inlines fonts)
       "font-src 'self' https://fonts.gstatic.com data:",
       // Images: own origin + data URIs + blob URLs + Supabase storage + Google profile pics
-      "img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com https://www.gstatic.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com https://www.gstatic.com https://images.unsplash.com",
       // XHR/fetch: own origin + Supabase + Razorpay + Firebase Auth + Google APIs
       "connect-src 'self' https://*.supabase.co https://api.razorpay.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com",
       // Frames: Razorpay + Instagram + Google sign-in popup
