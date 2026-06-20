@@ -21,7 +21,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Address', 'Review', 'Payment'];
+const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -90,9 +90,9 @@ export default function CheckoutPage() {
   async function handleProceed() {
     const user = auth.currentUser;
     if (user) {
-      window.location.href = '/checkout/address';
+      window.location.href = '/checkout/payment';
     } else {
-      window.location.href = '/login?redirect=/checkout/address';
+      window.location.href = '/login?redirect=/checkout/payment';
     }
   }
 
@@ -103,8 +103,8 @@ export default function CheckoutPage() {
       <link href={FONT_URL} rel="stylesheet" />
       <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif" }}>
         {/* Nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 60, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
-          <a href="/" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 90, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
+          <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
           <a href="/" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Continue Shopping</a>
@@ -147,7 +147,7 @@ export default function CheckoutPage() {
 
                       {/* Qty controls */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                        <button onClick={() => updateQty(item.id, -1)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(0,0,0,0.12)', background: '#f8f8f6', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                        <button onClick={() => updateQty(item.id, -1)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(0,0,0,0.12)', background: '#f8f8f6', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
                         <span style={{ fontSize: 14, fontWeight: 600, minWidth: 20, textAlign: 'center' }}>{item.qty}</span>
                         <button onClick={() => updateQty(item.id, 1)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(0,0,0,0.12)', background: '#f8f8f6', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                       </div>
@@ -206,3 +206,4 @@ export default function CheckoutPage() {
     </>
   );
 }
+

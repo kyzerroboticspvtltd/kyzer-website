@@ -135,8 +135,8 @@ function LoginForm() {
     <>
       <link href={FONT_URL} rel="stylesheet" />
       <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif" }}>
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 60, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
-          <a href="/" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 90, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
+          <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
           <a href="/" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to home</a>
@@ -168,14 +168,14 @@ function LoginForm() {
                 <form onSubmit={handleEmailSubmit}>
                   <div style={{ marginBottom: 18 }}>
                     <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#111', marginBottom: 6 }}>Email</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" style={INPUT} />
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Password" style={INPUT} />
                   </div>
                   <div style={{ marginBottom: 24 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                       <label style={{ fontSize: 13, fontWeight: 500, color: '#111' }}>Password</label>
                       <a href="/forgot-password" style={{ fontSize: 12, color: '#FF8C35', textDecoration: 'none' }}>Forgot password?</a>
                     </div>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" style={INPUT} />
+                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Password" style={INPUT} />
                   </div>
                   <button type="submit" disabled={loading} style={BTN_PRIMARY(loading)}>
                     {loading ? 'Signing in…' : 'Sign In'}
@@ -258,3 +258,4 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+

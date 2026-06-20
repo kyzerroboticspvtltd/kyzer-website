@@ -575,6 +575,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       <div class="sidebar-link" onclick="switchTab('links')" id="tl-links"><span>🔗</span> Links</div>
 
       <div class="sidebar-section" style="margin-top:1.25rem;">SETTINGS</div>
+      <div class="sidebar-link" onclick="switchTab('tickets')" id="tl-tickets" style="display:flex;align-items:center;"><span>🎫</span> Support Tickets <span id="ticketsNewBadge" style="display:none;background:#FF8C35;color:#111;border-radius:999px;font-size:10px;padding:1px 7px;margin-left:auto;font-weight:600;line-height:16px;"></span></div>
       <div class="sidebar-link" onclick="switchTab('security')" id="tl-security"><span>⚙️</span> Settings</div>
     </aside>
 
@@ -945,6 +946,74 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
       </div>
 
       <!-- SECURITY -->
+      <div class="admin-tab" id="tab-tickets">
+        <div class="tab-header">
+          <h2>Support Tickets</h2>
+          <p>Customer support requests submitted via the website chatbot or contact form.</p>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="loadTickets()">↻ Refresh</button>
+        </div>
+
+        <div class="orders-stats" style="grid-template-columns:repeat(4,1fr);">
+          <div class="ostat-card"><div class="ostat-num" id="tkstat-total">0</div><div class="ostat-label">Total</div></div>
+          <div class="ostat-card new"><div class="ostat-num" id="tkstat-open">0</div><div class="ostat-label">Open</div></div>
+          <div class="ostat-card" style="border-color:rgba(255,193,7,0.3);"><div class="ostat-num" id="tkstat-inprogress" style="color:#f59e0b;">0</div><div class="ostat-label">In Progress</div></div>
+          <div class="ostat-card done"><div class="ostat-num" id="tkstat-closed">0</div><div class="ostat-label">Closed</div></div>
+        </div>
+
+        <div class="list-toolbar">
+          <div class="list-search"><input class="form-input" id="ticketSearch" placeholder="Search name, email, subject…" oninput="renderTickets()"></div>
+          <select class="form-input list-sort" id="ticketFilter" onchange="renderTickets()">
+            <option value="all">All statuses</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportTicketsCSV()">⬇ Export CSV</button>
+        </div>
+
+        <div id="ticket-list" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Ticket Detail Modal -->
+      <div class="modal-overlay" id="ticketModal" style="display:none;" onclick="if(event.target===this)closeTicketModal()">
+        <div class="modal-box" style="width:580px;max-height:80vh;overflow-y:auto;">
+          <div class="modal-header"><span id="tmod-id" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);"></span><button class="modal-close" onclick="closeTicketModal()">✕</button></div>
+          <h3 id="tmod-subject" style="margin:8px 0 4px;font-size:17px;"></h3>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+            <span id="tmod-status-badge" style="font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;"></span>
+            <span style="font-size:12px;color:var(--muted);" id="tmod-date"></span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div class="omod-field"><label>Name</label><div id="tmod-name"></div></div>
+            <div class="omod-field"><label>Email</label><div><a id="tmod-email-link" href="#" style="color:var(--orange);"></a></div></div>
+            <div class="omod-field"><label>Phone</label><div id="tmod-phone"></div></div>
+            <div class="omod-field"><label>Source</label><div id="tmod-source"></div></div>
+          </div>
+
+          <div class="omod-field" style="margin-bottom:16px;">
+            <label>Message</label>
+            <div id="tmod-message" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;white-space:pre-wrap;"></div>
+          </div>
+
+          <div class="omod-field" style="margin-bottom:16px;">
+            <label>Internal Notes</label>
+            <textarea id="tmod-notes" rows="3" class="form-input" placeholder="Add internal notes…" style="width:100%;resize:vertical;font-size:13px;"></textarea>
+            <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="saveTicketNotes()">Save note</button>
+          </div>
+
+          <div class="modal-footer">
+            <select id="tmod-status-select" class="form-input" style="width:160px;">
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="closed">Closed</option>
+            </select>
+            <button class="btn" onclick="updateTicketStatus()">Update Status</button>
+            <a id="tmod-reply-btn" href="#" target="_blank" class="btn btn-ghost">✉️ Reply by Email</a>
+          </div>
+        </div>
+      </div>
+
       <div class="admin-tab" id="tab-security">
         <div class="tab-header"><h2>Settings</h2><p>Integrations, site mode, and account. Publishing and order updates are handled securely on the server — no secret keys are stored in this browser.</p></div>
 
@@ -2103,6 +2172,7 @@ function switchTab(name) {
   if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
   if (name === 'customers') { _fetchSupabaseCustomers().then(() => renderCustomers()); }
   if (name === 'quotes') { loadQuoteInquiries(); }
+  if (name === 'tickets') { loadTickets(); }
 }
 
 // ── DASHBOARD ──
@@ -2554,6 +2624,149 @@ function exportQuotesCSV() {
   downloadCSV('kyzer-quote-inquiries-' + _todayStamp() + '.csv', rows);
   toast('Exported ' + (rows.length - 1) + ' inquiries.');
 }
+
+// ── SUPPORT TICKETS ──────────────────────────────────────────────────────────
+let allTickets = JSON.parse(localStorage.getItem('kyzer_tickets') || '[]');
+let _activeTicketId = null;
+
+function _ticketStatusStyle(s) {
+  if (s === 'open')        return 'background:#fff3e8;color:#FF8C35;';
+  if (s === 'in_progress') return 'background:#fef3c7;color:#d97706;';
+  if (s === 'closed')      return 'background:#e8f5e9;color:#2e7d32;';
+  return 'background:var(--bg3);color:var(--muted);';
+}
+
+async function loadTickets() {
+  const { url, key } = _sbCreds();
+  if (!url || !key) { renderTickets(); return; }
+  try {
+    const res = await fetch(`${url}/rest/v1/support_tickets?select=*&order=created_at.desc`, {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    if (!res.ok) { renderTickets(); return; }
+    const rows = await res.json();
+    if (!Array.isArray(rows)) { renderTickets(); return; }
+    allTickets = rows;
+    localStorage.setItem('kyzer_tickets', JSON.stringify(allTickets));
+  } catch(e) {}
+  renderTickets();
+}
+
+function renderTickets() {
+  const q    = (document.getElementById('ticketSearch')?.value || '').toLowerCase();
+  const filt = document.getElementById('ticketFilter')?.value || 'all';
+  let list   = allTickets.filter(t => {
+    if (filt !== 'all' && t.status !== filt) return false;
+    if (q) return [t.name, t.email, t.subject, t.message].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+
+  // stats
+  document.getElementById('tkstat-total').textContent      = allTickets.length;
+  document.getElementById('tkstat-open').textContent       = allTickets.filter(t => t.status === 'open').length;
+  document.getElementById('tkstat-inprogress').textContent = allTickets.filter(t => t.status === 'in_progress').length;
+  document.getElementById('tkstat-closed').textContent     = allTickets.filter(t => t.status === 'closed').length;
+
+  // badge
+  const newCount = allTickets.filter(t => t.status === 'open').length;
+  const badge = document.getElementById('ticketsNewBadge');
+  if (badge) { badge.textContent = newCount; badge.style.display = newCount ? 'inline' : 'none'; }
+
+  const el = document.getElementById('ticket-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<div class="orders-empty">No tickets found.</div>'; return; }
+
+  el.innerHTML = list.map(t => {
+    const date = t.created_at ? new Date(t.created_at).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+    return `<div class="order-card" onclick="openTicketModal('${escHtml(t.id)}')">
+      <div class="oc-top">
+        <div>
+          <div class="oc-id">#${escHtml(t.id)}</div>
+          <div class="oc-name">${escHtml(t.name || '—')}</div>
+          <div class="oc-meta">${escHtml(t.email || '')}${t.phone ? ' · ' + escHtml(t.phone) : ''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="order-status-badge" style="${_ticketStatusStyle(t.status)}">${(t.status||'open').replace('_',' ')}</div>
+          <div class="oc-meta" style="margin-top:4px;">${date}</div>
+        </div>
+      </div>
+      <div class="oc-subject" style="margin-top:8px;font-size:13px;font-weight:500;">${escHtml(t.subject || '(No subject)')}</div>
+      <div class="oc-preview" style="font-size:12px;color:var(--muted);margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${escHtml((t.message||'').slice(0,120))}</div>
+    </div>`;
+  }).join('');
+}
+
+function openTicketModal(id) {
+  const t = allTickets.find(t => t.id === id);
+  if (!t) return;
+  _activeTicketId = id;
+  const date = t.created_at ? new Date(t.created_at).toLocaleString('en-IN') : '—';
+  document.getElementById('tmod-id').textContent       = '#' + t.id;
+  document.getElementById('tmod-subject').textContent  = t.subject || '(No subject)';
+  document.getElementById('tmod-date').textContent     = date;
+  document.getElementById('tmod-name').textContent     = t.name || '—';
+  document.getElementById('tmod-phone').textContent    = t.phone || '—';
+  document.getElementById('tmod-source').textContent   = t.source || 'Website';
+  document.getElementById('tmod-message').textContent  = t.message || '—';
+  document.getElementById('tmod-notes').value          = t.internal_notes || '';
+  const emailEl = document.getElementById('tmod-email-link');
+  emailEl.textContent = t.email || '—';
+  emailEl.href = t.email ? 'mailto:' + t.email + '?subject=Re: ' + encodeURIComponent(t.subject || 'Your support request') : '#';
+  document.getElementById('tmod-reply-btn').href = t.email ? 'mailto:' + t.email + '?subject=Re: ' + encodeURIComponent(t.subject || 'Your support request') : '#';
+  const badge = document.getElementById('tmod-status-badge');
+  badge.textContent = (t.status || 'open').replace('_', ' ');
+  badge.style.cssText = _ticketStatusStyle(t.status);
+  document.getElementById('tmod-status-select').value = t.status || 'open';
+  document.getElementById('ticketModal').style.display = 'flex';
+}
+
+function closeTicketModal() { document.getElementById('ticketModal').style.display = 'none'; }
+
+async function updateTicketStatus() {
+  const t = allTickets.find(t => t.id === _activeTicketId);
+  if (!t) return;
+  const newStatus = document.getElementById('tmod-status-select').value;
+  t.status = newStatus;
+  localStorage.setItem('kyzer_tickets', JSON.stringify(allTickets));
+  const { url, key } = _sbCreds();
+  if (url && key) {
+    await fetch(`${url}/rest/v1/support_tickets?id=eq.${encodeURIComponent(t.id)}`, {
+      method: 'PATCH',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ status: newStatus }),
+    });
+  }
+  const badge = document.getElementById('tmod-status-badge');
+  badge.textContent = newStatus.replace('_', ' ');
+  badge.style.cssText = _ticketStatusStyle(newStatus);
+  renderTickets();
+  toast('Ticket status updated.');
+}
+
+async function saveTicketNotes() {
+  const t = allTickets.find(t => t.id === _activeTicketId);
+  if (!t) return;
+  t.internal_notes = document.getElementById('tmod-notes').value;
+  localStorage.setItem('kyzer_tickets', JSON.stringify(allTickets));
+  const { url, key } = _sbCreds();
+  if (url && key) {
+    await fetch(`${url}/rest/v1/support_tickets?id=eq.${encodeURIComponent(t.id)}`, {
+      method: 'PATCH',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ internal_notes: t.internal_notes }),
+    });
+  }
+  toast('Note saved.');
+}
+
+function exportTicketsCSV() {
+  const rows = [['ID','Date','Status','Name','Email','Phone','Subject','Message','Source']];
+  allTickets.forEach(t => rows.push([t.id, t.created_at ? new Date(t.created_at).toLocaleString('en-IN') : '', t.status, t.name, t.email, t.phone, t.subject, t.message, t.source]));
+  if (rows.length < 2) return toast('No tickets to export.', true);
+  downloadCSV('kyzer-tickets-' + _todayStamp() + '.csv', rows);
+  toast('Exported ' + (rows.length - 1) + ' tickets.');
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 let custSortMode = 'newest';
 function setCustSort(v) { custSortMode = v; renderCustomers(document.getElementById('custSearchInput').value); }
@@ -3791,7 +4004,7 @@ async function startRealtimePolling() {
 
 async function _fetchAllSupabaseOrders(url, key) {
   try {
-    const res = await fetch(`${url}/rest/v1/orders?select=*&order=submitted_at.desc`, {
+    const res = await fetch(`${url}/rest/v1/orders?select=*&data->>type=in.(print,quote)&order=submitted_at.desc`, {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
     });
     if (!res.ok) return;
@@ -3814,7 +4027,7 @@ async function _fetchAllSupabaseOrders(url, key) {
 async function _pollNewOrders(url, key) {
   try {
     const since = encodeURIComponent(_lastPollTime);
-    const res = await fetch(`${url}/rest/v1/orders?submitted_at=gt.${since}&order=submitted_at.desc`, {
+    const res = await fetch(`${url}/rest/v1/orders?data->>type=in.(print,quote)&submitted_at=gt.${since}&order=submitted_at.desc`, {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
     });
     _lastPollTime = new Date().toISOString();
@@ -3867,7 +4080,7 @@ function requestNotificationPermission() {
 
 async function _fetchAllSupabaseShopOrders(url, key) {
   try {
-    const res = await fetch(`${url}/rest/v1/shop_orders?select=*&order=submitted_at.desc`, {
+    const res = await fetch(`${url}/rest/v1/orders?select=*&data->>type=in.(shop,cod)&order=submitted_at.desc`, {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
     });
     if (!res.ok) return;
@@ -3890,7 +4103,7 @@ async function _fetchAllSupabaseShopOrders(url, key) {
 async function _pollNewShopOrders(url, key) {
   try {
     const since = encodeURIComponent(_lastShopPollTime);
-    const res = await fetch(`${url}/rest/v1/shop_orders?submitted_at=gt.${since}&order=submitted_at.desc`, {
+    const res = await fetch(`${url}/rest/v1/orders?data->>type=in.(shop,cod)&submitted_at=gt.${since}&order=submitted_at.desc`, {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
     });
     _lastShopPollTime = new Date().toISOString();

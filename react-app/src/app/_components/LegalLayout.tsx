@@ -29,10 +29,10 @@ export default function LegalLayout({
           background:rgba(250,249,246,0.92); backdrop-filter:blur(12px);
           border-bottom:0.5px solid var(--border);
           display:flex; align-items:center; justify-content:space-between;
-          padding:0 2rem; height:64px; z-index:100;
+          padding:0 2rem; height:88px; z-index:100;
         }
         .lg-nav-logo { display:flex; align-items:center; gap:0; text-decoration:none; }
-        .lg-nav-logo img { width:auto; height:46px; margin-right:-4px; filter:brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%); mix-blend-mode:multiply; }
+        .lg-nav-logo img { width:auto; height:88px; margin-right:-4px; filter:brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%); mix-blend-mode:multiply; }
         .lg-nav-wordmark .top { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--orange); letter-spacing:0.03em; line-height:1; }
         .lg-nav-wordmark .sub { font-size:10px; font-weight:500; color:var(--orange); letter-spacing:0.2em; text-transform:uppercase; margin-top:3px; }
         .lg-back { font-size:14px; color:var(--muted); text-decoration:none; transition:color 0.15s; }

@@ -32,7 +32,7 @@ interface Address {
   isDefault: boolean;
 }
 
-const STEPS = ['Cart', 'Address', 'Review', 'Payment'];
+const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -165,15 +165,15 @@ export default function AddressPage() {
     <>
       <link href={FONT_URL} rel="stylesheet" />
       <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif" }}>
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 60, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
-          <a href="/" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 90, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
+          <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Cart</a>
+          <a href="/checkout/payment" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Payment</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
-          <StepBar current={1} />
+          <StepBar current={2} />
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>Delivery Address</h1>
 
           {error && (
@@ -315,3 +315,4 @@ export default function AddressPage() {
     </>
   );
 }
+

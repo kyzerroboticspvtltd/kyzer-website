@@ -35,12 +35,43 @@
     transition: background 0.3s, transform 0.35s cubic-bezier(.4,0,.2,1);
   }
   nav.nav-hidden { transform: translateY(-100%); }
+  @keyframes logo-walk-in {
+    0%   { opacity: 0;   transform: translateX(-220px) translateY(0px)   rotate(0deg)  scaleY(1);    }
+    /* left foot forward — lean left */
+    6%   { opacity: 1;   transform: translateX(-196px) translateY(-2px)  rotate(-6deg) scaleY(1);    }
+    12%  { opacity: 1;   transform: translateX(-172px) translateY(0px)   rotate(0deg)  scaleY(0.97); }
+    /* right foot forward — lean right */
+    18%  { opacity: 1;   transform: translateX(-148px) translateY(-2px)  rotate(6deg)  scaleY(1);    }
+    24%  { opacity: 1;   transform: translateX(-124px) translateY(0px)   rotate(0deg)  scaleY(0.97); }
+    /* left foot */
+    30%  { opacity: 1;   transform: translateX(-100px) translateY(-2px)  rotate(-6deg) scaleY(1);    }
+    36%  { opacity: 1;   transform: translateX(-78px)  translateY(0px)   rotate(0deg)  scaleY(0.97); }
+    /* right foot */
+    42%  { opacity: 1;   transform: translateX(-58px)  translateY(-2px)  rotate(6deg)  scaleY(1);    }
+    48%  { opacity: 1;   transform: translateX(-40px)  translateY(0px)   rotate(0deg)  scaleY(0.97); }
+    /* left foot */
+    54%  { opacity: 1;   transform: translateX(-24px)  translateY(-2px)  rotate(-5deg) scaleY(1);    }
+    60%  { opacity: 1;   transform: translateX(-12px)  translateY(0px)   rotate(0deg)  scaleY(0.97); }
+    /* right foot — arrive */
+    66%  { opacity: 1;   transform: translateX(-4px)   translateY(-1px)  rotate(4deg)  scaleY(1);    }
+    74%  { opacity: 1;   transform: translateX(0px)    translateY(0px)   rotate(0deg)  scaleY(0.98); }
+    /* settle */
+    100% { opacity: 1;   transform: translateX(0px)    translateY(0px)   rotate(0deg)  scaleY(1);    }
+  }
+  .nav-logo img,
+  .nav-logo-img,
+  .gaq-nav-logo img,
+  .lg-nav-logo img,
+  .st-nav-logo img,
+  .sl-nav-logo img {
+    animation: logo-walk-in 2.2s linear both;
+  }
   .nav-logo {
     display: flex; align-items: center; gap: 0;
     text-decoration: none;
   }
   .nav-logo-img {
-    width: auto; height: 46px;
+    width: auto; height: 88px;
     display: block; object-fit: contain; flex-shrink: 0;
     filter: brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%);
     mix-blend-mode: multiply;
@@ -48,10 +79,10 @@
   }
   .nav-logo-text {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; line-height: 1; color: var(--orange); letter-spacing: 0.03em;
+    font-size: 28px; line-height: 1; color: var(--orange); letter-spacing: 0.03em;
   }
   .nav-logo-sub {
-    font-size: 10px; font-weight: 500; color: var(--orange);
+    font-size: 13px; font-weight: 500; color: var(--orange);
     letter-spacing: 0.2em; text-transform: uppercase; margin-top: 3px;
   }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
@@ -601,7 +632,7 @@
   }
   .pdp-thumbs:empty { display: none; }
   .pdp-thumb {
-    width: 64px; height: 64px; flex-shrink: 0;
+    width: 64px; height: 88px; flex-shrink: 0;
     border-radius: 10px; object-fit: cover; cursor: pointer;
     border: 2px solid transparent; transition: border-color 0.2s, opacity 0.2s;
     opacity: 0.65;
@@ -653,7 +684,7 @@
     animation: fadeIn 0.6s ease;
   }
   #comingSoonOverlay.active { display: flex; }
-  .cs-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: 18px; }
+  .cs-logo { width: 64px; height: 88px; object-fit: contain; margin-bottom: 18px; }
   .cs-brand {
     font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em;
     color: #FF8C35; text-transform: uppercase; margin-bottom: 20px;

@@ -49,8 +49,8 @@ function ResetPasswordForm() {
     <>
       <link href={FONT_URL} rel="stylesheet" />
       <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif" }}>
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 60, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
-          <a href="/" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 90, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
+          <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
         </nav>
@@ -66,20 +66,20 @@ function ResetPasswordForm() {
             <div style={{ background: '#fff', borderRadius: 12, border: '1px solid rgba(0,0,0,0.09)', padding: '32px 28px' }}>
               {done ? (
                 <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                  <div style={{ fontSize: 44, marginBottom: 12 }}>✅</div>
+                  <div style={{ fontSize: 44, marginBottom: 12 }}>âœ…</div>
                   <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#111', marginBottom: 8 }}>Password updated!</h2>
-                  <p style={{ fontSize: 14, color: '#666' }}>Redirecting you to sign in…</p>
+                  <p style={{ fontSize: 14, color: '#666' }}>Redirecting you to sign inâ€¦</p>
                 </div>
               ) : invalidLink ? (
                 <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                  <div style={{ fontSize: 44, marginBottom: 12 }}>❌</div>
+                  <div style={{ fontSize: 44, marginBottom: 12 }}>âŒ</div>
                   <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#111', marginBottom: 8 }}>Invalid or expired link</h2>
                   <p style={{ fontSize: 14, color: '#666', marginBottom: 20 }}>Please request a new password reset link.</p>
-                  <a href="/forgot-password" style={{ color: '#FF8C35', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Request new link →</a>
+                  <a href="/forgot-password" style={{ color: '#FF8C35', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Request new link â†’</a>
                 </div>
               ) : !ready ? (
                 <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                  <p style={{ fontSize: 14, color: '#666' }}>Verifying reset link…</p>
+                  <p style={{ fontSize: 14, color: '#666' }}>Verifying reset linkâ€¦</p>
                 </div>
               ) : (
                 <>
@@ -116,7 +116,7 @@ function ResetPasswordForm() {
                       disabled={loading}
                       style={{ width: '100%', padding: '12px', background: loading ? '#ccc' : '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: "'DM Sans', sans-serif" }}
                     >
-                      {loading ? 'Updating…' : 'Update Password'}
+                      {loading ? 'Updatingâ€¦' : 'Update Password'}
                     </button>
                   </form>
                 </>
@@ -136,3 +136,4 @@ export default function ResetPasswordPage() {
     </Suspense>
   );
 }
+

@@ -66,10 +66,10 @@ export default function ElectronicsPage() {
           background:rgba(250,249,246,0.92); backdrop-filter:blur(12px);
           border-bottom:0.5px solid var(--border);
           display:flex; align-items:center; justify-content:space-between;
-          padding:0 2rem; height:64px; z-index:100;
+          padding:0 2rem; height:88px; z-index:100;
         }
         .sl-nav-logo { display:flex; align-items:center; gap:0; text-decoration:none; }
-        .sl-nav-logo img { width:auto; height:46px; filter:brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%); mix-blend-mode:multiply; margin-right:-4px; }
+        .sl-nav-logo img { width:auto; height:88px; filter:brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(103%); mix-blend-mode:multiply; margin-right:-4px; }
         .sl-nav-wordmark .top { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--orange); letter-spacing:0.03em; line-height:1; }
         .sl-nav-wordmark .sub { font-size:10px; font-weight:500; color:var(--orange); letter-spacing:0.2em; text-transform:uppercase; margin-top:3px; }
         .sl-back { font-size:14px; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:6px; transition:color 0.15s; }

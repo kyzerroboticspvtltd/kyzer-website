@@ -64,69 +64,74 @@ export async function POST(req: NextRequest) {
     const waLink = waPhone ? `https://wa.me/${waPhone.replace(/\D/g, '')}` : '#';
     const waDisplay = waPhone || '+91 90496 95264';
 
-    // Admin notification (no PDF needed for admin)
-    await sendMail({
-      to:      NOTIFY_EMAIL(),
-      subject: `[Kyzer] New COD Order ${esc(o.id || '')} — ${esc(o.name)}`,
-      html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;">
-        <h2 style="color:#FF8C35;">New Shop Order — Kyzer Robotics</h2>
-        <p><strong>Order ID:</strong> ${esc(o.id || '—')}</p>
-        <table style="width:100%;border-collapse:collapse;margin-top:12px;">
-          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;width:130px;">Customer</td><td style="padding:8px;font-weight:500;">${esc(o.name)}</td></tr>
-          <tr><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${esc(o.email)}">${esc(o.email)}</a></td></tr>
-          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${esc(o.phone) || '—'}</td></tr>
-          <tr><td style="padding:8px;color:#888;">Ship to</td><td style="padding:8px;">${esc(o.shippingFull) || '—'}</td></tr>
-          <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Payment</td><td style="padding:8px;">Cash on Delivery</td></tr>
-        </table>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
-          <tr style="background:#f4f4f4;font-weight:600;"><td style="padding:8px;">Product</td><td style="padding:8px;text-align:center;">Qty</td><td style="padding:8px;text-align:right;">Amount</td></tr>
-          ${itemRows}
-        </table>
-        <p style="font-size:12px;color:#aaa;margin-top:20px;">Submitted from kyzerrobotics.com checkout</p>
-      </div>`,
-    });
-
-    // Customer confirmation (with proforma invoice PDF if generated successfully)
-    await sendMail({
-      to:          o.email,
-      subject:     `Order received — Kyzer Robotics (#${esc(o.id || '')})`,
-      attachments: attachment ? [attachment] : undefined,
-      html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
-        <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
-          <h2 style="color:#111;margin:0;font-size:22px;">Order Received ✓</h2>
-        </div>
-        <div style="background:#fff;border:1px solid #eee;border-top:none;padding:24px 28px;border-radius:0 0 12px 12px;">
-          <p style="font-size:15px;">Hi <strong>${esc(o.name)}</strong>, we've received your order!</p>
-          <p style="color:#555;font-size:14px;">Your proforma invoice is attached. Our team will confirm availability and arrange delivery shortly.</p>
-
-          <div style="background:#fff8f3;border:1px solid #ffe0c0;border-radius:8px;padding:14px 16px;margin:20px 0;">
-            <p style="margin:0;font-size:13px;color:#c06000;"><strong>Order ID:</strong> ${esc(o.id || '—')}</p>
-            <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Payment:</strong> Cash on Delivery</p>
-            <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Ship to:</strong> ${esc(o.shippingFull) || '—'}</p>
-          </div>
-
-          <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
-            <tr style="background:#f8f8f8;font-weight:600;">
-              <td style="padding:8px 10px;">Item</td>
-              <td style="padding:8px 10px;text-align:center;">Qty</td>
-              <td style="padding:8px 10px;text-align:right;">Amount</td>
-            </tr>
-            ${(o.items || []).map((i: { name: string; qty: number }) =>
-              `<tr style="border-bottom:1px solid #f0f0f0;">
-                <td style="padding:8px 10px;">${esc(i.name)}</td>
-                <td style="padding:8px 10px;text-align:center;">×${Number(i.qty) || 1}</td>
-                <td style="padding:8px 10px;text-align:right;">—</td>
-              </tr>`
-            ).join('')}
+    // Admin notification (non-fatal — order is already saved)
+    try {
+      await sendMail({
+        to:      NOTIFY_EMAIL(),
+        subject: `[Kyzer] New COD Order ${esc(o.id || '')} — ${esc(o.name)}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;">
+          <h2 style="color:#FF8C35;">New Shop Order — Kyzer Robotics</h2>
+          <p><strong>Order ID:</strong> ${esc(o.id || '—')}</p>
+          <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+            <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;width:130px;">Customer</td><td style="padding:8px;font-weight:500;">${esc(o.name)}</td></tr>
+            <tr><td style="padding:8px;color:#888;">Email</td><td style="padding:8px;"><a href="mailto:${esc(o.email)}">${esc(o.email)}</a></td></tr>
+            <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Phone</td><td style="padding:8px;">${esc(o.phone) || '—'}</td></tr>
+            <tr><td style="padding:8px;color:#888;">Ship to</td><td style="padding:8px;">${esc(o.shippingFull) || '—'}</td></tr>
+            <tr style="background:#f4f4f4;"><td style="padding:8px;color:#888;">Payment</td><td style="padding:8px;">Cash on Delivery</td></tr>
           </table>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
+            <tr style="background:#f4f4f4;font-weight:600;"><td style="padding:8px;">Product</td><td style="padding:8px;text-align:center;">Qty</td><td style="padding:8px;text-align:right;">Amount</td></tr>
+            ${itemRows}
+          </table>
+          <p style="font-size:12px;color:#aaa;margin-top:20px;">Submitted from kyzerrobotics.com checkout</p>
+        </div>`,
+      });
+    } catch (mailErr) {
+      console.error('Admin email failed (order saved):', mailErr);
+    }
 
-          <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
-          <p style="font-size:12px;color:#aaa;">${attachment ? '📎 Your proforma invoice is attached as a PDF to this email.' : 'We will send your invoice separately once the order is confirmed.'}</p>
-          <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at <a href="${waLink}" style="color:#FF8C35;">${waDisplay}</a> or reply to this email.</p>
-          <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra · kyzerrobotics.com</p>
-        </div>
-      </div>`,
-    });
+    // Customer confirmation (non-fatal — order is already saved)
+    try {
+      await sendMail({
+        to:          o.email,
+        subject:     `Order received — Kyzer Robotics (#${esc(o.id || '')})`,
+        attachments: attachment ? [attachment] : undefined,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
+          <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
+            <h2 style="color:#111;margin:0;font-size:22px;">Order Received ✓</h2>
+          </div>
+          <div style="background:#fff;border:1px solid #eee;border-top:none;padding:24px 28px;border-radius:0 0 12px 12px;">
+            <p style="font-size:15px;">Hi <strong>${esc(o.name)}</strong>, we've received your order!</p>
+            <p style="color:#555;font-size:14px;">Our team will confirm availability and arrange delivery shortly.</p>
+
+            <div style="background:#fff8f3;border:1px solid #ffe0c0;border-radius:8px;padding:14px 16px;margin:20px 0;">
+              <p style="margin:0;font-size:13px;color:#c06000;"><strong>Order ID:</strong> ${esc(o.id || '—')}</p>
+              <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Payment:</strong> Cash on Delivery</p>
+              <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Ship to:</strong> ${esc(o.shippingFull) || '—'}</p>
+            </div>
+
+            <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
+              <tr style="background:#f8f8f8;font-weight:600;">
+                <td style="padding:8px 10px;">Item</td>
+                <td style="padding:8px 10px;text-align:center;">Qty</td>
+              </tr>
+              ${(o.items || []).map((i: { name: string; qty: number }) =>
+                `<tr style="border-bottom:1px solid #f0f0f0;">
+                  <td style="padding:8px 10px;">${esc(i.name)}</td>
+                  <td style="padding:8px 10px;text-align:center;">×${Number(i.qty) || 1}</td>
+                </tr>`
+              ).join('')}
+            </table>
+
+            <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
+            <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at <a href="${waLink}" style="color:#FF8C35;">${waDisplay}</a> or reply to this email.</p>
+            <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra · kyzerrobotics.com</p>
+          </div>
+        </div>`,
+      });
+    } catch (mailErr) {
+      console.error('Customer email failed (order saved):', mailErr);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Footer from "./_components/Footer";
+import ChatBot from "./_components/ChatBot";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -176,7 +178,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Footer />
+        <ChatBot />
+      </body>
     </html>
   );
 }
