@@ -1,14 +1,10 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.titan.email',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL_USER?.trim().replace(/^﻿/, ''),
-    pass: process.env.GMAIL_PASS?.trim().replace(/^﻿/, ''),
-  },
-});
+let _resend: Resend | null = null;
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY || 'placeholder');
+  return _resend;
+}
 
 interface Attachment {
   filename: string;
@@ -29,16 +25,16 @@ export function sendMail({
   attachments?: Attachment[];
   replyTo?: string;
 }) {
-  return transporter.sendMail({
-    from: `"Kyzer Robotics" <${process.env.GMAIL_USER}>`,
-    // Replies go to the business inbox by default so customer responses are not
-    // lost to a send-only Gmail address. Callers can override (e.g. admin
-    // notifications can set the customer's address as reply-to).
+  return getResend().emails.send({
+    from: `Kyzer Robotics <${process.env.GMAIL_USER || 'info@kyzerrobotics.com'}>`,
     replyTo: replyTo || NOTIFY_EMAIL() || undefined,
     to,
     subject,
     html,
-    attachments,
+    attachments: attachments?.map(a => ({
+      filename: a.filename,
+      content: a.content,
+    })),
   });
 }
 
