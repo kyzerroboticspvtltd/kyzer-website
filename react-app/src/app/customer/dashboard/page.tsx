@@ -52,27 +52,38 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-    auth.authStateReady().then(() => {
-      unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-          window.location.href = '/login?redirect=/customer/dashboard';
-          return;
-        }
-        const email = user.email || '';
-        setUserEmail(email);
-        setUserName(user.displayName || email.split('@')[0] || 'Customer');
+    let settled = false;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // onAuthStateChanged fires once when the persisted session is restored —
+      // no need for authStateReady(); that just adds an extra async hop.
+      if (settled) return; // ignore subsequent token-refresh callbacks
+      settled = true;
 
+      if (!user) {
+        window.location.href = '/login?redirect=/customer/dashboard';
+        return;
+      }
+
+      const email = user.email || '';
+      setUserEmail(email);
+      setUserName(user.displayName || email.split('@')[0] || 'Customer');
+
+      try {
         const idToken = await user.getIdToken();
         const res = await fetch('/api/my-orders', {
           headers: { Authorization: `Bearer ${idToken}` },
         });
-        const json = await res.json();
-        if (json.orders) setOrders(json.orders as Order[]);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.orders) setOrders(json.orders as Order[]);
+        }
+      } catch {
+        // orders stay empty — dashboard still renders, just shows "no orders"
+      } finally {
         setLoading(false);
-      });
+      }
     });
-    return () => unsubscribe?.();
+    return () => unsubscribe();
   }, []);
 
   function formatDate(iso: string) {
