@@ -52,38 +52,42 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let settled = false;
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      // onAuthStateChanged fires once when the persisted session is restored —
-      // no need for authStateReady(); that just adds an extra async hop.
-      if (settled) return; // ignore subsequent token-refresh callbacks
-      settled = true;
+    let done = false;
 
-      if (!user) {
-        window.location.href = '/login?redirect=/customer/dashboard';
-        return;
-      }
+    // authStateReady() resolves once Firebase has read the persisted session
+    // from localStorage — only THEN do we check the user, so we never redirect
+    // based on a transient null before the cache is loaded.
+    auth.authStateReady().then(() => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (done) return;
+        done = true;
+        unsubscribe();
 
-      const email = user.email || '';
-      setUserEmail(email);
-      setUserName(user.displayName || email.split('@')[0] || 'Customer');
-
-      try {
-        const idToken = await user.getIdToken();
-        const res = await fetch('/api/my-orders', {
-          headers: { Authorization: `Bearer ${idToken}` },
-        });
-        if (res.ok) {
-          const json = await res.json();
-          if (json.orders) setOrders(json.orders as Order[]);
+        if (!user) {
+          window.location.href = '/login?redirect=/customer/dashboard';
+          return;
         }
-      } catch {
-        // orders stay empty — dashboard still renders, just shows "no orders"
-      } finally {
-        setLoading(false);
-      }
+
+        const email = user.email || '';
+        setUserEmail(email);
+        setUserName(user.displayName || email.split('@')[0] || 'Customer');
+
+        try {
+          const idToken = await user.getIdToken();
+          const res = await fetch('/api/my-orders', {
+            headers: { Authorization: `Bearer ${idToken}` },
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.orders) setOrders(json.orders as Order[]);
+          }
+        } catch {
+          // orders stay empty — dashboard still renders
+        } finally {
+          setLoading(false);
+        }
+      });
     });
-    return () => unsubscribe();
   }, []);
 
   function formatDate(iso: string) {

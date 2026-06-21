@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "./_components/Footer";
 import ChatBot from "./_components/ChatBot";
+import PageTransition from "./_components/PageTransition";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -179,6 +180,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <PageTransition />
         {children}
         <Footer />
         <ChatBot />
