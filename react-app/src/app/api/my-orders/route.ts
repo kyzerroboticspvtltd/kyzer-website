@@ -32,7 +32,7 @@ async function verifyFirebaseToken(idToken: string): Promise<string | null> {
 
 export async function GET(req: NextRequest) {
   const rl = rateLimit(`my-orders:${getIp(req)}`, 20, 60_000);
-  if (!rl.ok) return tooManyRequests();
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const authHeader = req.headers.get('authorization');
   const idToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
