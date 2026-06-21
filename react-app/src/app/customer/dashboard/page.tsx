@@ -63,7 +63,10 @@ export default function DashboardPage() {
         setUserEmail(email);
         setUserName(user.displayName || email.split('@')[0] || 'Customer');
 
-        const res = await fetch(`/api/my-orders?email=${encodeURIComponent(email)}`);
+        const idToken = await user.getIdToken();
+        const res = await fetch('/api/my-orders', {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
         const json = await res.json();
         if (json.orders) setOrders(json.orders as Order[]);
         setLoading(false);
