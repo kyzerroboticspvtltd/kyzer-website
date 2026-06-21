@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -30,6 +31,9 @@ async function verifyFirebaseToken(idToken: string): Promise<string | null> {
 }
 
 export async function GET(req: NextRequest) {
+  const rl = rateLimit(`my-orders:${getIp(req)}`, 20, 60_000);
+  if (!rl.ok) return tooManyRequests();
+
   const authHeader = req.headers.get('authorization');
   const idToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
