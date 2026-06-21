@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
@@ -32,9 +32,9 @@ export function verifyCheckoutToken(token: string | null | undefined): boolean {
   return crypto.timingSafeEqual(a, b);
 }
 
-// GET /api/checkout-token  — called when the checkout page opens
+// GET /api/checkout-token  â€” called when the checkout page opens
 export async function GET(req: NextRequest) {
-  const rl = rateLimit(`checkout-token:${getIp(req)}`, 10, 60_000);
+  const rl = await rateLimit(`checkout-token:${getIp(req)}`, 10, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   try {

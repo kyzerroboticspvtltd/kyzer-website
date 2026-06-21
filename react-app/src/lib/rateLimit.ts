@@ -1,20 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
-interface Bucket {
-  count: number;
-  resetAt: number;
+// ── Upstash Redis (production) ────────────────────────────────────────────────
+// Falls back to in-memory when env vars are absent (local dev).
+let upstash: Ratelimit | null = null;
+
+function getUpstash(): Ratelimit | null {
+  if (upstash) return upstash;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  upstash = new Ratelimit({
+    redis: new Redis({ url, token }),
+    limiter: Ratelimit.slidingWindow(1, '1 s'), // overridden per call via identifier
+    prefix: 'kyzer:rl',
+  });
+  return upstash;
 }
 
+// ── In-memory fallback (dev / cold-start without Redis) ───────────────────────
+interface Bucket { count: number; resetAt: number; }
 const store = new Map<string, Bucket>();
-
-// Prune expired buckets once per minute to prevent unbounded growth
 setInterval(() => {
   const now = Date.now();
-  for (const [k, v] of store) {
-    if (now > v.resetAt) store.delete(k);
-  }
+  for (const [k, v] of store) if (now > v.resetAt) store.delete(k);
 }, 60_000).unref?.();
 
+function inMemoryLimit(key: string, limit: number, windowMs: number) {
+  const now = Date.now();
+  let b = store.get(key);
+  if (!b || now > b.resetAt) { b = { count: 0, resetAt: now + windowMs }; store.set(key, b); }
+  b.count += 1;
+  return { ok: b.count <= limit, retryAfterSecs: b.count > limit ? Math.ceil((b.resetAt - now) / 1000) : 0 };
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
 export function getIp(req: NextRequest): string {
   return (
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
@@ -23,32 +44,25 @@ export function getIp(req: NextRequest): string {
   );
 }
 
-/**
- * Returns ok:true when the request is within the allowed rate.
- * key    – unique string per (route, IP) combination
- * limit  – max requests allowed in the window
- * windowMs – rolling window in milliseconds
- */
-export function rateLimit(
+export async function rateLimit(
   key: string,
   limit: number,
   windowMs: number,
-): { ok: boolean; retryAfterSecs: number } {
-  const now = Date.now();
-  let bucket = store.get(key);
-
-  if (!bucket || now > bucket.resetAt) {
-    bucket = { count: 0, resetAt: now + windowMs };
-    store.set(key, bucket);
+): Promise<{ ok: boolean; retryAfterSecs: number }> {
+  const rl = getUpstash();
+  if (rl) {
+    // Upstash: create a per-call limiter using the key as identifier.
+    // We embed limit+window into a dedicated Ratelimit instance per unique config.
+    const perCallRl = new Ratelimit({
+      redis: (rl as unknown as { redis: Redis }).redis,
+      limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+      prefix: 'kyzer:rl',
+    });
+    const { success, reset } = await perCallRl.limit(key);
+    const retryAfterSecs = success ? 0 : Math.ceil((reset - Date.now()) / 1000);
+    return { ok: success, retryAfterSecs };
   }
-
-  bucket.count += 1;
-
-  if (bucket.count > limit) {
-    return { ok: false, retryAfterSecs: Math.ceil((bucket.resetAt - now) / 1000) };
-  }
-
-  return { ok: true, retryAfterSecs: 0 };
+  return inMemoryLimit(key, limit, windowMs);
 }
 
 export function tooManyRequests(retryAfterSecs: number): NextResponse {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { sendMail, NOTIFY_EMAIL } from '@/lib/mailer';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized, str, isValidEmail } from '@/lib/sanitize';
@@ -7,7 +7,7 @@ const esc = (s: unknown) =>
   String(s).replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c] as string));
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`cs-subscribe:${getIp(req)}`, 5, 60 * 60_000);
+  const rl = await rateLimit(`cs-subscribe:${getIp(req)}`, 5, 60 * 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.TINY);

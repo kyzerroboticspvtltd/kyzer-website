@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
 
 /**
- * Sheet-sync endpoint — receives product rows from a Google Sheets Apps Script
+ * Sheet-sync endpoint â€” receives product rows from a Google Sheets Apps Script
  * trigger and upserts them into the live catalog (site_data.products).
  *
  * Auth: static bearer token from env SHEET_SYNC_SECRET (set in Vercel dashboard).
  * Body: { products: Array<{ id, name, price?, category?, subcat?, type?,
  *                            description?, emoji?, button?, visible? }> }
  *
- * Products are merged by `id` — existing products NOT in the sheet payload are
+ * Products are merged by `id` â€” existing products NOT in the sheet payload are
  * kept unchanged. To hide a product, set visible=false in the sheet.
  */
 
@@ -47,7 +47,7 @@ function normalise(p: SheetProduct) {
     subcat: (p.subcat || '').trim().toLowerCase(),
     type: (p.type || '').trim().toLowerCase(),
     description: (p.description || '').trim(),
-    emoji: (p.emoji || '📦').trim(),
+    emoji: (p.emoji || 'ðŸ“¦').trim(),
     button: (p.button || 'buy').trim().toLowerCase(),
     visible: String(p.visible ?? 'yes').toLowerCase() !== 'no' &&
              String(p.visible ?? 'yes').toLowerCase() !== 'false',
@@ -55,7 +55,7 @@ function normalise(p: SheetProduct) {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`sheet-sync:${getIp(req)}`, 60, 60_000);
+  const rl = await rateLimit(`sheet-sync:${getIp(req)}`, 60, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.LARGE);

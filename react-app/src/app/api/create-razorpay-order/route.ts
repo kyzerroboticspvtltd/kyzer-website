@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
@@ -81,7 +81,7 @@ async function calcQuoteAmount(params: Record<string, unknown>): Promise<number>
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`razorpay-order:${getIp(req)}`, 10, 60_000);
+  const rl = await rateLimit(`razorpay-order:${getIp(req)}`, 10, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.MEDIUM);
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Store the authoritative server-calculated amount keyed by Razorpay order ID.
-    // verify-payment will fetch this and use it as the true total — the client
+    // verify-payment will fetch this and use it as the true total â€” the client
     // cannot tamper with the amount by sending different values in orderData.
     const sb = getSupabase();
     if (sb) {

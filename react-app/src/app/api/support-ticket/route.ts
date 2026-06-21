@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized, esc } from '@/lib/sanitize';
@@ -12,7 +12,7 @@ function getSupabase() {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`support-ticket:${getIp(req)}`, 5, 60_000);
+  const rl = await rateLimit(`support-ticket:${getIp(req)}`, 5, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.SMALL);
@@ -47,10 +47,10 @@ export async function POST(req: NextRequest) {
     try {
       await sendMail({
         to: NOTIFY_EMAIL(),
-        subject: `[Kyzer] New Support Ticket — ${ticket.subject}`,
+        subject: `[Kyzer] New Support Ticket â€” ${ticket.subject}`,
         html: `
           <div style="font-family:sans-serif;max-width:600px;margin:auto;">
-            <h2 style="color:#FF8C35;">🎫 New Support Ticket — ${esc(ticket.subject)}</h2>
+            <h2 style="color:#FF8C35;">ðŸŽ« New Support Ticket â€” ${esc(ticket.subject)}</h2>
             <p><strong>Ticket ID:</strong> ${ticket.id}</p>
             <p><strong>From:</strong> ${esc(ticket.name)} &lt;${esc(ticket.email)}&gt;</p>
             <p><strong>Source:</strong> ${esc(ticket.source)}</p>

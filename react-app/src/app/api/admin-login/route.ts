@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
@@ -11,7 +11,7 @@ function sign(ts: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`login:${getIp(req)}`, 5, 15 * 60 * 1000);
+  const rl = await rateLimit(`login:${getIp(req)}`, 5, 15 * 60 * 1000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.TINY);

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
@@ -9,7 +9,7 @@ export async function OPTIONS() {
 }
 
 export async function GET(req: NextRequest) {
-  const rl = rateLimit(`analytics:${getIp(req)}`, 60, 60_000);
+  const rl = await rateLimit(`analytics:${getIp(req)}`, 60, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

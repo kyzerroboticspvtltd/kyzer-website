@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { isAuthedAdmin } from '@/lib/adminAuth';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
@@ -8,13 +8,13 @@ import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
  *
  * Replaces the old pattern where the admin panel held the Supabase service-role
  * key in the browser and PATCHed Supabase directly. Now the secret key stays on
- * the server (env) and every write is gated by a signed admin token — same model
+ * the server (env) and every write is gated by a signed admin token â€” same model
  * as /api/publish.
  *
  * Body: { table, id, status?, dataPatch? }
- *   table     — 'orders' | 'shop_orders' | 'quote_inquiries'
- *   status    — new status string (optional)
- *   dataPatch — partial object merged into the row's `data` JSON
+ *   table     â€” 'orders' | 'shop_orders' | 'quote_inquiries'
+ *   status    â€” new status string (optional)
+ *   dataPatch â€” partial object merged into the row's `data` JSON
  *               (orders / shop_orders only; quote_inquiries has no data column)
  */
 
@@ -25,7 +25,7 @@ const ALLOWED_TABLES = new Set(['orders', 'shop_orders', 'quote_inquiries']);
 const HAS_DATA_COLUMN = new Set(['orders', 'shop_orders']);
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`order-update:${getIp(req)}`, 20, 60_000);
+  const rl = await rateLimit(`order-update:${getIp(req)}`, 20, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.MEDIUM);

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { isAuthedAdmin } from '@/lib/adminAuth';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
@@ -11,13 +11,13 @@ const SB_KEY = process.env.SUPABASE_SERVICE_KEY
   || '';
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(`publish:${getIp(req)}`, 20, 60_000);
+  const rl = await rateLimit(`publish:${getIp(req)}`, 20, 60_000);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const oversize = rejectOversized(req, BODY_LIMIT.LARGE);
   if (oversize) return oversize;
 
-  // 🔒 Only an authenticated admin may overwrite the live catalog.
+  // ðŸ”’ Only an authenticated admin may overwrite the live catalog.
   if (!isAuthedAdmin(req)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }

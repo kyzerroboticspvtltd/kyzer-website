@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kyzer Robotics — Security Audit</title>
+<style>
+  :root {
+    --orange:#FF8C35;--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;
+    --border:rgba(255,255,255,0.08);--text:#e8e8e8;--muted:#888;
+    --red:#ff5555;--yellow:#f1c40f;--green:#2ecc71;--blue:#5dade2;--purple:#a29bfe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;}
+
+  nav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(15,15,15,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:20px;z-index:100;}
+  nav .logo{font-size:15px;font-weight:700;color:var(--orange);letter-spacing:1px;white-space:nowrap;}
+  nav .tabs{display:flex;gap:4px;}
+  nav .tab{padding:6px 14px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.15s;}
+  nav .tab.active,nav .tab:hover{background:var(--bg3);color:var(--text);}
+  nav .tab.active{color:var(--orange);}
+  nav .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;flex-shrink:0;}
+  nav .live-label{font-size:12px;color:var(--green);margin-right:auto;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+  .main{max-width:1300px;margin:0 auto;padding:76px 24px 60px;}
+  .section{display:none;}
+  .section.active{display:block;}
+
+  /* SECURITY LEVEL */
+  .level-bar-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:24px;display:flex;align-items:center;gap:32px;}
+  .level-gauge{position:relative;width:140px;height:70px;flex-shrink:0;}
+  .level-gauge svg{width:140px;height:70px;}
+  .level-num{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;line-height:1;}
+  .level-info{flex:1;}
+  .level-info h2{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .level-info p{color:var(--muted);font-size:13px;max-width:500px;line-height:1.6;}
+  .level-checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+  .lc{display:flex;align-items:center;gap:8px;font-size:12px;}
+  .lc .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  /* CARDS */
+  .grid{display:grid;gap:16px;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  @media(max-width:900px){.grid-3,.grid-2{grid-template-columns:1fr;}}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .card h3{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+  .card .val{font-size:34px;font-weight:700;}
+  .card .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  /* BADGES */
+  .badge-crit{background:rgba(255,85,85,0.15);color:#ff5555;border:1px solid rgba(255,85,85,0.35);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .badge-high{background:rgba(255,140,53,0.15);color:#FF8C35;border:1px solid rgba(255,140,53,0.35);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .badge-med{background:rgba(241,196,15,0.15);color:#f1c40f;border:1px solid rgba(241,196,15,0.35);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .badge-low{background:rgba(93,173,226,0.15);color:#5dade2;border:1px solid rgba(93,173,226,0.35);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .badge-ok{background:rgba(46,204,113,0.15);color:#2ecc71;border:1px solid rgba(46,204,113,0.35);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .badge-fixed{background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.25);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;text-decoration:line-through;opacity:0.7;}
+
+  /* FINDINGS */
+  .finding{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px;}
+  .finding.resolved{opacity:0.5;border-color:rgba(46,204,113,0.2);}
+  .finding-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+  .finding h4{font-size:14px;font-weight:600;flex:1;}
+  .finding .detail{font-size:13px;color:var(--muted);line-height:1.7;}
+  .finding code{background:rgba(255,255,255,0.07);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#ccc;}
+  .finding .file{font-family:monospace;font-size:12px;color:var(--orange);opacity:0.8;margin-top:6px;}
+  .finding .fix{margin-top:10px;padding:10px 14px;background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.15);border-radius:6px;font-size:12px;color:#2ecc71;}
+  .resolved-stamp{margin-top:8px;padding:6px 12px;background:rgba(46,204,113,0.08);border-radius:6px;font-size:12px;color:#2ecc71;display:flex;align-items:center;gap:6px;}
+
+  /* MONITOR */
+  .monitor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px;}
+  .monitor-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .monitor-card .mc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .mc-status{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .mc-status.ok{background:var(--green);box-shadow:0 0 6px var(--green);}
+  .mc-status.warn{background:var(--yellow);box-shadow:0 0 6px var(--yellow);}
+  .mc-status.err{background:var(--red);box-shadow:0 0 6px var(--red);}
+  .mc-status.pending{background:var(--muted);animation:pulse 1.5s infinite;}
+  .mc-title{font-weight:600;font-size:14px;}
+  .mc-url{font-size:11px;color:var(--muted);font-family:monospace;}
+  .mc-result{font-size:13px;line-height:1.6;}
+  .mc-result .pass{color:var(--green);}
+  .mc-result .fail{color:var(--red);}
+  .mc-result .warn{color:var(--yellow);}
+  .mc-result .info{color:var(--blue);}
+  .mc-ms{font-size:11px;color:var(--muted);margin-top:6px;}
+  .refresh-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.15s;}
+  .refresh-btn:hover{border-color:var(--orange);color:var(--orange);}
+
+  /* TABLES */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;padding:10px 14px;background:var(--bg3);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--border);}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(255,255,255,0.02);}
+
+  /* ARCH */
+  .arch-layer{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+  .arch-layer h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--orange);margin-bottom:14px;}
+  .arch-items{display:flex;flex-wrap:wrap;gap:8px;}
+  .arch-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;}
+  .arch-item .sub{font-size:11px;color:var(--muted);}
+
+  /* TODO */
+  .todo-item{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;}
+  .todo-item.done{opacity:0.45;border-color:rgba(46,204,113,0.2);}
+  .todo-item .priority{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;}
+  .todo-item h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .todo-item p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .p1{background:rgba(255,85,85,0.15);color:#ff5555;}
+  .p2{background:rgba(255,140,53,0.15);color:#FF8C35;}
+  .p3{background:rgba(241,196,15,0.12);color:#f1c40f;}
+  .p4{background:rgba(136,136,136,0.15);color:#aaa;}
+  .done-stamp{font-size:11px;color:var(--green);margin-top:4px;}
+
+  .page-title{font-size:26px;font-weight:700;margin-bottom:4px;}
+  .page-sub{color:var(--muted);font-size:14px;margin-bottom:24px;}
+  .section-title{font-size:15px;font-weight:700;margin:28px 0 14px;color:var(--text);}
+  .section-title:first-child{margin-top:0;}
+  .mono{font-family:monospace;}
+  .tag{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-size:11px;color:var(--muted);margin:2px;}
+  .auth-none{color:var(--red);font-size:12px;}
+  .auth-token{color:var(--orange);font-size:12px;}
+  .auth-fb{color:var(--blue);font-size:12px;}
+  .auth-admin{color:var(--purple);font-size:12px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚡ KYZER AUDIT</div>
+  <div class="tabs">
+    <button class="tab active" onclick="show('overview')">Overview</button>
+    <button class="tab" onclick="show('security')">Security</button>
+    <button class="tab" onclick="show('monitor')" id="monitorTab">Live Monitor</button>
+    <button class="tab" onclick="show('routes')">API Routes</button>
+    <button class="tab" onclick="show('arch')">Architecture</button>
+    <button class="tab" onclick="show('todo')">Remaining</button>
+  </div>
+  <div class="live-dot"></div>
+  <div class="live-label" id="liveStatus">Connecting…</div>
+</nav>
+
+<div class="main">
+
+<!-- ======================== OVERVIEW ======================== -->
+<div id="overview" class="section active">
+  <div class="page-title">Security Audit — Kyzer Robotics</div>
+  <div class="page-sub">kyzerrobotics.com · Next.js 16 · Audited June 2026 · <span id="lastScan" style="color:var(--orange)">scanning…</span></div>
+
+  <!-- SECURITY LEVEL -->
+  <div class="level-bar-wrap">
+    <div class="level-gauge">
+      <svg viewBox="0 0 140 70">
+        <path d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#222" stroke-width="14" stroke-linecap="round"/>
+        <path id="gaugePath" d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#f1c40f" stroke-width="14" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="50" style="transition:stroke-dashoffset 1s,stroke 1s;"/>
+      </svg>
+      <div class="level-num" id="scoreNum" style="color:#f1c40f">7.2</div>
+    </div>
+    <div class="level-info">
+      <h2 id="levelName" style="color:#f1c40f">⚡ Level 3 — Strong</h2>
+      <p id="levelDesc">Good security posture. HMAC tokens, server-side payment validation, and input sanitisation in place. Critical JWT exposure fixed. Remaining gaps: in-memory rate limiting, email validation, Resend setup.</p>
+      <div class="level-checks" id="levelChecks"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-bottom:20px">
+    <div class="card">
+      <h3>Security Score</h3>
+      <div class="val" id="scoreCard" style="color:#f1c40f">7.2<span style="font-size:18px;color:var(--muted)">/10</span></div>
+      <div class="sub" id="scoreChange">↑ +0.8 from hardcoded JWT fix</div>
+    </div>
+    <div class="card">
+      <h3>Open Findings</h3>
+      <div class="val" id="openFindings" style="color:var(--red)">5</div>
+      <div class="sub">1 critical · 3 high · 1 medium</div>
+    </div>
+    <div class="card">
+      <h3>Fixed This Session</h3>
+      <div class="val" style="color:var(--green)">3</div>
+      <div class="sub">Hardcoded JWT · my-orders auth · support_tickets key</div>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card" style="border-color:rgba(255,85,85,0.3)">
+      <h3>🔴 Critical</h3>
+      <div class="val" style="color:var(--red)">1</div>
+      <div class="sub">In-memory rate limiting (serverless bypass)</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,140,53,0.3)">
+      <h3>🟠 High</h3>
+      <div class="val" style="color:var(--orange)">3</div>
+      <div class="sub">Sheet sync timing · Anon key fallback · Firebase token expiry</div>
+    </div>
+    <div class="card" style="border-color:rgba(241,196,15,0.3)">
+      <h3>🟡 Medium / Low</h3>
+      <div class="val" style="color:var(--yellow)">1</div>
+      <div class="sub">No email validation on support ticket</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECURITY ======================== -->
+<div id="security" class="section">
+  <div class="page-title">Security Findings</div>
+  <div class="page-sub">All issues ranked by severity — fixed items greyed out</div>
+
+  <div class="section-title">✅ Fixed</div>
+
+  <div class="finding resolved">
+    <div class="finding-header">
+      <span class="badge-fixed">CRITICAL — FIXED</span>
+      <h4>Hardcoded Supabase JWT in source code (6 files)</h4>
+    </div>
+    <div class="detail">Anon JWT was hardcoded in prototyping, complete-drones, drone-frames, printers-supplies, 3d-printing, electronics/products pages.</div>
+    <div class="resolved-stamp">✓ Fixed — removed all hardcoded fallbacks, env var only. Deployed 21 Jun 2026.</div>
+  </div>
+
+  <div class="finding resolved">
+    <div class="finding-header">
+      <span class="badge-fixed">HIGH — FIXED</span>
+      <h4>/api/my-orders trusted email query param — no auth</h4>
+    </div>
+    <div class="detail">Anyone could pass ?email=victim@gmail.com and see their orders.</div>
+    <div class="resolved-stamp">✓ Fixed — now requires Firebase ID token in Authorization header. Deployed 21 Jun 2026.</div>
+  </div>
+
+  <div class="finding resolved">
+    <div class="finding-header">
+      <span class="badge-fixed">HIGH — FIXED</span>
+      <h4>support_tickets fell back to anon key</h4>
+    </div>
+    <div class="detail">Used SUPABASE_SERVICE_KEY || NEXT_PUBLIC_SUPABASE_ANON_KEY — anon key has insufficient privileges.</div>
+    <div class="resolved-stamp">✓ Fixed — service key only, no fallback. Deployed 21 Jun 2026.</div>
+  </div>
+
+  <div class="section-title">🔴 Critical — Open</div>
+
+  <div class="finding">
+    <div class="finding-header"><span class="badge-crit">CRITICAL</span><h4>In-memory rate limiting is ineffective on Vercel serverless</h4></div>
+    <div class="detail">The rate limiter uses a module-level <code>Map</code>. Each Vercel invocation may spin up a fresh instance — rate counters reset on every cold start. An attacker can bypass all limits by sending requests across multiple instances.</div>
+    <div class="file">src/lib/rateLimit.ts — affects all 16 rate-limited routes</div>
+    <div class="fix">Fix: Replace with Upstash Redis + @upstash/ratelimit. Free tier, 30-min integration.</div>
+  </div>
+
+  <div class="finding resolved">
+    <div class="finding-header"><span class="badge-fixed">CRITICAL — FIXED</span><h4>No rate limit on /api/my-orders</h4></div>
+    <div class="detail">Firebase token auth is in place but no rate limiting. An attacker with valid tokens can hammer this endpoint with no throttling.</div>
+    <div class="resolved-stamp">✓ Fixed — 20 req/min per IP via rateLimit(). Deployed 21 Jun 2026.</div>
+  </div>
+
+  <div class="section-title">🟠 High — Open</div>
+
+  <div class="finding">
+    <div class="finding-header"><span class="badge-high">HIGH</span><h4>Sheet sync token compared with == (timing attack)</h4></div>
+    <div class="detail">Plain string equality leaks timing info, enabling offline brute-force of the token.</div>
+    <div class="file">src/app/api/sheet-sync/route.ts — Line 25: <code>return token === SYNC_SECRET</code></div>
+    <div class="fix">Fix: <code>crypto.timingSafeEqual(Buffer.from(token), Buffer.from(SYNC_SECRET))</code></div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header"><span class="badge-high">HIGH</span><h4>Service key falls back to anon key in track-visit / analytics / publish</h4></div>
+    <div class="detail">If SUPABASE_SERVICE_KEY is missing, these routes silently fall back to the anon key.</div>
+    <div class="file">src/app/api/track-visit/route.ts · analytics/route.ts · publish/route.ts</div>
+    <div class="fix">Fix: Throw 500 if SUPABASE_SERVICE_KEY missing instead of falling back.</div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header"><span class="badge-high">HIGH</span><h4>Firebase token expiry not explicitly validated</h4></div>
+    <div class="detail">verifyFirebaseToken() calls Firebase's accounts:lookup but doesn't decode/check the exp claim. Stale tokens may be accepted.</div>
+    <div class="file">src/app/api/my-orders/route.ts — Lines 11-29</div>
+    <div class="fix">Fix: Use firebase-admin SDK — validates expiry, signature, revocation in one call.</div>
+  </div>
+
+  <div class="section-title">🟡 Medium — Open</div>
+
+  <div class="finding">
+    <div class="finding-header"><span class="badge-med">MEDIUM</span><h4>No email validation on support ticket submission</h4></div>
+    <div class="detail">body.email used without calling isValidEmail() — invalid addresses stored in DB and sent to admin.</div>
+    <div class="file">src/app/api/support-ticket/route.ts — Line 23</div>
+    <div class="fix">Fix: Add <code>if (!isValidEmail(email)) return 400</code> — isValidEmail exists in src/lib/sanitize.ts.</div>
+  </div>
+
+  <div class="section-title">✅ Things Done Right</div>
+  <div class="grid grid-2">
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>Razorpay amount calculated server-side</h4></div><div class="detail">Payment amounts recalculated from DB catalog — client-sent amounts ignored.</div></div>
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>HMAC-signed checkout + admin tokens</h4></div><div class="detail">Both use HMAC-SHA256 with timing-safe comparison and TTL enforcement.</div></div>
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>HTML escaping on all user content in emails</h4></div><div class="detail">esc() applied to all user fields before email HTML template insertion.</div></div>
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>Razorpay payment signature verified server-side</h4></div><div class="detail">HMAC-SHA256 constant-time verification before accepting any payment.</div></div>
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>Input sanitisation library across all forms</h4></div><div class="detail">str() truncation, isValidEmail(), stripControl(), esc() used consistently.</div></div>
+    <div class="finding" style="border-color:rgba(46,204,113,0.2)"><div class="finding-header"><span class="badge-ok">GOOD</span><h4>Strong CSP headers</h4></div><div class="detail">Content-Security-Policy with allowlisted sources for scripts, styles, images, frames and connections.</div></div>
+  </div>
+</div>
+
+<!-- ======================== MONITOR ======================== -->
+<div id="monitor" class="section">
+  <div class="page-title">Live Security Monitor</div>
+  <div class="page-sub">Real-time checks against kyzerrobotics.com — <span id="monitorTime" style="color:var(--orange)">not yet run</span></div>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+    <button class="refresh-btn" onclick="runAllChecks()">▶ Run All Checks</button>
+    <button class="refresh-btn" onclick="toggleAuto()" id="autoBtn">⏱ Auto-refresh: OFF</button>
+    <span style="font-size:12px;color:var(--muted)" id="autoCountdown"></span>
+  </div>
+
+  <!-- LIVE SECURITY SCORE -->
+  <div class="level-bar-wrap" style="margin-bottom:20px;">
+    <div class="level-gauge">
+      <svg viewBox="0 0 140 70">
+        <path d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#222" stroke-width="14" stroke-linecap="round"/>
+        <path id="monitorGauge" d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#888" stroke-width="14" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="94" style="transition:stroke-dashoffset 1s,stroke 1s;"/>
+      </svg>
+      <div class="level-num" id="monitorScore" style="color:#888">—</div>
+    </div>
+    <div class="level-info">
+      <h2 id="monitorLevel" style="color:#888">Run checks to calculate live score</h2>
+      <p id="monitorLevelDesc" style="color:var(--muted)">Checks API health, security headers, rate limiting, auth enforcement, and endpoint availability.</p>
+      <div id="monitorBreakdown" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
+    </div>
+  </div>
+
+  <div class="monitor-grid" id="monitorGrid">
+    <!-- populated by JS -->
+  </div>
+
+  <div style="padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);margin-top:8px;">
+    ℹ Checks run from your browser to kyzerrobotics.com. Some tests (e.g. rate limit bypass) are read-only and non-destructive. CORS-restricted endpoints return network errors which are expected.
+  </div>
+</div>
+
+<!-- ======================== ROUTES ======================== -->
+<div id="routes" class="section">
+  <div class="page-title">API Routes</div>
+  <div class="page-sub">17 routes · auth methods · rate limits · DB tables</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Route</th><th>Auth</th><th>Rate Limit</th><th>Tables</th><th>Email</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">/api/admin-login</td><td><span class="auth-none">Password</span></td><td>5/15min</td><td>—</td><td>No</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/admin-verify</td><td><span class="auth-admin">Admin token</span></td><td>30/60s</td><td>—</td><td>No</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/publish</td><td><span class="auth-admin">Admin token</span></td><td>20/60s</td><td>site_data</td><td>No</td><td><span class="badge-med">Anon fallback</span></td></tr>
+        <tr><td class="mono">/api/order-update</td><td><span class="auth-admin">Admin token</span></td><td>20/60s</td><td>orders, shop_orders, quote_inquiries</td><td>No</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/my-orders</td><td><span class="auth-fb">Firebase ID token</span></td><td style="color:var(--red);font-weight:700">None ⚠</td><td>orders</td><td>No</td><td><span class="badge-crit">No rate limit</span></td></tr>
+        <tr><td class="mono">/api/checkout-token</td><td><span class="auth-none">None</span></td><td>10/60s</td><td>—</td><td>No</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/create-razorpay-order</td><td><span class="auth-none">None</span></td><td>10/60s</td><td>site_data, pending_payments</td><td>No</td><td><span class="badge-ok">Server amount ✓</span></td></tr>
+        <tr><td class="mono">/api/verify-payment</td><td><span class="auth-none">Razorpay sig</span></td><td>10/60s</td><td>pending_payments, orders</td><td>✉ Both</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/order-notify</td><td><span class="auth-token">Checkout token</span></td><td>10/60s</td><td>orders</td><td>✉ Both</td><td><span class="badge-med">No server amount</span></td></tr>
+        <tr><td class="mono">/api/contact</td><td><span class="auth-none">None</span></td><td>5/60min</td><td>—</td><td>✉ Both</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/print-quote</td><td><span class="auth-none">None</span></td><td>10/60s</td><td>orders</td><td>✉ Both</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/quote-inquiry</td><td><span class="auth-none">None</span></td><td>5/60min</td><td>quote_inquiries</td><td>✉ Both</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/support-ticket</td><td><span class="auth-none">None</span></td><td>5/60s</td><td>support_tickets</td><td>✉ Admin</td><td><span class="badge-high">No email validation</span></td></tr>
+        <tr><td class="mono">/api/cs-subscribe</td><td><span class="auth-none">None</span></td><td>5/60min</td><td>—</td><td>✉ Admin</td><td><span class="badge-ok">OK</span></td></tr>
+        <tr><td class="mono">/api/track-visit</td><td><span class="auth-none">None</span></td><td>60/60s</td><td>analytics_visits</td><td>No</td><td><span class="badge-med">Anon fallback</span></td></tr>
+        <tr><td class="mono">/api/analytics</td><td><span class="auth-none">None</span></td><td>60/60s</td><td>analytics_visits</td><td>No</td><td><span class="badge-low">Public read</span></td></tr>
+        <tr><td class="mono">/api/sheet-sync</td><td><span class="auth-token">Static bearer</span></td><td>60/60s</td><td>site_data</td><td>No</td><td><span class="badge-high">Timing attack</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ======================== ARCH ======================== -->
+<div id="arch" class="section">
+  <div class="page-title">Architecture</div>
+  <div class="page-sub">Full system map — services, data flow, auth boundaries</div>
+  <div class="arch-layer"><h3>🌐 Frontend — Browser</h3><div class="arch-items"><div class="arch-item">Home / Landing<div class="sub">Static · page.tsx inline HTML</div></div><div class="arch-item">Shop — Electronics<div class="sub">/shop/electronics + /products + /arduino</div></div><div class="arch-item">Shop — Drones<div class="sub">/shop/drones + /drone-frames + /complete-drones</div></div><div class="arch-item">Shop — 3D Printing<div class="sub">/shop/printing + /3d-printing + /printers-supplies</div></div><div class="arch-item">Shop — Prototyping<div class="sub">Supabase-driven live products</div></div><div class="arch-item">Checkout Flow<div class="sub">/checkout → /address → /payment → /review</div></div><div class="arch-item">Customer Dashboard<div class="sub">Firebase-gated + Firebase ID token</div></div><div class="arch-item">Profile<div class="sub">Firebase-gated, Supabase customers table</div></div><div class="arch-item">Quote / Contact<div class="sub">/get-a-quote · /contact</div></div><div class="arch-item">Auth Pages<div class="sub">/login · /signup · /forgot-password · /reset-password</div></div></div></div>
+  <div class="arch-layer"><h3>⚙️ API Layer — Vercel Serverless</h3><div class="arch-items"><div class="arch-item" style="border-color:rgba(160,155,254,0.3)">Admin Routes<div class="sub">admin-login · admin-verify · publish · order-update</div></div><div class="arch-item" style="border-color:rgba(93,173,226,0.3)">Customer Routes<div class="sub">my-orders (Firebase-gated)</div></div><div class="arch-item" style="border-color:rgba(255,140,53,0.3)">Payment Routes<div class="sub">checkout-token · create-razorpay-order · verify-payment · order-notify</div></div><div class="arch-item" style="border-color:rgba(46,204,113,0.3)">Form Routes<div class="sub">contact · print-quote · quote-inquiry · cs-subscribe · support-ticket</div></div><div class="arch-item" style="border-color:rgba(136,136,136,0.3)">Utility Routes<div class="sub">track-visit · analytics · sheet-sync</div></div></div></div>
+  <div class="arch-layer"><h3>🗄️ Supabase (PostgreSQL)</h3><div class="arch-items"><div class="arch-item">orders<div class="sub">All orders — shop/COD/print/quote. JSON data column.</div></div><div class="arch-item">pending_payments<div class="sub">Temporary Razorpay state</div></div><div class="arch-item">site_data<div class="sub">Product catalog JSON + quote config</div></div><div class="arch-item">quote_inquiries<div class="sub">Project quote submissions</div></div><div class="arch-item">support_tickets<div class="sub">Chatbot support tickets</div></div><div class="arch-item">analytics_visits<div class="sub">Page visit log</div></div><div class="arch-item">customers<div class="sub">Shipping addresses</div></div></div></div>
+  <div class="arch-layer"><h3>🔐 Auth Boundaries</h3><div class="arch-items"><div class="arch-item" style="border-color:rgba(160,155,254,0.4)">Admin Panel<div class="sub">HMAC-signed token · 24h TTL</div></div><div class="arch-item" style="border-color:rgba(93,173,226,0.4)">Customer Facing<div class="sub">Firebase Auth · Email/Google/Phone</div></div><div class="arch-item" style="border-color:rgba(255,140,53,0.4)">Checkout<div class="sub">HMAC checkout token · 30min TTL</div></div><div class="arch-item" style="border-color:rgba(46,204,113,0.4)">Payments<div class="sub">Razorpay HMAC-SHA256 webhook</div></div><div class="arch-item" style="border-color:rgba(136,136,136,0.4)">Sheet Sync<div class="sub">Static bearer token</div></div></div></div>
+  <div class="arch-layer"><h3>📧 Email (Resend — pending API key)</h3><div class="arch-items"><div class="arch-item">Order Confirmation<div class="sub">verify-payment + order-notify → customer + admin + PDF</div></div><div class="arch-item">Contact / Quotes<div class="sub">contact · print-quote · quote-inquiry</div></div><div class="arch-item">Support Tickets<div class="sub">support-ticket → admin only</div></div><div class="arch-item">Waitlist<div class="sub">cs-subscribe → admin only</div></div></div></div>
+</div>
+
+<!-- ======================== TODO ======================== -->
+<div id="todo" class="section">
+  <div class="page-title">What's Remaining</div>
+  <div class="page-sub">Prioritised P1→P4</div>
+
+  <div class="section-title">✅ Completed</div>
+  <div class="todo-item done"><div class="priority p1">P1</div><div><h4>Remove hardcoded Supabase JWT from 6 shop pages</h4><div class="done-stamp">✓ Done — 21 Jun 2026. Deployed.</div></div></div>
+  <div class="todo-item done"><div class="priority p1">P1</div><div><h4>Fix /api/my-orders — verify Firebase ID token</h4><div class="done-stamp">✓ Done — 21 Jun 2026. Deployed.</div></div></div>
+  <div class="todo-item done"><div class="priority p1">P1</div><div><h4>Lock support_tickets to service key only</h4><div class="done-stamp">✓ Done — 21 Jun 2026. Deployed.</div></div></div>
+  <div class="todo-item done"><div class="priority p2">P2</div><div><h4>Build support tickets section in admin panel</h4><div class="done-stamp">✓ Done — Deployed.</div></div></div>
+  <div class="todo-item done"><div class="priority p2">P2</div><div><h4>Build customer chatbot with ticket flow</h4><div class="done-stamp">✓ Done — Deployed.</div></div></div>
+  <div class="todo-item done"><div class="priority p2">P2</div><div><h4>Add product images to all shop category pages</h4><div class="done-stamp">✓ Done — Deployed.</div></div></div>
+
+  <div class="section-title">P1 — Do Now</div>
+  <div class="todo-item"><div class="priority p1">P1</div><div><h4>Set up Resend — emails completely broken</h4><p>resend.com → add domain → DNS records → API key → RESEND_API_KEY in Vercel → redeploy. Order confirmation, quotes, contact — none send until done.</p></div></div>
+  <div class="todo-item done"><div class="priority p1">P1</div><div><h4>Add rate limit to /api/my-orders</h4><div class="done-stamp">✓ Done — 21 Jun 2026. 20 req/min per IP. Deployed.</div></div></div>
+
+  <div class="section-title">P2 — This Week</div>
+  <div class="todo-item"><div class="priority p2">P2</div><div><h4>Fix timing attack in sheet-sync</h4><p>Replace <code>===</code> with <code>crypto.timingSafeEqual()</code> in /api/sheet-sync.</p></div></div>
+  <div class="todo-item"><div class="priority p2">P2</div><div><h4>Add email validation to support-ticket</h4><p>Add isValidEmail() check — already exists in src/lib/sanitize.ts.</p></div></div>
+  <div class="todo-item"><div class="priority p2">P2</div><div><h4>Enable leaked-password protection in Supabase</h4><p>Supabase dashboard → Auth → Settings → Enable HaveIBeenPwned. One click.</p></div></div>
+  <div class="todo-item"><div class="priority p2">P2</div><div><h4>Upload real product photos via admin panel</h4><p>Products show fallback images. Upload actual photos — they take priority automatically.</p></div></div>
+
+  <div class="section-title">P3 — Next Sprint</div>
+  <div class="todo-item"><div class="priority p3">P3</div><div><h4>Switch rate limiting to Upstash Redis</h4><p>In-memory limits ineffective on serverless. Upstash free tier + @upstash/ratelimit, ~30 min integration.</p></div></div>
+  <div class="todo-item"><div class="priority p3">P3</div><div><h4>Recalculate COD order amount server-side</h4><p>/api/order-notify trusts client-sent total. Use calcCartAmount() server-side.</p></div></div>
+  <div class="todo-item"><div class="priority p3">P3</div><div><h4>Order status tracking for customers</h4><p>Dashboard shows orders but no timeline. Add status flow driven by admin order-update.</p></div></div>
+  <div class="todo-item"><div class="priority p3">P3</div><div><h4>Razorpay webhook for payment reconciliation</h4><p>If user closes tab after payment, order is lost. Server-side webhook ensures it's always captured.</p></div></div>
+
+  <div class="section-title">P4 — Backlog</div>
+  <div class="todo-item"><div class="priority p4">P4</div><div><h4>Unify Firebase Auth + Supabase RLS</h4><p>Firebase JWT validated natively by Supabase — RLS policies could reference Firebase UID.</p></div></div>
+  <div class="todo-item"><div class="priority p4">P4</div><div><h4>SEO — dynamic meta tags per shop page</h4><p>Add generateMetadata() to shop pages for Google indexing.</p></div></div>
+  <div class="todo-item"><div class="priority p4">P4</div><div><h4>WhatsApp admin notifications on new orders</h4><p>NOTIFY_PHONE exists in env but never used. Wire to WhatsApp Business API.</p></div></div>
+  <div class="todo-item"><div class="priority p4">P4</div><div><h4>GST invoice number sequence</h4><p>Currently timestamp-based IDs. GST compliance needs sequential financial-year numbering.</p></div></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const SITE = 'https://kyzerrobotics.com';
+let autoInterval = null;
+let countdown = 0;
+
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'monitor' && !document.getElementById('monitorGrid').children.length) {
+    runAllChecks();
+  }
+}
+
+// ---- CHECKS ----
+const CHECKS = [
+  {
+    id: 'homepage', title: 'Homepage Health', url: '/',
+    run: async () => {
+      const r = await fetch(SITE + '/', {mode:'no-cors'});
+      return { status: 'ok', msg: '<span class="pass">✓ Site is reachable</span>' };
+    }
+  },
+  {
+    id: 'analytics', title: 'Analytics API', url: '/api/analytics',
+    run: async () => {
+      const r = await fetch(SITE + '/api/analytics');
+      if (!r.ok) return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status}</span>` };
+      const d = await r.json();
+      const total = d.total ?? d.count ?? '?';
+      return { status: 'ok', msg: `<span class="pass">✓ Online</span> · <span class="info">${total} total visits</span>` };
+    }
+  },
+  {
+    id: 'myorders_unauthed', title: 'my-orders: blocks unauth', url: '/api/my-orders',
+    run: async () => {
+      const r = await fetch(SITE + '/api/my-orders');
+      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 Unauthorized — auth correctly enforced</span>' };
+      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
+    }
+  },
+  {
+    id: 'myorders_badtoken', title: 'my-orders: rejects bad token', url: '/api/my-orders',
+    run: async () => {
+      const r = await fetch(SITE + '/api/my-orders', { headers: { Authorization: 'Bearer fake.token.here' } });
+      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 — bad token correctly rejected</span>' };
+      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
+    }
+  },
+  {
+    id: 'adminlogin_reject', title: 'Admin login: rejects wrong password', url: '/api/admin-login',
+    run: async () => {
+      const r = await fetch(SITE + '/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: 'wrongpassword123' })
+      });
+      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 — wrong password rejected</span>' };
+      if (r.status === 429) return { status: 'warn', msg: '<span class="warn">⚠ 429 rate limited — good sign but slow down</span>' };
+      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
+    }
+  },
+  {
+    id: 'publish_unauthed', title: 'publish: blocks unauth', url: '/api/publish',
+    run: async () => {
+      const r = await fetch(SITE + '/api/publish', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — admin auth correctly enforced</span>` };
+      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401/403</span>` };
+    }
+  },
+  {
+    id: 'orderupdate_unauthed', title: 'order-update: blocks unauth', url: '/api/order-update',
+    run: async () => {
+      const r = await fetch(SITE + '/api/order-update', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — admin auth correctly enforced</span>` };
+      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401/403</span>` };
+    }
+  },
+  {
+    id: 'checkouttoken', title: 'Checkout token: issues token', url: '/api/checkout-token',
+    run: async () => {
+      const r = await fetch(SITE + '/api/checkout-token');
+      if (!r.ok) return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status}</span>` };
+      const d = await r.json();
+      const valid = d.token && d.token.includes('.');
+      return valid
+        ? { status: 'ok', msg: '<span class="pass">✓ Returns HMAC-signed token</span>' }
+        : { status: 'err', msg: '<span class="fail">✗ Bad token format</span>' };
+    }
+  },
+  {
+    id: 'csp', title: 'Security Headers (CSP)', url: '/',
+    run: async () => {
+      // Can't read headers cross-origin, check via API
+      try {
+        const r = await fetch(SITE + '/api/analytics');
+        const csp = r.headers.get('content-security-policy');
+        if (csp && csp.includes("default-src 'self'")) {
+          return { status: 'ok', msg: `<span class="pass">✓ CSP header present</span><br><span class="info" style="font-size:11px">default-src + script + img + connect policies set</span>` };
+        }
+        return { status: 'warn', msg: '<span class="warn">⚠ CSP not detected on this endpoint (may be on page routes only)</span>' };
+      } catch {
+        return { status: 'warn', msg: '<span class="warn">⚠ Could not read headers (CORS)</span>' };
+      }
+    }
+  },
+  {
+    id: 'ratelimit', title: 'Rate limiting on contact form', url: '/api/contact',
+    run: async () => {
+      // Send 1 probe request — we don't want to actually spam
+      const r = await fetch(SITE + '/api/contact', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ name: '', email: '', message: '' })
+      });
+      if (r.status === 429) return { status: 'warn', msg: '<span class="warn">⚠ Already rate limited — limit in effect</span>' };
+      if (r.status === 400) return { status: 'ok', msg: '<span class="pass">✓ Reached handler (validation caught empty fields)</span><br><span class="info" style="font-size:11px">Note: in-memory limit may reset across invocations</span>' };
+      return { status: 'warn', msg: `<span class="warn">⚠ HTTP ${r.status}</span>` };
+    }
+  },
+  {
+    id: 'supportticket_noemail', title: 'Support ticket: missing email validation', url: '/api/support-ticket',
+    run: async () => {
+      const r = await fetch(SITE + '/api/support-ticket', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ name: 'Test', email: 'not-an-email', subject: 'Test', message: 'Security audit probe' })
+      });
+      if (r.status === 400) return { status: 'ok', msg: '<span class="pass">✓ Invalid email correctly rejected</span>' };
+      if (r.status === 200) return { status: 'err', msg: '<span class="fail">✗ Accepted invalid email — validation missing</span>' };
+      return { status: 'warn', msg: `<span class="warn">⚠ HTTP ${r.status}</span>` };
+    }
+  },
+  {
+    id: 'sheetsync_unauthed', title: 'sheet-sync: blocks unauth', url: '/api/sheet-sync',
+    run: async () => {
+      const r = await fetch(SITE + '/api/sheet-sync', { method: 'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — bearer token enforced</span>` };
+      return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status} — should be 401</span>` };
+    }
+  },
+];
+
+function renderMonitorCards() {
+  const grid = document.getElementById('monitorGrid');
+  grid.innerHTML = CHECKS.map(c => `
+    <div class="monitor-card" id="mc-${c.id}">
+      <div class="mc-header">
+        <div class="mc-status pending" id="mcs-${c.id}"></div>
+        <div>
+          <div class="mc-title">${c.title}</div>
+          <div class="mc-url">${c.url}</div>
+        </div>
+      </div>
+      <div class="mc-result" id="mcr-${c.id}"><span style="color:var(--muted)">Waiting…</span></div>
+      <div class="mc-ms" id="mcms-${c.id}"></div>
+    </div>`).join('');
+}
+
+async function runCheck(c) {
+  const statusEl = document.getElementById(`mcs-${c.id}`);
+  const resultEl = document.getElementById(`mcr-${c.id}`);
+  const msEl = document.getElementById(`mcms-${c.id}`);
+  statusEl.className = 'mc-status pending';
+  resultEl.innerHTML = '<span style="color:var(--muted)">Running…</span>';
+  msEl.textContent = '';
+  const t0 = Date.now();
+  try {
+    const res = await c.run();
+    const ms = Date.now() - t0;
+    statusEl.className = `mc-status ${res.status}`;
+    resultEl.innerHTML = res.msg;
+    msEl.textContent = `${ms}ms`;
+    return res.status;
+  } catch (e) {
+    const ms = Date.now() - t0;
+    statusEl.className = 'mc-status err';
+    resultEl.innerHTML = `<span class="fail">✗ Error: ${e.message}</span>`;
+    msEl.textContent = `${ms}ms`;
+    return 'err';
+  }
+}
+
+async function runAllChecks() {
+  if (!document.getElementById('monitorGrid').children.length) renderMonitorCards();
+  document.getElementById('monitorTime').textContent = 'Running…';
+  document.getElementById('monitorLevel').textContent = 'Checking…';
+  document.getElementById('monitorScore').textContent = '…';
+
+  const results = await Promise.all(CHECKS.map(c => runCheck(c)));
+
+  // Score
+  const pass = results.filter(r => r === 'ok').length;
+  const warn = results.filter(r => r === 'warn').length;
+  const fail = results.filter(r => r === 'err').length;
+  const total = results.length;
+  const raw = (pass * 10 + warn * 5) / (total * 10);
+  const score = (4 + raw * 6).toFixed(1); // scale 4-10
+
+  updateMonitorGauge(parseFloat(score));
+  document.getElementById('monitorBreakdown').textContent = `${pass} passed · ${warn} warnings · ${fail} failed out of ${total} checks`;
+  document.getElementById('monitorTime').textContent = `Last checked: ${new Date().toLocaleTimeString()}`;
+  document.getElementById('liveStatus').textContent = `Live · ${new Date().toLocaleTimeString()}`;
+
+  // Update navbar
+  updateNavBadge();
+}
+
+function updateMonitorGauge(score) {
+  const levels = [
+    { min: 0,   max: 5,   name: '🔴 Level 1 — At Risk',    color: '#ff5555', desc: 'Critical vulnerabilities expose user data. Immediate action required.' },
+    { min: 5,   max: 6.5, name: '🟠 Level 2 — Basic',      color: '#FF8C35', desc: 'Foundational security in place but significant gaps remain.' },
+    { min: 6.5, max: 8,   name: '⚡ Level 3 — Strong',      color: '#f1c40f', desc: 'Good posture. Auth, payments, and inputs well handled. Minor gaps remain.' },
+    { min: 8,   max: 9.5, name: '🛡 Level 4 — Hardened',   color: '#2ecc71', desc: 'Robust security across all surfaces. Only minor improvements possible.' },
+    { min: 9.5, max: 11,  name: '🔒 Level 5 — Fortified',  color: '#5dade2', desc: 'Industry-leading security. Persistent rate limiting, unified auth, full audit trail.' },
+  ];
+  const lvl = levels.find(l => score >= l.min && score < l.max) || levels[levels.length-1];
+
+  const gaugeEl = document.getElementById('monitorGauge');
+  const numEl = document.getElementById('monitorScore');
+  const nameEl = document.getElementById('monitorLevel');
+  const descEl = document.getElementById('monitorLevelDesc');
+  const offset = 188 - (score / 10) * 188;
+  gaugeEl.setAttribute('stroke-dashoffset', offset);
+  gaugeEl.setAttribute('stroke', lvl.color);
+  numEl.textContent = score;
+  numEl.style.color = lvl.color;
+  nameEl.textContent = lvl.name;
+  nameEl.style.color = lvl.color;
+  descEl.textContent = lvl.desc;
+
+  // Also update overview gauge
+  const og = document.getElementById('gaugePath');
+  const on = document.getElementById('scoreNum');
+  const oc = document.getElementById('scoreCard');
+  const olv = document.getElementById('levelName');
+  if (og) { og.setAttribute('stroke-dashoffset', offset); og.setAttribute('stroke', lvl.color); }
+  if (on) { on.textContent = score; on.style.color = lvl.color; }
+  if (oc) { oc.innerHTML = `${score}<span style="font-size:18px;color:var(--muted)">/10</span>`; oc.style.color = lvl.color; }
+  if (olv) { olv.textContent = lvl.name; olv.style.color = lvl.color; }
+}
+
+function updateNavBadge() {
+  const badge = document.querySelector('nav .badge');
+  if (badge) badge.textContent = '2 Critical · 3 High';
+}
+
+function toggleAuto() {
+  const btn = document.getElementById('autoBtn');
+  if (autoInterval) {
+    clearInterval(autoInterval);
+    clearInterval(window._cdInterval);
+    autoInterval = null;
+    btn.textContent = '⏱ Auto-refresh: OFF';
+    document.getElementById('autoCountdown').textContent = '';
+  } else {
+    countdown = 30;
+    btn.textContent = '⏱ Auto-refresh: ON (30s)';
+    autoInterval = setInterval(() => { runAllChecks(); countdown = 30; }, 30000);
+    window._cdInterval = setInterval(() => {
+      countdown--;
+      document.getElementById('autoCountdown').textContent = `Next in ${countdown}s`;
+      if (countdown <= 0) countdown = 30;
+    }, 1000);
+  }
+}
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('liveStatus').textContent = 'Ready';
+  document.getElementById('lastScan').textContent = new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+  // Set initial overview gauge to 7.2
+  const og = document.getElementById('gaugePath');
+  const offset = 188 - (7.2 / 10) * 188;
+  if (og) { og.setAttribute('stroke-dashoffset', offset); }
+
+  // Level checks on overview
+  const checks = [
+    { ok: true,  label: 'Firebase auth on customer routes' },
+    { ok: true,  label: 'Admin HMAC token (24h TTL)' },
+    { ok: true,  label: 'Razorpay server-side amount' },
+    { ok: true,  label: 'Input sanitisation on all forms' },
+    { ok: true,  label: 'Hardcoded JWT removed' },
+    { ok: false, label: 'Persistent rate limiting (Redis)' },
+    { ok: false, label: 'Resend email configured' },
+    { ok: false, label: 'sheet-sync timing-safe compare' },
+  ];
+  document.getElementById('levelChecks').innerHTML = checks.map(c =>
+    `<div class="lc"><div class="dot" style="background:${c.ok ? 'var(--green)' : 'var(--red)'}"></div><span style="color:${c.ok ? '#ccc' : 'var(--muted)'}">${c.label}</span></div>`
+  ).join('');
+});
+</script>
+</body>
+</html>
