@@ -102,123 +102,169 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#f8f8f6', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+      <div style={{ minHeight: '100vh', background: '#f9f9f7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <style>{`
-          @keyframes arm-move {
-            0%,100% { transform: rotate(-18deg); }
-            50% { transform: rotate(8deg); }
+          @keyframes kb-float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
           }
-          @keyframes box-slide {
-            0% { transform: translateX(0px); opacity:1; }
-            70% { transform: translateX(54px); opacity:1; }
-            85%,100% { transform: translateX(64px); opacity:0; }
+          @keyframes kb-blink {
+            0%,90%,100% { opacity: 1; }
+            95% { opacity: 0; }
           }
-          @keyframes belt-move {
-            0% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -20; }
+          @keyframes kb-arm {
+            0%,100% { transform: rotate(0deg); }
+            40% { transform: rotate(-22deg); }
+            60% { transform: rotate(-22deg); }
           }
-          @keyframes spark {
-            0%,100% { opacity:0; transform: scale(0.5); }
-            50% { opacity:1; transform: scale(1); }
+          @keyframes kb-belt {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-24px); }
           }
-          @keyframes label-blink {
-            0%,100% { opacity:0.3; }
-            50% { opacity:1; }
+          @keyframes kb-box {
+            0%   { transform: translateX(-10px); opacity: 0; }
+            10%  { opacity: 1; }
+            75%  { transform: translateX(90px); opacity: 1; }
+            90%,100% { transform: translateX(110px); opacity: 0; }
           }
-          @keyframes float-up {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-            100% { transform: translateY(0px); }
+          @keyframes kb-ping {
+            0%,100% { r: 3; opacity: 1; }
+            50% { r: 5; opacity: 0.4; }
           }
-          .robot-float { animation: float-up 2.4s ease-in-out infinite; }
-          .robot-arm { transform-origin: 12px 4px; animation: arm-move 1.1s ease-in-out infinite; }
-          .conveyor-dash { animation: belt-move 0.5s linear infinite; }
-          .box-anim { animation: box-slide 1.6s ease-in-out infinite; }
-          .spark1 { animation: spark 1.1s 0.1s ease-in-out infinite; }
-          .spark2 { animation: spark 1.1s 0.4s ease-in-out infinite; }
-          .label-anim { animation: label-blink 1.1s ease-in-out infinite; }
-          .dot1 { animation: spark 1.2s 0s ease-in-out infinite; }
-          .dot2 { animation: spark 1.2s 0.4s ease-in-out infinite; }
-          .dot3 { animation: spark 1.2s 0.8s ease-in-out infinite; }
+          @keyframes kb-dot {
+            0%,80%,100% { opacity: 0.2; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1); }
+          }
+          @keyframes kb-scan {
+            0% { opacity:0.15; }
+            50% { opacity:0.9; }
+            100% { opacity:0.15; }
+          }
+          .kb-wrap    { animation: kb-float 3s ease-in-out infinite; }
+          .kb-eye     { animation: kb-blink 4s ease-in-out infinite; }
+          .kb-arm     { transform-origin: 78px 104px; animation: kb-arm 1.8s ease-in-out infinite; }
+          .kb-belt-strip { animation: kb-belt 0.6s linear infinite; }
+          .kb-box     { animation: kb-box 2.4s ease-in-out infinite; }
+          .kb-ping    { animation: kb-ping 1.4s ease-in-out infinite; }
+          .kb-scan    { animation: kb-scan 1.8s ease-in-out infinite; }
+          .kb-d1 { animation: kb-dot 1.4s 0.0s ease-in-out infinite; }
+          .kb-d2 { animation: kb-dot 1.4s 0.2s ease-in-out infinite; }
+          .kb-d3 { animation: kb-dot 1.4s 0.4s ease-in-out infinite; }
         `}</style>
 
-        <div className="robot-float">
-          <svg width="220" height="180" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="kb-wrap">
+          <svg width="260" height="220" viewBox="0 0 260 220" fill="none">
 
-            {/* conveyor belt */}
-            <rect x="30" y="132" width="160" height="14" rx="7" fill="#d4d0c8"/>
-            <line x1="30" y1="139" x2="190" y2="139" stroke="#bbb" strokeWidth="2" strokeDasharray="10 10" className="conveyor-dash"/>
-            <circle cx="37" cy="139" r="7" fill="#b0aca0"/>
-            <circle cx="183" cy="139" r="7" fill="#b0aca0"/>
+            {/* ── shadow ── */}
+            <ellipse cx="130" cy="210" rx="52" ry="6" fill="#e0ddd7" opacity="0.7"/>
 
-            {/* box on belt */}
-            <g className="box-anim">
-              <rect x="58" y="112" width="32" height="20" rx="3" fill="#FF8C35"/>
-              <rect x="58" y="112" width="32" height="7" rx="3" fill="#e07020"/>
-              {/* tape */}
-              <rect x="72" y="112" width="4" height="20" fill="rgba(255,255,255,0.35)"/>
-              <rect x="58" y="119" width="32" height="3" fill="rgba(255,255,255,0.25)"/>
+            {/* ── conveyor belt ── */}
+            <rect x="40" y="168" width="180" height="18" rx="9" fill="#e8e4dc"/>
+            {/* moving stripes — clipped */}
+            <clipPath id="belt-clip"><rect x="49" y="168" width="162" height="18" rx="9"/></clipPath>
+            <g clipPath="url(#belt-clip)">
+              <g className="kb-belt-strip">
+                {[0,24,48,72,96,120,144,168,192].map(x => (
+                  <rect key={x} x={x+49} y="172" width="14" height="10" rx="2" fill="#ddd8ce" opacity="0.8"/>
+                ))}
+              </g>
+            </g>
+            <circle cx="49" cy="177" r="9" fill="#d5d0c6"/>
+            <circle cx="211" cy="177" r="9" fill="#d5d0c6"/>
+
+            {/* ── package on belt ── */}
+            <g className="kb-box">
+              {/* box body */}
+              <rect x="40" y="143" width="38" height="28" rx="5" fill="#FF8C35"/>
+              {/* lid crease */}
+              <rect x="40" y="143" width="38" height="9" rx="5" fill="#e07520"/>
+              <rect x="40" y="147" width="38" height="5" fill="#e07520"/>
+              {/* center tape vertical */}
+              <rect x="57" y="143" width="5" height="28" fill="rgba(255,255,255,0.28)" rx="1"/>
+              {/* center tape horizontal */}
+              <rect x="40" y="154" width="38" height="4" fill="rgba(255,255,255,0.2)" rx="1"/>
               {/* label */}
-              <rect x="62" y="122" width="18" height="7" rx="1" fill="white" opacity="0.9" className="label-anim"/>
-              <line x1="64" y1="125" x2="78" y2="125" stroke="#aaa" strokeWidth="1"/>
-              <line x1="64" y1="127" x2="75" y2="127" stroke="#aaa" strokeWidth="1"/>
+              <rect x="45" y="157" width="22" height="10" rx="2" fill="white" opacity="0.95"/>
+              <rect x="47" y="160" width="14" height="1.5" rx="1" fill="#ccc"/>
+              <rect x="47" y="163" width="10" height="1.5" rx="1" fill="#ccc"/>
             </g>
 
-            {/* robot body */}
-            <rect x="88" y="52" width="52" height="58" rx="10" fill="#2d2d2d"/>
-            <rect x="92" y="56" width="44" height="50" rx="8" fill="#3a3a3a"/>
+            {/* ── robot body ── */}
+            {/* torso */}
+            <rect x="86" y="96" width="68" height="72" rx="14" fill="#1e1e1e"/>
+            <rect x="90" y="100" width="60" height="64" rx="11" fill="#2a2a2a"/>
 
-            {/* robot screen */}
-            <rect x="97" y="62" width="34" height="22" rx="4" fill="#0a0a0a"/>
-            <rect x="99" y="64" width="30" height="18" rx="3" fill="#001a0a"/>
-            {/* screen glow lines */}
-            <line x1="101" y1="68" x2="127" y2="68" stroke="#2ecc71" strokeWidth="1.5" opacity="0.9"/>
-            <line x1="101" y1="72" x2="122" y2="72" stroke="#2ecc71" strokeWidth="1.5" opacity="0.7"/>
-            <line x1="101" y1="76" x2="119" y2="76" stroke="#2ecc71" strokeWidth="1" opacity="0.5"/>
+            {/* chest panel / screen */}
+            <rect x="98" y="108" width="44" height="32" rx="7" fill="#111"/>
+            <rect x="100" y="110" width="40" height="28" rx="6" fill="#0d1a0d"/>
+            {/* scanning line */}
+            <rect x="102" y="120" width="36" height="2" rx="1" fill="#FF8C35" opacity="0.9" className="kb-scan"/>
+            {/* green data lines */}
+            <rect x="102" y="114" width="28" height="1.5" rx="1" fill="#3ddc84" opacity="0.7"/>
+            <rect x="102" y="117" width="20" height="1.5" rx="1" fill="#3ddc84" opacity="0.5"/>
+            <rect x="102" y="124" width="32" height="1.5" rx="1" fill="#3ddc84" opacity="0.6"/>
+            <rect x="102" y="127" width="18" height="1.5" rx="1" fill="#3ddc84" opacity="0.4"/>
+            <rect x="102" y="130" width="24" height="1.5" rx="1" fill="#3ddc84" opacity="0.5"/>
 
-            {/* robot eyes / indicator */}
-            <circle cx="104" cy="90" r="4" fill="#FF8C35"/>
-            <circle cx="124" cy="90" r="4" fill="#FF8C35"/>
-            <circle cx="104" cy="90" r="2" fill="#fff" opacity="0.6"/>
-            <circle cx="124" cy="90" r="2" fill="#fff" opacity="0.6"/>
+            {/* chest indicator dots */}
+            <circle cx="106" cy="147" r="3.5" fill="#FF8C35" opacity="0.9"/>
+            <circle cx="116" cy="147" r="3.5" fill="#3ddc84" opacity="0.9"/>
+            <circle cx="126" cy="147" r="3.5" fill="#3ddc84" opacity="0.5"/>
 
-            {/* robot head */}
-            <rect x="94" y="34" width="40" height="22" rx="8" fill="#2d2d2d"/>
-            <rect x="98" y="37" width="32" height="16" rx="6" fill="#3a3a3a"/>
+            {/* ── head ── */}
+            <rect x="92" y="60" width="56" height="40" rx="14" fill="#1e1e1e"/>
+            <rect x="96" y="64" width="48" height="32" rx="11" fill="#2a2a2a"/>
+
+            {/* eyes */}
+            <rect x="103" y="72" width="14" height="10" rx="5" fill="#111" className="kb-eye"/>
+            <rect x="123" y="72" width="14" height="10" rx="5" fill="#111" className="kb-eye"/>
+            <rect x="105" y="74" width="10" height="6" rx="3" fill="#FF8C35" className="kb-eye"/>
+            <rect x="125" y="74" width="10" height="6" rx="3" fill="#FF8C35" className="kb-eye"/>
+            {/* eye shine */}
+            <circle cx="108" cy="76" r="1.5" fill="white" opacity="0.7"/>
+            <circle cx="128" cy="76" r="1.5" fill="white" opacity="0.7"/>
+
+            {/* mouth — subtle */}
+            <rect x="108" y="86" width="24" height="3" rx="1.5" fill="#111"/>
+            <rect x="112" y="87" width="16" height="1.5" rx="1" fill="#3ddc84" opacity="0.6"/>
+
             {/* antenna */}
-            <line x1="114" y1="34" x2="114" y2="24" stroke="#555" strokeWidth="2"/>
-            <circle cx="114" cy="22" r="3" fill="#FF8C35" className="spark1"/>
+            <rect x="118" y="48" width="4" height="14" rx="2" fill="#333"/>
+            <circle cx="120" cy="46" r="5" fill="#1e1e1e"/>
+            <circle cx="120" cy="46" r="3" fill="#FF8C35" className="kb-ping"/>
 
-            {/* robot arm (printing arm) */}
-            <g className="robot-arm" style={{transformOrigin:'88px 80px'}}>
-              <rect x="66" y="76" width="24" height="8" rx="4" fill="#444"/>
-              <rect x="56" y="80" width="14" height="6" rx="3" fill="#555"/>
-              {/* print head */}
-              <rect x="46" y="83" width="12" height="8" rx="2" fill="#FF8C35"/>
-              <circle cx="52" cy="91" r="2" fill="#fff" opacity="0.8" className="spark2"/>
+            {/* ── left arm (moves, holds scanner) ── */}
+            <g className="kb-arm">
+              <rect x="72" y="100" width="16" height="36" rx="8" fill="#1e1e1e"/>
+              <rect x="74" y="102" width="12" height="32" rx="6" fill="#2a2a2a"/>
+              {/* scanner tool */}
+              <rect x="62" y="130" width="22" height="10" rx="5" fill="#FF8C35"/>
+              <rect x="64" y="133" width="18" height="4" rx="2" fill="#e07520"/>
+              <rect x="71" y="131" width="2" height="8" rx="1" fill="rgba(255,255,255,0.4)"/>
             </g>
 
-            {/* right arm */}
-            <rect x="140" y="76" width="20" height="8" rx="4" fill="#444"/>
-            <rect x="158" y="79" width="10" height="5" rx="2" fill="#555"/>
+            {/* ── right arm ── */}
+            <rect x="152" y="100" width="16" height="28" rx="8" fill="#1e1e1e"/>
+            <rect x="154" y="102" width="12" height="24" rx="6" fill="#2a2a2a"/>
+            {/* gripper */}
+            <rect x="156" y="126" width="6" height="8" rx="3" fill="#333"/>
+            <rect x="163" y="126" width="6" height="8" rx="3" fill="#333"/>
 
-            {/* legs */}
-            <rect x="100" y="108" width="10" height="18" rx="4" fill="#2d2d2d"/>
-            <rect x="118" y="108" width="10" height="18" rx="4" fill="#2d2d2d"/>
-            <rect x="97" y="122" width="16" height="6" rx="3" fill="#222"/>
-            <rect x="115" y="122" width="16" height="6" rx="3" fill="#222"/>
+            {/* ── legs ── */}
+            <rect x="100" y="166" width="18" height="22" rx="8" fill="#1e1e1e"/>
+            <rect x="122" y="166" width="18" height="22" rx="8" fill="#1e1e1e"/>
+            {/* feet */}
+            <rect x="96" y="182" width="26" height="8" rx="5" fill="#161616"/>
+            <rect x="118" y="182" width="26" height="8" rx="5" fill="#161616"/>
 
-            {/* spark effects near print head */}
-            <circle cx="48" cy="86" r="2" fill="#FFD700" className="spark1"/>
-            <circle cx="56" cy="84" r="1.5" fill="#FFD700" className="spark2"/>
           </svg>
         </div>
 
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: '#555', marginTop: 8, letterSpacing: '0.02em' }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#999', marginTop: 4, letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>
           Fetching your orders
-          <span className="dot1" style={{ display:'inline-block', marginLeft:2 }}>.</span>
-          <span className="dot2" style={{ display:'inline-block' }}>.</span>
-          <span className="dot3" style={{ display:'inline-block' }}>.</span>
+          <span className="kb-d1" style={{ display:'inline-block', marginLeft: 4 }}>·</span>
+          <span className="kb-d2" style={{ display:'inline-block' }}>·</span>
+          <span className="kb-d3" style={{ display:'inline-block' }}>·</span>
         </p>
       </div>
     );
