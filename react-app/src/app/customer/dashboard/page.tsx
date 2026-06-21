@@ -91,8 +91,124 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#f8f8f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ color: '#666', fontFamily: "'DM Sans', sans-serif" }}>Loading orders…</span>
+      <div style={{ minHeight: '100vh', background: '#f8f8f6', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+        <style>{`
+          @keyframes arm-move {
+            0%,100% { transform: rotate(-18deg); }
+            50% { transform: rotate(8deg); }
+          }
+          @keyframes box-slide {
+            0% { transform: translateX(0px); opacity:1; }
+            70% { transform: translateX(54px); opacity:1; }
+            85%,100% { transform: translateX(64px); opacity:0; }
+          }
+          @keyframes belt-move {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -20; }
+          }
+          @keyframes spark {
+            0%,100% { opacity:0; transform: scale(0.5); }
+            50% { opacity:1; transform: scale(1); }
+          }
+          @keyframes label-blink {
+            0%,100% { opacity:0.3; }
+            50% { opacity:1; }
+          }
+          @keyframes float-up {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+          }
+          .robot-float { animation: float-up 2.4s ease-in-out infinite; }
+          .robot-arm { transform-origin: 12px 4px; animation: arm-move 1.1s ease-in-out infinite; }
+          .conveyor-dash { animation: belt-move 0.5s linear infinite; }
+          .box-anim { animation: box-slide 1.6s ease-in-out infinite; }
+          .spark1 { animation: spark 1.1s 0.1s ease-in-out infinite; }
+          .spark2 { animation: spark 1.1s 0.4s ease-in-out infinite; }
+          .label-anim { animation: label-blink 1.1s ease-in-out infinite; }
+          .dot1 { animation: spark 1.2s 0s ease-in-out infinite; }
+          .dot2 { animation: spark 1.2s 0.4s ease-in-out infinite; }
+          .dot3 { animation: spark 1.2s 0.8s ease-in-out infinite; }
+        `}</style>
+
+        <div className="robot-float">
+          <svg width="220" height="180" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            {/* conveyor belt */}
+            <rect x="30" y="132" width="160" height="14" rx="7" fill="#d4d0c8"/>
+            <line x1="30" y1="139" x2="190" y2="139" stroke="#bbb" strokeWidth="2" strokeDasharray="10 10" className="conveyor-dash"/>
+            <circle cx="37" cy="139" r="7" fill="#b0aca0"/>
+            <circle cx="183" cy="139" r="7" fill="#b0aca0"/>
+
+            {/* box on belt */}
+            <g className="box-anim">
+              <rect x="58" y="112" width="32" height="20" rx="3" fill="#FF8C35"/>
+              <rect x="58" y="112" width="32" height="7" rx="3" fill="#e07020"/>
+              {/* tape */}
+              <rect x="72" y="112" width="4" height="20" fill="rgba(255,255,255,0.35)"/>
+              <rect x="58" y="119" width="32" height="3" fill="rgba(255,255,255,0.25)"/>
+              {/* label */}
+              <rect x="62" y="122" width="18" height="7" rx="1" fill="white" opacity="0.9" className="label-anim"/>
+              <line x1="64" y1="125" x2="78" y2="125" stroke="#aaa" strokeWidth="1"/>
+              <line x1="64" y1="127" x2="75" y2="127" stroke="#aaa" strokeWidth="1"/>
+            </g>
+
+            {/* robot body */}
+            <rect x="88" y="52" width="52" height="58" rx="10" fill="#2d2d2d"/>
+            <rect x="92" y="56" width="44" height="50" rx="8" fill="#3a3a3a"/>
+
+            {/* robot screen */}
+            <rect x="97" y="62" width="34" height="22" rx="4" fill="#0a0a0a"/>
+            <rect x="99" y="64" width="30" height="18" rx="3" fill="#001a0a"/>
+            {/* screen glow lines */}
+            <line x1="101" y1="68" x2="127" y2="68" stroke="#2ecc71" strokeWidth="1.5" opacity="0.9"/>
+            <line x1="101" y1="72" x2="122" y2="72" stroke="#2ecc71" strokeWidth="1.5" opacity="0.7"/>
+            <line x1="101" y1="76" x2="119" y2="76" stroke="#2ecc71" strokeWidth="1" opacity="0.5"/>
+
+            {/* robot eyes / indicator */}
+            <circle cx="104" cy="90" r="4" fill="#FF8C35"/>
+            <circle cx="124" cy="90" r="4" fill="#FF8C35"/>
+            <circle cx="104" cy="90" r="2" fill="#fff" opacity="0.6"/>
+            <circle cx="124" cy="90" r="2" fill="#fff" opacity="0.6"/>
+
+            {/* robot head */}
+            <rect x="94" y="34" width="40" height="22" rx="8" fill="#2d2d2d"/>
+            <rect x="98" y="37" width="32" height="16" rx="6" fill="#3a3a3a"/>
+            {/* antenna */}
+            <line x1="114" y1="34" x2="114" y2="24" stroke="#555" strokeWidth="2"/>
+            <circle cx="114" cy="22" r="3" fill="#FF8C35" className="spark1"/>
+
+            {/* robot arm (printing arm) */}
+            <g className="robot-arm" style={{transformOrigin:'88px 80px'}}>
+              <rect x="66" y="76" width="24" height="8" rx="4" fill="#444"/>
+              <rect x="56" y="80" width="14" height="6" rx="3" fill="#555"/>
+              {/* print head */}
+              <rect x="46" y="83" width="12" height="8" rx="2" fill="#FF8C35"/>
+              <circle cx="52" cy="91" r="2" fill="#fff" opacity="0.8" className="spark2"/>
+            </g>
+
+            {/* right arm */}
+            <rect x="140" y="76" width="20" height="8" rx="4" fill="#444"/>
+            <rect x="158" y="79" width="10" height="5" rx="2" fill="#555"/>
+
+            {/* legs */}
+            <rect x="100" y="108" width="10" height="18" rx="4" fill="#2d2d2d"/>
+            <rect x="118" y="108" width="10" height="18" rx="4" fill="#2d2d2d"/>
+            <rect x="97" y="122" width="16" height="6" rx="3" fill="#222"/>
+            <rect x="115" y="122" width="16" height="6" rx="3" fill="#222"/>
+
+            {/* spark effects near print head */}
+            <circle cx="48" cy="86" r="2" fill="#FFD700" className="spark1"/>
+            <circle cx="56" cy="84" r="1.5" fill="#FFD700" className="spark2"/>
+          </svg>
+        </div>
+
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: '#555', marginTop: 8, letterSpacing: '0.02em' }}>
+          Fetching your orders
+          <span className="dot1" style={{ display:'inline-block', marginLeft:2 }}>.</span>
+          <span className="dot2" style={{ display:'inline-block' }}>.</span>
+          <span className="dot3" style={{ display:'inline-block' }}>.</span>
+        </p>
       </div>
     );
   }
