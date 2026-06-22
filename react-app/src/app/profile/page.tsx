@@ -134,6 +134,7 @@ export default function ProfilePage() {
 
   async function handleSignOut() {
     await signOut(auth);
+    localStorage.removeItem('kyzer_current_customer');
     window.location.href = '/';
   }
 

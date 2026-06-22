@@ -61,12 +61,19 @@ function LoginForm() {
   const recaptchaRef = useRef<HTMLDivElement>(null);
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
+  function syncToHomePage(user: { displayName: string | null; email: string | null; uid: string }) {
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Customer');
+    const email = user.email || '';
+    localStorage.setItem('kyzer_current_customer', JSON.stringify({ id: user.uid, name, email }));
+  }
+
   async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      syncToHomePage(cred.user);
       window.location.href = redirectTo;
     } catch (err: unknown) {
       setError(cleanFirebaseError(err instanceof Error ? err.message : 'Sign in failed'));
@@ -78,7 +85,8 @@ function LoginForm() {
   async function handleGoogleLogin() {
     setError('');
     try {
-      await signInWithPopup(auth, googleProvider);
+      const cred = await signInWithPopup(auth, googleProvider);
+      syncToHomePage(cred.user);
       window.location.href = redirectTo;
     } catch (err: unknown) {
       setError(cleanFirebaseError(err instanceof Error ? err.message : 'Google sign in failed'));
@@ -116,7 +124,8 @@ function LoginForm() {
     if (!confirmation) return;
     setLoading(true);
     try {
-      await confirmation.confirm(otp);
+      const otpCred = await confirmation.confirm(otp);
+      syncToHomePage(otpCred.user);
       window.location.href = redirectTo;
     } catch (err: unknown) {
       setError(cleanFirebaseError(err instanceof Error ? err.message : 'Invalid OTP'));
