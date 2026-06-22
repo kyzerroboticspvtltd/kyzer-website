@@ -1812,6 +1812,7 @@ function initAdmin() {
   loadOrders();
   renderOrders();
   renderDashboard();
+  refreshShopOrdersFromAPI();
   startRealtimePolling();
   requestNotificationPermission();
 
@@ -2164,7 +2165,7 @@ function switchTab(name) {
   if (name === 'dashboard') renderDashboard();
   if (name === 'security') initSecurity();
   if (name === 'orders') { renderOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseOrders(url,key); }
-  if (name === 'shoporders') { renderShopOrders(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
+  if (name === 'shoporders') { renderShopOrders(); refreshShopOrdersFromAPI(); const {url,key}=_sbCreds(); if(url&&key) _fetchAllSupabaseShopOrders(url,key); }
   if (name === 'customers') { _fetchSupabaseCustomers().then(() => renderCustomers()); }
   if (name === 'quotes') { loadQuoteInquiries(); }
   if (name === 'tickets') { loadTickets(); }
@@ -2314,6 +2315,32 @@ const SHOP_ORDER_STATUS_COLORS = {
 
 function loadShopOrders() {
   allShopOrders = JSON.parse(localStorage.getItem('kyzer_product_orders') || '[]');
+}
+
+// Fetches shop orders from the server API (uses admin token + service key on server).
+// Updates localStorage cache and re-renders when done.
+async function refreshShopOrdersFromAPI() {
+  try {
+    const token = localStorage.getItem('kyzer_admin_token') || '';
+    const r = await fetch('/api/admin-orders', { headers: { 'x-admin-token': token } });
+    if (!r.ok) return;
+    const d = await r.json();
+    const rows = (d.orders || [])
+      .filter(row => {
+        const t = (row.data && row.data.type) || row.type || '';
+        return t === 'shop' || t === 'cod' || t === '';
+      })
+      .map(row => ({
+        ...(row.data || {}),
+        id: row.id,
+        status: row.status || (row.data && row.data.status) || 'new',
+        submittedAt: row.submitted_at || (row.data && row.data.submittedAt) || row.created_at,
+      }));
+    rows.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+    localStorage.setItem('kyzer_product_orders', JSON.stringify(rows));
+    allShopOrders = rows;
+    renderShopOrders();
+  } catch(e) { console.warn('refreshShopOrdersFromAPI error:', e); }
 }
 
 function renderShopOrders() {
