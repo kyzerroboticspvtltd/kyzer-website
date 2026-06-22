@@ -51,16 +51,18 @@ export async function rateLimit(
 ): Promise<{ ok: boolean; retryAfterSecs: number }> {
   const rl = getUpstash();
   if (rl) {
-    // Upstash: create a per-call limiter using the key as identifier.
-    // We embed limit+window into a dedicated Ratelimit instance per unique config.
-    const perCallRl = new Ratelimit({
-      redis: (rl as unknown as { redis: Redis }).redis,
-      limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
-      prefix: 'kyzer:rl',
-    });
-    const { success, reset } = await perCallRl.limit(key);
-    const retryAfterSecs = success ? 0 : Math.ceil((reset - Date.now()) / 1000);
-    return { ok: success, retryAfterSecs };
+    try {
+      const perCallRl = new Ratelimit({
+        redis: (rl as unknown as { redis: Redis }).redis,
+        limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+        prefix: 'kyzer:rl',
+      });
+      const { success, reset } = await perCallRl.limit(key);
+      const retryAfterSecs = success ? 0 : Math.ceil((reset - Date.now()) / 1000);
+      return { ok: success, retryAfterSecs };
+    } catch (err) {
+      console.error('Upstash rateLimit error, falling back to in-memory:', err);
+    }
   }
   return inMemoryLimit(key, limit, windowMs);
 }
