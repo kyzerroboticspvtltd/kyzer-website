@@ -60,10 +60,17 @@ declare global {
   }
 }
 
+function isPuneAddress(city: string, pincode: string): boolean {
+  if (city.toLowerCase().includes('pune')) return true;
+  const pin = pincode.replace(/\D/g, '');
+  return pin.startsWith('410') || pin.startsWith('411') || pin.startsWith('412');
+}
+
 export default function PaymentPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [method, setMethod] = useState<'online' | 'cod'>('cod');
+  const [method, setMethod] = useState<'online' | 'cod'>('online');
   const [mounted, setMounted] = useState(false);
+  const [codAvailable, setCodAvailable] = useState(false);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -79,7 +86,12 @@ export default function PaymentPage() {
           const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
           if (checkoutRaw) {
             const parsed = JSON.parse(checkoutRaw);
-            if (parsed.paymentMethod) setMethod(parsed.paymentMethod);
+            const addr = parsed.address || {};
+            const pune = isPuneAddress(addr.city || '', addr.pincode || '');
+            setCodAvailable(pune);
+            if (parsed.paymentMethod === 'cod' && pune) setMethod('cod');
+            else if (parsed.paymentMethod === 'online') setMethod('online');
+            else setMethod(pune ? 'cod' : 'online');
           }
         } catch { /* ignore */ }
         setMounted(true);
@@ -127,34 +139,57 @@ export default function PaymentPage() {
           <div style={{ background: '#fff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', padding: '20px', marginBottom: 20 }}>
             <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: '#111', marginBottom: 16, letterSpacing: '0.04em' }}>How would you like to pay?</h3>
             <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-              {[
-                { key: 'online', label: '💳 Pay Online', sub: 'Card, UPI, Netbanking' },
-                { key: 'cod', label: '📦 Cash on Delivery', sub: 'Pay when delivered' },
-              ].map(opt => (
+              <button
+                onClick={() => setMethod('online')}
+                style={{
+                  flex: 1, padding: '14px 12px', borderRadius: 8, cursor: 'pointer',
+                  border: `2px solid ${method === 'online' ? '#FF8C35' : 'rgba(0,0,0,0.1)'}`,
+                  background: method === 'online' ? '#fff7f2' : '#fafaf9',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 600, color: method === 'online' ? '#FF8C35' : '#333' }}>💳 Pay Online</div>
+                <div style={{ fontSize: 11, color: '#888', marginTop: 3 }}>Card, UPI, Netbanking</div>
+              </button>
+
+              {codAvailable ? (
                 <button
-                  key={opt.key}
-                  onClick={() => setMethod(opt.key as 'online' | 'cod')}
+                  onClick={() => setMethod('cod')}
                   style={{
                     flex: 1, padding: '14px 12px', borderRadius: 8, cursor: 'pointer',
-                    border: `2px solid ${method === opt.key ? '#FF8C35' : 'rgba(0,0,0,0.1)'}`,
-                    background: method === opt.key ? '#fff7f2' : '#fafaf9',
+                    border: `2px solid ${method === 'cod' ? '#FF8C35' : 'rgba(0,0,0,0.1)'}`,
+                    background: method === 'cod' ? '#fff7f2' : '#fafaf9',
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 14, fontWeight: 600, color: method === opt.key ? '#FF8C35' : '#333' }}>{opt.label}</div>
-                  <div style={{ fontSize: 11, color: '#888', marginTop: 3 }}>{opt.sub}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: method === 'cod' ? '#FF8C35' : '#333' }}>📦 Cash on Delivery</div>
+                  <div style={{ fontSize: 11, color: '#888', marginTop: 3 }}>Pay when delivered</div>
                 </button>
-              ))}
+              ) : (
+                <div style={{
+                  flex: 1, padding: '14px 12px', borderRadius: 8,
+                  border: '2px solid rgba(0,0,0,0.06)',
+                  background: '#f5f5f5', textAlign: 'center', opacity: 0.6,
+                }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#999' }}>📦 Cash on Delivery</div>
+                  <div style={{ fontSize: 11, color: '#aaa', marginTop: 3 }}>Pune orders only</div>
+                </div>
+              )}
             </div>
 
-            {method === 'cod' && (
+            {!codAvailable && (
+              <div style={{ background: '#f8f8f6', borderRadius: 8, border: '1px solid #e0e0e0', padding: '10px 14px', fontSize: 12, color: '#888', marginBottom: 16 }}>
+                🚚 Cash on Delivery is available for <strong>Pune</strong> addresses only. Other cities require online payment.
+              </div>
+            )}
+            {method === 'cod' && codAvailable && (
               <div style={{ background: '#f8fff8', borderRadius: 8, border: '1px solid #c8eac8', padding: '12px 14px', fontSize: 13, color: '#2d7a2d', marginBottom: 16 }}>
                 Pay in cash when your order is delivered. No prepayment required.
               </div>
             )}
             {method === 'online' && (
               <div style={{ background: '#fff7ed', borderRadius: 8, border: '1px solid #ffd8a8', padding: '12px 14px', fontSize: 13, color: '#7c4a00', marginBottom: 16 }}>
-                <strong>Next:</strong> Enter your delivery address, then you&apos;ll be taken to <strong>Razorpay</strong> to complete payment securely.
+                <strong>Next:</strong> You&apos;ll be taken to <strong>Razorpay</strong> to complete payment securely.
               </div>
             )}
 
