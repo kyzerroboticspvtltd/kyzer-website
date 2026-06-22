@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -80,7 +79,7 @@ export function ShopFilters({
         </div>
 
         {/* Sort */}
-        <Select value={sort} onValueChange={onSortChange}>
+        <Select value={sort} onValueChange={(val) => val && onSortChange(val)}>
           <SelectTrigger className="w-44 h-10 bg-white border-black/10 text-[13px] rounded-xl">
             <SelectValue />
           </SelectTrigger>
@@ -93,10 +92,8 @@ export function ShopFilters({
 
         {/* Mobile filter toggle */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="lg:hidden h-10 px-3 border-black/10 rounded-xl">
-              <SlidersHorizontal className="w-4 h-4" />
-            </Button>
+          <SheetTrigger className="lg:hidden inline-flex items-center justify-center h-10 px-3 border border-black/10 rounded-xl bg-white hover:bg-gray-50 transition-colors">
+            <SlidersHorizontal className="w-4 h-4" />
           </SheetTrigger>
           <SheetContent side="left" className="w-64">
             <SheetHeader>
