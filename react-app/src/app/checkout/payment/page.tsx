@@ -60,8 +60,7 @@ declare global {
   }
 }
 
-function isPuneAddress(city: string, pincode: string): boolean {
-  if (city.toLowerCase().includes('pune')) return true;
+function isPuneAddress(_city: string, pincode: string): boolean {
   const pin = pincode.replace(/\D/g, '');
   return pin.startsWith('410') || pin.startsWith('411') || pin.startsWith('412');
 }
