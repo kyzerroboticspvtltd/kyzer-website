@@ -3,6 +3,10 @@ import "./globals.css";
 import Footer from "./_components/Footer";
 import ChatBot from "./_components/ChatBot";
 import PageTransition from "./_components/PageTransition";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -168,7 +172,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={cn("font-sans", geist.variable)}>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
