@@ -26,8 +26,9 @@ function addToCart(product: { id: string; name: string; price: number; emoji: st
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
-  const product = getProductBySlug(slug)
-  if (!product) notFound()
+  const productResult = getProductBySlug(slug)
+  if (!productResult) notFound()
+  const product = productResult!
 
   const category = CATEGORIES.find(c => c.id === product.category)
   const related = getProductsByCategory(product.category).filter(p => p.slug !== slug).slice(0, 4)
