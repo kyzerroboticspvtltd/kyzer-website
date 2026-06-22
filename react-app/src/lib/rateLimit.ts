@@ -11,11 +11,16 @@ function getUpstash(): Ratelimit | null {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
-  upstash = new Ratelimit({
-    redis: new Redis({ url, token }),
-    limiter: Ratelimit.slidingWindow(1, '1 s'), // overridden per call via identifier
-    prefix: 'kyzer:rl',
-  });
+  try {
+    upstash = new Ratelimit({
+      redis: new Redis({ url, token }),
+      limiter: Ratelimit.slidingWindow(1, '1 s'),
+      prefix: 'kyzer:rl',
+    });
+  } catch (err) {
+    console.error('Upstash init error, rate limiting will use in-memory fallback:', err);
+    return null;
+  }
   return upstash;
 }
 
