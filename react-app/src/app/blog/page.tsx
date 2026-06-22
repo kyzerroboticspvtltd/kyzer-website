@@ -36,7 +36,7 @@ const POSTS = [
   },
   {
     slug: 'kicad-pcb-design-beginners',
-    title: 'PCB Design in KiCad: A Practical Beginner\'s Guide',
+    title: "PCB Design in KiCad: A Practical Beginner's Guide",
     date: '2025-09-01',
     category: 'Electronics',
     readTime: '15 min',
@@ -78,7 +78,6 @@ export default function BlogPage() {
           Guides, builds, and technical deep-dives from our team in Pune. No fluff — real engineering content.
         </p>
 
-        {/* Category filters */}
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 48 }}>
           {['All', 'FPV Drones', '3D Printing', 'Robotics', 'Electronics', 'Automation', 'Agriculture'].map(cat => (
             <span key={cat} style={{
@@ -87,21 +86,17 @@ export default function BlogPage() {
               color: cat === 'All' ? '#000' : '#666',
               border: '1px solid',
               borderColor: cat === 'All' ? '#FF8C35' : '#222',
-              cursor: 'pointer',
             }}>{cat}</span>
           ))}
         </div>
 
-        {/* Posts grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
           {POSTS.map((post, i) => (
             <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
               <article style={{
                 background: '#111', border: '1px solid #1e1e1e', borderRadius: 16,
-                padding: 28, height: '100%', transition: 'border-color .2s', cursor: 'pointer',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#FF8C35')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#1e1e1e')}>
+                padding: 28, height: '100%', cursor: 'pointer',
+              }}>
                 {i === 0 && (
                   <span style={{ fontSize: 10, background: '#FF8C35', color: '#000', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 16, display: 'inline-block' }}>
                     LATEST
@@ -123,7 +118,6 @@ export default function BlogPage() {
           ))}
         </div>
 
-        {/* CTA */}
         <div style={{ marginTop: 80, padding: '40px', background: '#111', borderRadius: 16, border: '1px solid #1e1e1e', textAlign: 'center' }}>
           <p style={{ color: '#888', marginBottom: 16 }}>Want us to write about a specific topic? Drop us a message.</p>
           <a href="mailto:info@kyzerrobotics.com?subject=Blog%20topic%20suggestion" style={{

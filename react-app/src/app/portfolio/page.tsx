@@ -171,8 +171,6 @@ export default function PortfolioPage() {
                 overflow: 'hidden', display: 'flex', flexDirection: 'column',
                 transition: 'transform 0.25s, border-color 0.25s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = p.accent + '55' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)' }}
             >
               {/* Header band */}
               <div style={{ background: p.accent + '18', borderBottom: `1px solid ${p.accent}33`, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
