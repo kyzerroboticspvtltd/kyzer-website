@@ -118,7 +118,7 @@ const CATEGORIES = ['All', 'Drones', '3D Printing', 'Robotics', 'Automation', 'P
 
 export default function PortfolioPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#0f0f0f', fontFamily: "'DM Sans', sans-serif", color: '#e8e8e8' }}>
+    <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
       {/* Nav */}
@@ -127,8 +127,8 @@ export default function PortfolioPage() {
           KYZER <span style={{ fontSize: 10, color: '#fff', letterSpacing: '0.2em' }}>ROBOTICS</span>
         </Link>
         <div style={{ display: 'flex', gap: 24, fontSize: 13 }}>
-          <Link href="/shop" style={{ color: '#aaa', textDecoration: 'none' }}>Shop</Link>
-          <Link href="/services/3d-printing" style={{ color: '#aaa', textDecoration: 'none' }}>Services</Link>
+          <Link href="/shop" style={{ color: '#666', textDecoration: 'none' }}>Shop</Link>
+          <Link href="/services/3d-printing" style={{ color: '#666', textDecoration: 'none' }}>Services</Link>
           <Link href="/get-a-quote" style={{ color: '#FF8C35', fontWeight: 600, textDecoration: 'none' }}>Get a Quote →</Link>
         </div>
       </nav>
@@ -141,7 +141,7 @@ export default function PortfolioPage() {
         <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(48px, 8vw, 96px)', color: '#fff', margin: '0 0 20px', letterSpacing: '0.03em', lineHeight: 0.95 }}>
           WHAT WE&apos;VE<br /><span style={{ color: '#FF8C35' }}>BUILT</span>
         </h1>
-        <p style={{ fontSize: 17, color: '#888', maxWidth: 560, margin: '0 auto 40px' }}>
+        <p style={{ fontSize: 17, color: '#666', maxWidth: 560, margin: '0 auto 40px' }}>
           From FPV race drones to industrial automation — every project shipped from our Pune workshop.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -200,7 +200,7 @@ export default function PortfolioPage() {
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#555', letterSpacing: '0.08em', marginBottom: 8 }}>TECH STACK</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {p.tech.map(t => (
-                      <span key={t} style={{ fontSize: 11, color: '#aaa', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', padding: '3px 8px', borderRadius: 4 }}>{t}</span>
+                      <span key={t} style={{ fontSize: 11, color: '#666', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', padding: '3px 8px', borderRadius: 4 }}>{t}</span>
                     ))}
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function PortfolioPage() {
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(36px, 5vw, 56px)', color: '#fff', margin: '0 0 16px', letterSpacing: '0.04em' }}>
             GOT A PROJECT IN MIND?
           </h2>
-          <p style={{ fontSize: 16, color: '#888', margin: '0 auto 32px', maxWidth: 480 }}>
+          <p style={{ fontSize: 16, color: '#666', margin: '0 auto 32px', maxWidth: 480 }}>
             Tell us what you&apos;re building. We&apos;ll get back with a detailed quote within 24 hours.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>

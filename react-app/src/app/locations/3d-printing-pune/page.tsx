@@ -16,7 +16,7 @@ const FAQS = [
 
 export default function Page() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 16 }}>
@@ -26,13 +26,13 @@ export default function Page() {
           3D Printing Services in Pune<br />
           <span style={{ color: '#FF8C35' }}>48-Hour Turnaround</span>
         </h1>
-        <p style={{ color: '#aaa', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
+        <p style={{ color: '#888', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
           Kyzer Robotics is Pune&apos;s go-to 3D printing service for engineers, students, startups, and manufacturers. We print in PLA, PETG, ABS, TPU, Nylon, and Carbon Fibre composites — and deliver in 48 hours.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 60 }}>
           <a href="/get-a-quote" style={{ padding: '14px 28px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Get a Free Quote</a>
-          <a href="https://wa.me/919049695264" target="_blank" rel="noopener" style={{ padding: '14px 28px', background: '#111', color: '#fff', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>WhatsApp Us</a>
+          <a href="https://wa.me/919049695264" target="_blank" rel="noopener" style={{ padding: '14px 28px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>WhatsApp Us</a>
         </div>
 
         {/* Why Kyzer */}
@@ -44,10 +44,10 @@ export default function Page() {
             { icon: '📍', title: 'Pune Based', desc: 'Workshop in Ambegaon Pathar. Pickup available, or ship nationwide.' },
             { icon: '💰', title: 'Competitive Pricing', desc: 'Honest pricing per gram. Free quote in 2 hours. No hidden charges.' },
           ].map(f => (
-            <div key={f.title} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: 24 }}>
+            <div key={f.title} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
               <p style={{ fontWeight: 700, marginBottom: 6 }}>{f.title}</p>
-              <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
+              <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -56,7 +56,7 @@ export default function Page() {
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Frequently Asked Questions</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 60 }}>
           {FAQS.map(faq => (
-            <div key={faq.q} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: '20px 24px' }}>
+            <div key={faq.q} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '20px 24px' }}>
               <p style={{ fontWeight: 700, marginBottom: 8 }}>{faq.q}</p>
               <p style={{ color: '#888', fontSize: 14, lineHeight: 1.7 }}>{faq.a}</p>
             </div>

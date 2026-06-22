@@ -27,7 +27,7 @@ const INFO = [
 
 export default function Page() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#e74c3c', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 16 }}>
@@ -37,29 +37,29 @@ export default function Page() {
           Robotics Company in Pune —<br />
           <span style={{ color: '#e74c3c' }}>Kyzer Robotics</span>
         </h1>
-        <p style={{ color: '#aaa', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
+        <p style={{ color: '#888', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
           Kyzer Robotics Pvt. Ltd. is a Pune-based robotics company specialising in custom robotic arms, autonomous ground vehicles, AI-integrated robotics, industrial automation, drone development, and rapid prototyping. We serve students, startups, research labs, and manufacturers across India.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 60 }}>
           <a href="/consultation" style={{ padding: '14px 28px', background: '#e74c3c', color: '#fff', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Talk to Our Team</a>
-          <a href="/about" style={{ padding: '14px 28px', background: '#111', color: '#fff', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>About Kyzer →</a>
+          <a href="/about" style={{ padding: '14px 28px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>About Kyzer →</a>
         </div>
 
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>What We Do</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16, marginBottom: 60 }}>
           {SERVICES.map(f => (
             <a key={f.title} href={f.href} style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: 24, height: '100%' }}>
+              <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24, height: '100%' }}>
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
                 <p style={{ fontWeight: 700, marginBottom: 6, color: '#fff' }}>{f.title}</p>
-                <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
+                <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</p>
               </div>
             </a>
           ))}
         </div>
 
-        <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '32px 40px', marginBottom: 60 }}>
+        <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 16, padding: '32px 40px', marginBottom: 60 }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20 }}>Kyzer Robotics — Company Info</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 24 }}>
             {INFO.map(i => (

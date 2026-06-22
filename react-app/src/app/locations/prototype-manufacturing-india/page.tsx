@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#9b59b6', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 16 }}>
@@ -19,13 +19,13 @@ export default function Page() {
           Prototype Manufacturing in India —<br />
           <span style={{ color: '#9b59b6' }}>48-Hour Delivery Nationwide</span>
         </h1>
-        <p style={{ color: '#aaa', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
+        <p style={{ color: '#888', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
           Kyzer Robotics manufactures hardware prototypes from our Pune workshop and ships them anywhere in India within 48–72 hours. 3D printed parts, PCB prototypes, assembled electronics, and mechanical assemblies — all from a single team.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 60 }}>
           <a href="/get-a-quote" style={{ padding: '14px 28px', background: '#9b59b6', color: '#fff', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Start a Prototype</a>
-          <a href="/consultation" style={{ padding: '14px 28px', background: '#111', color: '#fff', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>Book a Consultation</a>
+          <a href="/consultation" style={{ padding: '14px 28px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>Book a Consultation</a>
         </div>
 
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>What We Prototype</h2>
@@ -38,10 +38,10 @@ export default function Page() {
             { icon: '🚁', title: 'Drone Frames & Parts', desc: 'Custom drone frames, mounts, and camera rigs printed in CF-PLA or Nylon.' },
             { icon: '💡', title: 'Hardware Startups', desc: 'End-to-end prototype for hardware startups — mechanical + electronics + firmware.' },
           ].map(f => (
-            <div key={f.title} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: 24 }}>
+            <div key={f.title} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
               <p style={{ fontWeight: 700, marginBottom: 6 }}>{f.title}</p>
-              <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
+              <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</p>
             </div>
           ))}
         </div>

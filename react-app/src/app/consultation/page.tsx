@@ -37,7 +37,7 @@ const STEPS = [
 
 export default function ConsultationPage() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 20 }}>
@@ -46,7 +46,7 @@ export default function ConsultationPage() {
         <h1 style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 'clamp(2.2rem,5vw,3.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: 20 }}>
           LET&apos;S TALK ABOUT<br /><span style={{ color: '#FF8C35' }}>YOUR PROJECT</span>
         </h1>
-        <p style={{ color: '#aaa', fontSize: 18, maxWidth: 600, lineHeight: 1.7, marginBottom: 60 }}>
+        <p style={{ color: '#888', fontSize: 18, maxWidth: 600, lineHeight: 1.7, marginBottom: 60 }}>
           Book a free 30-minute call with our engineering team. We&apos;ll understand your requirements, suggest the right approach, and give you an honest assessment — no pressure, no sales pitch.
         </p>
 
@@ -58,7 +58,7 @@ export default function ConsultationPage() {
               {OPTIONS.map(opt => (
                 <a key={opt.title} href={opt.href} target={opt.href.startsWith('http') ? '_blank' : undefined} rel="noopener"
                    style={{ textDecoration: 'none' }}>
-                  <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                  <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <span style={{ fontSize: 28 }}>{opt.icon}</span>
                     <div>
                       <p style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>{opt.title}</p>
@@ -83,13 +83,13 @@ export default function ConsultationPage() {
                   }}>{s.step}</div>
                   <div>
                     <p style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.title}</p>
-                    <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{s.desc}</p>
+                    <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{s.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: 24 }}>
+            <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24 }}>
               <p style={{ fontSize: 13, fontWeight: 700, color: '#FF8C35', letterSpacing: '0.1em', marginBottom: 16 }}>WHY KYZER ROBOTICS?</p>
               {[
                 '✓ 50+ projects delivered across drones, robotics, and electronics',
@@ -98,7 +98,7 @@ export default function ConsultationPage() {
                 '✓ Student and startup friendly pricing',
                 '✓ No ghost work — you own all source files and CAD',
               ].map(item => (
-                <p key={item} style={{ fontSize: 13, color: '#aaa', marginBottom: 10, lineHeight: 1.5 }}>{item}</p>
+                <p key={item} style={{ fontSize: 13, color: '#888', marginBottom: 10, lineHeight: 1.5 }}>{item}</p>
               ))}
             </div>
           </div>

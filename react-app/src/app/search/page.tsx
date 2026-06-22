@@ -23,7 +23,7 @@ export default function SearchPage() {
   }, [query, selectedCategory])
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px 100px' }}>
         <h1 style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
           SEARCH
@@ -49,7 +49,7 @@ export default function SearchPage() {
             onChange={e => setSelectedCategory(e.target.value)}
             style={{
               padding: '14px 16px', fontSize: 14, background: '#111',
-              border: '1px solid #222', borderRadius: 8, color: '#aaa',
+              border: '1px solid #222', borderRadius: 8, color: '#888',
             }}
           >
             <option value="all">All categories</option>
@@ -72,7 +72,7 @@ export default function SearchPage() {
             {results.map(p => (
               <Link key={p.id} href={`/shop/product/${p.slug}`} style={{ textDecoration: 'none' }}>
                 <div style={{
-                  background: '#111', border: '1px solid #1e1e1e', borderRadius: 12,
+                  background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12,
                   padding: 20, transition: 'border-color .2s',
                   cursor: 'pointer',
                 }} onMouseEnter={e => (e.currentTarget.style.borderColor = '#FF8C35')}
@@ -110,7 +110,7 @@ export default function SearchPage() {
               {['Arduino', 'Flight controller', 'FPV motor', 'LiPo battery', '3D printer', 'Raspberry Pi', 'ESC', 'Servo'].map(t => (
                 <button key={t} onClick={() => setQuery(t)} style={{
                   padding: '8px 16px', background: '#111', border: '1px solid #222',
-                  borderRadius: 20, color: '#aaa', fontSize: 13, cursor: 'pointer',
+                  borderRadius: 20, color: '#888', fontSize: 13, cursor: 'pointer',
                 }}>
                   {t}
                 </button>

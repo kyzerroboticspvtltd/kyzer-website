@@ -16,7 +16,7 @@ const FAQS = [
 
 export default function Page() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#3498db', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 16 }}>
@@ -26,13 +26,13 @@ export default function Page() {
           Drone Development &amp; Manufacturing<br />
           <span style={{ color: '#3498db' }}>in Pune, India</span>
         </h1>
-        <p style={{ color: '#aaa', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
+        <p style={{ color: '#888', fontSize: 18, maxWidth: 680, lineHeight: 1.8, marginBottom: 40 }}>
           Kyzer Robotics is a Pune-based custom drone manufacturer. We build FPV drones, agricultural sprayers, survey UAVs, and custom payload platforms — fully designed, assembled, tuned, and tested at our Pune workshop.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 60 }}>
           <a href="/consultation" style={{ padding: '14px 28px', background: '#3498db', color: '#fff', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Free Consultation</a>
-          <a href="https://wa.me/919049695264" target="_blank" rel="noopener" style={{ padding: '14px 28px', background: '#111', color: '#fff', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>WhatsApp Us</a>
+          <a href="https://wa.me/919049695264" target="_blank" rel="noopener" style={{ padding: '14px 28px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>WhatsApp Us</a>
         </div>
 
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Drone Types We Build in Pune</h2>
@@ -43,10 +43,10 @@ export default function Page() {
             { icon: '📡', title: 'Survey UAVs', desc: 'Mapping drones with RTK GPS, 4K gimbal, and Mission Planner integration.' },
             { icon: '👁️', title: 'Surveillance Drones', desc: 'Long-endurance thermal and optical payload drones for inspection and monitoring.' },
           ].map(f => (
-            <div key={f.title} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: 24 }}>
+            <div key={f.title} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
               <p style={{ fontWeight: 700, marginBottom: 6 }}>{f.title}</p>
-              <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
+              <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -54,7 +54,7 @@ export default function Page() {
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Frequently Asked Questions</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 60 }}>
           {FAQS.map(faq => (
-            <div key={faq.q} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: '20px 24px' }}>
+            <div key={faq.q} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '20px 24px' }}>
               <p style={{ fontWeight: 700, marginBottom: 8 }}>{faq.q}</p>
               <p style={{ color: '#888', fontSize: 14, lineHeight: 1.7 }}>{faq.a}</p>
             </div>

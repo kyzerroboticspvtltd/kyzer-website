@@ -26,7 +26,7 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '80px' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px 120px' }}>
 
         {/* Header */}
@@ -36,7 +36,7 @@ export default function AboutPage() {
         <h1 style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 'clamp(2.5rem,6vw,4rem)', fontWeight: 800, lineHeight: 1.05, marginBottom: 30, letterSpacing: '-0.03em' }}>
           WE BUILD THE<br /><span style={{ color: '#FF8C35' }}>FUTURE OF</span><br />ENGINEERING
         </h1>
-        <p style={{ color: '#aaa', fontSize: 20, maxWidth: 620, lineHeight: 1.8, marginBottom: 80 }}>
+        <p style={{ color: '#888', fontSize: 20, maxWidth: 620, lineHeight: 1.8, marginBottom: 80 }}>
           Kyzer Robotics Pvt. Ltd. is a Pune-based engineering company founded by engineers passionate about drones, robotics, and advanced manufacturing. We build custom solutions — fast, honestly priced, and made in India.
         </p>
 
@@ -48,7 +48,7 @@ export default function AboutPage() {
             { v: '2023', l: 'Founded' },
             { v: 'Pune', l: 'India' },
           ].map(s => (
-            <div key={s.l} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '28px 20px', textAlign: 'center' }}>
+            <div key={s.l} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 16, padding: '28px 20px', textAlign: 'center' }}>
               <p style={{ fontFamily: 'monospace', fontSize: 36, fontWeight: 800, color: '#FF8C35', marginBottom: 8 }}>{s.v}</p>
               <p style={{ color: '#666', fontSize: 13 }}>{s.l}</p>
             </div>
@@ -71,10 +71,10 @@ export default function AboutPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {VALUES.map(v => (
-              <div key={v.title} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 12, padding: '24px 20px' }}>
+              <div key={v.title} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '24px 20px' }}>
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{v.icon}</div>
                 <p style={{ fontWeight: 700, marginBottom: 6, fontSize: 15 }}>{v.title}</p>
-                <p style={{ fontSize: 12, color: '#666', lineHeight: 1.6 }}>{v.desc}</p>
+                <p style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>{v.desc}</p>
               </div>
             ))}
           </div>
@@ -86,7 +86,7 @@ export default function AboutPage() {
           <h2 style={{ fontSize: 'clamp(1.8rem,4vw,2.5rem)', fontWeight: 800, marginBottom: 48 }}>Built by engineers,<br />for engineers</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
             {TEAM.map(member => (
-              <div key={member.name} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 20, padding: '36px 28px' }}>
+              <div key={member.name} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 20, padding: '36px 28px' }}>
                 <div style={{ width: 72, height: 72, background: '#1a1a1a', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, marginBottom: 20 }}>
                   {member.emoji}
                 </div>
@@ -113,7 +113,7 @@ export default function AboutPage() {
         </div>
 
         {/* Location */}
-        <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 20, padding: '48px 40px', marginBottom: 60 }}>
+        <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 20, padding: '48px 40px', marginBottom: 60 }}>
           <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.15em', marginBottom: 16 }}>WHERE WE ARE</p>
           <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>Pune, Maharashtra, India</h2>
           <p style={{ color: '#888', lineHeight: 1.8, maxWidth: 560, marginBottom: 32 }}>
@@ -121,7 +121,7 @@ export default function AboutPage() {
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="/contact" style={{ padding: '12px 24px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Contact Us</a>
-            <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style={{ padding: '12px 24px', background: 'transparent', color: '#aaa', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #333' }}>
+            <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style={{ padding: '12px 24px', background: 'transparent', color: '#888', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #333' }}>
               View on Maps →
             </a>
           </div>
@@ -133,7 +133,7 @@ export default function AboutPage() {
           <p style={{ color: '#888', marginBottom: 28 }}>Prototype to production — we&apos;ll build it with you.</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a href="/get-a-quote" style={{ padding: '14px 32px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Get a Quote →</a>
-            <a href="/portfolio" style={{ padding: '14px 32px', background: '#111', color: '#fff', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>See Our Work</a>
+            <a href="/portfolio" style={{ padding: '14px 32px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>See Our Work</a>
           </div>
         </div>
       </div>
