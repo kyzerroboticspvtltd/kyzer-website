@@ -2322,7 +2322,7 @@ function loadShopOrders() {
 async function refreshShopOrdersFromAPI() {
   try {
     const token = localStorage.getItem('kyzer_admin_token') || '';
-    const r = await fetch('/api/admin-orders', { headers: { 'x-admin-token': token } });
+    const r = await fetch('/api/admin-orders', { headers: { 'Authorization': 'Bearer ' + token, 'x-admin-token': token } });
     if (!r.ok) return;
     const d = await r.json();
     const rows = (d.orders || [])
