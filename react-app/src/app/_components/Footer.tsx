@@ -1,6 +1,31 @@
 export default function Footer() {
   return (
     <footer style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      {/* Trust badges strip */}
+      <div style={{
+        background: '#0d0d0d', borderTop: '1px solid #1a1a1a', borderBottom: '1px solid #1a1a1a',
+        padding: '16px 20px',
+      }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', justifyContent: 'center' }}>
+          {[
+            { icon: '🔒', label: 'Secure Payments', sub: 'Powered by Razorpay' },
+            { icon: '🚚', label: 'Pan-India Shipping', sub: 'Blue Dart · Delhivery' },
+            { icon: '📦', label: '48hr 3D Print Turnaround', sub: 'Pune workshop' },
+            { icon: '✅', label: 'Genuine Parts', sub: '100% authentic components' },
+            { icon: '🤝', label: 'After-Sales Support', sub: 'WhatsApp · Email · Phone' },
+            { icon: '🏭', label: 'Made in India', sub: 'Designed & built in Pune' },
+          ].map(b => (
+            <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 20 }}>{b.icon}</span>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#ddd', margin: 0, lineHeight: 1.2 }}>{b.label}</p>
+                <p style={{ fontSize: 10, color: '#555', margin: 0 }}>{b.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="footer-main">
         <div className="footer-brand">
           <a href="/" className="footer-logo-row">
@@ -24,11 +49,25 @@ export default function Footer() {
           <a href="/shop/electronics">Electronics</a>
           <a href="/shop/3d-printing">3D Printing</a>
           <a href="/shop/printers-supplies">Printers &amp; Supplies</a>
+          <a href="/search">Search Products</a>
+        </div>
+
+        <div className="footer-col">
+          <h4>Services</h4>
+          <a href="/services/3d-printing">3D Printing</a>
+          <a href="/services/drone-development">Drone Development</a>
+          <a href="/services/pcb-design">PCB Design</a>
+          <a href="/services/robotics-solutions">Robotics Solutions</a>
+          <a href="/services/industrial-automation">Industrial Automation</a>
+          <a href="/services/prototyping">Rapid Prototyping</a>
+          <a href="/consultation">Free Consultation</a>
         </div>
 
         <div className="footer-col">
           <h4>Company</h4>
           <a href="/about">About Us</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/blog">Blog</a>
           <a href="/contact">Contact Us</a>
           <a href="/pricing">Product Pricing</a>
           <a href="/get-a-quote">Get a 3D Quote</a>
@@ -46,7 +85,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p className="footer-copy">© 2026 Kyzer Robotics Pvt. Ltd. — All Rights Reserved</p>
+        <p className="footer-copy">© 2026 Kyzer Robotics Pvt. Ltd. — All Rights Reserved · Made with ❤️ in Pune, India</p>
         <div className="footer-social">
           <a href="https://www.instagram.com/kyzer.robotics" target="_blank" rel="noopener" aria-label="Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>
