@@ -17,17 +17,6 @@ async function probe(url: string, init?: RequestInit): Promise<{ status: number;
 export async function GET(req: NextRequest) {
   const results: Record<string, { ok: boolean; status: number; detail: string; ms: number }> = {};
 
-  // analytics
-  const analytics = await probe(`${BASE}/api/analytics`);
-  results.analytics = {
-    ok: analytics.status === 200,
-    status: analytics.status,
-    detail: analytics.status === 200
-      ? `Online · ${(analytics.body as Record<string,unknown>)?.total ?? '?'} visits`
-      : `HTTP ${analytics.status || 'timeout'}`,
-    ms: analytics.ms,
-  };
-
   // my-orders — no token → must 401
   const mo1 = await probe(`${BASE}/api/my-orders`);
   results.myorders_unauthed = {

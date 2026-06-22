@@ -618,11 +618,6 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
             <div class="dash-kpi-num" id="dk-newcust">0</div>
             <div class="dash-kpi-sub">in range</div>
           </div>
-          <div class="dash-kpi">
-            <div class="dash-kpi-label">Site Visits</div>
-            <div class="dash-kpi-num" id="dk-visits">—</div>
-            <div class="dash-kpi-sub" id="dk-visits-sub">loading…</div>
-          </div>
         </div>
 
         <!-- Revenue trend + top products -->
@@ -2225,24 +2220,6 @@ function renderDashboard() {
   document.getElementById('dk-cust-total').textContent = customers.length;
   document.getElementById('dk-cust-today').textContent = customers.filter(c => c.createdAt && new Date(c.createdAt).toDateString() === todayStr).length;
   document.getElementById('dk-cust-orders').textContent = customers.filter(c => shopOrds.some(o => o.email === c.email) || printOrds.some(o => o.email === c.email)).length;
-
-  // Fetch site visit counts from our analytics API
-  fetch('/api/analytics').then(r => r.json()).then(d => {
-    const visitsEl = document.getElementById('dk-visits');
-    const visitsSub = document.getElementById('dk-visits-sub');
-    if (!visitsEl) return;
-    const count = dashRange === 'today' ? d.today
-                : dashRange === '7d'    ? d.week
-                : d.total;
-    const label = dashRange === 'today' ? 'today'
-                : dashRange === '7d'    ? 'last 7 days'
-                : 'all time';
-    visitsEl.textContent = (count || 0).toLocaleString('en-IN');
-    if (visitsSub) visitsSub.textContent = label;
-  }).catch(() => {
-    const el = document.getElementById('dk-visits');
-    if (el) el.textContent = '—';
-  });
 
   _renderRevenueChart(allOrd);
   _renderTopProducts(shopOrds, printOrds, inRange);

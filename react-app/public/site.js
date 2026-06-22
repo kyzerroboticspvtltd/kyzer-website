@@ -2199,11 +2199,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     gtag('js', new Date()); gtag('config', gid);
   })();
 
-  // ── VISIT COUNTER ──
-  (function trackVisit() {
-    fetch('/api/track-visit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ page: location.pathname }) }).catch(()=>{});
-  })();
-
   // Apply local data first (instant)
   applyAdminStorage();
   upgradeStaticCards();

@@ -5561,12 +5561,6 @@ window._OrbitControls = OrbitControls;
     }
   })();
 
-  // ── VISIT COUNTER ──
-  (function trackVisit() {
-    const bu = (localStorage.getItem('kyzer_backend_url') || '').replace(/\/$/,'');
-    if (!bu) return;
-    fetch(bu + '/api/track-visit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ page: location.pathname }) }).catch(()=>{});
-  })();
 
   // Apply local data first (instant)
   applyAdminStorage();
