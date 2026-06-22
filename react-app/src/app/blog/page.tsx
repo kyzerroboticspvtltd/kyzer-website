@@ -65,16 +65,16 @@ const POSTS = [
 
 export default function BlogPage() {
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '100px', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '100px', fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#FF8C35', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.15em', marginBottom: 16 }}>
           // KYZER ROBOTICS BLOG
         </p>
-        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2.5rem,6vw,4rem)', fontWeight: 400, letterSpacing: '0.04em', marginBottom: 16, lineHeight: 1 }}>
+        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2.5rem,6vw,4rem)', fontWeight: 400, letterSpacing: '0.04em', marginBottom: 16, lineHeight: 1, color: '#111' }}>
           ENGINEERING INSIGHTS
         </h1>
-        <p style={{ color: '#666', maxWidth: 500, lineHeight: 1.8, marginBottom: 52, fontSize: 15 }}>
+        <p style={{ color: '#888', maxWidth: 500, lineHeight: 1.8, marginBottom: 52, fontSize: 15 }}>
           Guides, builds, and technical deep-dives from our team in Pune. No fluff — real engineering content.
         </p>
 
@@ -83,9 +83,9 @@ export default function BlogPage() {
             <span key={cat} style={{
               padding: '6px 16px', borderRadius: 20, fontSize: 12, fontWeight: 500,
               background: cat === 'All' ? '#FF8C35' : 'transparent',
-              color: cat === 'All' ? '#000' : '#555',
+              color: cat === 'All' ? '#fff' : '#888',
               border: '1px solid',
-              borderColor: cat === 'All' ? '#FF8C35' : '#222',
+              borderColor: cat === 'All' ? '#FF8C35' : '#ddd',
               cursor: 'default',
             }}>{cat}</span>
           ))}
@@ -95,36 +95,37 @@ export default function BlogPage() {
           {POSTS.map((post, i) => (
             <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
               <article style={{
-                background: '#111', border: '1px solid #1e1e1e', borderRadius: 14,
+                background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 14,
                 padding: '28px', height: '100%', display: 'flex', flexDirection: 'column',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
               }}>
                 {i === 0 && (
-                  <span style={{ fontSize: 10, background: '#FF8C35', color: '#000', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: '0.1em', marginBottom: 16, display: 'inline-block', width: 'fit-content', fontFamily: "'JetBrains Mono', monospace" }}>
+                  <span style={{ fontSize: 10, background: '#FF8C35', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: '0.1em', marginBottom: 16, display: 'inline-block', width: 'fit-content', fontFamily: "'JetBrains Mono', monospace" }}>
                     LATEST
                   </span>
                 )}
                 <div style={{ fontSize: 32, marginBottom: 16 }}>{post.emoji}</div>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 11, color: '#FF8C35', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{post.category}</span>
-                  <span style={{ color: '#333' }}>·</span>
-                  <span style={{ fontSize: 11, color: '#444' }}>{post.readTime} read</span>
-                  <span style={{ color: '#333' }}>·</span>
-                  <span style={{ fontSize: 11, color: '#444' }}>{new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  <span style={{ color: '#ccc' }}>·</span>
+                  <span style={{ fontSize: 11, color: '#aaa' }}>{post.readTime} read</span>
+                  <span style={{ color: '#ccc' }}>·</span>
+                  <span style={{ fontSize: 11, color: '#aaa' }}>{new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                 </div>
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8e8e8', lineHeight: 1.45, marginBottom: 10, flex: 1 }}>{post.title}</h2>
-                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>{post.excerpt}</p>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#111', lineHeight: 1.45, marginBottom: 10, flex: 1 }}>{post.title}</h2>
+                <p style={{ fontSize: 13, color: '#888', lineHeight: 1.75, marginBottom: 20 }}>{post.excerpt}</p>
                 <span style={{ fontSize: 13, color: '#FF8C35', fontWeight: 600 }}>Read article →</span>
               </article>
             </Link>
           ))}
         </div>
 
-        <div style={{ marginTop: 72, padding: '40px', background: '#111', borderRadius: 14, border: '1px solid #1e1e1e', textAlign: 'center' }}>
-          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#fff', marginBottom: 8 }}>SUGGEST A TOPIC</p>
-          <p style={{ color: '#555', marginBottom: 20, fontSize: 14 }}>Want us to write about something specific? Drop us a message.</p>
+        <div style={{ marginTop: 72, padding: '40px', background: '#fff', borderRadius: 14, border: '1px solid rgba(0,0,0,0.08)', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#111', marginBottom: 8 }}>SUGGEST A TOPIC</p>
+          <p style={{ color: '#888', marginBottom: 20, fontSize: 14 }}>Want us to write about something specific? Drop us a message.</p>
           <a href="mailto:info@kyzerrobotics.com?subject=Blog%20topic%20suggestion" style={{
             display: 'inline-block', padding: '12px 28px', background: '#FF8C35',
-            color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14,
+            color: '#fff', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14,
           }}>Send suggestion</a>
         </div>
       </div>

@@ -134,29 +134,29 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const dateStr = new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: '100px', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '100px', fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '48px 20px 100px' }}>
 
         {/* Back */}
-        <Link href="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#555', fontSize: 13, textDecoration: 'none', marginBottom: 40 }}>
+        <Link href="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#aaa', fontSize: 13, textDecoration: 'none', marginBottom: 40 }}>
           ← Back to Blog
         </Link>
 
         {/* Meta */}
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 11, color: '#FF8C35', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{post.category}</span>
-          <span style={{ color: '#333' }}>·</span>
-          <span style={{ fontSize: 11, color: '#444' }}>{post.readTime} read</span>
-          <span style={{ color: '#333' }}>·</span>
-          <span style={{ fontSize: 11, color: '#444' }}>{dateStr}</span>
+          <span style={{ color: '#ccc' }}>·</span>
+          <span style={{ fontSize: 11, color: '#aaa' }}>{post.readTime} read</span>
+          <span style={{ color: '#ccc' }}>·</span>
+          <span style={{ fontSize: 11, color: '#aaa' }}>{dateStr}</span>
         </div>
 
         {/* Title */}
         <div style={{ fontSize: 40, marginBottom: 20 }}>{post.emoji}</div>
-        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 400, letterSpacing: '0.03em', lineHeight: 1.1, marginBottom: 24, color: '#fff' }}>
+        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 400, letterSpacing: '0.03em', lineHeight: 1.1, marginBottom: 24, color: '#111' }}>
           {post.title}
         </h1>
-        <p style={{ fontSize: 16, color: '#666', lineHeight: 1.8, marginBottom: 48, borderBottom: '1px solid #1a1a1a', paddingBottom: 40 }}>
+        <p style={{ fontSize: 16, color: '#888', lineHeight: 1.8, marginBottom: 48, borderBottom: '1px solid rgba(0,0,0,0.08)', paddingBottom: 40 }}>
           {post.excerpt}
         </p>
 
@@ -169,7 +169,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   {block.heading}
                 </h2>
               )}
-              <p style={{ fontSize: 15, color: '#888', lineHeight: 1.9, whiteSpace: 'pre-line' }}>
+              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.9, whiteSpace: 'pre-line' }}>
                 {block.body}
               </p>
             </div>
@@ -177,12 +177,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
 
         {/* CTA */}
-        <div style={{ marginTop: 64, background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '36px', textAlign: 'center' }}>
-          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', marginBottom: 8 }}>WORK WITH KYZER ROBOTICS</p>
-          <p style={{ color: '#555', fontSize: 14, marginBottom: 20 }}>Have a project in mind? Let&apos;s talk engineering.</p>
+        <div style={{ marginTop: 64, background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 14, padding: '36px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#111', marginBottom: 8 }}>WORK WITH KYZER ROBOTICS</p>
+          <p style={{ color: '#888', fontSize: 14, marginBottom: 20 }}>Have a project in mind? Let&apos;s talk engineering.</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/consultation" style={{ padding: '11px 24px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Get a Quote</a>
-            <a href="/blog" style={{ padding: '11px 24px', background: 'transparent', color: '#555', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #222' }}>More Articles</a>
+            <a href="/consultation" style={{ padding: '11px 24px', background: '#FF8C35', color: '#fff', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Get a Quote</a>
+            <a href="/blog" style={{ padding: '11px 24px', background: 'transparent', color: '#888', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #ddd' }}>More Articles</a>
           </div>
         </div>
 
