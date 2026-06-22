@@ -157,11 +157,11 @@
         <path d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#222" stroke-width="14" stroke-linecap="round"/>
         <path id="gaugePath" d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#f1c40f" stroke-width="14" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="50" style="transition:stroke-dashoffset 1s,stroke 1s;"/>
       </svg>
-      <div class="level-num" id="scoreNum" style="color:#f1c40f">7.2</div>
+      <div class="level-num" id="scoreNum" style="color:#2ecc71">8.1</div>
     </div>
     <div class="level-info">
-      <h2 id="levelName" style="color:#f1c40f">⚡ Level 3 — Strong</h2>
-      <p id="levelDesc">Good security posture. HMAC tokens, server-side payment validation, and input sanitisation in place. Critical JWT exposure fixed. Remaining gaps: in-memory rate limiting, email validation, Resend setup.</p>
+      <h2 id="levelName" style="color:#2ecc71">🛡 Level 4 — Hardened</h2>
+      <p id="levelDesc">0 critical findings open. Persistent Redis rate limiting across all 17 routes, Firebase auth, HMAC tokens, server-side payment validation. Remaining: Resend email setup, sheet-sync timing fix, email validation on support ticket.</p>
       <div class="level-checks" id="levelChecks"></div>
     </div>
   </div>
@@ -169,13 +169,13 @@
   <div class="grid grid-3" style="margin-bottom:20px">
     <div class="card">
       <h3>Security Score</h3>
-      <div class="val" id="scoreCard" style="color:#f1c40f">7.2<span style="font-size:18px;color:var(--muted)">/10</span></div>
-      <div class="sub" id="scoreChange">↑ +0.8 from hardcoded JWT fix</div>
+      <div class="val" id="scoreCard" style="color:#2ecc71">8.1<span style="font-size:18px;color:var(--muted)">/10</span></div>
+      <div class="sub" id="scoreChange">↑ +0.9 from Upstash Redis · 0 critical open</div>
     </div>
     <div class="card">
       <h3>Open Findings</h3>
-      <div class="val" id="openFindings" style="color:var(--red)">5</div>
-      <div class="sub">1 critical · 3 high · 1 medium</div>
+      <div class="val" id="openFindings" style="color:var(--orange)">4</div>
+      <div class="sub">3 high · 1 medium</div>
     </div>
     <div class="card">
       <h3>Fixed This Session</h3>
@@ -185,10 +185,10 @@
   </div>
 
   <div class="grid grid-3">
-    <div class="card" style="border-color:rgba(255,85,85,0.3)">
+    <div class="card" style="border-color:rgba(46,204,113,0.3)">
       <h3>🔴 Critical</h3>
-      <div class="val" style="color:var(--red)">1</div>
-      <div class="sub">In-memory rate limiting (serverless bypass)</div>
+      <div class="val" style="color:var(--green)">0</div>
+      <div class="sub">All critical issues resolved ✓</div>
     </div>
     <div class="card" style="border-color:rgba(255,140,53,0.3)">
       <h3>🟠 High</h3>
@@ -237,13 +237,10 @@
     <div class="resolved-stamp">✓ Fixed — service key only, no fallback. Deployed 21 Jun 2026.</div>
   </div>
 
-  <div class="section-title">🔴 Critical — Open</div>
-
-  <div class="finding">
-    <div class="finding-header"><span class="badge-crit">CRITICAL</span><h4>In-memory rate limiting is ineffective on Vercel serverless</h4></div>
-    <div class="detail">The rate limiter uses a module-level <code>Map</code>. Each Vercel invocation may spin up a fresh instance — rate counters reset on every cold start. An attacker can bypass all limits by sending requests across multiple instances.</div>
-    <div class="file">src/lib/rateLimit.ts — affects all 16 rate-limited routes</div>
-    <div class="fix">Fix: Replace with Upstash Redis + @upstash/ratelimit. Free tier, 30-min integration.</div>
+  <div class="finding resolved">
+    <div class="finding-header"><span class="badge-fixed">CRITICAL — FIXED</span><h4>In-memory rate limiting is ineffective on Vercel serverless</h4></div>
+    <div class="detail">The rate limiter used a module-level <code>Map</code> — counters reset on every cold start.</div>
+    <div class="resolved-stamp">✓ Fixed — Replaced with Upstash Redis (@upstash/ratelimit). Persistent across all serverless instances. Deployed 21 Jun 2026.</div>
   </div>
 
   <div class="finding resolved">
@@ -396,7 +393,7 @@
   <div class="todo-item"><div class="priority p2">P2</div><div><h4>Upload real product photos via admin panel</h4><p>Products show fallback images. Upload actual photos — they take priority automatically.</p></div></div>
 
   <div class="section-title">P3 — Next Sprint</div>
-  <div class="todo-item"><div class="priority p3">P3</div><div><h4>Switch rate limiting to Upstash Redis</h4><p>In-memory limits ineffective on serverless. Upstash free tier + @upstash/ratelimit, ~30 min integration.</p></div></div>
+  <div class="todo-item done"><div class="priority p3">P3</div><div><h4>Switch rate limiting to Upstash Redis</h4><div class="done-stamp">✓ Done — 21 Jun 2026. caring-jaybird-89256.upstash.io · us-east-1 · all 17 routes.</div></div></div>
   <div class="todo-item"><div class="priority p3">P3</div><div><h4>Recalculate COD order amount server-side</h4><p>/api/order-notify trusts client-sent total. Use calcCartAmount() server-side.</p></div></div>
   <div class="todo-item"><div class="priority p3">P3</div><div><h4>Order status tracking for customers</h4><p>Dashboard shows orders but no timeline. Add status flow driven by admin order-update.</p></div></div>
   <div class="todo-item"><div class="priority p3">P3</div><div><h4>Razorpay webhook for payment reconciliation</h4><p>If user closes tab after payment, order is lost. Server-side webhook ensures it's always captured.</p></div></div>
@@ -425,138 +422,34 @@ function show(id) {
   }
 }
 
-// ---- CHECKS ----
-const CHECKS = [
-  {
-    id: 'homepage', title: 'Homepage Health', url: '/',
-    run: async () => {
-      const r = await fetch(SITE + '/', {mode:'no-cors'});
-      return { status: 'ok', msg: '<span class="pass">✓ Site is reachable</span>' };
-    }
-  },
-  {
-    id: 'analytics', title: 'Analytics API', url: '/api/analytics',
-    run: async () => {
-      const r = await fetch(SITE + '/api/analytics');
-      if (!r.ok) return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status}</span>` };
-      const d = await r.json();
-      const total = d.total ?? d.count ?? '?';
-      return { status: 'ok', msg: `<span class="pass">✓ Online</span> · <span class="info">${total} total visits</span>` };
-    }
-  },
-  {
-    id: 'myorders_unauthed', title: 'my-orders: blocks unauth', url: '/api/my-orders',
-    run: async () => {
-      const r = await fetch(SITE + '/api/my-orders');
-      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 Unauthorized — auth correctly enforced</span>' };
-      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
-    }
-  },
-  {
-    id: 'myorders_badtoken', title: 'my-orders: rejects bad token', url: '/api/my-orders',
-    run: async () => {
-      const r = await fetch(SITE + '/api/my-orders', { headers: { Authorization: 'Bearer fake.token.here' } });
-      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 — bad token correctly rejected</span>' };
-      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
-    }
-  },
-  {
-    id: 'adminlogin_reject', title: 'Admin login: rejects wrong password', url: '/api/admin-login',
-    run: async () => {
-      const r = await fetch(SITE + '/api/admin-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: 'wrongpassword123' })
-      });
-      if (r.status === 401) return { status: 'ok', msg: '<span class="pass">✓ 401 — wrong password rejected</span>' };
-      if (r.status === 429) return { status: 'warn', msg: '<span class="warn">⚠ 429 rate limited — good sign but slow down</span>' };
-      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401</span>` };
-    }
-  },
-  {
-    id: 'publish_unauthed', title: 'publish: blocks unauth', url: '/api/publish',
-    run: async () => {
-      const r = await fetch(SITE + '/api/publish', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
-      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — admin auth correctly enforced</span>` };
-      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401/403</span>` };
-    }
-  },
-  {
-    id: 'orderupdate_unauthed', title: 'order-update: blocks unauth', url: '/api/order-update',
-    run: async () => {
-      const r = await fetch(SITE + '/api/order-update', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
-      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — admin auth correctly enforced</span>` };
-      return { status: 'err', msg: `<span class="fail">✗ Got HTTP ${r.status} — should be 401/403</span>` };
-    }
-  },
-  {
-    id: 'checkouttoken', title: 'Checkout token: issues token', url: '/api/checkout-token',
-    run: async () => {
-      const r = await fetch(SITE + '/api/checkout-token');
-      if (!r.ok) return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status}</span>` };
-      const d = await r.json();
-      const valid = d.token && d.token.includes('.');
-      return valid
-        ? { status: 'ok', msg: '<span class="pass">✓ Returns HMAC-signed token</span>' }
-        : { status: 'err', msg: '<span class="fail">✗ Bad token format</span>' };
-    }
-  },
-  {
-    id: 'csp', title: 'Security Headers (CSP)', url: '/',
-    run: async () => {
-      // Can't read headers cross-origin, check via API
-      try {
-        const r = await fetch(SITE + '/api/analytics');
-        const csp = r.headers.get('content-security-policy');
-        if (csp && csp.includes("default-src 'self'")) {
-          return { status: 'ok', msg: `<span class="pass">✓ CSP header present</span><br><span class="info" style="font-size:11px">default-src + script + img + connect policies set</span>` };
-        }
-        return { status: 'warn', msg: '<span class="warn">⚠ CSP not detected on this endpoint (may be on page routes only)</span>' };
-      } catch {
-        return { status: 'warn', msg: '<span class="warn">⚠ Could not read headers (CORS)</span>' };
-      }
-    }
-  },
-  {
-    id: 'ratelimit', title: 'Rate limiting on contact form', url: '/api/contact',
-    run: async () => {
-      // Send 1 probe request — we don't want to actually spam
-      const r = await fetch(SITE + '/api/contact', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ name: '', email: '', message: '' })
-      });
-      if (r.status === 429) return { status: 'warn', msg: '<span class="warn">⚠ Already rate limited — limit in effect</span>' };
-      if (r.status === 400) return { status: 'ok', msg: '<span class="pass">✓ Reached handler (validation caught empty fields)</span><br><span class="info" style="font-size:11px">Note: in-memory limit may reset across invocations</span>' };
-      return { status: 'warn', msg: `<span class="warn">⚠ HTTP ${r.status}</span>` };
-    }
-  },
-  {
-    id: 'supportticket_noemail', title: 'Support ticket: missing email validation', url: '/api/support-ticket',
-    run: async () => {
-      const r = await fetch(SITE + '/api/support-ticket', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ name: 'Test', email: 'not-an-email', subject: 'Test', message: 'Security audit probe' })
-      });
-      if (r.status === 400) return { status: 'ok', msg: '<span class="pass">✓ Invalid email correctly rejected</span>' };
-      if (r.status === 200) return { status: 'err', msg: '<span class="fail">✗ Accepted invalid email — validation missing</span>' };
-      return { status: 'warn', msg: `<span class="warn">⚠ HTTP ${r.status}</span>` };
-    }
-  },
-  {
-    id: 'sheetsync_unauthed', title: 'sheet-sync: blocks unauth', url: '/api/sheet-sync',
-    run: async () => {
-      const r = await fetch(SITE + '/api/sheet-sync', { method: 'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
-      if (r.status === 401 || r.status === 403) return { status: 'ok', msg: `<span class="pass">✓ ${r.status} — bearer token enforced</span>` };
-      return { status: 'err', msg: `<span class="fail">✗ HTTP ${r.status} — should be 401</span>` };
-    }
-  },
+// ---- CHECKS — run server-side via /api/health-check to avoid CORS ----
+const CHECK_META = [
+  { id: 'analytics',           title: 'Analytics API',                  url: '/api/analytics' },
+  { id: 'myorders_unauthed',   title: 'my-orders: blocks unauth',       url: '/api/my-orders' },
+  { id: 'myorders_badtoken',   title: 'my-orders: rejects bad token',   url: '/api/my-orders' },
+  { id: 'adminlogin',          title: 'Admin login: rejects bad pass',  url: '/api/admin-login' },
+  { id: 'publish_unauthed',    title: 'publish: blocks unauth',         url: '/api/publish' },
+  { id: 'orderupdate_unauthed',title: 'order-update: blocks unauth',    url: '/api/order-update' },
+  { id: 'checkouttoken',       title: 'Checkout token: issues token',   url: '/api/checkout-token' },
+  { id: 'supportticket_email', title: 'Support ticket: email validation',url: '/api/support-ticket' },
+  { id: 'sheetsync_unauthed',  title: 'sheet-sync: blocks unauth',      url: '/api/sheet-sync' },
+  { id: 'contact_ratelimit',   title: 'Contact: rate limit active',     url: '/api/contact' },
 ];
+
+// Homepage check runs direct (no-cors, just reachability)
+const HOMEPAGE_CHECK = { id: 'homepage', title: 'Homepage Health', url: '/' };
+
+async function fetchHealthCheck() {
+  const r = await fetch(SITE + '/api/health-check', { cache: 'no-store' });
+  if (!r.ok) throw new Error(`health-check returned ${r.status}`);
+  return r.json();
+}
+
+const ALL_CARDS = [HOMEPAGE_CHECK, ...CHECK_META];
 
 function renderMonitorCards() {
   const grid = document.getElementById('monitorGrid');
-  grid.innerHTML = CHECKS.map(c => `
+  grid.innerHTML = ALL_CARDS.map(c => `
     <div class="monitor-card" id="mc-${c.id}">
       <div class="mc-header">
         <div class="mc-status pending" id="mcs-${c.id}"></div>
@@ -570,28 +463,16 @@ function renderMonitorCards() {
     </div>`).join('');
 }
 
-async function runCheck(c) {
-  const statusEl = document.getElementById(`mcs-${c.id}`);
-  const resultEl = document.getElementById(`mcr-${c.id}`);
-  const msEl = document.getElementById(`mcms-${c.id}`);
-  statusEl.className = 'mc-status pending';
-  resultEl.innerHTML = '<span style="color:var(--muted)">Running…</span>';
-  msEl.textContent = '';
-  const t0 = Date.now();
-  try {
-    const res = await c.run();
-    const ms = Date.now() - t0;
-    statusEl.className = `mc-status ${res.status}`;
-    resultEl.innerHTML = res.msg;
-    msEl.textContent = `${ms}ms`;
-    return res.status;
-  } catch (e) {
-    const ms = Date.now() - t0;
-    statusEl.className = 'mc-status err';
-    resultEl.innerHTML = `<span class="fail">✗ Error: ${e.message}</span>`;
-    msEl.textContent = `${ms}ms`;
-    return 'err';
-  }
+function applyResult(id, ok, detail, ms) {
+  const s = document.getElementById(`mcs-${id}`);
+  const r = document.getElementById(`mcr-${id}`);
+  const m = document.getElementById(`mcms-${id}`);
+  if (!s) return;
+  s.className = `mc-status ${ok ? 'ok' : 'err'}`;
+  r.innerHTML = ok
+    ? `<span class="pass">✓ ${detail}</span>`
+    : `<span class="fail">✗ ${detail}</span>`;
+  if (ms) m.textContent = `${ms}ms`;
 }
 
 async function runAllChecks() {
@@ -600,23 +481,47 @@ async function runAllChecks() {
   document.getElementById('monitorLevel').textContent = 'Checking…';
   document.getElementById('monitorScore').textContent = '…';
 
-  const results = await Promise.all(CHECKS.map(c => runCheck(c)));
+  // Set all to pending
+  ALL_CARDS.forEach(c => {
+    const s = document.getElementById(`mcs-${c.id}`);
+    const r = document.getElementById(`mcr-${c.id}`);
+    if (s) s.className = 'mc-status pending';
+    if (r) r.innerHTML = '<span style="color:var(--muted)">Running…</span>';
+  });
 
-  // Score
-  const pass = results.filter(r => r === 'ok').length;
-  const warn = results.filter(r => r === 'warn').length;
-  const fail = results.filter(r => r === 'err').length;
-  const total = results.length;
-  const raw = (pass * 10 + warn * 5) / (total * 10);
-  const score = (4 + raw * 6).toFixed(1); // scale 4-10
+  // Homepage — direct no-cors
+  const t0 = Date.now();
+  try {
+    await fetch(SITE + '/', { mode: 'no-cors' });
+    applyResult('homepage', true, 'Site is reachable', Date.now() - t0);
+  } catch {
+    applyResult('homepage', false, 'Unreachable', Date.now() - t0);
+  }
 
-  updateMonitorGauge(parseFloat(score));
-  document.getElementById('monitorBreakdown').textContent = `${pass} passed · ${warn} warnings · ${fail} failed out of ${total} checks`;
+  // All other checks via server-side proxy
+  try {
+    const t1 = Date.now();
+    const data = await fetchHealthCheck();
+    const elapsed = Date.now() - t1;
+    const r = data.results;
+    CHECK_META.forEach(c => {
+      const res = r[c.id];
+      if (res) applyResult(c.id, res.ok, res.detail, res.ms);
+      else applyResult(c.id, false, 'No result from health-check', elapsed);
+    });
+
+    const pass = Object.values(r).filter(x => x.ok).length + 1; // +1 for homepage
+    const total = ALL_CARDS.length;
+    const raw = pass / total;
+    const score = (4 + raw * 6).toFixed(1);
+    updateMonitorGauge(parseFloat(score));
+    document.getElementById('monitorBreakdown').textContent = `${pass} passed · ${total - pass} failed out of ${total} checks`;
+  } catch (e) {
+    CHECK_META.forEach(c => applyResult(c.id, false, `health-check error: ${e.message}`, 0));
+  }
+
   document.getElementById('monitorTime').textContent = `Last checked: ${new Date().toLocaleTimeString()}`;
   document.getElementById('liveStatus').textContent = `Live · ${new Date().toLocaleTimeString()}`;
-
-  // Update navbar
-  updateNavBadge();
 }
 
 function updateMonitorGauge(score) {
@@ -684,8 +589,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('lastScan').textContent = new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
   // Set initial overview gauge to 7.2
   const og = document.getElementById('gaugePath');
-  const offset = 188 - (7.2 / 10) * 188;
-  if (og) { og.setAttribute('stroke-dashoffset', offset); }
+  const offset = 188 - (8.1 / 10) * 188;
+  if (og) { og.setAttribute('stroke-dashoffset', String(offset)); og.setAttribute('stroke', '#2ecc71'); }
 
   // Level checks on overview
   const checks = [
@@ -694,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { ok: true,  label: 'Razorpay server-side amount' },
     { ok: true,  label: 'Input sanitisation on all forms' },
     { ok: true,  label: 'Hardcoded JWT removed' },
-    { ok: false, label: 'Persistent rate limiting (Redis)' },
+    { ok: true,  label: 'Persistent rate limiting (Upstash Redis)' },
     { ok: false, label: 'Resend email configured' },
     { ok: false, label: 'sheet-sync timing-safe compare' },
   ];
