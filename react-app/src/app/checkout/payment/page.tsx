@@ -21,7 +21,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
+const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -97,7 +97,7 @@ export default function PaymentPage() {
       const existing = JSON.parse(sessionStorage.getItem('kyzer_checkout') || '{}');
       sessionStorage.setItem('kyzer_checkout', JSON.stringify({ ...existing, paymentMethod: method }));
     } catch { /* ignore */ }
-    window.location.href = '/checkout/address';
+    window.location.href = '/checkout/review';
   }
 
   if (!mounted) return null;
@@ -110,11 +110,11 @@ export default function PaymentPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Cart</a>
+          <a href="/checkout/address" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Address</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
-          <StepBar current={1} />
+          <StepBar current={2} />
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>Payment Method</h1>
 
           {/* Order total */}

@@ -21,7 +21,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
+const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -90,9 +90,9 @@ export default function CheckoutPage() {
   async function handleProceed() {
     const user = auth.currentUser;
     if (user) {
-      window.location.href = '/checkout/payment';
+      window.location.href = '/checkout/address';
     } else {
-      window.location.href = '/login?redirect=/checkout/payment';
+      window.location.href = '/login?redirect=/checkout/address';
     }
   }
 

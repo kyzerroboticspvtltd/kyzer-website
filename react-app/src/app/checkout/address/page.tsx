@@ -32,7 +32,7 @@ interface Address {
   isDefault: boolean;
 }
 
-const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
+const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -144,7 +144,7 @@ export default function AddressPage() {
       sessionStorage.setItem('kyzer_checkout', JSON.stringify({ ...existing, address: addr }));
     } catch { /* ignore */ }
 
-    window.location.href = '/checkout/review';
+    window.location.href = '/checkout/payment';
   }
 
   if (loading) {
@@ -169,11 +169,11 @@ export default function AddressPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout/payment" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Payment</a>
+          <a href="/checkout" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Cart</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
-          <StepBar current={2} />
+          <StepBar current={1} />
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>Delivery Address</h1>
 
           {error && (

@@ -36,7 +36,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Payment', 'Address', 'Review'];
+const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -224,7 +224,7 @@ export default function ReviewPage() {
         <link href={FONT_URL} rel="stylesheet" />
         <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
           <p style={{ color: '#666', marginBottom: 16 }}>No address found. Please go back and enter your address.</p>
-          <a href="/checkout/address" style={{ color: '#FF8C35', fontWeight: 600, textDecoration: 'none' }}>← Back to Address</a>
+          <a href="/checkout/payment" style={{ color: '#FF8C35', fontWeight: 600, textDecoration: 'none' }}>← Back to Address</a>
         </div>
       </>
     );
@@ -238,7 +238,7 @@ export default function ReviewPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout/address" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Address</a>
+          <a href="/checkout/payment" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Address</a>
         </nav>
 
         <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
@@ -279,7 +279,7 @@ export default function ReviewPage() {
               <div style={{ background: '#fff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', padding: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: '#111', letterSpacing: '0.04em' }}>Delivery Address</h3>
-                  <a href="/checkout/address" style={{ fontSize: 13, color: '#FF8C35', textDecoration: 'none', fontWeight: 500 }}>Edit</a>
+                  <a href="/checkout/payment" style={{ fontSize: 13, color: '#FF8C35', textDecoration: 'none', fontWeight: 500 }}>Edit</a>
                 </div>
                 <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", background: '#f2f0eb', padding: '2px 8px', borderRadius: 4, color: '#666', display: 'inline-block', marginBottom: 8 }}>{address.label}</span>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>{address.name}</div>
@@ -329,7 +329,7 @@ export default function ReviewPage() {
                   {loading ? 'Processing…' : paymentMethod === 'cod' ? 'Confirm Order' : `Pay ₹${grandTotal.toLocaleString('en-IN')} →`}
                 </button>
 
-                <a href="/checkout/address" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: '#666', textDecoration: 'none' }}>
+                <a href="/checkout/payment" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: '#666', textDecoration: 'none' }}>
                   ← Back to Address
                 </a>
               </div>
