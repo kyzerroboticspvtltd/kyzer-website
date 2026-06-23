@@ -53,7 +53,7 @@ export default function ConsultationPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 40 }}>
 
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: '#fff' }}>Choose how to connect</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: '#111' }}>Choose how to connect</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {OPTIONS.map(opt => (
                 <a key={opt.title} href={opt.href} target={opt.href.startsWith('http') ? '_blank' : undefined} rel="noopener"
@@ -61,7 +61,7 @@ export default function ConsultationPage() {
                   <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <span style={{ fontSize: 28 }}>{opt.icon}</span>
                     <div>
-                      <p style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>{opt.title}</p>
+                      <p style={{ fontWeight: 700, color: '#111', marginBottom: 4 }}>{opt.title}</p>
                       <p style={{ fontSize: 13, color: '#666', marginBottom: 10, lineHeight: 1.5 }}>{opt.desc}</p>
                       <span style={{ fontSize: 13, color: '#FF8C35', fontWeight: 600 }}>{opt.cta}</span>
                     </div>
@@ -72,7 +72,7 @@ export default function ConsultationPage() {
           </div>
 
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: '#fff' }}>What to expect</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: '#111' }}>What to expect</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 40 }}>
               {STEPS.map(s => (
                 <div key={s.step} style={{ display: 'flex', gap: 20 }}>
@@ -82,7 +82,7 @@ export default function ConsultationPage() {
                     fontSize: 13, fontWeight: 800, color: '#000', flexShrink: 0, fontFamily: 'monospace',
                   }}>{s.step}</div>
                   <div>
-                    <p style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.title}</p>
+                    <p style={{ fontWeight: 700, color: '#111', marginBottom: 4 }}>{s.title}</p>
                     <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{s.desc}</p>
                   </div>
                 </div>

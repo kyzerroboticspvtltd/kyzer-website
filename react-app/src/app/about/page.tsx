@@ -69,7 +69,7 @@ export default function AboutPage() {
               We are the opposite — fast, transparent, and genuinely invested in your project&apos;s success.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
             {VALUES.map(v => (
               <div key={v.title} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '24px 20px' }}>
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{v.icon}</div>
@@ -95,13 +95,13 @@ export default function AboutPage() {
                 <p style={{ color: '#888', fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>{member.bio}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {member.skills.map(s => (
-                    <span key={s} style={{ padding: '4px 12px', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 20, fontSize: 11, color: '#888' }}>{s}</span>
+                    <span key={s} style={{ padding: '4px 12px', background: '#f4f4f2', border: '1px solid #e8e8e8', borderRadius: 20, fontSize: 11, color: '#666' }}>{s}</span>
                   ))}
                 </div>
               </div>
             ))}
             {/* Join the team card */}
-            <div style={{ background: 'transparent', border: '1px dashed #2a2a2a', borderRadius: 20, padding: '36px 28px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+            <div style={{ background: 'transparent', border: '1px dashed #ccc', borderRadius: 20, padding: '36px 28px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
               <div style={{ fontSize: 36, marginBottom: 20 }}>✨</div>
               <p style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Join the team</p>
               <p style={{ color: '#666', fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>We are always looking for passionate engineers, makers, and designers to work on real robotics projects.</p>
@@ -121,7 +121,7 @@ export default function AboutPage() {
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="/contact" style={{ padding: '12px 24px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Contact Us</a>
-            <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style={{ padding: '12px 24px', background: 'transparent', color: '#888', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #333' }}>
+            <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style={{ padding: '12px 24px', background: 'transparent', color: '#555', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid #ccc' }}>
               View on Maps →
             </a>
           </div>
@@ -133,7 +133,7 @@ export default function AboutPage() {
           <p style={{ color: '#888', marginBottom: 28 }}>Prototype to production — we&apos;ll build it with you.</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a href="/get-a-quote" style={{ padding: '14px 32px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Get a Quote →</a>
-            <a href="/portfolio" style={{ padding: '14px 32px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #333' }}>See Our Work</a>
+            <a href="/portfolio" style={{ padding: '14px 32px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #ddd' }}>See Our Work</a>
           </div>
         </div>
       </div>

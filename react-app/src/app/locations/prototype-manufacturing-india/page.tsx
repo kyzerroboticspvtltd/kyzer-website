@@ -47,7 +47,7 @@ export default function Page() {
         </div>
 
         <div style={{ background: '#9b59b6', borderRadius: 16, padding: '40px', textAlign: 'center', marginBottom: 60 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 800, color: '#fff', marginBottom: 12 }}>Shipping Pan-India</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: '#111', marginBottom: 12 }}>Shipping Pan-India</h2>
           <p style={{ color: 'rgba(255,255,255,.8)', maxWidth: 500, margin: '0 auto 24px', lineHeight: 1.7 }}>
             We ship to Mumbai, Bangalore, Delhi, Chennai, Hyderabad, and all Indian cities via Blue Dart, Delhivery, and DTDC with full tracking.
           </p>

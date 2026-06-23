@@ -2499,3 +2499,21 @@
     @apply font-sans;
     }
 }
+
+/* ── INNER PAGE MOBILE HELPERS ── */
+/* These apply to Next.js app-router pages that use inline styles and don't have their own CSS */
+@media (max-width: 768px) {
+  /* Ensure inner page main sections are never wider than viewport */
+  main > section, main > div {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  /* Reduce large clamp font sizes on mobile for inner pages */
+  h1 { word-break: break-word; }
+}
+@media (max-width: 480px) {
+  /* Tighten horizontal padding for inner pages using inline padding */
+  main[style] { padding-left: 0 !important; padding-right: 0 !important; }
+  /* Give inner-page sections a safe minimum horizontal padding */
+  main > section, main > div { padding-left: 16px; padding-right: 16px; box-sizing: border-box; }
+}

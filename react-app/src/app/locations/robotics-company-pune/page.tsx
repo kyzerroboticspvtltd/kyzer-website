@@ -52,7 +52,7 @@ export default function Page() {
             <a key={f.title} href={f.href} style={{ textDecoration: 'none' }}>
               <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: 24, height: '100%' }}>
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
-                <p style={{ fontWeight: 700, marginBottom: 6, color: '#fff' }}>{f.title}</p>
+                <p style={{ fontWeight: 700, marginBottom: 6, color: '#111' }}>{f.title}</p>
                 <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</p>
               </div>
             </a>
