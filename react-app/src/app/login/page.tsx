@@ -55,11 +55,40 @@ function LoginForm() {
 
   // Phone OTP
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpSent, setOtpSent] = useState(false);
   const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null);
   const recaptchaRef = useRef<HTMLDivElement>(null);
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  function handleOtpChange(val: string, idx: number) {
+    const digit = val.replace(/\D/g, '').slice(-1);
+    const next = [...otp];
+    next[idx] = digit;
+    setOtp(next);
+    if (digit && idx < 5) otpRefs.current[idx + 1]?.focus();
+  }
+
+  function handleOtpKeyDown(e: React.KeyboardEvent, idx: number) {
+    if (e.key === 'Backspace') {
+      if (otp[idx]) {
+        const next = [...otp]; next[idx] = ''; setOtp(next);
+      } else if (idx > 0) {
+        otpRefs.current[idx - 1]?.focus();
+      }
+    }
+  }
+
+  function handleOtpPaste(e: React.ClipboardEvent) {
+    e.preventDefault();
+    const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
+    const next = ['', '', '', '', '', ''];
+    digits.forEach((d, i) => { next[i] = d; });
+    setOtp(next);
+    const focusIdx = Math.min(digits.length, 5);
+    otpRefs.current[focusIdx]?.focus();
+  }
 
   function syncToHomePage(user: { displayName: string | null; email: string | null; uid: string }) {
     const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Customer');
@@ -118,17 +147,21 @@ function LoginForm() {
     }
   }
 
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleVerifyOtp(e?: React.FormEvent) {
+    e?.preventDefault();
     setError('');
     if (!confirmation) return;
+    const code = otp.join('');
+    if (code.length < 6) return;
     setLoading(true);
     try {
-      const otpCred = await confirmation.confirm(otp);
+      const otpCred = await confirmation.confirm(code);
       syncToHomePage(otpCred.user);
       window.location.href = redirectTo;
     } catch (err: unknown) {
       setError(cleanFirebaseError(err instanceof Error ? err.message : 'Invalid OTP'));
+      setOtp(['', '', '', '', '', '']);
+      otpRefs.current[0]?.focus();
     } finally {
       setLoading(false);
     }
@@ -163,8 +196,8 @@ function LoginForm() {
             <div style={{ background: '#fff', borderRadius: 12, border: '1px solid rgba(0,0,0,0.09)', padding: '32px 28px' }}>
               {/* Tab switcher */}
               <div style={{ display: 'flex', background: '#f3f3f1', borderRadius: 8, padding: 3, marginBottom: 24 }}>
-                <button style={TAB_STYLE(tab === 'email')} onClick={() => { setTab('email'); setError(''); setOtpSent(false); }}>Email</button>
-                <button style={TAB_STYLE(tab === 'phone')} onClick={() => { setTab('phone'); setError(''); setOtpSent(false); }}>Phone / OTP</button>
+                <button style={TAB_STYLE(tab === 'email')} onClick={() => { setTab('email'); setError(''); setOtpSent(false); setOtp(['','','','','','']); }}>Email</button>
+                <button style={TAB_STYLE(tab === 'phone')} onClick={() => { setTab('phone'); setError(''); setOtpSent(false); setOtp(['','','','','','']); }}>Phone / OTP</button>
               </div>
 
               {error && (
@@ -218,24 +251,41 @@ function LoginForm() {
 
               {tab === 'phone' && otpSent && (
                 <form onSubmit={handleVerifyOtp}>
-                  <p style={{ fontSize: 14, color: '#555', marginBottom: 20, marginTop: 0 }}>
-                    OTP sent to <strong>+91 {phone}</strong>.{' '}
-                    <button type="button" onClick={() => { setOtpSent(false); setOtp(''); setError(''); }} style={{ background: 'none', border: 'none', color: '#FF8C35', fontSize: 14, cursor: 'pointer', padding: 0 }}>Change number</button>
-                  </p>
-                  <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#111', marginBottom: 6 }}>Enter OTP</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={otp}
-                      onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      required
-                      placeholder="6-digit code"
-                      style={{ ...INPUT, letterSpacing: '0.2em', textAlign: 'center', fontSize: 20 }}
-                      autoFocus
-                    />
+                  <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                    <p style={{ fontSize: 14, color: '#555', marginBottom: 4, marginTop: 0 }}>
+                      Code sent to <strong>+91 {phone}</strong>
+                    </p>
+                    <button type="button" onClick={() => { setOtpSent(false); setOtp(['','','','','','']); setError(''); }} style={{ background: 'none', border: 'none', color: '#FF8C35', fontSize: 13, cursor: 'pointer', padding: 0 }}>
+                      Change number
+                    </button>
                   </div>
-                  <button type="submit" disabled={loading || otp.length < 6} style={BTN_PRIMARY(loading || otp.length < 6)}>
+
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 24 }}>
+                    {otp.map((digit, i) => (
+                      <input
+                        key={i}
+                        ref={el => { otpRefs.current[i] = el; }}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={digit}
+                        autoFocus={i === 0}
+                        onChange={e => handleOtpChange(e.target.value, i)}
+                        onKeyDown={e => handleOtpKeyDown(e, i)}
+                        onPaste={i === 0 ? handleOtpPaste : undefined}
+                        style={{
+                          width: 44, height: 52, textAlign: 'center', fontSize: 22, fontWeight: 700,
+                          borderRadius: 10, outline: 'none', fontFamily: "'JetBrains Mono', monospace",
+                          border: `2px solid ${digit ? '#FF8C35' : 'rgba(0,0,0,0.12)'}`,
+                          background: digit ? '#fff7f2' : '#fafaf9',
+                          color: '#111',
+                          transition: 'border-color 0.15s, background 0.15s',
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <button type="submit" disabled={loading || otp.join('').length < 6} style={BTN_PRIMARY(loading || otp.join('').length < 6)}>
                     {loading ? 'Verifying…' : 'Verify & Sign In'}
                   </button>
                 </form>
