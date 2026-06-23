@@ -86,7 +86,7 @@ export default function AboutPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
             {TEAM.map(member => (
               <div key={member.name} style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 20, padding: '36px 28px' }}>
-                <div style={{ width: 72, height: 72, background: '#1a1a1a', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, marginBottom: 20 }}>
+                <div style={{ width: 72, height: 72, background: '#fff3e8', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, marginBottom: 20 }}>
                   {member.emoji}
                 </div>
                 <p style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>{member.name}</p>
