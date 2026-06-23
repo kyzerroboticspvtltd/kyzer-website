@@ -40,6 +40,7 @@ export default function ElectronicsProductsPage() {
   const [sort, setSort]         = useState('default');
   const [selected, setSelected] = useState<ElecProduct | null>(null);
   const [addedId, setAddedId]   = useState<string | null>(null);
+  const [modalQty, setModalQty] = useState(1);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -81,14 +82,28 @@ export default function ElectronicsProductsPage() {
       return 0;
     });
 
-  function handleAddToCart(p: ElecProduct) {
-    addToLocalCart(p);
+  function openModal(p: ElecProduct) {
+    setSelected(p);
+    setModalQty(1);
+  }
+
+  function handleAddToCart(p: ElecProduct, qty = 1) {
+    addToLocalCart(p, qty);
     setAddedId(p.id);
     setTimeout(() => setAddedId(null), 1500);
   }
 
   function enquireNow(p: ElecProduct) {
     const msg = encodeURIComponent(`Hi, I'd like to enquire about: ${p.name} (${p.price})`);
+    window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
+  }
+
+  function bulkOrder(p: ElecProduct, qty: number) {
+    const priceNum = parseFloat(p.price);
+    const priceStr = priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')} each` : p.price;
+    const msg = encodeURIComponent(
+      `Hi Kyzer Robotics, I'd like to place a bulk order:\n\nProduct: ${p.name}\nUnit price: ${priceStr}\nQuantity: ${qty} units\n\nPlease share bulk pricing and availability.`
+    );
     window.open(`https://wa.me/919049695264?text=${msg}`, '_blank');
   }
 
@@ -201,7 +216,7 @@ export default function ElectronicsProductsPage() {
               const photo = p.photos?.[0];
               const priceNum = parseFloat(p.price);
               return (
-                <div key={p.id} onClick={() => setSelected(p)}
+                <div key={p.id} onClick={() => openModal(p)}
                   style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s', position: 'relative' }}
                   onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
                   onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
@@ -221,24 +236,30 @@ export default function ElectronicsProductsPage() {
                       <span style={{ fontWeight: 700, fontSize: 17 }}>{priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : p.price}</span>
                       <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {p.btnMode === 'enquire' ? (
-                        <button onClick={e => { e.stopPropagation(); enquireNow(p); }}
-                          style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                          Enquire Now →
-                        </button>
-                      ) : (
-                        <>
-                          <button onClick={e => { e.stopPropagation(); handleAddToCart(p); }}
-                            style={{ flex: 1, padding: '9px 6px', background: addedId === p.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === p.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === p.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
-                            {addedId === p.id ? '✓ Added!' : '+ Cart'}
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); buyNow(p); }}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        {p.btnMode === 'enquire' ? (
+                          <button onClick={e => { e.stopPropagation(); enquireNow(p); }}
                             style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                            Buy Now →
+                            Enquire Now →
                           </button>
-                        </>
-                      )}
+                        ) : (
+                          <>
+                            <button onClick={e => { e.stopPropagation(); handleAddToCart(p); }}
+                              style={{ flex: 1, padding: '9px 6px', background: addedId === p.id ? '#e8f5e9' : 'transparent', border: `1.5px solid ${addedId === p.id ? '#2e7d32' : '#FF8C35'}`, color: addedId === p.id ? '#2e7d32' : '#FF8C35', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}>
+                              {addedId === p.id ? '✓ Added!' : '+ Cart'}
+                            </button>
+                            <button onClick={e => { e.stopPropagation(); buyNow(p); }}
+                              style={{ flex: 1, padding: '9px 6px', background: '#FF8C35', border: 'none', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                              Buy Now →
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      <button onClick={e => { e.stopPropagation(); bulkOrder(p, 10); }}
+                        style={{ width: '100%', padding: '7px 6px', background: 'transparent', border: '1px solid #ddd', color: '#888', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                        Bulk Order (10+) →
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -264,22 +285,55 @@ export default function ElectronicsProductsPage() {
             <ul style={{ margin: '0 0 20px', paddingLeft: 20 }}>
               {selected.specs?.map((s, i) => <li key={i} style={{ fontSize: 13, color: '#444', marginBottom: 4 }}>{s}</li>)}
             </ul>
+
+            {/* Price + qty stepper */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 1 }}>
-                {parseFloat(selected.price) > 0 ? `₹${parseFloat(selected.price).toLocaleString('en-IN')}` : selected.price}
-              </span>
+              <div>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 1 }}>
+                  {parseFloat(selected.price) > 0 ? `₹${parseFloat(selected.price).toLocaleString('en-IN')}` : selected.price}
+                </span>
+                {parseFloat(selected.price) > 0 && modalQty > 1 && (
+                  <div style={{ fontSize: 13, color: '#FF8C35', fontWeight: 600, marginTop: 2 }}>
+                    Total: ₹{(parseFloat(selected.price) * modalQty).toLocaleString('en-IN')}
+                  </div>
+                )}
+              </div>
               <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
             </div>
-            <div style={{ display: 'flex', gap: 10 }}>
+
+            {/* Quantity selector */}
+            {selected.btnMode !== 'enquire' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <span style={{ fontSize: 13, color: '#555', fontWeight: 600, minWidth: 56 }}>Quantity</span>
+                <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #ddd', borderRadius: 10, overflow: 'hidden' }}>
+                  <button onClick={() => setModalQty(q => Math.max(1, q - 1))}
+                    style={{ width: 38, height: 38, background: '#f8f8f6', border: 'none', fontSize: 18, cursor: 'pointer', color: '#555', fontFamily: "'DM Sans', sans-serif' " }}>−</button>
+                  <span style={{ minWidth: 36, textAlign: 'center', fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#111' }}>{modalQty}</span>
+                  <button onClick={() => setModalQty(q => q + 1)}
+                    style={{ width: 38, height: 38, background: '#f8f8f6', border: 'none', fontSize: 18, cursor: 'pointer', color: '#555', fontFamily: "'DM Sans', sans-serif' " }}>+</button>
+                </div>
+                {modalQty >= 10 && (
+                  <span style={{ fontSize: 11, color: '#FF8C35', fontFamily: "'JetBrains Mono', monospace", background: '#fff3e8', padding: '3px 8px', borderRadius: 4 }}>BULK</span>
+                )}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {selected.btnMode === 'enquire' ? (
-                <button onClick={() => enquireNow(selected)} style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>Enquire Now →</button>
+                <button onClick={() => enquireNow(selected)} style={{ padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>Enquire Now →</button>
               ) : (
                 <>
-                  <button onClick={() => { handleAddToCart(selected); }}
-                    style={{ flex: 1, padding: '13px', background: addedId === selected.id ? '#e8f5e9' : '#111', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: addedId === selected.id ? '#2e7d32' : '#fff', transition: 'all 0.2s' }}>
-                    {addedId === selected.id ? '✓ Added to Cart!' : 'Add to Cart'}
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button onClick={() => handleAddToCart(selected, modalQty)}
+                      style={{ flex: 1, padding: '13px', background: addedId === selected.id ? '#e8f5e9' : '#111', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: addedId === selected.id ? '#2e7d32' : '#fff', transition: 'all 0.2s' }}>
+                      {addedId === selected.id ? `✓ Added ${modalQty > 1 ? `×${modalQty}` : ''}!` : `Add to Cart${modalQty > 1 ? ` ×${modalQty}` : ''}`}
+                    </button>
+                    <button onClick={() => buyNow(selected, modalQty)} style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>Buy Now →</button>
+                  </div>
+                  <button onClick={() => bulkOrder(selected, modalQty)}
+                    style={{ padding: '11px', background: 'transparent', border: '1.5px solid #ddd', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#555' }}>
+                    Bulk Order on WhatsApp →
                   </button>
-                  <button onClick={() => buyNow(selected)} style={{ flex: 1, padding: '13px', background: '#FF8C35', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", color: '#111' }}>Buy Now →</button>
                 </>
               )}
             </div>

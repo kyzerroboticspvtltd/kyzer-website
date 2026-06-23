@@ -9,27 +9,27 @@ export interface CartItem {
   qty: number;
 }
 
-export function addToLocalCart(product: { id?: string; name: string; price: string; emoji?: string }) {
+export function addToLocalCart(product: { id?: string; name: string; price: string; emoji?: string }, qty = 1) {
   try {
     const cart: CartItem[] = JSON.parse(localStorage.getItem('kyzer_cart') || '[]');
     const pid = product.id || ('p-' + Date.now());
     const existing = cart.find(i => i.id === pid);
     if (existing) {
-      existing.qty += 1;
+      existing.qty += qty;
     } else {
       cart.push({
         id: pid,
         name: product.name,
         price: String(parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0),
         emoji: product.emoji || '📦',
-        qty: 1,
+        qty,
       });
     }
     localStorage.setItem('kyzer_cart', JSON.stringify(cart));
   } catch { /* localStorage unavailable */ }
 }
 
-export function buyNow(product: { id?: string; name: string; price: string; emoji?: string }) {
-  addToLocalCart(product);
+export function buyNow(product: { id?: string; name: string; price: string; emoji?: string }, qty = 1) {
+  addToLocalCart(product, qty);
   window.location.href = '/checkout';
 }
