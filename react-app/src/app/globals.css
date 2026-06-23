@@ -563,9 +563,9 @@
 
   /* FOOTER */
   footer {
-    background: #0d0d0d;
-    border-top: 0.5px solid #1e1e1e;
-    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem) 0;
+    background: #f0f0ee;
+    border-top: 0.5px solid rgba(0,0,0,0.08);
+    padding: 0;
   }
   .footer-main {
     max-width: 1180px; margin: 0 auto;
@@ -587,21 +587,21 @@
   .fc-row a:hover { color: var(--orange); }
 
   .footer-col { display: flex; flex-direction: column; gap: 11px; }
-  .footer-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: 0.05em; color: #fff; margin-bottom: 6px; }
+  .footer-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: 0.05em; color: #111; margin-bottom: 6px; }
   .footer-col a { font-size: 13.5px; color: #888; text-decoration: none; transition: color 0.2s; width: fit-content; }
   .footer-col a:hover { color: var(--orange); }
 
   .footer-bottom {
     max-width: 1180px; margin: 0 auto;
-    border-top: 0.5px solid #1e1e1e;
+    border-top: 0.5px solid rgba(0,0,0,0.08);
     padding: 1.3rem 0;
     display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap;
   }
   .footer-copy { font-size: 12.5px; color: #555; }
   .footer-social { display: flex; gap: 9px; }
   .footer-social a {
-    width: 33px; height: 33px; border-radius: 50%; border: 1px solid #2a2a2a;
-    display: flex; align-items: center; justify-content: center; color: #666;
+    width: 33px; height: 33px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.12);
+    display: flex; align-items: center; justify-content: center; color: #aaa;
     transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s;
   }
   .footer-social a:hover { color: #fff; background: var(--orange); border-color: var(--orange); transform: translateY(-2px); }
@@ -1308,7 +1308,7 @@
     .deals-ctas { justify-content: flex-start; }
 
     /* ── Footer ── */
-    footer { padding: 2.5rem 1.25rem 0; }
+    footer { padding: 0; }
     .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem; }
     .footer-brand { grid-column: 1 / -1; }
     .footer-bottom { flex-direction: column; align-items: flex-start; gap: 1.1rem; }
