@@ -196,7 +196,7 @@ export default function PaymentPage() {
               onClick={handleContinue}
               style={{ width: '100%', padding: '13px', background: '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
             >
-              {method === 'online' ? 'Next: Enter Address →' : 'Continue to Address →'}
+              Continue to Review →
             </button>
           </div>
 

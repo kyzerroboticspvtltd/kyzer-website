@@ -308,7 +308,7 @@ export default function AddressPage() {
             onClick={handleContinue}
             style={{ width: '100%', marginTop: 20, padding: '13px', background: '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
           >
-            Continue to Review →
+            Continue to Payment →
           </button>
         </div>
       </div>
