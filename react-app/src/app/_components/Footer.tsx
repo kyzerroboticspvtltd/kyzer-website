@@ -1,3 +1,5 @@
+'use client';
+
 export default function Footer() {
   return (
     <footer style={{ fontFamily: "'DM Sans', sans-serif", background: '#f0f0ee', color: '#666' }}>
