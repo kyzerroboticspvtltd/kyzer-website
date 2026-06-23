@@ -20,7 +20,7 @@ const TEAM = [
 const VALUES = [
   { icon: '⚡', title: 'Speed', desc: '48-hour turnaround on standard 3D print orders. We move fast so you can too.' },
   { icon: '🛠️', title: 'Craft', desc: 'Every part we print, every robot we build, every PCB we design is done with engineering precision.' },
-  { icon: '🤝', title: 'Honesty', desc: 'We tell you what your project actually needs — not what costs the most.' },
+  { icon: '🤝', title: 'Honesty', desc: 'We tell you what your project actually needs, not what costs the most.' },
   { icon: '🎓', title: 'Education', desc: 'We support students and college teams. Discounted rates, mentorship, and real-world builds.' },
 ]
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
           WE BUILD THE<br /><span style={{ color: '#FF8C35' }}>FUTURE OF</span><br />ENGINEERING
         </h1>
         <p style={{ color: '#888', fontSize: 20, maxWidth: 620, lineHeight: 1.8, marginBottom: 80 }}>
-          Kyzer Robotics Pvt. Ltd. is a Pune-based engineering company founded by engineers passionate about drones, robotics, and advanced manufacturing. We build custom solutions — fast, honestly priced, and made in India.
+          Kyzer Robotics Pvt. Ltd. is a Pune-based engineering company founded by engineers passionate about drones, robotics, and advanced manufacturing. We build custom solutions: fast, honestly priced, and made in India.
         </p>
 
         {/* Stats */}
@@ -66,7 +66,7 @@ export default function AboutPage() {
               We started Kyzer Robotics because we noticed a gap: students and small teams in India had great ideas but no accessible, quality engineering partner to build with. Expensive quotes, slow turnaround, no communication.
             </p>
             <p style={{ color: '#888', lineHeight: 1.8 }}>
-              We are the opposite — fast, transparent, and genuinely invested in your project&apos;s success.
+              We are the opposite: fast, transparent, and genuinely invested in your project&apos;s success.
             </p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
@@ -82,7 +82,6 @@ export default function AboutPage() {
 
         {/* Team */}
         <div style={{ marginBottom: 100 }}>
-          <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.15em', marginBottom: 16 }}>THE TEAM</p>
           <h2 style={{ fontSize: 'clamp(1.8rem,4vw,2.5rem)', fontWeight: 800, marginBottom: 48 }}>Built by engineers,<br />for engineers</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
             {TEAM.map(member => (
@@ -114,10 +113,9 @@ export default function AboutPage() {
 
         {/* Location */}
         <div style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 20, padding: '48px 40px', marginBottom: 60 }}>
-          <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.15em', marginBottom: 16 }}>WHERE WE ARE</p>
           <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>Pune, Maharashtra, India</h2>
           <p style={{ color: '#888', lineHeight: 1.8, maxWidth: 560, marginBottom: 32 }}>
-            Our workshop, 3D printers, and engineering team are all based in Ambegaon Pathar, Pune. Pune customers can visit in person — no appointment needed. We ship pan-India via courier with full tracking.
+            Our workshop, 3D printers, and engineering team are all based in Ambegaon Pathar, Pune. Pune customers can visit in person with no appointment needed. We ship pan-India via courier with full tracking.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="/contact" style={{ padding: '12px 24px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Contact Us</a>
@@ -130,7 +128,7 @@ export default function AboutPage() {
         {/* CTA */}
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
           <h2 style={{ fontSize: 'clamp(1.5rem,3vw,2rem)', fontWeight: 800, marginBottom: 16 }}>Ready to build something?</h2>
-          <p style={{ color: '#888', marginBottom: 28 }}>Prototype to production — we&apos;ll build it with you.</p>
+          <p style={{ color: '#888', marginBottom: 28 }}>Prototype to production. We&apos;ll build it with you.</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a href="/get-a-quote" style={{ padding: '14px 32px', background: '#FF8C35', color: '#000', borderRadius: 8, fontWeight: 700, textDecoration: 'none' }}>Get a Quote →</a>
             <a href="/portfolio" style={{ padding: '14px 32px', background: '#f0f0ee', color: '#111', borderRadius: 8, fontWeight: 600, textDecoration: 'none', border: '1px solid #ddd' }}>See Our Work</a>

@@ -32,13 +32,13 @@ const PROJECTS = [
   {
     id: 'formula-prototype', category: '3D Printing', tag: 'Student Motorsport', emoji: '🏎️',
     title: 'Formula Student Aero Package', client: 'MIT-WPU Racing Team', duration: '5 days',
-    summary: 'Full aero package for Formula Student India 2025 — front and rear wing endplates, diffuser fins, nose cone, and undertray components in CF-PLA and Nylon.',
+    summary: 'Full aero package for Formula Student India 2025: front and rear wing endplates, diffuser fins, nose cone, and undertray components in CF-PLA and Nylon.',
     tech: ['CF-PLA (front wing endplates)', 'PA12 Nylon (undertray)', 'ABS (nose cone internal structure)', '0.15mm layer height for surface finish', 'Post-processed and sanded'],
     outcome: '47 parts delivered in 5 days · Team qualified for dynamic events · Aero parts survived full season', accent: '#e74c3c',
   },
   {
     id: 'enclosure-iot', category: '3D Printing', tag: 'IoT / Product Dev', emoji: '📦',
-    title: 'Industrial IoT Enclosure', client: 'StartupPune — sensor startup', duration: '48 hours',
+    title: 'Industrial IoT Enclosure', client: 'StartupPune - sensor startup', duration: '48 hours',
     summary: 'Rapid prototyped IP54 enclosure for an industrial IoT sensor device. 3 design iterations in 2 days from sketch to injection-mould-ready CAD with wall thickness analysis.',
     tech: ['PETG (impact resistant)', 'IP54 gasket channel design', 'M3 brass heat-set inserts', 'DIN rail mount integrated', 'CAD: SolidWorks STEP delivered'],
     outcome: '3 iterations in 48hr · Client proceeded to injection mould with same CAD · 10,000 unit production order', accent: '#9b59b6',
@@ -73,13 +73,13 @@ export default function PortfolioPage() {
       {/* Hero */}
       <section style={{ padding: '48px 20px 40px', maxWidth: 1100, margin: '0 auto', textAlign: 'center' }}>
         <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#FF8C35', letterSpacing: '0.15em', marginBottom: 16 }}>
-          // PORTFOLIO — REAL BUILDS, REAL ENGINEERING
+          // PORTFOLIO - REAL BUILDS, REAL ENGINEERING
         </p>
         <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(48px, 10vw, 88px)', color: '#111', margin: '0 0 16px', letterSpacing: '0.03em', lineHeight: 0.95 }}>
           WHAT WE&apos;VE <span style={{ color: '#FF8C35' }}>BUILT</span>
         </h1>
         <p style={{ fontSize: 16, color: '#888', maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.7 }}>
-          From FPV race drones to industrial automation — every project shipped from our Pune workshop.
+          From FPV race drones to industrial automation, every project shipped from our Pune workshop.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           {[{ n: '50+', l: 'Projects' }, { n: '30+', l: 'Clients' }, { n: '8', l: 'Verticals' }, { n: '48hr', l: 'Fastest' }].map(s => (

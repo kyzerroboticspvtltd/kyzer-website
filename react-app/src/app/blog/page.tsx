@@ -9,21 +9,21 @@ export const metadata: Metadata = {
 const POSTS = [
   {
     slug: 'best-fpv-flight-controllers-2025',
-    title: 'The Best FPV Flight Controllers in 2025 — Compared',
+    title: 'The Best FPV Flight Controllers in 2025: Compared',
     date: '2025-11-15',
     category: 'FPV Drones',
     readTime: '8 min',
     emoji: '🏁',
-    excerpt: 'F4 vs F7 vs H7 — which flight controller stack should you pick for your 5" FPV build in 2025? We break down the top options by price, features, and compatibility with Betaflight 4.5.',
+    excerpt: 'F4 vs F7 vs H7: which flight controller stack should you pick for your 5" FPV build in 2025? We break down the top options by price, features, and compatibility with Betaflight 4.5.',
   },
   {
     slug: '3d-printing-materials-comparison',
-    title: 'PLA vs PETG vs ABS vs Nylon — Which 3D Print Material for Your Project?',
+    title: 'PLA vs PETG vs ABS vs Nylon: Which 3D Print Material for Your Project?',
     date: '2025-10-22',
     category: '3D Printing',
     readTime: '10 min',
     emoji: '🖨️',
-    excerpt: 'Choosing the wrong filament can ruin a functional part. We compare the 4 most common FDM materials on strength, temperature resistance, ease of printing, and cost — with real-world examples.',
+    excerpt: 'Choosing the wrong filament can ruin a functional part. We compare the 4 most common FDM materials on strength, temperature resistance, ease of printing, and cost, with real-world examples.',
   },
   {
     slug: 'agricultural-drone-india-guide',
@@ -45,7 +45,7 @@ const POSTS = [
   },
   {
     slug: 'ros2-raspberry-pi-robot',
-    title: 'Build a ROS2 Robot on Raspberry Pi 5 — From Zero to Autonomous Navigation',
+    title: 'Build a ROS2 Robot on Raspberry Pi 5: From Zero to Autonomous Navigation',
     date: '2025-08-10',
     category: 'Robotics',
     readTime: '20 min',

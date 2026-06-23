@@ -36,7 +36,7 @@ export default function Footer() {
             </span>
           </a>
           <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 280, marginBottom: 20 }}>
-            Custom drones, electronics &amp; precision 3D printing — designed and built in Pune, India.
+            Custom drones, electronics &amp; precision 3D printing, designed and built in Pune, India.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[
@@ -139,7 +139,7 @@ export default function Footer() {
       <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', padding: '1.2rem clamp(1.25rem,4vw,2.5rem)' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <p style={{ fontSize: 12, color: '#aaa', margin: 0 }}>
-            © 2026 Kyzer Robotics Pvt. Ltd. — All Rights Reserved · Made with ❤️ in Pune, India
+            © 2026 Kyzer Robotics Pvt. Ltd. All Rights Reserved · Made with ❤️ in Pune, India
           </p>
 
           {/* Social icons */}

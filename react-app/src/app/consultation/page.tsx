@@ -29,9 +29,9 @@ const OPTIONS = [
 ]
 
 const STEPS = [
-  { step: '01', title: 'Tell us your project', desc: "Describe what you want to build — drone, robot, 3D print, automation. The more detail the better, but sketches and rough ideas work too." },
+  { step: '01', title: 'Tell us your project', desc: "Describe what you want to build: drone, robot, 3D print, automation. The more detail the better, but sketches and rough ideas work too." },
   { step: '02', title: 'We assess feasibility', desc: "Our engineering team reviews your requirements and tells you what's technically possible, what it would cost, and how long it would take." },
-  { step: '03', title: 'You get a clear plan', desc: 'A specific recommendation — build approach, technology stack, timeline, and a rough budget range. No vague "it depends" answers.' },
+  { step: '03', title: 'You get a clear plan', desc: 'A specific recommendation covering build approach, technology stack, timeline, and a rough budget range. No vague "it depends" answers.' },
   { step: '04', title: 'Proceed or walk away', desc: "No obligation. If we're a fit, great. If not, we'll point you in the right direction. We'd rather turn down a bad fit than take on a project we can't do well." },
 ]
 
@@ -41,13 +41,13 @@ export default function ConsultationPage() {
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px 100px' }}>
 
         <p style={{ color: '#FF8C35', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.15em', marginBottom: 20 }}>
-          // FREE CONSULTATION — KYZER ROBOTICS
+          // FREE CONSULTATION - KYZER ROBOTICS
         </p>
         <h1 style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 'clamp(2.2rem,5vw,3.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: 20 }}>
           LET&apos;S TALK ABOUT<br /><span style={{ color: '#FF8C35' }}>YOUR PROJECT</span>
         </h1>
         <p style={{ color: '#888', fontSize: 18, maxWidth: 600, lineHeight: 1.7, marginBottom: 60 }}>
-          Book a free 30-minute call with our engineering team. We&apos;ll understand your requirements, suggest the right approach, and give you an honest assessment — no pressure, no sales pitch.
+          Book a free 30-minute call with our engineering team. We&apos;ll understand your requirements, suggest the right approach, and give you an honest assessment. No pressure, no sales pitch.
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 40 }}>
@@ -94,9 +94,9 @@ export default function ConsultationPage() {
               {[
                 '✓ 50+ projects delivered across drones, robotics, and electronics',
                 '✓ In-house 3D printing, PCB design, and firmware development',
-                '✓ Based in Pune — fast turnaround, India-wide shipping',
+                '✓ Based in Pune - fast turnaround, India-wide shipping',
                 '✓ Student and startup friendly pricing',
-                '✓ No ghost work — you own all source files and CAD',
+                '✓ No ghost work - you own all source files and CAD',
               ].map(item => (
                 <p key={item} style={{ fontSize: 13, color: '#888', marginBottom: 10, lineHeight: 1.5 }}>{item}</p>
               ))}
