@@ -1,9 +1,9 @@
 export default function Footer() {
   return (
-    <footer style={{ fontFamily: "'DM Sans', sans-serif", background: '#0d0d0d', color: '#888' }}>
+    <footer style={{ fontFamily: "'DM Sans', sans-serif", background: '#f0f0ee', color: '#666' }}>
 
       {/* Trust badges */}
-      <div style={{ borderBottom: '1px solid #1c1c1c', padding: '20px 24px' }}>
+      <div style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', padding: '20px 24px' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '12px 32px', alignItems: 'center', justifyContent: 'center' }}>
           {[
             { icon: '🔒', label: 'Secure Payments', sub: 'Razorpay' },
@@ -16,8 +16,8 @@ export default function Footer() {
             <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <span style={{ fontSize: 18, lineHeight: 1 }}>{b.icon}</span>
               <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#ccc', margin: 0, lineHeight: 1.2 }}>{b.label}</p>
-                <p style={{ fontSize: 10, color: '#555', margin: 0 }}>{b.sub}</p>
+                <p style={{ fontSize: 12, fontWeight: 600, color: '#111', margin: 0, lineHeight: 1.2 }}>{b.label}</p>
+                <p style={{ fontSize: 10, color: '#888', margin: 0 }}>{b.sub}</p>
               </div>
             </div>
           ))}
@@ -30,12 +30,12 @@ export default function Footer() {
         {/* Brand col */}
         <div style={{ gridColumn: 'span 2' }}>
           <a href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 14 }}>
-            <img src="/logo.png" alt="Kyzer Robotics" style={{ width: 36, height: 36, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(56%) sepia(85%) saturate(800%) hue-rotate(345deg) brightness(95%)' }} />
+            <img src="/logo.png" alt="Kyzer Robotics" style={{ width: 36, height: 36, objectFit: 'contain' }} />
             <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, color: '#FF8C35', lineHeight: 0.9, letterSpacing: '0.03em' }}>
-              Kyzer<span style={{ display: 'block', fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, letterSpacing: '0.22em', color: '#555', marginTop: 3 }}>ROBOTICS</span>
+              Kyzer<span style={{ display: 'block', fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, letterSpacing: '0.22em', color: '#aaa', marginTop: 3 }}>ROBOTICS</span>
             </span>
           </a>
-          <p style={{ fontSize: 13, color: '#555', lineHeight: 1.7, maxWidth: 280, marginBottom: 20 }}>
+          <p style={{ fontSize: 13, color: '#888', lineHeight: 1.7, maxWidth: 280, marginBottom: 20 }}>
             Custom drones, electronics &amp; precision 3D printing — designed and built in Pune, India.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -45,10 +45,10 @@ export default function Footer() {
               { icon: '📞', text: '+91 90496 95264', href: 'tel:+919049695264' },
               { icon: '🕑', text: 'Mon–Sat · 10 AM – 7 PM IST', href: null },
             ].map(r => (
-              <div key={r.text} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#555', lineHeight: 1.5 }}>
+              <div key={r.text} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#888', lineHeight: 1.5 }}>
                 <span style={{ flexShrink: 0, lineHeight: 1.5 }}>{r.icon}</span>
                 {r.href
-                  ? <a href={r.href} target={r.href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ color: '#555', textDecoration: 'none' }}>{r.text}</a>
+                  ? <a href={r.href} target={r.href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ color: '#888', textDecoration: 'none' }}>{r.text}</a>
                   : <span>{r.text}</span>
                 }
               </div>
@@ -58,7 +58,7 @@ export default function Footer() {
 
         {/* Shop */}
         <div>
-          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#fff', marginBottom: 14 }}>Shop</h4>
+          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#111', marginBottom: 14 }}>Shop</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {[
               ['Drones', '/shop/drones'],
@@ -69,16 +69,16 @@ export default function Footer() {
               ['Printers & Supplies', '/shop/printers-supplies'],
               ['Search Products', '/search'],
             ].map(([label, href]) => (
-              <a key={href} href={href} style={{ fontSize: 13, color: '#555', textDecoration: 'none', transition: 'color 0.2s' }}
+              <a key={href} href={href} style={{ fontSize: 13, color: '#888', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#FF8C35')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}>{label}</a>
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}>{label}</a>
             ))}
           </div>
         </div>
 
         {/* Services */}
         <div>
-          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#fff', marginBottom: 14 }}>Services</h4>
+          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#111', marginBottom: 14 }}>Services</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {[
               ['3D Printing', '/services/3d-printing'],
@@ -89,16 +89,16 @@ export default function Footer() {
               ['Rapid Prototyping', '/services/prototyping'],
               ['Free Consultation', '/consultation'],
             ].map(([label, href]) => (
-              <a key={href} href={href} style={{ fontSize: 13, color: '#555', textDecoration: 'none', transition: 'color 0.2s' }}
+              <a key={href} href={href} style={{ fontSize: 13, color: '#888', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#FF8C35')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}>{label}</a>
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}>{label}</a>
             ))}
           </div>
         </div>
 
         {/* Company */}
         <div>
-          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#fff', marginBottom: 14 }}>Company</h4>
+          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#111', marginBottom: 14 }}>Company</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {[
               ['About Us', '/about'],
@@ -109,16 +109,16 @@ export default function Footer() {
               ['Get a 3D Quote', '/get-a-quote'],
               ['Kyzer Studio', '/studio'],
             ].map(([label, href]) => (
-              <a key={href} href={href} style={{ fontSize: 13, color: '#555', textDecoration: 'none', transition: 'color 0.2s' }}
+              <a key={href} href={href} style={{ fontSize: 13, color: '#888', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#FF8C35')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}>{label}</a>
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}>{label}</a>
             ))}
           </div>
         </div>
 
         {/* Policies */}
         <div>
-          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#fff', marginBottom: 14 }}>Legal</h4>
+          <h4 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: '0.06em', color: '#111', marginBottom: 14 }}>Legal</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {[
               ['Privacy Policy', '/privacy'],
@@ -127,18 +127,18 @@ export default function Footer() {
               ['Cancellation Policy', '/cancellation'],
               ['Shipping & Delivery', '/shipping-policy'],
             ].map(([label, href]) => (
-              <a key={href} href={href} style={{ fontSize: 13, color: '#555', textDecoration: 'none', transition: 'color 0.2s' }}
+              <a key={href} href={href} style={{ fontSize: 13, color: '#888', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#FF8C35')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}>{label}</a>
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}>{label}</a>
             ))}
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div style={{ borderTop: '1px solid #1c1c1c', padding: '1.2rem clamp(1.25rem,4vw,2.5rem)' }}>
+      <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', padding: '1.2rem clamp(1.25rem,4vw,2.5rem)' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <p style={{ fontSize: 12, color: '#3a3a3a', margin: 0 }}>
+          <p style={{ fontSize: 12, color: '#aaa', margin: 0 }}>
             © 2026 Kyzer Robotics Pvt. Ltd. — All Rights Reserved · Made with ❤️ in Pune, India
           </p>
 
@@ -155,9 +155,9 @@ export default function Footer() {
               },
             ].map(s => (
               <a key={s.label} href={s.href} target="_blank" rel="noopener" aria-label={s.label}
-                style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555', textDecoration: 'none', transition: 'all 0.2s' }}
+                style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', textDecoration: 'none', transition: 'all 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#FF8C35'; e.currentTarget.style.borderColor = '#FF8C35'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#555'; }}>
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.12)'; e.currentTarget.style.color = '#aaa'; }}>
                 {s.svg}
               </a>
             ))}
@@ -166,9 +166,9 @@ export default function Footer() {
           {/* Payment chips */}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
             {['UPI', 'VISA', 'Mastercard', 'RuPay'].map(m => (
-              <span key={m} style={{ fontSize: 10, fontWeight: 700, color: '#444', background: '#161616', border: '1px solid #222', borderRadius: 4, padding: '3px 7px' }}>{m}</span>
+              <span key={m} style={{ fontSize: 10, fontWeight: 700, color: '#888', background: '#fff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 4, padding: '3px 7px' }}>{m}</span>
             ))}
-            <span style={{ fontSize: 10, fontWeight: 700, color: '#FF8C35', background: '#161616', border: '1px solid rgba(255,140,53,0.3)', borderRadius: 4, padding: '3px 7px' }}>🔒 Razorpay</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#FF8C35', background: '#fff', border: '1px solid rgba(255,140,53,0.3)', borderRadius: 4, padding: '3px 7px' }}>🔒 Razorpay</span>
           </div>
         </div>
       </div>
