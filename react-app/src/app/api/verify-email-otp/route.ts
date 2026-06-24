@@ -24,19 +24,84 @@ function verifySession(email: string, otp: string, session: string): boolean {
   }
 }
 
-async function getAdminAuth() {
-  const { initializeApp, getApps, cert } = await import('firebase-admin/app');
-  const { getAuth } = await import('firebase-admin/auth');
-  if (!getApps().length) {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  }
-  return getAuth();
+function b64url(data: string) {
+  return Buffer.from(data).toString('base64url');
+}
+
+function signJwt(header: object, payload: object, privateKey: string): string {
+  const h = b64url(JSON.stringify(header));
+  const p = b64url(JSON.stringify(payload));
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(`${h}.${p}`);
+  const sig = sign.sign(privateKey, 'base64url');
+  return `${h}.${p}.${sig}`;
+}
+
+async function getGoogleAccessToken(clientEmail: string, privateKey: string): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const jwt = signJwt(
+    { alg: 'RS256', typ: 'JWT' },
+    {
+      iss: clientEmail,
+      scope: 'https://www.googleapis.com/auth/cloud-platform',
+      aud: 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600,
+    },
+    privateKey,
+  );
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt,
+    }),
+  });
+  const data = await res.json() as { access_token: string };
+  if (!data.access_token) throw new Error('Failed to get Google access token');
+  return data.access_token;
+}
+
+async function getOrCreateUid(email: string, accessToken: string, projectId: string): Promise<string> {
+  const lookupRes = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:lookup`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: [email] }),
+    },
+  );
+  const lookupData = await lookupRes.json() as { users?: { localId: string }[] };
+  if (lookupData.users?.length) return lookupData.users[0].localId;
+
+  const createRes = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, emailVerified: true }),
+    },
+  );
+  const createData = await createRes.json() as { localId: string };
+  if (!createData.localId) throw new Error('Failed to create Firebase user');
+  return createData.localId;
+}
+
+function createCustomToken(uid: string, clientEmail: string, privateKey: string): string {
+  const now = Math.floor(Date.now() / 1000);
+  return signJwt(
+    { alg: 'RS256', typ: 'JWT' },
+    {
+      iss: clientEmail,
+      sub: clientEmail,
+      aud: 'https://identitytoolkit.googleapis.com/google.identity.toolkit.v1.IdentityToolkit',
+      iat: now,
+      exp: now + 3600,
+      uid,
+    },
+    privateKey,
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -44,7 +109,6 @@ export async function POST(req: NextRequest) {
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const { email, otp, session } = await req.json().catch(() => ({}));
-
   if (!email || !otp || !session) {
     return NextResponse.json({ ok: false, error: 'Missing fields.' }, { status: 400 });
   }
@@ -54,18 +118,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const auth = await getAdminAuth();
+    const projectId = process.env.FIREBASE_PROJECT_ID!;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL!;
+    const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 
-    let uid: string;
-    try {
-      const existing = await auth.getUserByEmail(email);
-      uid = existing.uid;
-    } catch {
-      const created = await auth.createUser({ email, emailVerified: true });
-      uid = created.uid;
-    }
+    const accessToken = await getGoogleAccessToken(clientEmail, privateKey);
+    const uid = await getOrCreateUid(email.toLowerCase(), accessToken, projectId);
+    const customToken = createCustomToken(uid, clientEmail, privateKey);
 
-    const customToken = await auth.createCustomToken(uid);
     return NextResponse.json({ ok: true, token: customToken });
   } catch (err) {
     console.error('Firebase custom token error:', err);
