@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { sendMail } from '@/lib/mailer';
+import nodemailer from 'nodemailer';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
-const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const OTP_TTL_MS = 10 * 60 * 1000;
 
 function generateOtp(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -14,6 +14,19 @@ function signSession(email: string, otp: string, iat: number): string {
   const payload = `${email}:${otp}:${iat}`;
   const sig = crypto.createHmac('sha256', OTP_SECRET).update(payload).digest('hex');
   return Buffer.from(`${payload}:${sig}`).toString('base64url');
+}
+
+function getTitanTransport() {
+  return nodemailer.createTransport({
+    host: 'smtp.titan.email',
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: process.env.TITAN_USER || 'info@kyzerrobotics.com',
+      pass: process.env.TITAN_PASS,
+    },
+  });
 }
 
 export async function POST(req: NextRequest) {
@@ -30,9 +43,11 @@ export async function POST(req: NextRequest) {
   const session = signSession(email.toLowerCase(), otp, iat);
 
   try {
-    const mailResult = await sendMail({
+    const transporter = getTitanTransport();
+    const info = await transporter.sendMail({
+      from: `Kyzer Robotics <info@kyzerrobotics.com>`,
       to: email,
-      subject: `${otp} is your Kyzer Robotics login code`,
+      subject: `Your Kyzer Robotics login code: ${otp}`,
       html: `
         <div style="font-family:'DM Sans',Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#f8f8f6;border-radius:12px;">
           <div style="text-align:center;margin-bottom:28px;">
@@ -48,12 +63,10 @@ export async function POST(req: NextRequest) {
         </div>
       `,
     });
-
-    console.log('OTP email sent:', JSON.stringify(mailResult));
+    console.log('Titan OTP sent:', info.messageId);
     return NextResponse.json({ ok: true, session });
   } catch (err) {
-    console.error('Email OTP send error:', err);
+    console.error('Titan OTP send error:', err);
     return NextResponse.json({ ok: false, error: 'Failed to send email. Please try again.' }, { status: 500 });
   }
 }
-
