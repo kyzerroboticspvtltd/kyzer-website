@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import { sendMail } from '@/lib/mailer';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
@@ -14,18 +14,6 @@ function signSession(email: string, otp: string, iat: number): string {
   const payload = `${email}:${otp}:${iat}`;
   const sig = crypto.createHmac('sha256', OTP_SECRET).update(payload).digest('hex');
   return Buffer.from(`${payload}:${sig}`).toString('base64url');
-}
-
-function getTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.TITAN_HOST || 'smtp.titan.email',
-    port: Number(process.env.TITAN_PORT) || 465,
-    secure: true,
-    auth: {
-      user: process.env.TITAN_USER,
-      pass: process.env.TITAN_PASS,
-    },
-  });
 }
 
 export async function POST(req: NextRequest) {
@@ -42,9 +30,7 @@ export async function POST(req: NextRequest) {
   const session = signSession(email.toLowerCase(), otp, iat);
 
   try {
-    const transporter = getTransporter();
-    await transporter.sendMail({
-      from: `"Kyzer Robotics" <${process.env.TITAN_USER}>`,
+    await sendMail({
       to: email,
       subject: `${otp} is your Kyzer Robotics login code`,
       html: `
@@ -70,4 +56,3 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export { signSession, OTP_SECRET, OTP_TTL_MS };
