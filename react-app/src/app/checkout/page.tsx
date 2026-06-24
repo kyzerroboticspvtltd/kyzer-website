@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 const FONT_URL =
@@ -20,7 +21,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
+const STEPS = ['Cart', 'Review', 'Payment', 'Address'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -56,6 +57,7 @@ function StepBar({ current }: { current: number }) {
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [authUser, setAuthUser] = useState<import('firebase/auth').User | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -63,6 +65,11 @@ export default function CheckoutPage() {
       const raw = localStorage.getItem('kyzer_cart');
       if (raw) setCart(JSON.parse(raw));
     } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => setAuthUser(user));
+    return unsub;
   }, []);
 
   function saveCart(updated: CartItem[]) {
@@ -86,12 +93,11 @@ export default function CheckoutPage() {
   const delivery = subtotal >= 999 ? 0 : 99;
   const grandTotal = subtotal + gst + delivery;
 
-  async function handleProceed() {
-    const user = auth.currentUser;
-    if (user) {
-      window.location.href = '/checkout/address';
+  function handleProceed() {
+    if (authUser) {
+      window.location.href = '/checkout/review';
     } else {
-      window.location.href = '/login?redirect=/checkout/address';
+      window.location.href = '/login?redirect=/checkout/review';
     }
   }
 

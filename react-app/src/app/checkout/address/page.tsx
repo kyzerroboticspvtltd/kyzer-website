@@ -17,6 +17,15 @@ const INDIAN_STATES = [
   'Andaman & Nicobar Islands','Dadra & Nagar Haveli','Daman & Diu',
 ];
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: string | number;
+  emoji: string;
+  qty: number;
+  photo?: string;
+}
+
 interface Address {
   id: string;
   label: string;
@@ -32,7 +41,12 @@ interface Address {
   isDefault: boolean;
 }
 
-const STEPS = ['Cart', 'Address', 'Payment', 'Review'];
+function parsePrice(p: string | number): number {
+  if (!p) return 0;
+  return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
+}
+
+const STEPS = ['Review', 'Payment', 'Address'];
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -70,55 +84,77 @@ const emptyForm = (): Omit<Address, 'id' | 'isDefault'> => ({
   city: '', state: '', pincode: '', landmark: '',
 });
 
+function clearOrder() {
+  try {
+    localStorage.removeItem('kyzer_cart');
+    sessionStorage.removeItem('kyzer_checkout');
+  } catch { /* ignore */ }
+}
+
+function addrString(a: Address) {
+  return [a.addr1, a.addr2, a.city, a.state, a.pincode, a.landmark].filter(Boolean).join(', ');
+}
+
 export default function AddressPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState('');
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm());
   const [saveToProfile, setSaveToProfile] = useState(true);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
     auth.authStateReady().then(() => {
-    unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = '/login?redirect=/checkout/address';
-        return;
-      }
-      const uid = user.uid;
-      const email = user.email || '';
-      setUserId(uid);
-      setUserEmail(email);
-      const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
-      if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
-        setSavedAddresses(cust.address as Address[]);
-        const def = (cust.address as Address[]).find(a => a.isDefault);
-        setSelectedId(def?.id || (cust.address as Address[])[0]?.id);
-        setShowForm(false);
-      } else {
-        setShowForm(true);
-        setForm(prev => ({ ...prev, email }));
-      }
-      setLoading(false);
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = '/login?redirect=/checkout/address';
+          return;
+        }
+        const uid = user.uid;
+        const email = user.email || '';
+        setUserId(uid);
+        setUserEmail(email);
+
+        try {
+          const cartRaw = localStorage.getItem('kyzer_cart');
+          if (cartRaw) setCart(JSON.parse(cartRaw));
+          const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
+          if (checkoutRaw) {
+            const parsed = JSON.parse(checkoutRaw);
+            if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
+          }
+        } catch { /* ignore */ }
+
+        const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
+        if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
+          setSavedAddresses(cust.address as Address[]);
+          const def = (cust.address as Address[]).find(a => a.isDefault);
+          setSelectedId(def?.id || (cust.address as Address[])[0]?.id);
+          setShowForm(false);
+        } else {
+          setShowForm(true);
+          setForm(prev => ({ ...prev, email }));
+        }
+        setPageLoading(false);
+      });
     });
-    });
-    return () => unsubscribe?.();
   }, []);
 
   function field(key: keyof typeof form, value: string) {
     setForm(prev => ({ ...prev, [key]: value }));
   }
 
-  async function handleContinue() {
+  async function handleConfirmOrder() {
     setError('');
     let addr: Address;
 
     if (showForm) {
-      // Validate
       if (!form.name.trim()) { setError('Full name is required.'); return; }
       if (!/^\d{10}$/.test(form.phone)) { setError('Phone must be 10 digits.'); return; }
       if (!form.email.trim()) { setError('Email is required.'); return; }
@@ -139,15 +175,91 @@ export default function AddressPage() {
       addr = sel;
     }
 
-    try {
-      const existing = JSON.parse(sessionStorage.getItem('kyzer_checkout') || '{}');
-      sessionStorage.setItem('kyzer_checkout', JSON.stringify({ ...existing, address: addr }));
-    } catch { /* ignore */ }
+    setLoading(true);
 
-    window.location.href = '/checkout/payment';
+    try {
+      const checkoutData = JSON.parse(sessionStorage.getItem('kyzer_checkout') || '{}');
+      const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
+      const delivery = subtotal >= 999 ? 0 : 99;
+      const grandTotal = subtotal + delivery;
+
+      if (paymentMethod === 'online') {
+        // Verify the payment that was completed on the payment page
+        const verifyRes = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: checkoutData.razorpay_order_id,
+            razorpay_payment_id: checkoutData.razorpay_payment_id,
+            razorpay_signature: checkoutData.razorpay_signature,
+            orderId: checkoutData.orderId,
+          }),
+        });
+        if (!verifyRes.ok) throw new Error('Payment verification failed');
+
+        const tokenRes = await fetch('/api/checkout-token');
+        const tokenData = await tokenRes.json();
+
+        const notifyRes = await fetch('/api/order-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            checkoutToken: tokenData?.token,
+            orderData: {
+              id: checkoutData.orderId,
+              name: addr.name,
+              email: addr.email,
+              phone: addr.phone,
+              shippingFull: addrString(addr),
+              address: addrString(addr),
+              items: cart,
+              total: grandTotal,
+              paymentMethod: 'online',
+              paymentId: checkoutData.razorpay_payment_id,
+              status: 'new',
+            },
+          }),
+        });
+        if (!notifyRes.ok) throw new Error('Order notification failed');
+        clearOrder();
+        window.location.href = `/order-confirmation/${checkoutData.orderId}`;
+      } else {
+        // COD order
+        const orderId = 'SHOP-' + Date.now();
+        const tokenRes = await fetch('/api/checkout-token');
+        const tokenData = await tokenRes.json();
+
+        const notifyRes = await fetch('/api/order-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            checkoutToken: tokenData?.token,
+            orderData: {
+              id: orderId,
+              name: addr.name,
+              email: addr.email,
+              phone: addr.phone,
+              shippingFull: addrString(addr),
+              address: addrString(addr),
+              items: cart,
+              total: grandTotal,
+              paymentMethod: 'cod',
+              status: 'new',
+            },
+          }),
+        });
+        if (!notifyRes.ok) throw new Error('Order failed');
+        clearOrder();
+        window.location.href = `/order-confirmation/${orderId}`;
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Something went wrong';
+      setError(msg + '. Please try again or contact support.');
+      setLoading(false);
+    }
   }
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div style={{ minHeight: '100vh', background: '#f8f8f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ color: '#666', fontFamily: "'DM Sans', sans-serif" }}>Loading…</span>
@@ -169,12 +281,15 @@ export default function AddressPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Cart</a>
+          <a href="/checkout/payment" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Payment</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
-          <StepBar current={1} />
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>Delivery Address</h1>
+          <StepBar current={2} />
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 8, letterSpacing: '0.04em' }}>Delivery Address</h1>
+          <p style={{ fontSize: 14, color: '#777', marginBottom: 24 }}>
+            {paymentMethod === 'online' ? 'Payment confirmed. Enter where to ship your order.' : 'Enter your delivery address to confirm the order.'}
+          </p>
 
           {error && (
             <div style={{ background: '#fff0f0', border: '1px solid #ffc5c5', borderRadius: 8, padding: '12px 14px', marginBottom: 20, fontSize: 14, color: '#c0392b' }}>
@@ -227,7 +342,7 @@ export default function AddressPage() {
 
           {/* Address form */}
           {showForm && (
-            <div style={{ background: '#fff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', padding: '24px' }}>
+            <div style={{ background: '#fff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', padding: '24px', marginBottom: 20 }}>
               <h3 style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 20 }}>
                 {savedAddresses.length > 0 ? 'New Address' : 'Delivery Details'}
               </h3>
@@ -274,7 +389,6 @@ export default function AddressPage() {
                 </div>
               </div>
 
-              {/* Address type */}
               <div style={{ marginBottom: 16 }}>
                 <label style={labelStyle}>Address Type</label>
                 <div style={{ display: 'flex', gap: 12 }}>
@@ -287,7 +401,6 @@ export default function AddressPage() {
                 </div>
               </div>
 
-              {/* Save checkbox */}
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: '#555', marginBottom: 4 }}>
                 <input type="checkbox" checked={saveToProfile} onChange={e => setSaveToProfile(e.target.checked)} />
                 Save this address to my profile
@@ -305,14 +418,14 @@ export default function AddressPage() {
           )}
 
           <button
-            onClick={handleContinue}
-            style={{ width: '100%', marginTop: 20, padding: '13px', background: '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+            onClick={handleConfirmOrder}
+            disabled={loading}
+            style={{ width: '100%', marginTop: 8, padding: '14px', background: loading ? '#ccc' : '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: "'DM Sans', sans-serif" }}
           >
-            Continue to Payment →
+            {loading ? 'Confirming Order…' : 'Confirm Order →'}
           </button>
         </div>
       </div>
     </>
   );
 }
-
