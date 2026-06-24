@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const session = signSession(email.toLowerCase(), otp, iat);
 
   try {
-    await sendMail({
+    const mailResult = await sendMail({
       to: email,
       subject: `${otp} is your Kyzer Robotics login code`,
       html: `
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
       `,
     });
 
+    console.log('OTP email sent:', JSON.stringify(mailResult));
     return NextResponse.json({ ok: true, session });
   } catch (err) {
     console.error('Email OTP send error:', err);
