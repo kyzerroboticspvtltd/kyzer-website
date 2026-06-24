@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
@@ -26,7 +24,9 @@ function verifySession(email: string, otp: string, session: string): boolean {
   }
 }
 
-function getAdminAuth() {
+async function getAdminAuth() {
+  const { initializeApp, getApps, cert } = await import('firebase-admin/app');
+  const { getAuth } = await import('firebase-admin/auth');
   if (!getApps().length) {
     initializeApp({
       credential: cert({
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const auth = getAdminAuth();
+    const auth = await getAdminAuth();
 
     let uid: string;
     try {
