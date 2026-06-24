@@ -22,12 +22,12 @@ function getTitanTransport() {
     port: 465,
     secure: true,
     auth: {
-      type: 'login',
       user: process.env.TITAN_USER || 'info@kyzerrobotics.com',
-      pass: process.env.TITAN_PASS,
+      pass: (process.env.TITAN_PASS || '').replace(/^﻿/, '').trim(),
     },
     tls: { rejectUnauthorized: false },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
 }
 
 export async function POST(req: NextRequest) {
