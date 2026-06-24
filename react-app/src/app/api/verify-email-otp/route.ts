@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import * as admin from 'firebase-admin';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
@@ -25,15 +26,17 @@ function verifySession(email: string, otp: string, session: string): boolean {
   }
 }
 
-function getAdminApp() {
-  if (admin.apps.length) return admin.app();
-  return admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+function getAdminAuth() {
+  if (!getApps().length) {
+    initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+  }
+  return getAuth();
 }
 
 export async function POST(req: NextRequest) {
@@ -51,10 +54,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const app = getAdminApp();
-    const auth = admin.auth(app);
+    const auth = getAdminAuth();
 
-    // Get or create the Firebase user for this email
     let uid: string;
     try {
       const existing = await auth.getUserByEmail(email);
