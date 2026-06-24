@@ -39,7 +39,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['razorpay'],
+  serverExternalPackages: ['razorpay', 'firebase-admin'],
   async headers() {
     return [
       {
