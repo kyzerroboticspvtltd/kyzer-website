@@ -67,7 +67,12 @@ export function AdminProducts() {
             {filtered.map(p => (
               <div key={p.id} className="px-5 py-3.5 grid grid-cols-12 gap-3 items-center hover:bg-[#fafaf8] transition-colors">
                 <div className="col-span-5 flex items-center gap-3 min-w-0">
-                  <span className="text-xl shrink-0">{p.emoji}</span>
+                  {p.image ? (
+                    <img src={p.image} alt={p.name}
+                      className="w-10 h-10 rounded-lg object-cover shrink-0 bg-gray-100" />
+                  ) : (
+                    <span className="text-xl shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50">{p.emoji}</span>
+                  )}
                   <div className="min-w-0">
                     <p className="text-[13px] font-medium text-[#111] truncate">{p.name}</p>
                     <p className="text-[11px] text-gray-400 font-mono">{p.id}</p>
