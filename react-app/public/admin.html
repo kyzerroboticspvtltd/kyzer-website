@@ -158,6 +158,27 @@ html.dark .toggle-slider{background:#444}
 .publish-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(255,140,53,.06);border:1.5px solid rgba(255,140,53,.2);border-radius:12px;padding:14px 20px;margin-bottom:24px}
 .publish-bar p{font-size:13px;color:var(--muted)}
 
+/* ── PRODUCT CARDS ── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.prod-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s;position:relative}
+.prod-card:hover{box-shadow:var(--shadow-lg);border-color:rgba(255,140,53,.35)}
+.prod-card.hidden-card{opacity:.55}
+.prod-img{position:relative;height:160px;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--border)}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.prod-card:hover .prod-img img{transform:scale(1.04)}
+.prod-img-emoji{font-size:52px;line-height:1;user-select:none}
+.prod-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:6px;color:#fff}
+.prod-badge.HOT{background:#e74c3c}.prod-badge.NEW{background:var(--orange)}.prod-badge.SALE{background:var(--green)}.prod-badge.LIMITED{background:#9b59b6}
+.prod-vis-toggle{position:absolute;top:10px;right:10px}
+.prod-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:8px}
+.prod-subcat{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--orange);letter-spacing:.1em;text-transform:uppercase}
+.prod-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3}
+.prod-desc{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--border);gap:8px}
+.prod-price{font-size:15px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace}
+.prod-price.unset{font-size:12px;color:var(--muted);font-style:italic;font-family:'Inter',sans-serif;font-weight:400}
+.prod-actions{display:flex;gap:6px}
+
 /* ── SECTION HEADER ── */
 .section-header{margin-bottom:20px}
 .section-header h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
@@ -353,13 +374,12 @@ html.dark .toggle-slider{background:#444}
           <p>Changes are saved locally. Click <strong>Publish</strong> to push live to the website.</p>
           <button class="btn btn-primary" onclick="doPublish()">Publish now</button>
         </div>
-        <div class="table-wrap">
-          <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search products…" oninput="renderProducts(this.value)">
-            <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
-          </div>
-          <div id="products-table"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+          <input type="text" class="search-input" placeholder="Search products…" oninput="renderProducts(this.value)" style="flex:1;min-width:200px;max-width:320px">
+          <div id="prod-cat-filters" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+          <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
         </div>
+        <div id="products-grid"></div>
       </div>
 
       <!-- HERO -->
@@ -992,24 +1012,78 @@ async function doPublish() {
 }
 
 // ─── PRODUCTS ─────────────────────────────────────────────────
-function renderProducts(search='') {
-  const prods = (siteData.products||[]).filter(p => !search || [p.name,p.category,p.description].some(f=>String(f||'').toLowerCase().includes(search.toLowerCase())));
-  if (!prods.length) { $('products-table').innerHTML = '<div class="empty-state">No products. Add one above.</div>'; return; }
-  $('products-table').innerHTML = `<table>
-    <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Visible</th><th></th></tr></thead>
-    <tbody>${prods.map((p,i)=>`<tr>
-      <td style="font-weight:500"><div style="display:flex;align-items:center;gap:10px">${p.image?`<img src="${esc(p.image)}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">`:''}<span>${esc(p.name)}</span></div></td>
-      <td style="font-size:12px;color:var(--muted)">${esc(p.category||'—')}</td>
-      <td style="font-size:13px">${p.price?'₹'+esc(String(p.price)):'—'}</td>
-      <td><label class="toggle"><input type="checkbox" ${p.visible!==false?'checked':''} onchange="toggleProduct('${esc(p.id||String(i))}')"><span class="toggle-slider"></span></label></td>
-      <td style="text-align:right;display:flex;gap:6px;justify-content:flex-end">
-        <button class="btn btn-ghost btn-sm" onclick="openProductModal('${esc(p.id||String(i))}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${esc(p.id||String(i))}')">Delete</button>
-      </td>
-    </tr>`).join('')}</tbody></table>`;
+let _prodCatFilter = 'all';
+
+function renderProdCatFilters() {
+  const cats = ['all', ...new Set((siteData.products||[]).map(p=>p.category).filter(Boolean))];
+  const el = $('prod-cat-filters');
+  if (!el) return;
+  el.innerHTML = cats.map(c=>`<button class="filter-btn${_prodCatFilter===c?' active':''}" onclick="setProdCat('${esc(c)}')">${c==='all'?'All':esc(c)}</button>`).join('');
 }
 
-function toggleProduct(id) { const p=siteData.products.find(x=>x.id===id); if(p){p.visible=!p.visible;saveLocal();} }
+function setProdCat(cat) {
+  _prodCatFilter = cat;
+  renderProdCatFilters();
+  renderProducts(document.querySelector('#tab-products .search-input')?.value||'');
+}
+
+function renderProducts(search='') {
+  renderProdCatFilters();
+  const q = search.toLowerCase();
+  const prods = (siteData.products||[]).filter(p => {
+    const matchSearch = !q || [p.name,p.category,p.subcategory,p.description].some(f=>String(f||'').toLowerCase().includes(q));
+    const matchCat = _prodCatFilter==='all' || p.category===_prodCatFilter;
+    return matchSearch && matchCat;
+  });
+  const grid = $('products-grid');
+  if (!grid) return;
+  if (!prods.length) { grid.innerHTML = '<div class="empty-state">No products found.</div>'; return; }
+
+  grid.innerHTML = `<div class="prod-grid">${prods.map(p => {
+    const id = esc(p.id||p.name);
+    const badgeHtml = p.badge ? `<span class="prod-badge ${esc(p.badge)}">${esc(p.badge)}</span>` : '';
+    const imgHtml = p.image
+      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      : '';
+    const emojiHtml = `<span class="prod-img-emoji" style="${p.image?'display:none':''}">${esc(p.emoji||'📦')}</span>`;
+    const priceHtml = p.price>0
+      ? `<span class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</span>`
+      : `<span class="prod-price unset">Price on request</span>`;
+    const isVisible = p.visible !== false;
+    return `<div class="prod-card${isVisible?'':' hidden-card'}" id="pcard-${id}">
+      <div class="prod-img">
+        ${imgHtml}${emojiHtml}${badgeHtml}
+        <span class="prod-vis-toggle">
+          <label class="toggle" title="${isVisible?'Visible':'Hidden'}">
+            <input type="checkbox" ${isVisible?'checked':''} onchange="toggleProduct('${id}')">
+            <span class="toggle-slider"></span>
+          </label>
+        </span>
+      </div>
+      <div class="prod-body">
+        <div class="prod-subcat">${esc(p.subcategory||p.category||'')}</div>
+        <div class="prod-name">${esc(p.name)}</div>
+        <div class="prod-desc">${esc(p.description||'')}</div>
+      </div>
+      <div class="prod-footer">
+        ${priceHtml}
+        <div class="prod-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openProductModal('${id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function toggleProduct(id) {
+  const p = siteData.products.find(x=>x.id===id);
+  if (!p) return;
+  p.visible = !p.visible;
+  saveLocal();
+  const card = document.getElementById('pcard-'+id);
+  if (card) card.classList.toggle('hidden-card', !p.visible);
+}
 
 function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
