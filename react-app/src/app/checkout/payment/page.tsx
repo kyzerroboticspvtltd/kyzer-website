@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -70,26 +68,26 @@ export default function PaymentPage() {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-    auth.authStateReady().then(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          window.location.href = '/login?redirect=/checkout/payment';
-          return;
-        }
-        setUserName(user.displayName || '');
-        setUserEmail(user.email || '');
-        try {
-          const cartRaw = localStorage.getItem('kyzer_cart');
-          if (cartRaw) setCart(JSON.parse(cartRaw));
-          const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
-          if (checkoutRaw) {
-            const parsed = JSON.parse(checkoutRaw);
-            if (parsed.paymentMethod) setMethod(parsed.paymentMethod);
-          }
-        } catch { /* ignore */ }
-        setMounted(true);
-      });
-    });
+    const token = localStorage.getItem('kyzer_auth_token');
+    const raw = localStorage.getItem('kyzer_current_customer');
+    if (!token || !raw) {
+      window.location.href = '/login?redirect=/checkout/payment';
+      return;
+    }
+    let customer: { name?: string; email?: string } = {};
+    try { customer = JSON.parse(raw); } catch { /* ignore */ }
+    setUserName(customer.name || '');
+    setUserEmail(customer.email || '');
+    try {
+      const cartRaw = localStorage.getItem('kyzer_cart');
+      if (cartRaw) setCart(JSON.parse(cartRaw));
+      const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
+      if (checkoutRaw) {
+        const parsed = JSON.parse(checkoutRaw);
+        if (parsed.paymentMethod) setMethod(parsed.paymentMethod);
+      }
+    } catch { /* ignore */ }
+    setMounted(true);
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { supabase } from '@/lib/supabase';
 
 const FONT_URL =
@@ -51,25 +49,31 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-    auth.authStateReady().then(() => {
-      unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-          window.location.href = '/login?redirect=/profile';
-          return;
-        }
-        setUserId(user.uid);
-        setUserEmail(user.email || '');
-        setUserName(user.displayName || user.email?.split('@')[0] || 'User');
+    const token = localStorage.getItem('kyzer_auth_token');
+    const raw = localStorage.getItem('kyzer_current_customer');
 
-        const { data: cust } = await supabase.from('customers').select('address').eq('id', user.uid).single();
-        if (cust && Array.isArray(cust.address)) {
-          setAddresses(cust.address as Address[]);
-        }
-        setLoading(false);
-      });
-    });
-    return () => unsubscribe?.();
+    if (!token || !raw) {
+      window.location.href = '/login?redirect=/profile';
+      return;
+    }
+
+    let customer: { id?: string; name?: string; email?: string } = {};
+    try { customer = JSON.parse(raw); } catch { /* ignore */ }
+
+    const uid = customer.id || '';
+    const email = customer.email || '';
+    setUserId(uid);
+    setUserEmail(email);
+    setUserName(customer.name || email.split('@')[0] || 'User');
+
+    const fetchAddresses = async () => {
+      try {
+        const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
+        if (cust && Array.isArray(cust.address)) setAddresses(cust.address as Address[]);
+      } catch { /* ignore */ }
+      setLoading(false);
+    };
+    fetchAddresses();
   }, []);
 
   async function saveAddresses(updated: Address[]) {
@@ -132,8 +136,8 @@ export default function ProfilePage() {
     cancelForm();
   }
 
-  async function handleSignOut() {
-    await signOut(auth);
+  function handleSignOut() {
+    localStorage.removeItem('kyzer_auth_token');
     localStorage.removeItem('kyzer_current_customer');
     window.location.href = '/';
   }

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -52,42 +50,25 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let done = false;
+    const token = localStorage.getItem('kyzer_auth_token');
+    const raw = localStorage.getItem('kyzer_current_customer');
 
-    // authStateReady() resolves once Firebase has read the persisted session
-    // from localStorage — only THEN do we check the user, so we never redirect
-    // based on a transient null before the cache is loaded.
-    auth.authStateReady().then(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (done) return;
-        done = true;
-        unsubscribe();
+    if (!token || !raw) {
+      window.location.href = '/login?redirect=/customer/dashboard';
+      return;
+    }
 
-        if (!user) {
-          window.location.href = '/login?redirect=/customer/dashboard';
-          return;
-        }
+    let customer: { id?: string; name?: string; email?: string } = {};
+    try { customer = JSON.parse(raw); } catch { /* ignore */ }
 
-        const email = user.email || '';
-        setUserEmail(email);
-        setUserName(user.displayName || email.split('@')[0] || 'Customer');
+    setUserEmail(customer.email || '');
+    setUserName(customer.name || customer.email?.split('@')[0] || 'Customer');
 
-        try {
-          const idToken = await user.getIdToken();
-          const res = await fetch('/api/my-orders', {
-            headers: { Authorization: `Bearer ${idToken}` },
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (json.orders) setOrders(json.orders as Order[]);
-          }
-        } catch {
-          // orders stay empty — dashboard still renders
-        } finally {
-          setLoading(false);
-        }
-      });
-    });
+    fetch('/api/my-orders', { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => { if (json?.orders) setOrders(json.orders as Order[]); })
+      .catch(() => { /* orders stay empty */ })
+      .finally(() => setLoading(false));
   }, []);
 
   function formatDate(iso: string) {

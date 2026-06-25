@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -59,19 +57,15 @@ export default function ReviewPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    auth.authStateReady().then(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          window.location.href = '/login?redirect=/checkout/review';
-          return;
-        }
-        try {
-          const raw = localStorage.getItem('kyzer_cart');
-          if (raw) setCart(JSON.parse(raw));
-        } catch { /* ignore */ }
-        setMounted(true);
-      });
-    });
+    if (!localStorage.getItem('kyzer_auth_token')) {
+      window.location.href = '/login?redirect=/checkout/review';
+      return;
+    }
+    try {
+      const raw = localStorage.getItem('kyzer_cart');
+      if (raw) setCart(JSON.parse(raw));
+    } catch { /* ignore */ }
+    setMounted(true);
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 import { supabase } from '@/lib/supabase';
 
 const FONT_URL =
@@ -110,40 +108,45 @@ export default function AddressPage() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
 
   useEffect(() => {
-    auth.authStateReady().then(() => {
-      onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-          window.location.href = '/login?redirect=/checkout/address';
-          return;
-        }
-        const uid = user.uid;
-        const email = user.email || '';
-        setUserId(uid);
-        setUserEmail(email);
+    (async () => {
+      const token = localStorage.getItem('kyzer_auth_token');
+      const raw = localStorage.getItem('kyzer_current_customer');
 
-        try {
-          const cartRaw = localStorage.getItem('kyzer_cart');
-          if (cartRaw) setCart(JSON.parse(cartRaw));
-          const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
-          if (checkoutRaw) {
-            const parsed = JSON.parse(checkoutRaw);
-            if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
-          }
-        } catch { /* ignore */ }
+      if (!token || !raw) {
+        window.location.href = '/login?redirect=/checkout/address';
+        return;
+      }
 
-        const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
-        if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
-          setSavedAddresses(cust.address as Address[]);
-          const def = (cust.address as Address[]).find(a => a.isDefault);
-          setSelectedId(def?.id || (cust.address as Address[])[0]?.id);
-          setShowForm(false);
-        } else {
-          setShowForm(true);
-          setForm(prev => ({ ...prev, email }));
+      let customer: { id?: string; name?: string; email?: string } = {};
+      try { customer = JSON.parse(raw); } catch { /* ignore */ }
+
+      const uid = customer.id || '';
+      const email = customer.email || '';
+      setUserId(uid);
+      setUserEmail(email);
+
+      try {
+        const cartRaw = localStorage.getItem('kyzer_cart');
+        if (cartRaw) setCart(JSON.parse(cartRaw));
+        const checkoutRaw = sessionStorage.getItem('kyzer_checkout');
+        if (checkoutRaw) {
+          const parsed = JSON.parse(checkoutRaw);
+          if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
         }
-        setPageLoading(false);
-      });
-    });
+      } catch { /* ignore */ }
+
+      const { data: cust } = await supabase.from('customers').select('address').eq('id', uid).single();
+      if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
+        setSavedAddresses(cust.address as Address[]);
+        const def = (cust.address as Address[]).find(a => a.isDefault);
+        setSelectedId(def?.id || (cust.address as Address[])[0]?.id);
+        setShowForm(false);
+      } else {
+        setShowForm(true);
+        setForm(prev => ({ ...prev, email }));
+      }
+      setPageLoading(false);
+    })();
   }, []);
 
   function field(key: keyof typeof form, value: string) {

@@ -2,8 +2,6 @@
 
 import { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { signInWithCustomToken } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -99,10 +97,10 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || 'Invalid code');
-      const cred = await signInWithCustomToken(auth, data.token);
-      const name = cred.user.email?.split('@')[0] || 'Customer';
+      const name = data.email?.split('@')[0] || 'Customer';
+      localStorage.setItem('kyzer_auth_token', data.token);
       localStorage.setItem('kyzer_current_customer', JSON.stringify({
-        id: cred.user.uid, name, email: cred.user.email || '',
+        id: data.uid, name, email: data.email || '',
       }));
       window.location.href = redirectTo;
     } catch (err: unknown) {

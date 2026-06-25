@@ -1,6 +1,9 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import jwt from 'jsonwebtoken';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
+
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -9,22 +12,10 @@ function getSupabaseAdmin() {
   return createClient(url, key);
 }
 
-async function verifyFirebaseToken(idToken: string): Promise<string | null> {
+function verifySessionToken(token: string): string | null {
   try {
-    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-    if (!apiKey) return null;
-    const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
-      }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    const email: string | undefined = data?.users?.[0]?.email;
-    return email || null;
+    const payload = jwt.verify(token, SESSION_SECRET, { algorithms: ['HS256'] }) as { email: string };
+    return payload.email || null;
   } catch {
     return null;
   }
@@ -35,13 +26,13 @@ export async function GET(req: NextRequest) {
   if (!rl.ok) return tooManyRequests(rl.retryAfterSecs);
 
   const authHeader = req.headers.get('authorization');
-  const idToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-  if (!idToken) {
+  if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const email = await verifyFirebaseToken(idToken);
+  const email = verifySessionToken(token);
   if (!email) {
     return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
   }

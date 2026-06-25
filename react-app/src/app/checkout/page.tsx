@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -57,7 +55,7 @@ function StepBar({ current }: { current: number }) {
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
-  const [authUser, setAuthUser] = useState<import('firebase/auth').User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -68,8 +66,7 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => setAuthUser(user));
-    return unsub;
+    setIsLoggedIn(!!localStorage.getItem('kyzer_auth_token'));
   }, []);
 
   function saveCart(updated: CartItem[]) {
@@ -94,7 +91,7 @@ export default function CheckoutPage() {
   const grandTotal = subtotal + gst + delivery;
 
   function handleProceed() {
-    if (authUser) {
+    if (isLoggedIn) {
       window.location.href = '/checkout/review';
     } else {
       window.location.href = '/login?redirect=/checkout/review';
