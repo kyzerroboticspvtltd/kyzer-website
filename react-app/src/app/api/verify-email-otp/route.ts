@@ -124,7 +124,9 @@ export async function POST(req: NextRequest) {
 
     const accessToken = await getGoogleAccessToken(clientEmail, privateKey);
     const uid = await getOrCreateUid(email.toLowerCase(), accessToken, projectId);
+    console.log('uid:', uid, 'email:', email, 'clientEmail:', clientEmail, 'projectId:', projectId);
     const customToken = createCustomToken(uid, clientEmail, privateKey);
+    console.log('token preview:', customToken.slice(0, 80));
 
     return NextResponse.json({ ok: true, token: customToken });
   } catch (err) {
