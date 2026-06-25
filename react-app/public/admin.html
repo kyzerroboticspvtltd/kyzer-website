@@ -989,10 +989,17 @@ function loadAll() {
   const raw = localStorage.getItem('kyzer_site_data');
   if (raw) try { siteData = JSON.parse(raw); } catch(e) {}
   if (!siteData) siteData = { products:[], categories:[], hero:{}, services:[], contact:{}, links:{}, quote:{}, hero_photos:[] };
-  // Seed products from products.ts if the list is empty
+  // Seed products from products.ts if the list is empty, or merge in any missing ones
   if (!siteData.products || siteData.products.length === 0) {
     siteData.products = SEED_PRODUCTS;
     saveLocal();
+  } else {
+    const existingIds = new Set(siteData.products.map(p => p.id));
+    const missing = SEED_PRODUCTS.filter(p => !existingIds.has(p.id));
+    if (missing.length) {
+      siteData.products = [...siteData.products, ...missing];
+      saveLocal();
+    }
   }
 }
 
