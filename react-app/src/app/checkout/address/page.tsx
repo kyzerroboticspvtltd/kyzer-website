@@ -225,6 +225,7 @@ export default function AddressPage() {
         });
         if (!notifyRes.ok) throw new Error('Order notification failed');
         clearOrder();
+        sessionStorage.setItem('kyzer_last_order', checkoutData.orderId);
         window.location.href = `/order-confirmation/${checkoutData.orderId}`;
       } else {
         // COD order
@@ -253,6 +254,7 @@ export default function AddressPage() {
         });
         if (!notifyRes.ok) throw new Error('Order failed');
         clearOrder();
+        sessionStorage.setItem('kyzer_last_order', orderId);
         window.location.href = `/order-confirmation/${orderId}`;
       }
     } catch (e) {

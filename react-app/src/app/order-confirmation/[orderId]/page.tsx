@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { use } from 'react';
 
 const FONT_URL =
@@ -12,13 +12,26 @@ interface PageProps {
 
 export default function OrderConfirmationPage({ params }: PageProps) {
   const { orderId } = use(params);
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     try {
+      const last = sessionStorage.getItem('kyzer_last_order');
+      if (last !== orderId) {
+        window.location.href = '/';
+        return;
+      }
+      // Clear so the page can't be revisited by URL
+      sessionStorage.removeItem('kyzer_last_order');
       localStorage.removeItem('kyzer_cart');
       sessionStorage.removeItem('kyzer_checkout');
-    } catch { /* ignore */ }
-  }, []);
+      setAuthorized(true);
+    } catch {
+      window.location.href = '/';
+    }
+  }, [orderId]);
+
+  if (!authorized) return null;
 
   return (
     <>
