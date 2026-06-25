@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
@@ -28,19 +29,9 @@ function b64url(data: string) {
   return Buffer.from(data).toString('base64url');
 }
 
-function signJwt(header: object, payload: object, privateKey: string): string {
-  const h = b64url(JSON.stringify(header));
-  const p = b64url(JSON.stringify(payload));
-  const sign = crypto.createSign('RSA-SHA256');
-  sign.update(`${h}.${p}`);
-  const sig = sign.sign(privateKey, 'base64url');
-  return `${h}.${p}.${sig}`;
-}
-
 async function getGoogleAccessToken(clientEmail: string, privateKey: string): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
-  const jwt = signJwt(
-    { alg: 'RS256', typ: 'JWT' },
+  const assertion = jwt.sign(
     {
       iss: clientEmail,
       scope: 'https://www.googleapis.com/auth/cloud-platform',
@@ -49,13 +40,14 @@ async function getGoogleAccessToken(clientEmail: string, privateKey: string): Pr
       exp: now + 3600,
     },
     privateKey,
+    { algorithm: 'RS256' },
   );
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt,
+      assertion,
     }),
   });
   const data = await res.json() as { access_token: string };
@@ -89,18 +81,15 @@ async function getOrCreateUid(email: string, accessToken: string, projectId: str
 }
 
 function createCustomToken(uid: string, clientEmail: string, privateKey: string): string {
-  const now = Math.floor(Date.now() / 1000);
-  return signJwt(
-    { alg: 'RS256', typ: 'JWT' },
+  return jwt.sign(
     {
       iss: clientEmail,
       sub: clientEmail,
       aud: 'https://identitytoolkit.googleapis.com/google.identity.toolkit.v1.IdentityToolkit',
-      iat: now,
-      exp: now + 3600,
       uid,
     },
     privateKey,
+    { algorithm: 'RS256', expiresIn: 3600 },
   );
 }
 

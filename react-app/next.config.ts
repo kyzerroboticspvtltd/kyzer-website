@@ -39,7 +39,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['razorpay', 'nodemailer'],
+  serverExternalPackages: ['razorpay', 'nodemailer', 'jsonwebtoken'],
   async headers() {
     return [
       {
