@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <script>if(location.hash!=='#manage'){location.replace('./');}</script>
@@ -10,7 +10,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── LIGHT (default) ── */
+/* â”€â”€ LIGHT (default) â”€â”€ */
 :root{
   --bg:#f5f5f3;--surface:#ffffff;--surface2:#f0efed;--border:#e5e5e2;
   --text:#111111;--muted:#888888;--orange:#FF8C35;--orange-soft:rgba(255,140,53,.1);
@@ -20,7 +20,7 @@
   --logo-filter:none;
 }
 
-/* ── DARK ── */
+/* â”€â”€ DARK â”€â”€ */
 html.dark{
   --bg:#0d0d0d;--surface:#161616;--surface2:#1e1e1e;--border:#2a2a2a;
   --text:#ececec;--muted:#666666;
@@ -31,7 +31,7 @@ html.dark{
 
 html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;transition:background .2s,color .2s}
 
-/* ── LOGIN ── */
+/* â”€â”€ LOGIN â”€â”€ */
 #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:44px 40px;width:380px;text-align:center;box-shadow:var(--shadow-lg)}
 .login-logo{width:52px;height:52px;margin:0 auto 18px;display:block;filter:var(--logo-filter)}
@@ -43,7 +43,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .login-btn:hover{opacity:.88}
 .login-err{color:var(--red);font-size:12px;margin-top:8px;display:none}
 
-/* ── LAYOUT ── */
+/* â”€â”€ LAYOUT â”€â”€ */
 #adminPanel{display:none;height:100vh;flex-direction:row}
 .sidebar{width:228px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
 .sidebar-top{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
@@ -59,7 +59,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .nav-badge{margin-left:auto;background:var(--orange);color:#fff;border-radius:999px;font-size:10px;padding:1px 7px;font-weight:700;display:none}
 .sidebar-bottom{padding:12px 8px;border-top:1px solid var(--border)}
 
-/* ── MAIN ── */
+/* â”€â”€ MAIN â”€â”€ */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .topbar-left{font-size:15px;font-weight:600;color:var(--text)}
@@ -75,7 +75,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .content{flex:1;overflow-y:auto;padding:28px}
 .tab{display:none}.tab.active{display:block}
 
-/* ── STATS ── */
+/* â”€â”€ STATS â”€â”€ */
 .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
 .stat-num{font-size:30px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1}
@@ -84,7 +84,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .stat-card.green .stat-num{color:var(--green)}
 .stat-card.red .stat-num{color:var(--red)}
 
-/* ── TABLES ── */
+/* â”€â”€ TABLES â”€â”€ */
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
 .table-toolbar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .search-input{background:var(--surface2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Inter',sans-serif;width:240px;transition:border-color .2s}
@@ -98,7 +98,7 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--surface2)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:13px}
 
-/* ── BADGES ── */
+/* â”€â”€ BADGES â”€â”€ */
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.03em}
 .badge-new{background:rgba(255,140,53,.12);color:var(--orange);border:1px solid rgba(255,140,53,.25)}
 .badge-paid{background:rgba(22,163,74,.1);color:var(--green);border:1px solid rgba(22,163,74,.25)}
@@ -108,14 +108,14 @@ tr:hover td{background:var(--surface2)}
 .badge-cancelled{background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.25)}
 .badge-cod{background:rgba(217,119,6,.1);color:var(--yellow);border:1px solid rgba(217,119,6,.25)}
 
-/* ── BUTTONS ── */
+/* â”€â”€ BUTTONS â”€â”€ */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .15s}
 .btn-primary{background:var(--orange);color:#fff}.btn-primary:hover{opacity:.88}
 .btn-ghost{background:var(--surface2);color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--orange)}
 .btn-danger{background:rgba(231,76,60,.08);color:var(--red);border:1.5px solid rgba(231,76,60,.2)}.btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .btn-sm{padding:5px 12px;font-size:12px}
 
-/* ── MODAL ── */
+/* â”€â”€ MODAL â”€â”€ */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
 .modal-bg.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
@@ -131,7 +131,7 @@ tr:hover td{background:var(--surface2)}
 select.status-select{background:var(--surface2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer}
 select.status-select:focus{outline:none;border-color:var(--orange)}
 
-/* ── FORM ── */
+/* â”€â”€ FORM â”€â”€ */
 .form-group{margin-bottom:18px}
 .form-label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
 .form-input,.form-textarea,.form-select{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;transition:border-color .2s}
@@ -140,7 +140,7 @@ select.status-select:focus{outline:none;border-color:var(--orange)}
 .form-select{cursor:pointer}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
-/* ── TOGGLE SWITCH ── */
+/* â”€â”€ TOGGLE SWITCH â”€â”€ */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
 .toggle-row:last-child{border-bottom:none}
 .toggle{position:relative;width:42px;height:24px;flex-shrink:0;display:inline-block}
@@ -151,15 +151,15 @@ html.dark .toggle-slider{background:#444}
 .toggle input:checked+.toggle-slider{background:var(--orange)}
 .toggle input:checked+.toggle-slider:before{transform:translateX(18px)}
 
-/* ── TOAST ── */
+/* â”€â”€ TOAST â”€â”€ */
 #toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--text);z-index:9999;transform:translateY(12px);opacity:0;transition:all .25s;pointer-events:none;max-width:320px;box-shadow:var(--shadow-lg)}
 #toast.show{transform:translateY(0);opacity:1}
 
-/* ── PUBLISH BAR ── */
+/* â”€â”€ PUBLISH BAR â”€â”€ */
 .publish-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(255,140,53,.06);border:1.5px solid rgba(255,140,53,.2);border-radius:12px;padding:14px 20px;margin-bottom:24px}
 .publish-bar p{font-size:13px;color:var(--muted)}
 
-/* ── PRODUCT CARDS ── */
+/* â”€â”€ PRODUCT CARDS â”€â”€ */
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .prod-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s;position:relative}
 .prod-card:hover{box-shadow:var(--shadow-lg);border-color:rgba(255,140,53,.35)}
@@ -180,12 +180,12 @@ html.dark .toggle-slider{background:#444}
 .prod-price.unset{font-size:12px;color:var(--muted);font-style:italic;font-family:'Inter',sans-serif;font-weight:400}
 .prod-actions{display:flex;gap:6px}
 
-/* ── SECTION HEADER ── */
+/* â”€â”€ SECTION HEADER â”€â”€ */
 .section-header{margin-bottom:20px}
 .section-header h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
 .section-header p{font-size:13px;color:var(--muted)}
 
-/* ── RESPONSIVE ── */
+/* â”€â”€ RESPONSIVE â”€â”€ */
 @media(max-width:768px){
   #adminPanel{flex-direction:column}
   .sidebar{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--border)}
@@ -222,27 +222,27 @@ html.dark .toggle-slider{background:#444}
     </div>
     <div class="sidebar-nav">
       <div class="nav-section">OVERVIEW</div>
-      <button class="nav-item active" id="nl-dashboard" onclick="nav('dashboard')">📊 Dashboard</button>
+      <button class="nav-item active" id="nl-dashboard" onclick="nav('dashboard')">ðŸ“Š Dashboard</button>
 
       <div class="nav-section">ORDERS</div>
-      <button class="nav-item" id="nl-shoporders" onclick="nav('shoporders')">🛒 Shop Orders <span class="nav-badge" id="badge-shoporders"></span></button>
-      <button class="nav-item" id="nl-printorders" onclick="nav('printorders')">🖨️ 3D Orders <span class="nav-badge" id="badge-printorders"></span></button>
-      <button class="nav-item" id="nl-quotes" onclick="nav('quotes')">💬 Quotes <span class="nav-badge" id="badge-quotes"></span></button>
-      <button class="nav-item" id="nl-tickets" onclick="nav('tickets')">🎫 Support <span class="nav-badge" id="badge-tickets"></span></button>
+      <button class="nav-item" id="nl-shoporders" onclick="nav('shoporders')">ðŸ›’ Shop Orders <span class="nav-badge" id="badge-shoporders"></span></button>
+      <button class="nav-item" id="nl-printorders" onclick="nav('printorders')">ðŸ–¨ï¸ 3D Orders <span class="nav-badge" id="badge-printorders"></span></button>
+      <button class="nav-item" id="nl-quotes" onclick="nav('quotes')">ðŸ’¬ Quotes <span class="nav-badge" id="badge-quotes"></span></button>
+      <button class="nav-item" id="nl-tickets" onclick="nav('tickets')">ðŸŽ« Support <span class="nav-badge" id="badge-tickets"></span></button>
 
       <div class="nav-section">CUSTOMERS</div>
-      <button class="nav-item" id="nl-customers" onclick="nav('customers')">👤 Customers</button>
+      <button class="nav-item" id="nl-customers" onclick="nav('customers')">ðŸ‘¤ Customers</button>
 
       <div class="nav-section">CONTENT</div>
-      <button class="nav-item" id="nl-products" onclick="nav('products')">📦 Products</button>
-      <button class="nav-item" id="nl-hero" onclick="nav('hero')">🏠 Hero & Stats</button>
-      <button class="nav-item" id="nl-services" onclick="nav('services')">🧩 Services</button>
-      <button class="nav-item" id="nl-contact" onclick="nav('contact')">📬 Contact</button>
-      <button class="nav-item" id="nl-quote" onclick="nav('quote')">💰 Quote Pricing</button>
-      <button class="nav-item" id="nl-photos" onclick="nav('photos')">🖼️ Photos</button>
+      <button class="nav-item" id="nl-products" onclick="nav('products')">ðŸ“¦ Products</button>
+      <button class="nav-item" id="nl-hero" onclick="nav('hero')">ðŸ  Hero & Stats</button>
+      <button class="nav-item" id="nl-services" onclick="nav('services')">ðŸ§© Services</button>
+      <button class="nav-item" id="nl-contact" onclick="nav('contact')">ðŸ“¬ Contact</button>
+      <button class="nav-item" id="nl-quote" onclick="nav('quote')">ðŸ’° Quote Pricing</button>
+      <button class="nav-item" id="nl-photos" onclick="nav('photos')">ðŸ–¼ï¸ Photos</button>
 
       <div class="nav-section">SYSTEM</div>
-      <button class="nav-item" id="nl-settings" onclick="nav('settings')">⚙️ Settings</button>
+      <button class="nav-item" id="nl-settings" onclick="nav('settings')">âš™ï¸ Settings</button>
     </div>
     <div class="sidebar-bottom">
       <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="width:100%">Sign out</button>
@@ -254,9 +254,9 @@ html.dark .toggle-slider{background:#444}
     <div class="topbar">
       <div class="topbar-left" id="topbar-title">Dashboard</div>
       <div class="topbar-right">
-        <span id="live-indicator" style="display:none;font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">● LIVE</span>
-        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark mode">🌙</button>
-        <a href="/" target="_blank" class="tb-btn">↗ View site</a>
+        <span id="live-indicator" style="display:none;font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">â— LIVE</span>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark mode">ðŸŒ™</button>
+        <a href="/" target="_blank" class="tb-btn">â†— View site</a>
       </div>
     </div>
     <div class="content">
@@ -264,7 +264,7 @@ html.dark .toggle-slider{background:#444}
       <!-- DASHBOARD -->
       <div class="tab active" id="tab-dashboard">
         <div class="stats-row">
-          <div class="stat-card orange"><div class="stat-num" id="dk-revenue">₹0</div><div class="stat-label">Total Revenue</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="dk-revenue">â‚¹0</div><div class="stat-label">Total Revenue</div></div>
           <div class="stat-card"><div class="stat-num" id="dk-orders">0</div><div class="stat-label">Shop Orders</div></div>
           <div class="stat-card"><div class="stat-num" id="dk-print">0</div><div class="stat-label">3D Orders</div></div>
           <div class="stat-card green"><div class="stat-num" id="dk-customers">0</div><div class="stat-label">Customers</div></div>
@@ -277,9 +277,9 @@ html.dark .toggle-slider{background:#444}
           <div class="table-wrap">
             <div style="padding:16px;font-size:14px;font-weight:600;border-bottom:1px solid var(--border)">Quick Actions</div>
             <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
-              <button class="btn btn-ghost" onclick="nav('shoporders')">View all shop orders →</button>
-              <button class="btn btn-ghost" onclick="nav('printorders')">View 3D print orders →</button>
-              <button class="btn btn-ghost" onclick="nav('customers')">View customers →</button>
+              <button class="btn btn-ghost" onclick="nav('shoporders')">View all shop orders â†’</button>
+              <button class="btn btn-ghost" onclick="nav('printorders')">View 3D print orders â†’</button>
+              <button class="btn btn-ghost" onclick="nav('customers')">View customers â†’</button>
               <button class="btn btn-primary" onclick="doPublish()" id="publishBtn">Publish site changes</button>
             </div>
           </div>
@@ -296,13 +296,13 @@ html.dark .toggle-slider{background:#444}
         </div>
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search orders…" oninput="filterShopOrders(this.value)">
+            <input type="text" class="search-input" placeholder="Search ordersâ€¦" oninput="filterShopOrders(this.value)">
             <button class="filter-btn active" onclick="setShopFilter('all',this)">All</button>
             <button class="filter-btn" onclick="setShopFilter('new',this)">New</button>
             <button class="filter-btn" onclick="setShopFilter('processing',this)">Processing</button>
             <button class="filter-btn" onclick="setShopFilter('shipped',this)">Shipped</button>
             <button class="filter-btn" onclick="setShopFilter('completed',this)">Completed</button>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadShopOrders()">↻ Refresh</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadShopOrders()">â†» Refresh</button>
           </div>
           <div id="shop-orders-table"></div>
         </div>
@@ -318,12 +318,12 @@ html.dark .toggle-slider{background:#444}
         </div>
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search orders…" oninput="filterPrintOrders(this.value)">
+            <input type="text" class="search-input" placeholder="Search ordersâ€¦" oninput="filterPrintOrders(this.value)">
             <button class="filter-btn active" onclick="setPrintFilter('all',this)">All</button>
             <button class="filter-btn" onclick="setPrintFilter('new',this)">New</button>
             <button class="filter-btn" onclick="setPrintFilter('printing',this)">Printing</button>
             <button class="filter-btn" onclick="setPrintFilter('completed',this)">Completed</button>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadPrintOrders()">↻ Refresh</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadPrintOrders()">â†» Refresh</button>
           </div>
           <div id="print-orders-table"></div>
         </div>
@@ -333,12 +333,12 @@ html.dark .toggle-slider{background:#444}
       <div class="tab" id="tab-quotes">
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search quotes…" oninput="filterQuotes(this.value)">
+            <input type="text" class="search-input" placeholder="Search quotesâ€¦" oninput="filterQuotes(this.value)">
             <button class="filter-btn active" onclick="setQuoteFilter('all',this)">All</button>
             <button class="filter-btn" onclick="setQuoteFilter('new',this)">New</button>
             <button class="filter-btn" onclick="setQuoteFilter('contacted',this)">Contacted</button>
             <button class="filter-btn" onclick="setQuoteFilter('closed',this)">Closed</button>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadQuotes()">↻ Refresh</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadQuotes()">â†» Refresh</button>
           </div>
           <div id="quotes-table"></div>
         </div>
@@ -348,11 +348,11 @@ html.dark .toggle-slider{background:#444}
       <div class="tab" id="tab-tickets">
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search tickets…" oninput="filterTickets(this.value)">
+            <input type="text" class="search-input" placeholder="Search ticketsâ€¦" oninput="filterTickets(this.value)">
             <button class="filter-btn active" onclick="setTicketFilter('all',this)">All</button>
             <button class="filter-btn" onclick="setTicketFilter('open',this)">Open</button>
             <button class="filter-btn" onclick="setTicketFilter('closed',this)">Closed</button>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadTickets()">↻ Refresh</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadTickets()">â†» Refresh</button>
           </div>
           <div id="tickets-table"></div>
         </div>
@@ -362,8 +362,8 @@ html.dark .toggle-slider{background:#444}
       <div class="tab" id="tab-customers">
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" class="search-input" placeholder="Search customers…" oninput="filterCustomers(this.value)">
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadCustomers()">↻ Refresh</button>
+            <input type="text" class="search-input" placeholder="Search customersâ€¦" oninput="filterCustomers(this.value)">
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadCustomers()">â†» Refresh</button>
           </div>
           <div id="customers-table"></div>
         </div>
@@ -376,11 +376,11 @@ html.dark .toggle-slider{background:#444}
           <button class="btn btn-primary" onclick="doPublish()">Publish now</button>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-          <input type="text" class="search-input" placeholder="Search products…" oninput="renderProducts(this.value)" style="flex:1;min-width:200px;max-width:320px">
+          <input type="text" class="search-input" placeholder="Search productsâ€¦" oninput="renderProducts(this.value)" style="flex:1;min-width:200px;max-width:320px">
           <div id="prod-cat-filters" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
-          <button class="btn btn-ghost btn-sm" onclick="downloadImportTemplate()" title="Download Excel template">⬇ Template</button>
-          <button class="btn btn-ghost btn-sm" onclick="openImportModal()" title="Bulk import from Excel/CSV">⬆ Import Excel</button>
-          <button class="btn btn-ghost btn-sm" onclick="syncGoogleSheet()" title="Sync products from Google Sheets" id="sync-sheets-btn">🔄 Sync Sheets</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadImportTemplate()" title="Download Excel template">â¬‡ Template</button>
+          <button class="btn btn-ghost btn-sm" onclick="openImportModal()" title="Bulk import from Excel/CSV">â¬† Import Excel</button>
+          <button class="btn btn-ghost btn-sm" onclick="syncGoogleSheet()" title="Sync products from Google Sheets" id="sync-sheets-btn">ðŸ”„ Sync Sheets</button>
           <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
         </div>
         <div id="products-grid"></div>
@@ -397,7 +397,7 @@ html.dark .toggle-slider{background:#444}
           </div>
           <div class="form-group"><label class="form-label">Headline Line 3</label><input class="form-input" id="hero-l3"></div>
           <div class="form-group"><label class="form-label">Subtitle</label><textarea class="form-textarea" id="hero-sub"></textarea></div>
-          <div class="form-group"><label class="form-label" style="margin-bottom:10px">Stats (label — value)</label>
+          <div class="form-group"><label class="form-label" style="margin-bottom:10px">Stats (label â€” value)</label>
             <div id="hero-stats-rows"></div>
           </div>
           <button class="btn btn-ghost" onclick="saveHero()">Save changes</button>
@@ -431,11 +431,11 @@ html.dark .toggle-slider{background:#444}
         <div class="publish-bar"><p>Control material rates in the live quote calculator.</p><button class="btn btn-primary" onclick="doPublish()">Publish</button></div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:700px">
           <div class="form-row">
-            <div class="form-group"><label class="form-label">Machine rate (₹/hr)</label><input class="form-input" type="number" id="q-machine"></div>
-            <div class="form-group"><label class="form-label">Same-day fee (₹)</label><input class="form-input" type="number" id="q-sameday"></div>
+            <div class="form-group"><label class="form-label">Machine rate (â‚¹/hr)</label><input class="form-input" type="number" id="q-machine"></div>
+            <div class="form-group"><label class="form-label">Same-day fee (â‚¹)</label><input class="form-input" type="number" id="q-sameday"></div>
           </div>
-          <div class="form-group"><label class="form-label">7-day fee (₹)</label><input class="form-input" type="number" id="q-sevenday"></div>
-          <div class="form-group"><label class="form-label" style="margin-bottom:10px">Material rates (₹/g)</label><div id="q-materials"></div></div>
+          <div class="form-group"><label class="form-label">7-day fee (â‚¹)</label><input class="form-input" type="number" id="q-sevenday"></div>
+          <div class="form-group"><label class="form-label" style="margin-bottom:10px">Material rates (â‚¹/g)</label><div id="q-materials"></div></div>
           <button class="btn btn-ghost" onclick="saveQuotePricing()">Save changes</button>
         </div>
       </div>
@@ -455,14 +455,14 @@ html.dark .toggle-slider{background:#444}
         <div style="max-width:600px;display:flex;flex-direction:column;gap:20px">
           <div class="table-wrap" style="padding:24px">
             <h3 style="font-size:15px;margin-bottom:16px">Google Sheets Sync</h3>
-            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Paste your Google Sheet URL. The sheet must be set to <strong>"Anyone with the link can view"</strong>. The Products tab "🔄 Sync Sheets" button will fetch it directly.</p>
-            <div class="form-group"><label class="form-label">Google Sheet URL</label><input class="form-input" id="gs-url" placeholder="https://docs.google.com/spreadsheets/d/…/edit…"></div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Paste your Google Sheet URL. The sheet must be set to <strong>"Anyone with the link can view"</strong>. The Products tab "ðŸ”„ Sync Sheets" button will fetch it directly.</p>
+            <div class="form-group"><label class="form-label">Google Sheet URL</label><input class="form-input" id="gs-url" placeholder="https://docs.google.com/spreadsheets/d/â€¦/editâ€¦"></div>
             <button class="btn btn-ghost" onclick="saveGsUrl()">Save</button>
           </div>
 
           <div class="table-wrap" style="padding:24px">
             <h3 style="font-size:15px;margin-bottom:16px">Supabase Credentials</h3>
-            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Public anon key only — used for real-time polling. The service key never touches this browser.</p>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Public anon key only â€” used for real-time polling. The service key never touches this browser.</p>
             <div class="form-group"><label class="form-label">Supabase URL</label><input class="form-input" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
             <div class="form-group"><label class="form-label">Anon key</label><input class="form-input" id="sb-key" placeholder="eyJ..."></div>
             <button class="btn btn-ghost" onclick="saveSbCreds()">Save</button>
@@ -502,7 +502,7 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
   <div class="modal">
     <div class="modal-head">
       <h3 id="om-title">Order Details</h3>
-      <button class="modal-close" onclick="closeOrderModal()">×</button>
+      <button class="modal-close" onclick="closeOrderModal()">Ã—</button>
     </div>
     <div class="modal-body" id="om-body"></div>
     <div class="modal-footer" id="om-footer"></div>
@@ -514,7 +514,7 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
   <div class="modal-box" style="max-width:760px;width:95vw">
     <div class="modal-header">
       <h3 class="modal-title">Bulk Import Products</h3>
-      <button class="modal-close" onclick="closeImportModal()">✕</button>
+      <button class="modal-close" onclick="closeImportModal()">âœ•</button>
     </div>
     <div style="padding:24px;display:flex;flex-direction:column;gap:18px">
       <!-- Drop zone -->
@@ -523,9 +523,9 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
         ondragover="event.preventDefault();this.style.borderColor='var(--orange)';this.style.background='var(--orange-soft)'"
         ondragleave="this.style.borderColor='var(--border)';this.style.background=''"
         ondrop="handleImportDrop(event)">
-        <div style="font-size:32px;margin-bottom:8px">📂</div>
+        <div style="font-size:32px;margin-bottom:8px">ðŸ“‚</div>
         <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Drop your Excel or CSV file here</div>
-        <div style="font-size:12px;color:var(--muted)">Supports .xlsx, .xls, .csv — or <span style="color:var(--orange);text-decoration:underline">browse</span></div>
+        <div style="font-size:12px;color:var(--muted)">Supports .xlsx, .xls, .csv â€” or <span style="color:var(--orange);text-decoration:underline">browse</span></div>
         <input type="file" id="import-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImportFile(this.files[0])">
       </div>
 
@@ -572,7 +572,7 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
 
 <script src="supabase-config.js" onerror="console.log('no supabase-config')"></script>
 <script>
-// ─── STATE ───────────────────────────────────────────────────
+// â”€â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let TOKEN = '';
 let shopOrders = [], printOrders = [], quoteList = [], ticketList = [], customerList = [];
 let shopFilter = 'all', printFilter = 'all', quoteFilter = 'all', ticketFilter = 'all';
@@ -580,10 +580,10 @@ let shopSearch = '', printSearch = '', quoteSearch = '', ticketSearch = '', cust
 let siteData = null;
 let currentOrderType = ''; // 'shop' | 'print'
 
-// ─── HELPERS ─────────────────────────────────────────────────
+// â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const $ = id => document.getElementById(id);
-const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
-const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const fmt = n => 'â‚¹' + Number(n || 0).toLocaleString('en-IN');
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'â€”';
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function toast(msg, ok=true) {
@@ -603,16 +603,16 @@ function apiHeaders() {
   return { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN };
 }
 
-// ─── THEME TOGGLE ─────────────────────────────────────────────
+// â”€â”€â”€ THEME TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyTheme(dark) {
   if (dark) {
     document.documentElement.classList.add('dark');
     const btn = document.getElementById('themeToggleBtn');
-    if (btn) btn.textContent = '☀️';
+    if (btn) btn.textContent = 'â˜€ï¸';
   } else {
     document.documentElement.classList.remove('dark');
     const btn = document.getElementById('themeToggleBtn');
-    if (btn) btn.textContent = '🌙';
+    if (btn) btn.textContent = 'ðŸŒ™';
   }
   localStorage.setItem('kyzer_admin_theme', dark ? 'dark' : 'light');
 }
@@ -625,7 +625,7 @@ function toggleTheme() {
   applyTheme(saved ? saved === 'dark' : prefersDark);
 })();
 
-// ─── LOGIN ────────────────────────────────────────────────────
+// â”€â”€â”€ LOGIN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function doLogin() {
   const pass = $('loginPass').value.trim();
   const err = $('loginErr');
@@ -665,7 +665,7 @@ function doLogout() {
   } catch(e) {}
 })();
 
-// ─── INIT ─────────────────────────────────────────────────────
+// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function initAdmin() {
   loadAll();
   loadShopOrders();
@@ -675,7 +675,7 @@ function initAdmin() {
   loadCustomers();
 }
 
-// ─── NAVIGATION ───────────────────────────────────────────────
+// â”€â”€â”€ NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function nav(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -701,7 +701,7 @@ function nav(name) {
   }
 }
 
-// ─── SHOP ORDERS ──────────────────────────────────────────────
+// â”€â”€â”€ SHOP ORDERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadShopOrders() {
   try {
     const r = await fetch('/api/admin-orders', { headers: apiHeaders() });
@@ -739,9 +739,9 @@ function renderShopOrders() {
     <tbody>${filtered.map(o => `
       <tr style="cursor:pointer" onclick="openOrderModal('${esc(o.id)}','shop')">
         <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--orange)">${esc(o.id)}</span></td>
-        <td><div style="font-weight:500">${esc(o.name||'—')}</div><div style="font-size:12px;color:var(--muted)">${esc(o.email||'')}</div></td>
-        <td style="font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(o.items||[]).map(i=>esc(i.name)).join(', ')||'—'}</td>
-        <td style="font-weight:600">${o.total ? fmt(o.total) : '—'}</td>
+        <td><div style="font-weight:500">${esc(o.name||'â€”')}</div><div style="font-size:12px;color:var(--muted)">${esc(o.email||'')}</div></td>
+        <td style="font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(o.items||[]).map(i=>esc(i.name)).join(', ')||'â€”'}</td>
+        <td style="font-weight:600">${o.total ? fmt(o.total) : 'â€”'}</td>
         <td><span class="badge ${o.type==='cod'?'badge-cod':'badge-paid'}">${o.type||'paid'}</span></td>
         <td>${badgeHtml(o.status)}</td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(o.submittedAt)}</td>
@@ -757,7 +757,7 @@ function setShopFilter(f, btn) {
   renderShopOrders();
 }
 
-// ─── PRINT ORDERS ─────────────────────────────────────────────
+// â”€â”€â”€ PRINT ORDERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadPrintOrders() {
   try {
     const r = await fetch('/api/admin-print-orders', { headers: apiHeaders() });
@@ -794,9 +794,9 @@ function renderPrintOrders() {
     <tbody>${filtered.map(o => `
       <tr style="cursor:pointer" onclick="openOrderModal('${esc(o.id)}','print')">
         <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--orange)">${esc(o.id)}</span></td>
-        <td><div style="font-weight:500">${esc(o.name||'—')}</div><div style="font-size:12px;color:var(--muted)">${esc(o.email||'')}</div></td>
-        <td style="font-size:12px">${esc(o.material||'—')}</td>
-        <td style="font-weight:600">${o.estimatedTotal ? fmt(o.estimatedTotal) : '—'}</td>
+        <td><div style="font-weight:500">${esc(o.name||'â€”')}</div><div style="font-size:12px;color:var(--muted)">${esc(o.email||'')}</div></td>
+        <td style="font-size:12px">${esc(o.material||'â€”')}</td>
+        <td style="font-weight:600">${o.estimatedTotal ? fmt(o.estimatedTotal) : 'â€”'}</td>
         <td>${badgeHtml(o.status)}</td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(o.submittedAt)}</td>
       </tr>`).join('')}
@@ -811,7 +811,7 @@ function setPrintFilter(f, btn) {
   renderPrintOrders();
 }
 
-// ─── QUOTES ───────────────────────────────────────────────────
+// â”€â”€â”€ QUOTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadQuotes() {
   try {
     const r = await fetch('/api/admin-quotes', { headers: apiHeaders() });
@@ -837,10 +837,10 @@ function renderQuotes() {
     <thead><tr><th>Name</th><th>Email</th><th>Project</th><th>Budget</th><th>Status</th><th>Date</th></tr></thead>
     <tbody>${filtered.map(q => `
       <tr style="cursor:pointer" onclick="openQuoteDetailModal('${esc(q.id||q.email)}')">
-        <td style="font-weight:500">${esc(q.name||'—')}</td>
-        <td style="font-size:12px">${esc(q.email||'—')}</td>
-        <td style="font-size:12px;color:var(--muted)">${esc(q.project_type||q.service||'—')}</td>
-        <td style="font-size:12px">${esc(q.budget||'—')}</td>
+        <td style="font-weight:500">${esc(q.name||'â€”')}</td>
+        <td style="font-size:12px">${esc(q.email||'â€”')}</td>
+        <td style="font-size:12px;color:var(--muted)">${esc(q.project_type||q.service||'â€”')}</td>
+        <td style="font-size:12px">${esc(q.budget||'â€”')}</td>
         <td>${badgeHtml(q.status||'new')}</td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(q.submitted_at||q.createdAt)}</td>
       </tr>`).join('')}
@@ -853,18 +853,18 @@ function setQuoteFilter(f,btn) { quoteFilter=f; document.querySelectorAll('#tab-
 function openQuoteDetailModal(id) {
   const q = quoteList.find(x=>(x.id||x.email)===id);
   if(!q) return;
-  showOrderModal('Quote — '+esc(q.name), `
-    <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${esc(q.name||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(q.email)}" style="color:var(--orange)">${esc(q.email||'—')}</a></span></div>
-    <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(q.phone||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Project type</span><span class="detail-value">${esc(q.project_type||q.service||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Budget</span><span class="detail-value">${esc(q.budget||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value" style="white-space:pre-wrap">${esc(q.description||q.message||'—')}</span></div>
+  showOrderModal('Quote â€” '+esc(q.name), `
+    <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${esc(q.name||'â€”')}</span></div>
+    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(q.email)}" style="color:var(--orange)">${esc(q.email||'â€”')}</a></span></div>
+    <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(q.phone||'â€”')}</span></div>
+    <div class="detail-row"><span class="detail-label">Project type</span><span class="detail-value">${esc(q.project_type||q.service||'â€”')}</span></div>
+    <div class="detail-row"><span class="detail-label">Budget</span><span class="detail-value">${esc(q.budget||'â€”')}</span></div>
+    <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value" style="white-space:pre-wrap">${esc(q.description||q.message||'â€”')}</span></div>
     <div class="detail-row"><span class="detail-label">Submitted</span><span class="detail-value">${fmtDate(q.submitted_at||q.createdAt)}</span></div>
   `, `<a href="mailto:${esc(q.email)}" class="btn btn-primary">Reply by email</a><button class="btn btn-ghost" onclick="closeOrderModal()">Close</button>`);
 }
 
-// ─── SUPPORT TICKETS ──────────────────────────────────────────
+// â”€â”€â”€ SUPPORT TICKETS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadTickets() {
   try {
     const r = await fetch('/api/admin-tickets', { headers: apiHeaders() });
@@ -890,9 +890,9 @@ function renderTickets() {
     <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Date</th></tr></thead>
     <tbody>${filtered.map(t => `
       <tr>
-        <td style="font-weight:500">${esc(t.name||'—')}</td>
-        <td style="font-size:12px">${esc(t.email||'—')}</td>
-        <td style="font-size:12px;color:var(--muted)">${esc(t.subject||t.message||'—').slice(0,60)}</td>
+        <td style="font-weight:500">${esc(t.name||'â€”')}</td>
+        <td style="font-size:12px">${esc(t.email||'â€”')}</td>
+        <td style="font-size:12px;color:var(--muted)">${esc(t.subject||t.message||'â€”').slice(0,60)}</td>
         <td>${badgeHtml(t.status||'open')}</td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(t.submitted_at||t.createdAt)}</td>
       </tr>`).join('')}
@@ -902,7 +902,7 @@ function renderTickets() {
 function filterTickets(q) { ticketSearch = q; renderTickets(); }
 function setTicketFilter(f,btn) { ticketFilter=f; document.querySelectorAll('#tab-tickets .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderTickets(); }
 
-// ─── CUSTOMERS ────────────────────────────────────────────────
+// â”€â”€â”€ CUSTOMERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadCustomers() {
   try {
     const r = await fetch('/api/admin-customers', { headers: apiHeaders() });
@@ -925,9 +925,9 @@ function renderCustomers() {
     <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Orders</th><th>Joined</th></tr></thead>
     <tbody>${filtered.map(c => `
       <tr>
-        <td style="font-weight:500">${esc(c.name||'—')}</td>
-        <td><a href="mailto:${esc(c.email)}" style="color:var(--orange);font-size:13px">${esc(c.email||'—')}</a></td>
-        <td style="font-size:13px">${esc(c.phone||'—')}</td>
+        <td style="font-weight:500">${esc(c.name||'â€”')}</td>
+        <td><a href="mailto:${esc(c.email)}" style="color:var(--orange);font-size:13px">${esc(c.email||'â€”')}</a></td>
+        <td style="font-size:13px">${esc(c.phone||'â€”')}</td>
         <td style="font-size:13px">${c.order_count||0}</td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(c.created_at)}</td>
       </tr>`).join('')}
@@ -936,7 +936,7 @@ function renderCustomers() {
 
 function filterCustomers(q) { customerSearch = q; renderCustomers(); }
 
-// ─── ORDER MODAL ──────────────────────────────────────────────
+// â”€â”€â”€ ORDER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openOrderModal(id, type) {
   currentOrderType = type;
   const order = type === 'shop' ? shopOrders.find(o=>o.id===id) : printOrders.find(o=>o.id===id);
@@ -949,16 +949,16 @@ function openOrderModal(id, type) {
   const itemsHtml = type === 'shop' && order.items
     ? `<div style="margin:16px 0;background:var(--surface2);border-radius:8px;overflow:hidden">
         <table style="width:100%"><thead><tr><th>Item</th><th>Qty</th><th>Amount</th></tr></thead>
-        <tbody>${(order.items||[]).map(i=>`<tr><td>${esc(i.name)}</td><td>×${i.qty||1}</td><td>${fmt(Number(i.price||0)*Number(i.qty||1))}</td></tr>`).join('')}</tbody>
+        <tbody>${(order.items||[]).map(i=>`<tr><td>${esc(i.name)}</td><td>Ã—${i.qty||1}</td><td>${fmt(Number(i.price||0)*Number(i.qty||1))}</td></tr>`).join('')}</tbody>
         <tfoot><tr><td colspan="2" style="padding:10px 16px;font-weight:700">Total</td><td style="padding:10px 16px;font-weight:700;color:var(--orange)">${fmt(order.total)}</td></tr></tfoot>
         </table></div>` : '';
 
   const body = `
     <div class="detail-row"><span class="detail-label">Order ID</span><span class="detail-value" style="font-family:'JetBrains Mono',monospace;color:var(--orange)">${esc(order.id)}</span></div>
-    <div class="detail-row"><span class="detail-label">Customer</span><span class="detail-value">${esc(order.name||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(order.email)}" style="color:var(--orange)">${esc(order.email||'—')}</a></span></div>
-    <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(order.phone||'—')}</span></div>
-    ${order.shippingFull||order.address ? `<div class="detail-row"><span class="detail-label">Ship to</span><span class="detail-value" style="white-space:pre-wrap">${esc(order.shippingFull||order.address||'—')}</span></div>` : ''}
+    <div class="detail-row"><span class="detail-label">Customer</span><span class="detail-value">${esc(order.name||'â€”')}</span></div>
+    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(order.email)}" style="color:var(--orange)">${esc(order.email||'â€”')}</a></span></div>
+    <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(order.phone||'â€”')}</span></div>
+    ${order.shippingFull||order.address ? `<div class="detail-row"><span class="detail-label">Ship to</span><span class="detail-value" style="white-space:pre-wrap">${esc(order.shippingFull||order.address||'â€”')}</span></div>` : ''}
     ${order.paymentId ? `<div class="detail-row"><span class="detail-label">Payment ID</span><span class="detail-value" style="font-family:'JetBrains Mono',monospace;font-size:12px">${esc(order.paymentId)}</span></div>` : ''}
     ${order.material ? `<div class="detail-row"><span class="detail-label">Material</span><span class="detail-value">${esc(order.material)}</span></div>` : ''}
     ${order.notes ? `<div class="detail-row"><span class="detail-label">Notes</span><span class="detail-value">${esc(order.notes)}</span></div>` : ''}
@@ -971,7 +971,7 @@ function openOrderModal(id, type) {
       </select>
     </div>`;
 
-  showOrderModal((type==='shop'?'Shop Order — ':'3D Order — ')+esc(order.id), body,
+  showOrderModal((type==='shop'?'Shop Order â€” ':'3D Order â€” ')+esc(order.id), body,
     `<button class="btn btn-primary" onclick="updateOrderStatus('${esc(order.id)}')">Update status</button>
      <a href="mailto:${esc(order.email)}" class="btn btn-ghost">Email customer</a>
      <button class="btn btn-ghost" onclick="closeOrderModal()">Close</button>`);
@@ -1006,7 +1006,7 @@ async function updateOrderStatus(id) {
   } catch(e) { toast('Network error', false); }
 }
 
-// ─── DASHBOARD ────────────────────────────────────────────────
+// â”€â”€â”€ DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderDashboard() {
   const totalRevenue = shopOrders.reduce((s,o) => s + Number(o.total||0), 0);
   $('dk-revenue').textContent = fmt(totalRevenue);
@@ -1018,8 +1018,8 @@ function renderDashboard() {
   $('dash-recent-orders').innerHTML = recent.length ? `<table>
     <thead><tr><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
     <tbody>${recent.map(o=>`<tr style="cursor:pointer" onclick="nav('shoporders')">
-      <td><div style="font-weight:500;font-size:13px">${esc(o.name||'—')}</div><div style="font-size:11px;color:var(--muted)">${esc(o.id)}</div></td>
-      <td style="font-size:13px;font-weight:600">${o.total?fmt(o.total):'—'}</td>
+      <td><div style="font-weight:500;font-size:13px">${esc(o.name||'â€”')}</div><div style="font-size:11px;color:var(--muted)">${esc(o.id)}</div></td>
+      <td style="font-size:13px;font-weight:600">${o.total?fmt(o.total):'â€”'}</td>
       <td>${badgeHtml(o.status)}</td>
       <td style="font-size:11px;color:var(--muted)">${fmtDate(o.submittedAt)}</td>
     </tr>`).join('')}</tbody></table>` : '<div class="empty-state">No orders yet</div>';
@@ -1032,212 +1032,49 @@ function updateBadge(tab, count) {
   else { el.style.display = 'none'; }
 }
 
-// ─── SEED PRODUCTS (from products.ts) ────────────────────────
-const SEED_PRODUCTS = [
-  { id:"rb-ard-b01", name:"Arduino Uno R3", emoji:"📦", category:"electronics", subcategory:"arduino", price:446, badge:"", image:"", description:"The most popular Arduino board. ATmega328P with 14 digital I/O and 6 analog inputs.", visible:true },
-  { id:"rb-ard-b02", name:"Arduino Nano", emoji:"📦", category:"electronics", subcategory:"arduino", price:349, badge:"", image:"", description:"Compact breadboard-friendly ATmega328P in a tiny footprint.", visible:true },
-  { id:"rb-ard-b03", name:"Arduino Mega 2560", emoji:"📦", category:"electronics", subcategory:"arduino", price:999, badge:"", image:"", description:"54 digital I/O and 16 analog inputs on ATmega2560. For large complex projects.", visible:true },
-  { id:"rb-ard-b04", name:"Arduino Leonardo", emoji:"📦", category:"electronics", subcategory:"arduino", price:649, badge:"", image:"", description:"ATmega32U4 with built-in USB. Can emulate a mouse or keyboard HID device.", visible:true },
-  { id:"rb-ard-b05", name:"Arduino Due", emoji:"📦", category:"electronics", subcategory:"arduino", price:1299, badge:"", image:"", description:"First Arduino with 32-bit ARM Cortex-M3 at 84 MHz and two DAC outputs.", visible:true },
-  { id:"rb-ard-b06", name:"Arduino Pro Mini 5V", emoji:"📦", category:"electronics", subcategory:"arduino", price:199, badge:"", image:"", description:"Minimalist ATmega328P at 16 MHz / 5V. Upload via USB-to-TTL adapter.", visible:true },
-  { id:"rb-ard-b07", name:"Arduino Pro Mini 3.3V", emoji:"📦", category:"electronics", subcategory:"arduino", price:199, badge:"", image:"", description:"ATmega328P at 8 MHz / 3.3V. Lower power compatible with 3.3V sensors.", visible:true },
-  { id:"rb-ard-b08", name:"Arduino Micro", emoji:"📦", category:"electronics", subcategory:"arduino", price:799, badge:"", image:"", description:"ATmega32U4 with native USB in a smaller form factor than the Leonardo.", visible:true },
-  { id:"rb-ard-b09", name:"Arduino Nano Every", emoji:"📦", category:"electronics", subcategory:"arduino", price:549, badge:"", image:"", description:"Next-gen Nano with ATMega4809. More flash and RAM on the same pinout.", visible:true },
-  { id:"rb-ard-b10", name:"Arduino Uno WiFi Rev2", emoji:"📦", category:"electronics", subcategory:"arduino", price:1999, badge:"", image:"", description:"Uno R3 plus Wi-Fi and Bluetooth via ESP32 co-processor and ATmega4809.", visible:true },
-  { id:"rb-ard-b11", name:"Arduino MKR WiFi 1010", emoji:"📦", category:"electronics", subcategory:"arduino", price:2499, badge:"", image:"", description:"32-bit SAMD21 with onboard Wi-Fi and Bluetooth for IoT Cloud projects.", visible:true },
-  { id:"rb-ard-b12", name:"Arduino MKR Zero", emoji:"📦", category:"electronics", subcategory:"arduino", price:1799, badge:"", image:"", description:"SAMD21 with SD card and I2S connector for audio and data-logging.", visible:true },
-  { id:"rb-ard-b13", name:"Arduino Nano 33 IoT", emoji:"📦", category:"electronics", subcategory:"arduino", price:1499, badge:"", image:"", description:"SAMD21 + NINA-W10 Wi-Fi/BT + LSM6DS3 IMU. Ideal for wearables and IoT.", visible:true },
-  { id:"rb-ard-b14", name:"Arduino Nano 33 BLE Sense", emoji:"📦", category:"electronics", subcategory:"arduino", price:2199, badge:"", image:"", description:"nRF52840 + Bluetooth 5 + nine onboard sensors. Machine learning ready.", visible:true },
-  { id:"rb-ard-b15", name:"Arduino Zero", emoji:"📦", category:"electronics", subcategory:"arduino", price:1599, badge:"", image:"", description:"SAMD21 Cortex-M0+ with embedded EDBG for full in-circuit debugging.", visible:true },
-  { id:"rb-ard-d01", name:"2.4 inch TFT LCD Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:499, badge:"", image:"", description:"320x240 colour TFT touchscreen for Uno/Mega. Includes SD card slot.", visible:true },
-  { id:"rb-ard-d02", name:"3.5 inch TFT LCD Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:699, badge:"", image:"", description:"480x320 colour resistive touchscreen for Uno/Mega. Great for GUIs.", visible:true },
-  { id:"rb-ard-d03", name:"1.8 inch TFT SPI Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:299, badge:"", image:"", description:"128x160 TFT colour breakout board. Works via hardware or software SPI.", visible:true },
-  { id:"rb-ard-d04", name:"0.96 inch OLED I2C Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:199, badge:"", image:"", description:"128x64 monochrome OLED with I2C. Only two signal wires needed.", visible:true },
-  { id:"rb-ard-d05", name:"1.3 inch OLED I2C Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:249, badge:"", image:"", description:"128x64 OLED larger than 0.96 inch. SH1106 controller.", visible:true },
-  { id:"rb-ard-d06", name:"2.42 inch OLED SPI Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:449, badge:"", image:"", description:"128x64 OLED on SPI for faster refresh. Sharp even in daylight.", visible:true },
-  { id:"rb-ard-d07", name:"16x2 LCD Display Module", emoji:"📦", category:"electronics", subcategory:"arduino", price:129, badge:"", image:"", description:"Classic HD44780 character LCD. Add I2C backpack for two-wire control.", visible:true },
-  { id:"rb-ard-d08", name:"20x4 LCD Display Module", emoji:"📦", category:"electronics", subcategory:"arduino", price:199, badge:"", image:"", description:"Four rows of 20 characters. Same HD44780 interface as the 16x2.", visible:true },
-  { id:"rb-ard-d09", name:"7-Segment 4-Digit Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:149, badge:"", image:"", description:"TM1637 driver with only two wires. Perfect for clocks and counters.", visible:true },
-  { id:"rb-ard-d10", name:"E-Paper 2.9 inch Display", emoji:"📦", category:"electronics", subcategory:"arduino", price:799, badge:"", image:"", description:"Tri-colour e-ink via SPI. Retains image with zero power draw.", visible:true },
-  { id:"rb-ard-s01", name:"Arduino Sensor Shield V5", emoji:"📦", category:"electronics", subcategory:"arduino", price:349, badge:"", image:"", description:"Breaks every Uno pin into a 3-pin VCC/GND/SIG header for direct plug-in.", visible:true },
-  { id:"rb-ard-s02", name:"Arduino Relay Shield 4-Channel", emoji:"📦", category:"electronics", subcategory:"arduino", price:499, badge:"", image:"", description:"Four 10A/250VAC relays with opto-isolated inputs to protect the MCU.", visible:true },
-  { id:"rb-ard-s03", name:"Ethernet Shield W5100", emoji:"📦", category:"electronics", subcategory:"arduino", price:599, badge:"", image:"", description:"Wired Ethernet for Uno/Mega. W5100 chip with RJ45 and onboard SD.", visible:true },
-  { id:"rb-ard-s04", name:"ESP8266 WiFi Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:349, badge:"", image:"", description:"Wi-Fi over serial UART with AT-command firmware pre-loaded.", visible:true },
-  { id:"rb-ard-s05", name:"Motor Driver Shield L298P", emoji:"📦", category:"electronics", subcategory:"arduino", price:399, badge:"", image:"", description:"Dual H-bridge for two DC motors or one stepper. 7-12V motor supply.", visible:true },
-  { id:"rb-ard-s06", name:"CNC Shield V3", emoji:"📦", category:"electronics", subcategory:"arduino", price:299, badge:"", image:"", description:"Drives up to 4 axes with A4988/DRV8825 drivers for CNC and 3D printers.", visible:true },
-  { id:"rb-ard-s07", name:"Proto Shield with Mini Breadboard", emoji:"📦", category:"electronics", subcategory:"arduino", price:249, badge:"", image:"", description:"Stackable shield with a 170-point mini breadboard for quick experiments.", visible:true },
-  { id:"rb-ard-s08", name:"Data Logger Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:449, badge:"", image:"", description:"DS1307 RTC and micro SD on one shield. Timestamps sensor data to CSV.", visible:true },
-  { id:"rb-ard-s09", name:"Bluetooth Shield HC-05", emoji:"📦", category:"electronics", subcategory:"arduino", price:399, badge:"", image:"", description:"HC-05 Bluetooth 2.0 with UART passthrough for wireless serial.", visible:true },
-  { id:"rb-ard-s10", name:"GSM GPRS Shield SIM900", emoji:"📦", category:"electronics", subcategory:"arduino", price:1499, badge:"", image:"", description:"SIM900 quad-band GSM for SMS voice calls and GPRS data.", visible:true },
-  { id:"rb-ard-s11", name:"GPS Shield NEO-6M", emoji:"📦", category:"electronics", subcategory:"arduino", price:799, badge:"", image:"", description:"u-blox NEO-6M GPS with SMA antenna connector and SD card slot.", visible:true },
-  { id:"rb-ard-s12", name:"Touch Screen Shield 3.2 inch", emoji:"📦", category:"electronics", subcategory:"arduino", price:599, badge:"", image:"", description:"320x480 resistive touch TFT for Mega with SD and onboard font chip.", visible:true },
-  { id:"rb-ard-s13", name:"Voice Recognition Shield V3", emoji:"📦", category:"electronics", subcategory:"arduino", price:899, badge:"", image:"", description:"Up to 80 user-trained offline voice commands. Speaker and mic jack.", visible:true },
-  { id:"rb-ard-s14", name:"Joystick Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:199, badge:"", image:"", description:"Analogue joystick plus 4 buttons mapped to A0/A1 for robot control.", visible:true },
-  { id:"rb-ard-s15", name:"XBee Shield", emoji:"📦", category:"electronics", subcategory:"arduino", price:549, badge:"", image:"", description:"Carrier for XBee modules with UART/SPI switch and RSSI LED.", visible:true },
-  { id:"rb-rpi-s01", name:"Raspberry Pi 5 (4GB)", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:5499, badge:"", image:"", description:"Latest RPi 5 with 4GB RAM, BCM2712 quad-core 2.4GHz, dual 4K HDMI, USB 3.0, PCIe connector.", visible:true },
-  { id:"rb-rpi-s02", name:"Raspberry Pi 5 (8GB)", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:7999, badge:"", image:"", description:"RPi 5 with 8GB RAM. Best for AI/ML workloads, media servers, and desktop use.", visible:true },
-  { id:"rb-rpi-s03", name:"Raspberry Pi 4 Model B (4GB)", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:4499, badge:"", image:"", description:"Quad-core Cortex-A72 at 1.8GHz with 4GB RAM. Dual 4K HDMI, USB 3.0, Gigabit Ethernet.", visible:true },
-  { id:"rb-rpi-s04", name:"Raspberry Pi 4 Model B (2GB)", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:3299, badge:"", image:"", description:"RPi 4 with 2GB RAM. Great for most projects, servers, and desktop usage.", visible:true },
-  { id:"rb-rpi-s05", name:"Raspberry Pi Zero 2 W", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:1299, badge:"", image:"", description:"Tiny RPi with quad-core Cortex-A53 at 1GHz, 512MB RAM, Wi-Fi, Bluetooth.", visible:true },
-  { id:"rb-rpi-s06", name:"Raspberry Pi Zero W", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:799, badge:"", image:"", description:"Ultra-compact RPi with single-core 1GHz, 512MB RAM, Wi-Fi, and Bluetooth.", visible:true },
-  { id:"rb-rpi-s07", name:"Raspberry Pi Pico W", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:349, badge:"", image:"", description:"RP2040 microcontroller board with Wi-Fi. 264KB RAM, 2MB Flash, 26 GPIO.", visible:true },
-  { id:"rb-rpi-s08", name:"Raspberry Pi Pico", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:199, badge:"", image:"", description:"RP2040 chip with dual Cortex-M0+ at 133MHz. 26 GPIO, 3 ADC channels.", visible:true },
-  { id:"rb-rpi-h01", name:"RPi Camera Module 3", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:2499, badge:"", image:"", description:"12MP Sony IMX708 autofocus camera. HDR support, 120 deg FoV wide version available.", visible:true },
-  { id:"rb-rpi-h02", name:"RPi Camera Module V2", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:1499, badge:"", image:"", description:"8MP Sony IMX219 fixed-focus camera for standard RPi CSI connector.", visible:true },
-  { id:"rb-rpi-h03", name:"Sense HAT", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:2999, badge:"", image:"", description:"8x8 RGB LED matrix, joystick, temperature, humidity, pressure, IMU. Used on ISS.", visible:true },
-  { id:"rb-rpi-h04", name:"Motor Driver HAT", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:899, badge:"", image:"", description:"Dual DC motor and stepper driver HAT for RPi. I2C control, up to 12V motors.", visible:true },
-  { id:"rb-rpi-h05", name:"GPS HAT NEO-6M", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:1599, badge:"", image:"", description:"u-blox NEO-6M GPS receiver HAT. PPS output for precise timing applications.", visible:true },
-  { id:"rb-rpi-h06", name:"PoE+ HAT", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:1799, badge:"", image:"", description:"Power over Ethernet HAT for RPi 4/5. IEEE 802.3at PoE+ standard, active cooling.", visible:true },
-  { id:"rb-rpi-a01", name:"Official RPi 5 Case", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:799, badge:"", image:"", description:"Official white/red plastic case for Raspberry Pi 5 with active cooler.", visible:true },
-  { id:"rb-rpi-a02", name:"Official RPi 4 Case", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:499, badge:"", image:"", description:"Official Raspberry Pi 4 plastic case. Available in red/white.", visible:true },
-  { id:"rb-rpi-a03", name:"Official USB-C Power Supply 5V/3A", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:699, badge:"", image:"", description:"Official RPi 4 power adapter, 5V 3A USB-C, white, multi-region plugs.", visible:true },
-  { id:"rb-rpi-a04", name:"Micro SD Card 32GB Class 10", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:349, badge:"", image:"", description:"SanDisk 32GB Class 10 micro SD card. Pre-loaded with Raspberry Pi OS on request.", visible:true },
-  { id:"rb-rpi-a05", name:"GPIO Ribbon Cable 40-Pin", emoji:"📦", category:"electronics", subcategory:"raspberry-pi", price:149, badge:"", image:"", description:"40-pin ribbon cable to connect RPi GPIO to breadboard or expansion board.", visible:true },
-  { id:"rb-sns-t01", name:"DHT11 Temperature & Humidity Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:99, badge:"", image:"", description:"Basic digital temp/humidity sensor. +/-2 deg C accuracy, 20-80% RH range. 1-wire protocol.", visible:true },
-  { id:"rb-sns-t02", name:"DHT22 Temperature & Humidity Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:249, badge:"", image:"", description:"Improved DHT11 with +/-0.5 deg C accuracy, -40 to +80 deg C range, 0-100% RH.", visible:true },
-  { id:"rb-sns-t03", name:"DS18B20 Waterproof Temperature Probe", emoji:"📦", category:"electronics", subcategory:"sensors", price:199, badge:"", image:"", description:"Stainless-steel waterproof 1-wire temperature probe. -55 to +125 deg C, +/-0.5 deg C.", visible:true },
-  { id:"rb-sns-t04", name:"BME280 Temp/Humidity/Pressure Module", emoji:"📦", category:"electronics", subcategory:"sensors", price:349, badge:"", image:"", description:"Bosch BME280 on I2C/SPI breakout. Temp, humidity, and barometric pressure.", visible:true },
-  { id:"rb-sns-t05", name:"LM35 Temperature Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:79, badge:"", image:"", description:"Analog temperature sensor, 10mV/deg C linear output. 0-100 deg C range.", visible:true },
-  { id:"rb-sns-t06", name:"MLX90614 IR Temperature Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:699, badge:"", image:"", description:"Non-contact IR thermometer module. -70 to +380 deg C, I2C interface.", visible:true },
-  { id:"rb-sns-m01", name:"HC-SR04 Ultrasonic Distance Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:99, badge:"", image:"", description:"Ultrasonic ranging module, 2cm-400cm, 3mm accuracy. 5V trigger/echo.", visible:true },
-  { id:"rb-sns-m02", name:"PIR Motion Sensor HC-SR501", emoji:"📦", category:"electronics", subcategory:"sensors", price:129, badge:"", image:"", description:"Passive infrared motion detector. 3-7m range, adjustable sensitivity and delay.", visible:true },
-  { id:"rb-sns-m03", name:"MPU-6050 6-Axis IMU", emoji:"📦", category:"electronics", subcategory:"sensors", price:199, badge:"", image:"", description:"3-axis gyroscope + 3-axis accelerometer on I2C. +/-2/4/8/16g, +/-250-2000 deg/s.", visible:true },
-  { id:"rb-sns-m04", name:"MPU-9250 9-Axis IMU", emoji:"📦", category:"electronics", subcategory:"sensors", price:449, badge:"", image:"", description:"9-DOF IMU with gyroscope, accelerometer, and magnetometer on SPI/I2C.", visible:true },
-  { id:"rb-sns-m05", name:"VL53L0X ToF Distance Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:349, badge:"", image:"", description:"Time-of-flight ranging sensor up to 2m. I2C, works in ambient light.", visible:true },
-  { id:"rb-sns-m06", name:"ADXL345 3-Axis Accelerometer", emoji:"📦", category:"electronics", subcategory:"sensors", price:199, badge:"", image:"", description:"3-axis digital accelerometer, +/-2/4/8/16g, I2C/SPI. Tap/free-fall detect.", visible:true },
-  { id:"rb-sns-m07", name:"Reed Switch Module", emoji:"📦", category:"electronics", subcategory:"sensors", price:79, badge:"", image:"", description:"Magnetic reed switch with digital output. Use with magnets for door/window sensing.", visible:true },
-  { id:"rb-sns-l01", name:"LDR Photoresistor Module", emoji:"📦", category:"electronics", subcategory:"sensors", price:49, badge:"", image:"", description:"Light-dependent resistor module with analog output. For basic light sensing.", visible:true },
-  { id:"rb-sns-l02", name:"BH1750 Ambient Light Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:149, badge:"", image:"", description:"Digital light intensity sensor (lux), I2C. 1-65535 lux range.", visible:true },
-  { id:"rb-sns-l03", name:"TCS34725 RGB Colour Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:349, badge:"", image:"", description:"RGB and clear light sensing with IR filter. I2C, programmable gain and timing.", visible:true },
-  { id:"rb-sns-l04", name:"APDS-9960 Gesture Colour Proximity", emoji:"📦", category:"electronics", subcategory:"sensors", price:449, badge:"", image:"", description:"Combined gesture, proximity, colour, and ambient light sensor on I2C.", visible:true },
-  { id:"rb-sns-l05", name:"IR Obstacle Avoidance Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:89, badge:"", image:"", description:"Infrared proximity sensor with digital output. Adjustable 2-30cm range.", visible:true },
-  { id:"rb-sns-g01", name:"MQ-2 Smoke Gas Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:149, badge:"", image:"", description:"Detects LPG, propane, hydrogen, smoke. Analog output, 5V. For gas alarms.", visible:true },
-  { id:"rb-sns-g02", name:"MQ-135 Air Quality Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:149, badge:"", image:"", description:"Detects NH3, NOx, alcohol, benzene, CO2. Analog output. For air quality monitors.", visible:true },
-  { id:"rb-sns-g03", name:"MQ-7 Carbon Monoxide Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:199, badge:"", image:"", description:"Highly sensitive CO sensor. 20-2000ppm range. Analog output with heater control.", visible:true },
-  { id:"rb-sns-g04", name:"CCS811 CO2 & TVOC Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:699, badge:"", image:"", description:"Digital eCO2 and TVOC sensor, I2C. 400-8192ppm CO2, indoor air quality.", visible:true },
-  { id:"rb-sns-g05", name:"Rain/Water Drop Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:99, badge:"", image:"", description:"Conductive rain detection sensor with analog and digital output. 5V.", visible:true },
-  { id:"rb-sns-g06", name:"Soil Moisture Sensor", emoji:"📦", category:"electronics", subcategory:"sensors", price:99, badge:"", image:"", description:"Resistive soil moisture probe with analog output. For plant watering automation.", visible:true },
-  { id:"rb-mtr-d01", name:"DC Geared Motor 6V 60RPM", emoji:"📦", category:"electronics", subcategory:"motors", price:249, badge:"", image:"", description:"Metal gear DC motor, 6V, 60RPM, high torque. For robot arms and heavy-load robots.", visible:true },
-  { id:"rb-mtr-d02", name:"DC Geared Motor 6V 120RPM", emoji:"📦", category:"electronics", subcategory:"motors", price:249, badge:"", image:"", description:"6V 120RPM gear motor. Good balance of speed and torque for wheeled robots.", visible:true },
-  { id:"rb-mtr-d03", name:"DC Geared Motor 12V 200RPM", emoji:"📦", category:"electronics", subcategory:"motors", price:399, badge:"", image:"", description:"12V 200RPM high-speed gear motor for robotics carts and conveyor projects.", visible:true },
-  { id:"rb-mtr-d04", name:"BO Motor (Battery Operated) 3V 150RPM", emoji:"📦", category:"electronics", subcategory:"motors", price:129, badge:"", image:"", description:"Lightweight BO motor ideal for mini line-follower and sumo robots.", visible:true },
-  { id:"rb-mtr-d05", name:"N20 Micro Metal Gear Motor 6V 100RPM", emoji:"📦", category:"electronics", subcategory:"motors", price:349, badge:"", image:"", description:"Tiny N20 micro metal gear motor, 6V, 100RPM. For compact robot platforms.", visible:true },
-  { id:"rb-mtr-s01", name:"SG90 Micro Servo 9g", emoji:"📦", category:"electronics", subcategory:"motors", price:149, badge:"", image:"", description:"9g micro servo, 180 deg rotation, 1.8kg.cm torque. Ideal for small arms and fins.", visible:true },
-  { id:"rb-mtr-s02", name:"MG996R Metal Gear Servo", emoji:"📦", category:"electronics", subcategory:"motors", price:349, badge:"", image:"", description:"Metal gear servo, 180 deg, 9.4-11kg.cm torque. For robotic arms and steering.", visible:true },
-  { id:"rb-mtr-s03", name:"MG90S Metal Gear Micro Servo", emoji:"📦", category:"electronics", subcategory:"motors", price:199, badge:"", image:"", description:"Metal gear mini servo, 180 deg, 2.2kg.cm. Stronger than SG90 in same size.", visible:true },
-  { id:"rb-mtr-s04", name:"DS3218 270 deg Digital Servo", emoji:"📦", category:"electronics", subcategory:"motors", price:799, badge:"", image:"", description:"High-torque digital servo, 270 deg rotation, 20kg.cm. For industrial-grade arms.", visible:true },
-  { id:"rb-mtr-s05", name:"360 deg Continuous Rotation Servo", emoji:"📦", category:"electronics", subcategory:"motors", price:249, badge:"", image:"", description:"Continuous rotation servo with speed and direction control via PWM.", visible:true },
-  { id:"rb-mtr-st01", name:"28BYJ-48 Stepper Motor + ULN2003 Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:199, badge:"", image:"", description:"5V unipolar stepper with driver board. 512 steps/rev, 1:64 reduction for precision.", visible:true },
-  { id:"rb-mtr-st02", name:"NEMA 17 Stepper Motor 40Ncm", emoji:"📦", category:"electronics", subcategory:"motors", price:699, badge:"", image:"", description:"NEMA 17 bipolar stepper, 1.8 deg per step, 40Ncm torque. Standard for 3D printers.", visible:true },
-  { id:"rb-mtr-st03", name:"NEMA 17 Stepper Motor 59Ncm", emoji:"📦", category:"electronics", subcategory:"motors", price:899, badge:"", image:"", description:"High-torque NEMA 17, 59Ncm. For CNC machines and heavier 3D printer axes.", visible:true },
-  { id:"rb-mtr-st04", name:"NEMA 23 Stepper Motor 130Ncm", emoji:"📦", category:"electronics", subcategory:"motors", price:1899, badge:"", image:"", description:"NEMA 23 bipolar stepper, 1.8 deg/step, 130Ncm. For CNC mills and lathes.", visible:true },
-  { id:"rb-mtr-dr01", name:"L298N Dual H-Bridge Motor Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:149, badge:"", image:"", description:"Classic L298N driver module. 2 DC motors or 1 stepper, up to 2A per channel, 7-46V.", visible:true },
-  { id:"rb-mtr-dr02", name:"L293D Motor Driver IC", emoji:"📦", category:"electronics", subcategory:"motors", price:79, badge:"", image:"", description:"Quad half-H-bridge IC, 600mA per channel, 4.5-36V. DIP-16 package for breadboard.", visible:true },
-  { id:"rb-mtr-dr03", name:"A4988 Stepper Motor Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:149, badge:"", image:"", description:"A4988 microstepping driver up to 1/16 step. 35V, 2A. Standard for 3D printers.", visible:true },
-  { id:"rb-mtr-dr04", name:"DRV8825 Stepper Motor Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:199, badge:"", image:"", description:"Up to 1/32 microstepping, 45V, 2.5A. Quieter than A4988, ideal for CNC.", visible:true },
-  { id:"rb-mtr-dr05", name:"TB6612FNG Dual Motor Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:199, badge:"", image:"", description:"Dual H-bridge driver, 1.2A continuous per channel. Smaller and more efficient than L298N.", visible:true },
-  { id:"rb-mtr-dr06", name:"BTS7960 43A High-Power Motor Driver", emoji:"📦", category:"electronics", subcategory:"motors", price:499, badge:"", image:"", description:"High-current half-bridge driver module, 43A peak. For heavy-duty DC motors.", visible:true },
-  { id:"rb-cmp-p01", name:"Resistor Kit 600pcs (30 values)", emoji:"📦", category:"electronics", subcategory:"components", price:199, badge:"", image:"", description:"600-piece resistor assortment, 1 Ohm - 1M Ohm, 1/4W 5% tolerance. Sorted in compartment box.", visible:true },
-  { id:"rb-cmp-p02", name:"Capacitor Kit 300pcs (30 values)", emoji:"📦", category:"electronics", subcategory:"components", price:249, badge:"", image:"", description:"Electrolytic and ceramic capacitor assortment from 1pF to 1000uF.", visible:true },
-  { id:"rb-cmp-p03", name:"LED Assortment Kit 100pcs (5 colours)", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"5mm LEDs: red, green, blue, yellow, white, 20 pcs each. Basic indicator LEDs.", visible:true },
-  { id:"rb-cmp-p04", name:"Push Button Tactile Switch Pack (20pcs)", emoji:"📦", category:"electronics", subcategory:"components", price:79, badge:"", image:"", description:"6x6mm through-hole tactile switches. 4-pin. For Arduino shields and PCBs.", visible:true },
-  { id:"rb-cmp-p05", name:"Potentiometer 10K Linear (5pcs)", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"10k Ohm single-turn rotary potentiometer, B10K. 3-pin, panel or PCB mount.", visible:true },
-  { id:"rb-cmp-p06", name:"Zener Diode Kit (5V 12V 24V assorted)", emoji:"📦", category:"electronics", subcategory:"components", price:149, badge:"", image:"", description:"Assorted zener diodes for voltage regulation and protection circuits.", visible:true },
-  { id:"rb-cmp-i01", name:"NE555 Timer IC", emoji:"📦", category:"electronics", subcategory:"components", price:29, badge:"", image:"", description:"Classic 555 timer in DIP-8. For oscillators, pulse generation, and timing circuits.", visible:true },
-  { id:"rb-cmp-i02", name:"LM741 Op-Amp IC", emoji:"📦", category:"electronics", subcategory:"components", price:39, badge:"", image:"", description:"General-purpose single op-amp in DIP-8. Amplification, comparators, filters.", visible:true },
-  { id:"rb-cmp-i03", name:"74HC595 Shift Register IC", emoji:"📦", category:"electronics", subcategory:"components", price:49, badge:"", image:"", description:"8-bit serial-to-parallel shift register. Expand Arduino outputs using 3 pins.", visible:true },
-  { id:"rb-cmp-i04", name:"PCF8574 I2C GPIO Expander", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"8-bit I/O expander for I2C bus. Add 8 GPIO pins via just two wires.", visible:true },
-  { id:"rb-cmp-i05", name:"AMS1117 3.3V Voltage Regulator", emoji:"📦", category:"electronics", subcategory:"components", price:39, badge:"", image:"", description:"SOT-223 LDO regulator, 800mA, 3.3V output. Popular on ESP and RPi projects.", visible:true },
-  { id:"rb-cmp-i06", name:"ESP-01 ESP8266 Wi-Fi Module", emoji:"📦", category:"electronics", subcategory:"components", price:249, badge:"", image:"", description:"Tiny ESP8266 Wi-Fi module with 2 GPIO. Add Wi-Fi to any Arduino via serial.", visible:true },
-  { id:"rb-cmp-i07", name:"HC-05 Bluetooth Module", emoji:"📦", category:"electronics", subcategory:"components", price:349, badge:"", image:"", description:"Classic HC-05 Bluetooth 2.0 serial module. Master/slave mode via AT commands.", visible:true },
-  { id:"rb-cmp-i08", name:"nRF24L01+ 2.4GHz RF Module", emoji:"📦", category:"electronics", subcategory:"components", price:199, badge:"", image:"", description:"2.4GHz SPI radio module, 100m+ range, 250kbps-2Mbps. Pair for wireless comm.", visible:true },
-  { id:"rb-cmp-c01", name:"Jumper Wire Kit M-M/M-F/F-F (120pcs)", emoji:"📦", category:"electronics", subcategory:"components", price:149, badge:"", image:"", description:"40pcs each male-male, male-female, female-female jumper wires, 20cm.", visible:true },
-  { id:"rb-cmp-c02", name:"Breadboard 830 Tie Points", emoji:"📦", category:"electronics", subcategory:"components", price:199, badge:"", image:"", description:"Full-size solderless breadboard, 830 tie-points, with binding posts.", visible:true },
-  { id:"rb-cmp-c03", name:"Mini Breadboard 400 Tie Points", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"Half-size 400 tie-point breadboard. Ideal for compact circuit prototyping.", visible:true },
-  { id:"rb-cmp-c04", name:"USB-A to USB-B Cable 1m", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"Standard USB cable for Arduino Uno/Mega programming and power.", visible:true },
-  { id:"rb-cmp-c05", name:"USB-A to Micro USB Cable 1m", emoji:"📦", category:"electronics", subcategory:"components", price:79, badge:"", image:"", description:"Micro USB cable for Arduino Nano, Pro Mini adapter, and RPi power.", visible:true },
-  { id:"rb-cmp-c06", name:"Dupont Connector Kit with Crimping Tool", emoji:"📦", category:"electronics", subcategory:"components", price:349, badge:"", image:"", description:"Male/female Dupont housings, crimp pins, and crimping tool. Make custom cables.", visible:true },
-  { id:"rb-cmp-c07", name:"XT60 Connector Pair (Male + Female)", emoji:"📦", category:"electronics", subcategory:"components", price:99, badge:"", image:"", description:"High-current XT60 connector pair rated 60A. Standard for LiPo battery packs.", visible:true },
-  { id:"rb-cmp-c08", name:"18650 Battery Holder 2-Cell", emoji:"📦", category:"electronics", subcategory:"components", price:79, badge:"", image:"", description:"2x18650 lithium cell battery holder with leads. 7.4V nominal output.", visible:true },
-  { id:"rb-tl-sl01", name:"Soldering Iron 25W", emoji:"📦", category:"electronics", subcategory:"tools", price:399, badge:"", image:"", description:"Basic 25W pencil soldering iron. 400 deg C tip temperature. For PCB and wire work.", visible:true },
-  { id:"rb-tl-sl02", name:"Soldering Iron Station 60W", emoji:"📦", category:"electronics", subcategory:"tools", price:1499, badge:"", image:"", description:"Adjustable 60W soldering station with digital temperature control 200-480 deg C.", visible:true },
-  { id:"rb-tl-sl03", name:"Solder Wire 60/40 250g", emoji:"📦", category:"electronics", subcategory:"tools", price:299, badge:"", image:"", description:"60/40 tin-lead solder, 0.8mm diameter, rosin flux core. 250g spool.", visible:true },
-  { id:"rb-tl-sl04", name:"Desoldering Pump / Solder Sucker", emoji:"📦", category:"electronics", subcategory:"tools", price:199, badge:"", image:"", description:"Spring-loaded desoldering pump for removing excess solder from PCB joints.", visible:true },
-  { id:"rb-tl-sl05", name:"Flux Paste 50g", emoji:"📦", category:"electronics", subcategory:"tools", price:149, badge:"", image:"", description:"Water-washable flux paste in a jar. Improves solder flow and reduces oxidation.", visible:true },
-  { id:"rb-tl-sl06", name:"PCB Helping Hands with Magnifier", emoji:"📦", category:"electronics", subcategory:"tools", price:399, badge:"", image:"", description:"Third-hand tool with alligator clips and 5x magnifying glass for PCB work.", visible:true },
-  { id:"rb-tl-ms01", name:"Digital Multimeter", emoji:"📦", category:"electronics", subcategory:"tools", price:799, badge:"", image:"", description:"Auto-ranging digital multimeter, DC/AC voltage, current, resistance, continuity.", visible:true },
-  { id:"rb-tl-ms02", name:"USB Logic Analyser 8-Channel", emoji:"📦", category:"electronics", subcategory:"tools", price:1499, badge:"", image:"", description:"8-channel 24MHz USB logic analyser. Works with Sigrok/PulseView. I2C/SPI/UART decode.", visible:true },
-  { id:"rb-tl-ms03", name:"Oscilloscope DSO138 DIY Kit", emoji:"📦", category:"electronics", subcategory:"tools", price:1999, badge:"", image:"", description:"DIY 200kHz digital oscilloscope kit with 2.4-inch LCD. Single-channel, 1Msps.", visible:true },
-  { id:"rb-tl-ms04", name:"LCR Meter Component Tester", emoji:"📦", category:"electronics", subcategory:"tools", price:999, badge:"", image:"", description:"Auto-detect transistors, resistors, capacitors, inductors, diodes on a graphic LCD.", visible:true },
-  { id:"rb-tl-ms05", name:"Bench Power Supply 30V 5A", emoji:"📦", category:"electronics", subcategory:"tools", price:3499, badge:"", image:"", description:"Variable bench PSU, 0-30V 0-5A, dual display, over-current protection.", visible:true },
-  { id:"rb-tl-ht01", name:"Precision Screwdriver Set 25pcs", emoji:"📦", category:"electronics", subcategory:"tools", price:499, badge:"", image:"", description:"25-piece magnetic screwdriver set with Phillips, flat, Torx, hex bits.", visible:true },
-  { id:"rb-tl-ht02", name:"Wire Stripper & Cutter", emoji:"📦", category:"electronics", subcategory:"tools", price:299, badge:"", image:"", description:"Adjustable wire stripper for 10-24 AWG wire with built-in cutter.", visible:true },
-  { id:"rb-tl-ht03", name:"Needle-Nose Pliers", emoji:"📦", category:"electronics", subcategory:"tools", price:199, badge:"", image:"", description:"Long-nose ESD-safe pliers for bending component leads and handling SMD parts.", visible:true },
-  { id:"rb-tl-ht04", name:"Diagonal Flush Cutters", emoji:"📦", category:"electronics", subcategory:"tools", price:149, badge:"", image:"", description:"Micro flush cutter for clean component lead trimming after soldering.", visible:true },
-  { id:"rb-tl-ht05", name:"Anti-Static ESD Wrist Strap", emoji:"📦", category:"electronics", subcategory:"tools", price:99, badge:"", image:"", description:"ESD wrist strap with 1M Ohm resistor and alligator clip for static-safe PCB work.", visible:true },
-  { id:"rb-tl-ht06", name:"Hot Glue Gun 20W with Sticks", emoji:"📦", category:"electronics", subcategory:"tools", price:299, badge:"", image:"", description:"Low-temperature mini glue gun with 10 glue sticks. For enclosure and wire tack.", visible:true },
-  { id:"rb-drn-f01", name:"F450 Quadcopter Frame 450mm", emoji:"📦", category:"drone", subcategory:"drone", price:799, badge:"", image:"", description:"Classic F450 glass-fibre quad frame with PCB bottom plate for power distribution.", visible:true },
-  { id:"rb-drn-f02", name:"Q250 Racing Frame 250mm", emoji:"📦", category:"drone", subcategory:"drone", price:999, badge:"", image:"", description:"Compact 250mm carbon-fibre FPV racing frame. Low profile, strong arm design.", visible:true },
-  { id:"rb-drn-f03", name:"S500 Hexacopter Frame 500mm", emoji:"📦", category:"drone", subcategory:"drone", price:1499, badge:"", image:"", description:"S500 glass-fibre hexacopter frame, retractable landing gear, PCB power plate.", visible:true },
-  { id:"rb-drn-f04", name:"X500 V2 Quadcopter Frame 500mm", emoji:"📦", category:"drone", subcategory:"drone", price:2499, badge:"", image:"", description:"All-carbon X500 V2 frame compatible with Holybro Pixhawk stacks.", visible:true },
-  { id:"rb-drn-c01", name:"Survey Mapping Drone S1000", emoji:"📦", category:"drone", subcategory:"drone", price:85000, badge:"", image:"", description:"Fixed-wing VTOL mapping drone. 60-min flight time, RTK GPS, 1km range.", visible:true },
-  { id:"rb-drn-c02", name:"FPV Racing Drone 5-Inch", emoji:"📦", category:"drone", subcategory:"drone", price:18000, badge:"", image:"", description:"Ready-to-fly 5-inch FPV racer with F7 FC, 45A ESC, and digital FPV system.", visible:true },
-  { id:"rb-drn-c03", name:"Agricultural Spray Drone 10L", emoji:"📦", category:"drone", subcategory:"drone", price:250000, badge:"", image:"", description:"10L tank hexacopter for precision crop spraying. 15-min per 10 acres coverage.", visible:true },
-  { id:"rb-drn-p01", name:"A2212 1000KV Brushless Motor", emoji:"📦", category:"drone", subcategory:"drone", price:599, badge:"", image:"", description:"2212 1000KV brushless outrunner for 450-class quads. 250W, fits 10-inch props.", visible:true },
-  { id:"rb-drn-p02", name:"A2212 2200KV Brushless Motor", emoji:"📦", category:"drone", subcategory:"drone", price:599, badge:"", image:"", description:"2212 2200KV brushless motor for 250mm racers and 330-class quads.", visible:true },
-  { id:"rb-drn-p03", name:"30A Brushless ESC", emoji:"📦", category:"drone", subcategory:"drone", price:399, badge:"", image:"", description:"30A UBEC ESC with BEC output, compatible with most 2-4S LiPo packs.", visible:true },
-  { id:"rb-drn-p04", name:"FlySky FS-i6X 10CH Transmitter + Receiver", emoji:"📦", category:"drone", subcategory:"drone", price:3499, badge:"", image:"", description:"10-channel 2.4GHz digital transmitter with FS-iA10B receiver for RC aircraft.", visible:true },
-  { id:"rb-drn-p05", name:"Flight Controller F405 Wing", emoji:"📦", category:"drone", subcategory:"drone", price:2999, badge:"", image:"", description:"F405-based FC with OSD, barometer, and BEC. For fixed-wing and quad builds.", visible:true },
-  { id:"rb-drn-p06", name:"LiPo Battery 3S 2200mAh 25C", emoji:"📦", category:"drone", subcategory:"drone", price:1299, badge:"", image:"", description:"3S 11.1V 2200mAh 25C LiPo. Standard battery for 450-class quadcopters.", visible:true },
-  { id:"rb-drn-p07", name:"LiPo Battery 4S 1500mAh 50C", emoji:"📦", category:"drone", subcategory:"drone", price:1499, badge:"", image:"", description:"4S 14.8V 1500mAh 50C LiPo. For 5-inch FPV racing drones.", visible:true },
-  { id:"rb-drn-p08", name:"1045 Propeller Set (2CW + 2CCW)", emoji:"📦", category:"drone", subcategory:"drone", price:199, badge:"", image:"", description:"10-inch 4.5-pitch carbon propellers for 450-class frames. One set of 4.", visible:true },
-  { id:"rb-drn-p09", name:"5045 Tri-Blade FPV Propeller Set", emoji:"📦", category:"drone", subcategory:"drone", price:249, badge:"", image:"", description:"5-inch 3-blade FPV racing propellers. One set of 4 (2CW + 2CCW).", visible:true },
-  { id:"rb-drn-p10", name:"GPS Module M8N with Compass", emoji:"📦", category:"drone", subcategory:"drone", price:1499, badge:"", image:"", description:"u-blox M8N GPS + HMC5883L compass on a pole mount for ArduPilot/PX4.", visible:true },
-  { id:"rb-prt-b01", name:"Breadboard 830 Tie Points", emoji:"📦", category:"proto", subcategory:"prototyping", price:199, badge:"", image:"", description:"Full-size 830-point solderless breadboard with binding posts. Standard for prototyping.", visible:true },
-  { id:"rb-prt-b02", name:"Double-Sided PCB 5x7cm (5pcs)", emoji:"📦", category:"proto", subcategory:"prototyping", price:99, badge:"", image:"", description:"5-pack of 5x7cm double-sided perf boards. 2.54mm hole pitch for DIP components.", visible:true },
-  { id:"rb-prt-b03", name:"Double-Sided PCB 10x15cm (2pcs)", emoji:"📦", category:"proto", subcategory:"prototyping", price:149, badge:"", image:"", description:"2-pack of 10x15cm double-sided universal PCBs. Ideal for larger project boards.", visible:true },
-  { id:"rb-prt-b04", name:"SMD Prototype PCB 5x7cm (5pcs)", emoji:"📦", category:"proto", subcategory:"prototyping", price:129, badge:"", image:"", description:"5-pack of SMD-capable PCBs with 0805 pads and SOT-23 footprints.", visible:true },
-  { id:"rb-prt-k01", name:"Arduino Starter Kit with Components", emoji:"📦", category:"proto", subcategory:"prototyping", price:1499, badge:"", image:"", description:"Arduino Uno R3, breadboard, jumper wires, LEDs, resistors, sensors - complete starter box.", visible:true },
-  { id:"rb-prt-k02", name:"ESP32 IoT Development Kit", emoji:"📦", category:"proto", subcategory:"prototyping", price:999, badge:"", image:"", description:"ESP32 dev board, DHT22, relay, OLED, jumper wires - for IoT and Wi-Fi projects.", visible:true },
-  { id:"rb-prt-k03", name:"Raspberry Pi Pico Starter Kit", emoji:"📦", category:"proto", subcategory:"prototyping", price:799, badge:"", image:"", description:"RPi Pico W, breadboard, LEDs, buttons, resistors, micro USB cable, and guide.", visible:true },
-  { id:"rb-prt-k04", name:"Robot Car Chassis Kit (4WD)", emoji:"📦", category:"proto", subcategory:"prototyping", price:1299, badge:"", image:"", description:"4-wheel drive chassis with DC motors, wheels, encoders, and motor driver module.", visible:true },
-  { id:"rb-prt-k05", name:"Line Follower Robot Kit", emoji:"📦", category:"proto", subcategory:"prototyping", price:1499, badge:"", image:"", description:"Complete line-follower kit with IR sensors, L298N, Arduino Uno, and chassis.", visible:true },
-  { id:"rb-prt-e01", name:"ABS Project Box 100x60x25mm", emoji:"📦", category:"proto", subcategory:"prototyping", price:149, badge:"", image:"", description:"Black ABS enclosure for small electronics projects. Screw-top lid, 100x60x25mm.", visible:true },
-  { id:"rb-prt-e02", name:"ABS Project Box 150x80x35mm", emoji:"📦", category:"proto", subcategory:"prototyping", price:199, badge:"", image:"", description:"Medium ABS project enclosure with flanged lid, 150x80x35mm.", visible:true },
-  { id:"rb-prt-e03", name:"DIN Rail Enclosure 100mm", emoji:"📦", category:"proto", subcategory:"prototyping", price:299, badge:"", image:"", description:"Snap-on ABS DIN rail enclosure for panel mounting. Fits standard rail.", visible:true },
-  { id:"rb-prt-e04", name:"Raspberry Pi 4 Acrylic Case", emoji:"📦", category:"proto", subcategory:"prototyping", price:299, badge:"", image:"", description:"Clear acrylic layered case for RPi 4 with GPIO access, 4 standoffs, fan mount.", visible:true },
-  { id:"rb-prt-e05", name:"Arduino Uno Acrylic Case", emoji:"📦", category:"proto", subcategory:"prototyping", price:149, badge:"", image:"", description:"Clear acrylic case for Arduino Uno with USB and power cutouts.", visible:true },
+// â”€â”€â”€ SEED PRODUCTS (from products.ts) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const SEED_VERSION = 3; // bump to wipe old localStorage and reseed
 
-  // ── FROM MAIN WEBSITE (products.ts) ────────────────────────────────────────
-  { id:"e-uno",        name:"Arduino Uno R3",                 emoji:"🔵", category:"electronics",     subcategory:"arduino",           price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1586920740099-f3ceb65bc51e?w=600&q=80&auto=format&fit=crop", description:"The classic ATmega328P development board. Perfect for beginners and pros alike.", visible:true },
-  { id:"e-mega",       name:"Arduino Mega 2560",              emoji:"🟢", category:"electronics",     subcategory:"arduino",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80&auto=format&fit=crop", description:"More pins, more power. 54 digital I/O pins and 256KB flash for complex projects.", visible:true },
-  { id:"e-nano",       name:"Arduino Nano",                   emoji:"🔷", category:"electronics",     subcategory:"arduino",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1603732551658-5fabbafa84eb?w=600&q=80&auto=format&fit=crop", description:"Compact and powerful. All the Arduino goodness in a tiny breadboard-friendly form.", visible:true },
-  { id:"e-esp32",      name:"ESP32 Dev Board",                emoji:"📡", category:"electronics",     subcategory:"modules",           price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&auto=format&fit=crop", description:"Dual-core WiFi + Bluetooth powerhouse. The go-to chip for IoT projects.", visible:true },
-  { id:"e-esp8266",    name:"ESP8266 NodeMCU",                emoji:"📶", category:"electronics",     subcategory:"modules",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1553406926-ba6e4e9ce89e?w=600&q=80&auto=format&fit=crop", description:"The WiFi module that changed everything. Budget IoT with built-in USB.", visible:true },
-  { id:"e-rpi4",       name:"Raspberry Pi 4B (4GB)",          emoji:"🍓", category:"electronics",     subcategory:"arduino",           price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&q=80&auto=format&fit=crop", description:"Full Linux SBC with 4GB RAM. Powers robots, AI projects and media centres.", visible:true },
-  { id:"e-ultrasonic", name:"HC-SR04 Ultrasonic Sensor",      emoji:"📏", category:"electronics",     subcategory:"sensors",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1581092160607-ee67df0c4a6b?w=600&q=80&auto=format&fit=crop", description:"Accurate distance sensing from 2cm to 400cm. Robotics staple.", visible:true },
-  { id:"e-servo",      name:"SG90 Micro Servo",               emoji:"⚙️", category:"electronics",     subcategory:"motors",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80&auto=format&fit=crop", description:"Lightweight 9g servo for small robotic arms, pan-tilt mounts and RC projects.", visible:true },
-  { id:"d-fpv5",       name:"5\" FPV Racing Drone",           emoji:"🚀", category:"drones",          subcategory:"complete",          price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1527977966861-8dfc86d96f3f?w=600&q=80&auto=format&fit=crop", description:"Ready-to-fly 5\" FPV racer built and tuned in-house. Plug in a battery and fly.", visible:true },
-  { id:"d-frame-5",    name:"5\" Freestyle Frame",            emoji:"🔩", category:"drones",          subcategory:"frames",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600&q=80&auto=format&fit=crop", description:"True X carbon fibre frame. Rigid, light and built to survive crashes.", visible:true },
-  { id:"d-f7",         name:"F7 Flight Controller",           emoji:"🎛️", category:"drones",          subcategory:"flight-controllers",price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1601132359864-b06e71c7c50e?w=600&q=80&auto=format&fit=crop", description:"Betaflight-ready F7 FC with onboard blackbox and 8 UARTs.", visible:true },
-  { id:"d-2207",       name:"2207 2450KV Brushless Motor",    emoji:"⚡", category:"drones",          subcategory:"motors",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600&q=80&auto=format&fit=crop", description:"High-torque stator for punchy 5\" builds. 4–6S compatible.", visible:true },
-  { id:"d-4in1-esc",   name:"45A 4-in-1 ESC",                emoji:"🔌", category:"drones",          subcategory:"escs",              price:0,    badge:"",     image:"https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=600&q=80&auto=format&fit=crop", description:"BLHeli_32 4-in-1 ESC stack. 45A per channel, 30×30mm mount.", visible:true },
-  { id:"p-pla",        name:"PLA Printing Service",           emoji:"🟡", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80&auto=format&fit=crop", description:"Most popular material. Great for prototypes, enclosures and visual models.", visible:true },
-  { id:"p-petg",       name:"PETG Printing Service",          emoji:"🔵", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?w=600&q=80&auto=format&fit=crop", description:"Tough, slightly flexible and moisture resistant. Ideal for functional parts.", visible:true },
-  { id:"p-tpu",        name:"TPU Flexible Printing",          emoji:"🟠", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1565034946487-077786996e27?w=600&q=80&auto=format&fit=crop", description:"Rubber-like flexible material. Perfect for drone canopies, gaskets and grips.", visible:true },
-  { id:"p-nylon",      name:"Nylon Printing Service",         emoji:"⚪", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1609695001873-99e78e2f38cc?w=600&q=80&auto=format&fit=crop", description:"Engineering-grade nylon for mechanical parts requiring strength and heat resistance.", visible:true },
-  { id:"proto-pcb",    name:"PCB Design & Manufacturing",     emoji:"🟢", category:"prototyping",     subcategory:"pcb",               price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop", description:"From schematic to board — we design, fabricate and assemble your PCB.", visible:true },
-  { id:"proto-cnc",    name:"CNC Machining Service",          emoji:"🔨", category:"prototyping",     subcategory:"cnc",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80&auto=format&fit=crop", description:"Precision CNC milling in aluminium, steel, acrylic and wood. ±0.1mm tolerance.", visible:true },
-  { id:"sup-pla-1kg",  name:"PLA Filament 1kg",              emoji:"🧵", category:"printers-supplies",subcategory:"filaments",         price:0,    badge:"",     image:"https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80&auto=format&fit=crop", description:"Premium PLA in 30+ colours. Consistent diameter, tangle-free spool.", visible:true },
-  { id:"sup-petg-1kg", name:"PETG Filament 1kg",             emoji:"🔵", category:"printers-supplies",subcategory:"filaments",         price:0,    badge:"",     image:"https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=600&q=80&auto=format&fit=crop", description:"Tough PETG for functional parts. Clear, black, white and more.", visible:true }
+const SEED_PRODUCTS = [
+  // â”€â”€ FROM MAIN WEBSITE (products.ts) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  { id:"e-uno",        name:"Arduino Uno R3",                 emoji:"ðŸ”µ", category:"electronics",     subcategory:"arduino",           price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1586920740099-f3ceb65bc51e?w=600&q=80&auto=format&fit=crop", description:"The classic ATmega328P development board. Perfect for beginners and pros alike.", visible:true },
+
+  // â”€â”€ FROM MAIN WEBSITE (products.ts) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  { id:"e-uno",        name:"Arduino Uno R3",                 emoji:"ðŸ”µ", category:"electronics",     subcategory:"arduino",           price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1586920740099-f3ceb65bc51e?w=600&q=80&auto=format&fit=crop", description:"The classic ATmega328P development board. Perfect for beginners and pros alike.", visible:true },
+  { id:"e-mega",       name:"Arduino Mega 2560",              emoji:"ðŸŸ¢", category:"electronics",     subcategory:"arduino",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80&auto=format&fit=crop", description:"More pins, more power. 54 digital I/O pins and 256KB flash for complex projects.", visible:true },
+  { id:"e-nano",       name:"Arduino Nano",                   emoji:"ðŸ”·", category:"electronics",     subcategory:"arduino",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1603732551658-5fabbafa84eb?w=600&q=80&auto=format&fit=crop", description:"Compact and powerful. All the Arduino goodness in a tiny breadboard-friendly form.", visible:true },
+  { id:"e-esp32",      name:"ESP32 Dev Board",                emoji:"ðŸ“¡", category:"electronics",     subcategory:"modules",           price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&auto=format&fit=crop", description:"Dual-core WiFi + Bluetooth powerhouse. The go-to chip for IoT projects.", visible:true },
+  { id:"e-esp8266",    name:"ESP8266 NodeMCU",                emoji:"ðŸ“¶", category:"electronics",     subcategory:"modules",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1553406926-ba6e4e9ce89e?w=600&q=80&auto=format&fit=crop", description:"The WiFi module that changed everything. Budget IoT with built-in USB.", visible:true },
+  { id:"e-rpi4",       name:"Raspberry Pi 4B (4GB)",          emoji:"ðŸ“", category:"electronics",     subcategory:"arduino",           price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&q=80&auto=format&fit=crop", description:"Full Linux SBC with 4GB RAM. Powers robots, AI projects and media centres.", visible:true },
+  { id:"e-ultrasonic", name:"HC-SR04 Ultrasonic Sensor",      emoji:"ðŸ“", category:"electronics",     subcategory:"sensors",           price:0,    badge:"",     image:"https://images.unsplash.com/photo-1581092160607-ee67df0c4a6b?w=600&q=80&auto=format&fit=crop", description:"Accurate distance sensing from 2cm to 400cm. Robotics staple.", visible:true },
+  { id:"e-servo",      name:"SG90 Micro Servo",               emoji:"âš™ï¸", category:"electronics",     subcategory:"motors",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80&auto=format&fit=crop", description:"Lightweight 9g servo for small robotic arms, pan-tilt mounts and RC projects.", visible:true },
+  { id:"d-fpv5",       name:"5\" FPV Racing Drone",           emoji:"ðŸš€", category:"drones",          subcategory:"complete",          price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1527977966861-8dfc86d96f3f?w=600&q=80&auto=format&fit=crop", description:"Ready-to-fly 5\" FPV racer built and tuned in-house. Plug in a battery and fly.", visible:true },
+  { id:"d-frame-5",    name:"5\" Freestyle Frame",            emoji:"ðŸ”©", category:"drones",          subcategory:"frames",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600&q=80&auto=format&fit=crop", description:"True X carbon fibre frame. Rigid, light and built to survive crashes.", visible:true },
+  { id:"d-f7",         name:"F7 Flight Controller",           emoji:"ðŸŽ›ï¸", category:"drones",          subcategory:"flight-controllers",price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1601132359864-b06e71c7c50e?w=600&q=80&auto=format&fit=crop", description:"Betaflight-ready F7 FC with onboard blackbox and 8 UARTs.", visible:true },
+  { id:"d-2207",       name:"2207 2450KV Brushless Motor",    emoji:"âš¡", category:"drones",          subcategory:"motors",            price:0,    badge:"",     image:"https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600&q=80&auto=format&fit=crop", description:"High-torque stator for punchy 5\" builds. 4â€“6S compatible.", visible:true },
+  { id:"d-4in1-esc",   name:"45A 4-in-1 ESC",                emoji:"ðŸ”Œ", category:"drones",          subcategory:"escs",              price:0,    badge:"",     image:"https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=600&q=80&auto=format&fit=crop", description:"BLHeli_32 4-in-1 ESC stack. 45A per channel, 30Ã—30mm mount.", visible:true },
+  { id:"p-pla",        name:"PLA Printing Service",           emoji:"ðŸŸ¡", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"HOT",  image:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80&auto=format&fit=crop", description:"Most popular material. Great for prototypes, enclosures and visual models.", visible:true },
+  { id:"p-petg",       name:"PETG Printing Service",          emoji:"ðŸ”µ", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?w=600&q=80&auto=format&fit=crop", description:"Tough, slightly flexible and moisture resistant. Ideal for functional parts.", visible:true },
+  { id:"p-tpu",        name:"TPU Flexible Printing",          emoji:"ðŸŸ ", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1565034946487-077786996e27?w=600&q=80&auto=format&fit=crop", description:"Rubber-like flexible material. Perfect for drone canopies, gaskets and grips.", visible:true },
+  { id:"p-nylon",      name:"Nylon Printing Service",         emoji:"âšª", category:"3d-printing",     subcategory:"fdm",               price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1609695001873-99e78e2f38cc?w=600&q=80&auto=format&fit=crop", description:"Engineering-grade nylon for mechanical parts requiring strength and heat resistance.", visible:true },
+  { id:"proto-pcb",    name:"PCB Design & Manufacturing",     emoji:"ðŸŸ¢", category:"prototyping",     subcategory:"pcb",               price:0,    badge:"NEW",  image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop", description:"From schematic to board â€” we design, fabricate and assemble your PCB.", visible:true },
+  { id:"proto-cnc",    name:"CNC Machining Service",          emoji:"ðŸ”¨", category:"prototyping",     subcategory:"cnc",               price:0,    badge:"",     image:"https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80&auto=format&fit=crop", description:"Precision CNC milling in aluminium, steel, acrylic and wood. Â±0.1mm tolerance.", visible:true },
+  { id:"sup-pla-1kg",  name:"PLA Filament 1kg",              emoji:"ðŸ§µ", category:"printers-supplies",subcategory:"filaments",         price:0,    badge:"",     image:"https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80&auto=format&fit=crop", description:"Premium PLA in 30+ colours. Consistent diameter, tangle-free spool.", visible:true },
+  { id:"sup-petg-1kg", name:"PETG Filament 1kg",             emoji:"ðŸ”µ", category:"printers-supplies",subcategory:"filaments",         price:0,    badge:"",     image:"https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=600&q=80&auto=format&fit=crop", description:"Tough PETG for functional parts. Clear, black, white and more.", visible:true }
 ];
 
-// ─── SITE DATA (products / hero / services / contact / quote / photos) ────
+// â”€â”€â”€ SITE DATA (products / hero / services / contact / quote / photos) â”€â”€â”€â”€
 function loadAll() {
+  // Version-based reset: wipe old localStorage if seed version changed
+  const storedVersion = parseInt(localStorage.getItem('kyzer_seed_version') || '0', 10);
+  if (storedVersion < SEED_VERSION) {
+    localStorage.removeItem('kyzer_site_data');
+    localStorage.setItem('kyzer_seed_version', String(SEED_VERSION));
+  }
+
   const raw = localStorage.getItem('kyzer_site_data');
   if (raw) try { siteData = JSON.parse(raw); } catch(e) {}
   if (!siteData) siteData = { products:[], categories:[], hero:{}, services:[], contact:{}, links:{}, quote:{}, hero_photos:[] };
-  // Seed products from products.ts if the list is empty, or merge in any missing ones
   if (!siteData.products || siteData.products.length === 0) {
     siteData.products = SEED_PRODUCTS;
     saveLocal();
@@ -1266,7 +1103,7 @@ async function doPublish() {
   } catch(e) { toast('Network error', false); }
 }
 
-// ─── PRODUCTS ─────────────────────────────────────────────────
+// â”€â”€â”€ PRODUCTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _prodCatFilter = 'all';
 
 function renderProdCatFilters() {
@@ -1300,9 +1137,9 @@ function renderProducts(search='') {
     const imgHtml = p.image
       ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
       : '';
-    const emojiHtml = `<span class="prod-img-emoji" style="${p.image?'display:none':''}">${esc(p.emoji||'📦')}</span>`;
+    const emojiHtml = `<span class="prod-img-emoji" style="${p.image?'display:none':''}">${esc(p.emoji||'ðŸ“¦')}</span>`;
     const priceHtml = p.price>0
-      ? `<span class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</span>`
+      ? `<span class="prod-price">â‚¹${Number(p.price).toLocaleString('en-IN')}</span>`
       : `<span class="prod-price unset">Price on request</span>`;
     const isVisible = p.visible !== false;
     return `<div class="prod-card${isVisible?'':' hidden-card'}" id="pcard-${id}">
@@ -1356,13 +1193,13 @@ function openProductModal(id) {
       <label class="form-label">Product Photo</label>
       <div id="pm-img-wrap" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
         <div id="pm-img-preview" style="width:120px;height:100px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:28px">
-          ${imgVal ? `<img src="${imgVal}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : (esc(p?.emoji||'📦'))}
+          ${imgVal ? `<img src="${imgVal}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : (esc(p?.emoji||'ðŸ“¦'))}
         </div>
         <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:180px">
-          <input class="form-input" id="pm-image" placeholder="Paste image URL…" value="${imgVal}" oninput="pmImageUrlChanged(this.value)" style="font-size:12px">
+          <input class="form-input" id="pm-image" placeholder="Paste image URLâ€¦" value="${imgVal}" oninput="pmImageUrlChanged(this.value)" style="font-size:12px">
           <div style="display:flex;gap:8px">
             <label style="cursor:pointer;flex:1">
-              <span class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;display:flex">📁 Upload file</span>
+              <span class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;display:flex">ðŸ“ Upload file</span>
               <input type="file" accept="image/*" style="display:none" onchange="pmUploadFile(this)">
             </label>
           </div>
@@ -1376,7 +1213,7 @@ function openProductModal(id) {
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="pm-cat" value="${esc(p?.category||'')}"></div>
-      <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
+      <div class="form-group"><label class="form-label">Price (â‚¹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Subcategory</label><input class="form-input" id="pm-subcat" value="${esc(p?.subcategory||'')}"></div>
@@ -1393,14 +1230,14 @@ function openProductModal(id) {
 
 function pmImageUrlChanged(url) {
   const preview = $('pm-img-preview');
-  if (!url) { preview.innerHTML = $('pm-emoji')?.value || '📦'; return; }
-  preview.innerHTML = `<img src="${esc(url)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='❌'">`;
+  if (!url) { preview.innerHTML = $('pm-emoji')?.value || 'ðŸ“¦'; return; }
+  preview.innerHTML = `<img src="${esc(url)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='âŒ'">`;
 }
 
 function pmUploadFile(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { toast('Image too large — keep under 2MB or use a URL instead.'); return; }
+  if (file.size > 2 * 1024 * 1024) { toast('Image too large â€” keep under 2MB or use a URL instead.'); return; }
   const reader = new FileReader();
   reader.onload = function(e) {
     const dataUrl = e.target.result;
@@ -1434,7 +1271,7 @@ function saveProduct(id) {
   toast('Saved locally. Publish to go live.');
 }
 
-// ─── HERO FORM ────────────────────────────────────────────────
+// â”€â”€â”€ HERO FORM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadHeroForm() {
   const h = siteData.hero || {};
   $('hero-tag').value = h.tag||''; $('hero-l1').value = h.l1||''; $('hero-l2').value = h.l2||''; $('hero-l3').value = h.l3||''; $('hero-sub').value = h.sub||'';
@@ -1452,7 +1289,7 @@ function saveHero() {
   saveLocal(); toast('Saved locally. Publish to go live.');
 }
 
-// ─── SERVICES FORM ────────────────────────────────────────────
+// â”€â”€â”€ SERVICES FORM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadServicesForm() {
   $('services-list').innerHTML = (siteData.services||[]).map((s,i)=>`
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px">
@@ -1470,7 +1307,7 @@ function saveService(i) {
   saveLocal(); toast('Saved locally. Publish to go live.');
 }
 
-// ─── CONTACT FORM ─────────────────────────────────────────────
+// â”€â”€â”€ CONTACT FORM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadContactForm() {
   const c = siteData.contact || {};
   $('c-loc').value=c.loc||''; $('c-email').value=c.email||''; $('c-phone').value=c.phone||''; $('c-social').value=c.social||'';
@@ -1481,14 +1318,14 @@ function saveContact() {
   saveLocal(); toast('Saved locally. Publish to go live.');
 }
 
-// ─── QUOTE PRICING FORM ───────────────────────────────────────
+// â”€â”€â”€ QUOTE PRICING FORM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadQuoteForm() {
   const q = siteData.quote || {};
   $('q-machine').value=q.machineRate||''; $('q-sameday').value=q.sameDayFee||''; $('q-sevenday').value=q.sevenDayFee||'';
   $('q-materials').innerHTML = (q.materials||[]).map((m,i)=>`
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
       <input class="form-input" style="flex:1" placeholder="Material" id="qm-name-${i}" value="${esc(m.name||'')}">
-      <input class="form-input" style="width:100px" placeholder="₹/g" type="number" id="qm-rate-${i}" value="${esc(m.rate||'')}">
+      <input class="form-input" style="width:100px" placeholder="â‚¹/g" type="number" id="qm-rate-${i}" value="${esc(m.rate||'')}">
     </div>`).join('');
 }
 
@@ -1499,19 +1336,19 @@ function saveQuotePricing() {
   saveLocal(); toast('Saved locally. Publish to go live.');
 }
 
-// ─── PHOTOS ───────────────────────────────────────────────────
+// â”€â”€â”€ PHOTOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadPhotosForm() {
   $('photo-list').innerHTML = (siteData.hero_photos||[]).map((p,i)=>`
     <div style="display:flex;gap:8px">
       <input class="form-input" style="flex:1" value="${esc(p)}" id="photo-${i}" placeholder="https://...">
-      <button class="btn btn-danger btn-sm" onclick="removePhoto(${i})">✕</button>
+      <button class="btn btn-danger btn-sm" onclick="removePhoto(${i})">âœ•</button>
     </div>`).join('');
 }
 
 function addPhoto() { siteData.hero_photos=(siteData.hero_photos||[]); siteData.hero_photos.push(''); saveLocal(); loadPhotosForm(); }
 function removePhoto(i) { siteData.hero_photos.splice(i,1); saveLocal(); loadPhotosForm(); }
 
-// ─── BULK IMPORT ──────────────────────────────────────────────
+// â”€â”€â”€ BULK IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _importRows = [];
 
 const IMPORT_COLS = ['id','name','category','subcategory','price','emoji','badge','image','description','visible','inStock'];
@@ -1630,7 +1467,7 @@ function confirmImport() {
       category: String(row.category||''),
       subcategory: String(row.subcategory||''),
       price: parseFloat(row.price)||0,
-      emoji: String(row.emoji||'📦'),
+      emoji: String(row.emoji||'ðŸ“¦'),
       badge: String(row.badge||''),
       image: String(row.image||''),
       description: String(row.description||''),
@@ -1654,10 +1491,10 @@ function confirmImport() {
 }
 
 function downloadImportTemplate() {
-  if (!window.XLSX) { toast('SheetJS not loaded — refresh and try again.'); return; }
+  if (!window.XLSX) { toast('SheetJS not loaded â€” refresh and try again.'); return; }
   const template = [
     { id:'e-example', name:'Example Product', category:'electronics', subcategory:'arduino', price:499,
-      emoji:'📦', badge:'HOT', image:'https://...', description:'Short description', visible:'true', inStock:'true' }
+      emoji:'ðŸ“¦', badge:'HOT', image:'https://...', description:'Short description', visible:'true', inStock:'true' }
   ];
   const ws = XLSX.utils.json_to_sheet(template, { header: IMPORT_COLS });
   const wb = XLSX.utils.book_new();
@@ -1665,7 +1502,7 @@ function downloadImportTemplate() {
   XLSX.writeFile(wb, 'kyzer-products-template.xlsx');
 }
 
-// ─── GOOGLE SHEETS SYNC ───────────────────────────────────────
+// â”€â”€â”€ GOOGLE SHEETS SYNC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const DEFAULT_GSHEET_URL = 'https://docs.google.com/spreadsheets/d/1-ueMlYR9yNfkRzWAOIzewemv7hTNAXKfGc6klapCKz0/edit?usp=sharing';
 
 function saveGsUrl() {
@@ -1695,7 +1532,7 @@ function parseCSVLine(line) {
   res.push(cur); return res;
 }
 
-// Smart parser — handles flat CSVs and messy sheets with mixed section headers/blanks
+// Smart parser â€” handles flat CSVs and messy sheets with mixed section headers/blanks
 function parseSheetRows(text) {
   const lines = text.split(/\r?\n/);
   const productIdRe = /^[a-zA-Z][a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+/;
@@ -1711,13 +1548,13 @@ function parseSheetRows(text) {
         .filter(r => r.length > nameIdx && (r[idIdx]||'').trim() && (r[nameIdx]||'').trim())
         .map(r => {
           const obj = {}; headers.forEach((h,idx) => obj[h] = (r[idx]||'').trim());
-          const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[₹,\s]/g,''))||0;
-          return { id:obj['id'], name:obj['name'], category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:obj['emoji']||'📦', badge:obj['badge']||'', image:obj['image']||'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true };
+          const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[â‚¹,\s]/g,''))||0;
+          return { id:obj['id'], name:obj['name'], category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:obj['emoji']||'ðŸ“¦', badge:obj['badge']||'', image:obj['image']||'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true };
         });
     }
   }
 
-  // Irregular format — scan every line, detect product rows by ID pattern, re-read headers when found
+  // Irregular format â€” scan every line, detect product rows by ID pattern, re-read headers when found
   let headers = ['id','name','price','description','button','visible','category','subcategory','type'];
   const products = [];
   for (const line of lines) {
@@ -1728,8 +1565,8 @@ function parseSheetRows(text) {
     if ((low[0]==='id'||low[0]==='id ') && low.some(c=>c.startsWith('name'))) { headers=low; continue; }
     if (!productIdRe.test(first)) continue;
     const obj = {}; headers.forEach((h,idx) => obj[h] = (cols[idx]||'').trim());
-    const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[₹,\s]/g,''))||0;
-    products.push({ id:first, name:obj['name']||'', category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:'📦', badge:'', image:'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true });
+    const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[â‚¹,\s]/g,''))||0;
+    products.push({ id:first, name:obj['name']||'', category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:'ðŸ“¦', badge:'', image:'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true });
   }
   return products;
 }
@@ -1739,11 +1576,11 @@ async function syncGoogleSheet() {
   if (!savedUrl || !savedUrl.includes('/spreadsheets/d/')) { toast('Invalid Google Sheet URL. Set it in Settings tab.'); return; }
 
   const btn = $('sync-sheets-btn');
-  btn.textContent = '⏳ Fetching…';
+  btn.textContent = 'â³ Fetchingâ€¦';
   btn.disabled = true;
 
   try {
-    // Pass raw sheets URL — proxy builds the clean export URL server-side
+    // Pass raw sheets URL â€” proxy builds the clean export URL server-side
     const proxyUrl = '/api/sheet-proxy?url=' + encodeURIComponent(savedUrl);
     const res = await fetch(proxyUrl, {
       headers: { Authorization: 'Bearer ' + TOKEN }
@@ -1763,12 +1600,12 @@ async function syncGoogleSheet() {
   } catch(err) {
     toast('Sync failed: ' + err.message);
   } finally {
-    btn.textContent = '🔄 Sync Sheets';
+    btn.textContent = 'ðŸ”„ Sync Sheets';
     btn.disabled = false;
   }
 }
 
-// ─── SETTINGS ─────────────────────────────────────────────────
+// â”€â”€â”€ SETTINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function saveSbCreds() {
   localStorage.setItem('kyzer_supabase_url', $('sb-url').value.trim());
   localStorage.setItem('kyzer_supabase_key', $('sb-key').value.trim());
