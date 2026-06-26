@@ -1721,8 +1721,16 @@ async function syncGoogleSheet() {
   btn.disabled = true;
 
   try {
-    const res = await fetch(csvUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status} — make sure the sheet is "Anyone with the link can view"`);
+    // Fetch via server-side proxy to avoid CORS restrictions on Google Sheets
+    const proxyUrl = '/api/sheet-proxy?url=' + encodeURIComponent(csvUrl);
+    const res = await fetch(proxyUrl, {
+      headers: { Authorization: 'Bearer ' + TOKEN }
+    });
+    if (!res.ok) {
+      let errMsg = `HTTP ${res.status}`;
+      try { const j = await res.json(); errMsg = j.error || errMsg; } catch {}
+      throw new Error(errMsg);
+    }
     const text = await res.text();
     const products = parseSheetRows(text);
     if (!products.length) throw new Error('No product rows found. Check the sheet format or sharing settings.');
