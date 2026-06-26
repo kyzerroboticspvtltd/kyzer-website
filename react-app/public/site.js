@@ -150,10 +150,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // Default categories used before Supabase data loads
   const DEFAULT_CATS = [
-    { id: 'electronics', name: 'Electronics',          desc: 'Arduino, ESP32, Raspberry Pi, sensors & motors',  photo: 'https://lh3.googleusercontent.com/d/1SjJowP0KhF56Wfi_6NJbk6r-pQZW_vjY' },
-    { id: 'drone',       name: 'Drones',               desc: 'Survey, FPV & agricultural platforms',            photo: 'https://lh3.googleusercontent.com/d/1IfC8MDLVqHZ_uAyBtGKXt1xZcs5VsFsM' },
-    { id: 'proto',       name: 'Prototyping',          desc: 'PCB design, CNC machining & rapid prototyping',   photo: 'https://lh3.googleusercontent.com/d/1O1WLQ9BSpW2xIcj5nLZVHPWtUm19wr3x' },
-    { id: '3dprint',     name: '3D Print Accessories', desc: '3D printers, filaments & upgrade components',     photo: 'https://lh3.googleusercontent.com/d/1ZZtJfJnO69X9P6lx7FcWXi-RXR3zZoZc' },
+    { id: 'electronics', name: 'Electronics',          desc: 'Arduino, ESP32, Raspberry Pi, sensors & motors',  photo: '/cat-photos/electronics.png' },
+    { id: 'drone',       name: 'Drones',               desc: 'Survey, FPV & agricultural platforms',            photo: '/cat-photos/drone.png' },
+    { id: 'proto',       name: 'Prototyping',          desc: 'PCB design, CNC machining & rapid prototyping',   photo: '/cat-photos/proto.png' },
+    { id: '3dprint',     name: '3D Print Accessories', desc: '3D printers, filaments & upgrade components',     photo: '/cat-photos/3dprint.png' },
   ];
 
   const CAT_PAGES = {
