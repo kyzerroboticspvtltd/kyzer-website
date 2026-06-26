@@ -1,0 +1,174 @@
+id,name,category,subcategory,price,emoji,badge,image,description,visible,inStock
+rb-ard-b01,Arduino Uno R3,electronics,arduino,446,📦,,,"The most popular Arduino board. ATmega328P with 14 digital I/O and 6 analog inputs.",true,true
+rb-ard-b02,Arduino Nano,electronics,arduino,349,📦,,,"Compact breadboard-friendly ATmega328P in a tiny footprint.",true,true
+rb-ard-b03,Arduino Mega 2560,electronics,arduino,999,📦,,,"54 digital I/O and 16 analog inputs on ATmega2560. For large complex projects.",true,true
+rb-ard-b04,Arduino Leonardo,electronics,arduino,649,📦,,,"ATmega32U4 with built-in USB. Can emulate a mouse or keyboard HID device.",true,true
+rb-ard-b05,Arduino Due,electronics,arduino,1299,📦,,,"First Arduino with 32-bit ARM Cortex-M3 at 84 MHz and two DAC outputs.",true,true
+rb-ard-b06,Arduino Pro Mini 5V,electronics,arduino,199,📦,,,"Minimalist ATmega328P at 16 MHz / 5V. Upload via USB-to-TTL adapter.",true,true
+rb-ard-b07,Arduino Pro Mini 3.3V,electronics,arduino,199,📦,,,"ATmega328P at 8 MHz / 3.3V. Lower power compatible with 3.3V sensors.",true,true
+rb-ard-b08,Arduino Micro,electronics,arduino,799,📦,,,"ATmega32U4 with native USB in a smaller form factor than the Leonardo.",true,true
+rb-ard-b09,Arduino Nano Every,electronics,arduino,549,📦,,,"Next-gen Nano with ATMega4809. More flash and RAM on the same pinout.",true,true
+rb-ard-b10,Arduino Uno WiFi Rev2,electronics,arduino,1999,📦,,,"Uno R3 plus Wi-Fi and Bluetooth via ESP32 co-processor and ATmega4809.",true,true
+rb-ard-b11,Arduino MKR WiFi 1010,electronics,arduino,2499,📦,,,"32-bit SAMD21 with onboard Wi-Fi and Bluetooth for IoT Cloud projects.",true,true
+rb-ard-b12,Arduino MKR Zero,electronics,arduino,1799,📦,,,"SAMD21 with SD card and I2S connector for audio and data-logging.",true,true
+rb-ard-b13,Arduino Nano 33 IoT,electronics,arduino,1499,📦,,,"SAMD21 + NINA-W10 Wi-Fi/BT + LSM6DS3 IMU. Ideal for wearables and IoT.",true,true
+rb-ard-b14,Arduino Nano 33 BLE Sense,electronics,arduino,2199,📦,,,"nRF52840 + Bluetooth 5 + nine onboard sensors. Machine learning ready.",true,true
+rb-ard-b15,Arduino Zero,electronics,arduino,1599,📦,,,"SAMD21 Cortex-M0+ with embedded EDBG for full in-circuit debugging.",true,true
+rb-ard-d01,2.4 inch TFT LCD Shield,electronics,arduino,499,📦,,,"320x240 colour TFT touchscreen for Uno/Mega. Includes SD card slot.",true,true
+rb-ard-d02,3.5 inch TFT LCD Shield,electronics,arduino,699,📦,,,"480x320 colour resistive touchscreen for Uno/Mega. Great for GUIs.",true,true
+rb-ard-d03,1.8 inch TFT SPI Display,electronics,arduino,299,📦,,,"128x160 TFT colour breakout board. Works via hardware or software SPI.",true,true
+rb-ard-d04,0.96 inch OLED I2C Display,electronics,arduino,199,📦,,,"128x64 monochrome OLED with I2C. Only two signal wires needed.",true,true
+rb-ard-d05,1.3 inch OLED I2C Display,electronics,arduino,249,📦,,,"128x64 OLED larger than 0.96 inch. SH1106 controller.",true,true
+rb-ard-d06,2.42 inch OLED SPI Display,electronics,arduino,449,📦,,,"128x64 OLED on SPI for faster refresh. Sharp even in daylight.",true,true
+rb-ard-d07,16x2 LCD Display Module,electronics,arduino,129,📦,,,"Classic HD44780 character LCD. Add I2C backpack for two-wire control.",true,true
+rb-ard-d08,20x4 LCD Display Module,electronics,arduino,199,📦,,,"Four rows of 20 characters. Same HD44780 interface as the 16x2.",true,true
+rb-ard-d09,7-Segment 4-Digit Display,electronics,arduino,149,📦,,,"TM1637 driver with only two wires. Perfect for clocks and counters.",true,true
+rb-ard-d10,E-Paper 2.9 inch Display,electronics,arduino,799,📦,,,"Tri-colour e-ink via SPI. Retains image with zero power draw.",true,true
+rb-ard-s01,Arduino Sensor Shield V5,electronics,arduino,349,📦,,,"Breaks every Uno pin into a 3-pin VCC/GND/SIG header for direct plug-in.",true,true
+rb-ard-s02,Arduino Relay Shield 4-Channel,electronics,arduino,499,📦,,,"Four 10A/250VAC relays with opto-isolated inputs to protect the MCU.",true,true
+rb-ard-s03,Ethernet Shield W5100,electronics,arduino,599,📦,,,"Wired Ethernet for Uno/Mega. W5100 chip with RJ45 and onboard SD.",true,true
+rb-ard-s04,ESP8266 WiFi Shield,electronics,arduino,349,📦,,,"Wi-Fi over serial UART with AT-command firmware pre-loaded.",true,true
+rb-ard-s05,Motor Driver Shield L298P,electronics,arduino,399,📦,,,"Dual H-bridge for two DC motors or one stepper. 7-12V motor supply.",true,true
+rb-ard-s06,CNC Shield V3,electronics,arduino,299,📦,,,"Drives up to 4 axes with A4988/DRV8825 drivers for CNC and 3D printers.",true,true
+rb-ard-s07,Proto Shield with Mini Breadboard,electronics,arduino,249,📦,,,"Stackable shield with a 170-point mini breadboard for quick experiments.",true,true
+rb-ard-s08,Data Logger Shield,electronics,arduino,449,📦,,,"DS1307 RTC and micro SD on one shield. Timestamps sensor data to CSV.",true,true
+rb-ard-s09,Bluetooth Shield HC-05,electronics,arduino,399,📦,,,"HC-05 Bluetooth 2.0 with UART passthrough for wireless serial.",true,true
+rb-ard-s10,GSM GPRS Shield SIM900,electronics,arduino,1499,📦,,,"SIM900 quad-band GSM for SMS voice calls and GPRS data.",true,true
+rb-ard-s11,GPS Shield NEO-6M,electronics,arduino,799,📦,,,"u-blox NEO-6M GPS with SMA antenna connector and SD card slot.",true,true
+rb-ard-s12,Touch Screen Shield 3.2 inch,electronics,arduino,599,📦,,,"320x480 resistive touch TFT for Mega with SD and onboard font chip.",true,true
+rb-ard-s13,Voice Recognition Shield V3,electronics,arduino,899,📦,,,"Up to 80 user-trained offline voice commands. Speaker and mic jack.",true,true
+rb-ard-s14,Joystick Shield,electronics,arduino,199,📦,,,"Analogue joystick plus 4 buttons mapped to A0/A1 for robot control.",true,true
+rb-ard-s15,XBee Shield,electronics,arduino,549,📦,,,"Carrier for XBee modules with UART/SPI switch and RSSI LED.",true,true
+rb-rpi-s01,Raspberry Pi 5 (4GB),electronics,raspberry-pi,5499,📦,,,"Latest RPi 5 with 4GB RAM, BCM2712 quad-core 2.4GHz, dual 4K HDMI, USB 3.0, PCIe connector.",true,true
+rb-rpi-s02,Raspberry Pi 5 (8GB),electronics,raspberry-pi,7999,📦,,,"RPi 5 with 8GB RAM. Best for AI/ML workloads, media servers, and desktop use.",true,true
+rb-rpi-s03,Raspberry Pi 4 Model B (4GB),electronics,raspberry-pi,4499,📦,,,"Quad-core Cortex-A72 at 1.8GHz with 4GB RAM. Dual 4K HDMI, USB 3.0, Gigabit Ethernet.",true,true
+rb-rpi-s04,Raspberry Pi 4 Model B (2GB),electronics,raspberry-pi,3299,📦,,,"RPi 4 with 2GB RAM. Great for most projects, servers, and desktop usage.",true,true
+rb-rpi-s05,Raspberry Pi Zero 2 W,electronics,raspberry-pi,1299,📦,,,"Tiny RPi with quad-core Cortex-A53 at 1GHz, 512MB RAM, Wi-Fi, Bluetooth.",true,true
+rb-rpi-s06,Raspberry Pi Zero W,electronics,raspberry-pi,799,📦,,,"Ultra-compact RPi with single-core 1GHz, 512MB RAM, Wi-Fi, and Bluetooth.",true,true
+rb-rpi-s07,Raspberry Pi Pico W,electronics,raspberry-pi,349,📦,,,"RP2040 microcontroller board with Wi-Fi. 264KB RAM, 2MB Flash, 26 GPIO.",true,true
+rb-rpi-s08,Raspberry Pi Pico,electronics,raspberry-pi,199,📦,,,"RP2040 chip with dual Cortex-M0+ at 133MHz. 26 GPIO, 3 ADC channels.",true,true
+rb-rpi-h01,RPi Camera Module 3,electronics,raspberry-pi,2499,📦,,,"12MP Sony IMX708 autofocus camera. HDR support, 120 deg FoV wide version available.",true,true
+rb-rpi-h02,RPi Camera Module V2,electronics,raspberry-pi,1499,📦,,,"8MP Sony IMX219 fixed-focus camera for standard RPi CSI connector.",true,true
+rb-rpi-h03,Sense HAT,electronics,raspberry-pi,2999,📦,,,"8x8 RGB LED matrix, joystick, temperature, humidity, pressure, IMU. Used on ISS.",true,true
+rb-rpi-h04,Motor Driver HAT,electronics,raspberry-pi,899,📦,,,"Dual DC motor and stepper driver HAT for RPi. I2C control, up to 12V motors.",true,true
+rb-rpi-h05,GPS HAT NEO-6M,electronics,raspberry-pi,1599,📦,,,"u-blox NEO-6M GPS receiver HAT. PPS output for precise timing applications.",true,true
+rb-rpi-h06,PoE+ HAT,electronics,raspberry-pi,1799,📦,,,"Power over Ethernet HAT for RPi 4/5. IEEE 802.3at PoE+ standard, active cooling.",true,true
+rb-rpi-a01,Official RPi 5 Case,electronics,raspberry-pi,799,📦,,,"Official white/red plastic case for Raspberry Pi 5 with active cooler.",true,true
+rb-rpi-a02,Official RPi 4 Case,electronics,raspberry-pi,499,📦,,,"Official Raspberry Pi 4 plastic case. Available in red/white.",true,true
+rb-rpi-a03,Official USB-C Power Supply 5V/3A,electronics,raspberry-pi,699,📦,,,"Official RPi 4 power adapter, 5V 3A USB-C, white, multi-region plugs.",true,true
+rb-rpi-a04,Micro SD Card 32GB Class 10,electronics,raspberry-pi,349,📦,,,"SanDisk 32GB Class 10 micro SD card. Pre-loaded with Raspberry Pi OS on request.",true,true
+rb-rpi-a05,GPIO Ribbon Cable 40-Pin,electronics,raspberry-pi,149,📦,,,"40-pin ribbon cable to connect RPi GPIO to breadboard or expansion board.",true,true
+rb-sns-t01,DHT11 Temperature & Humidity Sensor,electronics,sensors,99,📦,,,"Basic digital temp/humidity sensor. +/-2 deg C accuracy, 20-80% RH range. 1-wire protocol.",true,true
+rb-sns-t02,DHT22 Temperature & Humidity Sensor,electronics,sensors,249,📦,,,"Improved DHT11 with +/-0.5 deg C accuracy, -40 to +80 deg C range, 0-100% RH.",true,true
+rb-sns-t03,DS18B20 Waterproof Temperature Probe,electronics,sensors,199,📦,,,"Stainless-steel waterproof 1-wire temperature probe. -55 to +125 deg C, +/-0.5 deg C.",true,true
+rb-sns-t04,BME280 Temp/Humidity/Pressure Module,electronics,sensors,349,📦,,,"Bosch BME280 on I2C/SPI breakout. Temp, humidity, and barometric pressure.",true,true
+rb-sns-t05,LM35 Temperature Sensor,electronics,sensors,79,📦,,,"Analog temperature sensor, 10mV/deg C linear output. 0-100 deg C range.",true,true
+rb-sns-t06,MLX90614 IR Temperature Sensor,electronics,sensors,699,📦,,,"Non-contact IR thermometer module. -70 to +380 deg C, I2C interface.",true,true
+rb-sns-m01,HC-SR04 Ultrasonic Distance Sensor,electronics,sensors,99,📦,,,"Ultrasonic ranging module, 2cm-400cm, 3mm accuracy. 5V trigger/echo.",true,true
+rb-sns-m02,PIR Motion Sensor HC-SR501,electronics,sensors,129,📦,,,"Passive infrared motion detector. 3-7m range, adjustable sensitivity and delay.",true,true
+rb-sns-m03,MPU-6050 6-Axis IMU,electronics,sensors,199,📦,,,"3-axis gyroscope + 3-axis accelerometer on I2C. +/-2/4/8/16g, +/-250-2000 deg/s.",true,true
+rb-sns-m04,MPU-9250 9-Axis IMU,electronics,sensors,449,📦,,,"9-DOF IMU with gyroscope, accelerometer, and magnetometer on SPI/I2C.",true,true
+rb-sns-m05,VL53L0X ToF Distance Sensor,electronics,sensors,349,📦,,,"Time-of-flight ranging sensor up to 2m. I2C, works in ambient light.",true,true
+rb-sns-m06,ADXL345 3-Axis Accelerometer,electronics,sensors,199,📦,,,"3-axis digital accelerometer, +/-2/4/8/16g, I2C/SPI. Tap/free-fall detect.",true,true
+rb-sns-m07,Reed Switch Module,electronics,sensors,79,📦,,,"Magnetic reed switch with digital output. Use with magnets for door/window sensing.",true,true
+rb-sns-l01,LDR Photoresistor Module,electronics,sensors,49,📦,,,"Light-dependent resistor module with analog output. For basic light sensing.",true,true
+rb-sns-l02,BH1750 Ambient Light Sensor,electronics,sensors,149,📦,,,"Digital light intensity sensor (lux), I2C. 1-65535 lux range.",true,true
+rb-sns-l03,TCS34725 RGB Colour Sensor,electronics,sensors,349,📦,,,"RGB and clear light sensing with IR filter. I2C, programmable gain and timing.",true,true
+rb-sns-l04,APDS-9960 Gesture Colour Proximity,electronics,sensors,449,📦,,,"Combined gesture, proximity, colour, and ambient light sensor on I2C.",true,true
+rb-sns-l05,IR Obstacle Avoidance Sensor,electronics,sensors,89,📦,,,"Infrared proximity sensor with digital output. Adjustable 2-30cm range.",true,true
+rb-sns-g01,MQ-2 Smoke Gas Sensor,electronics,sensors,149,📦,,,"Detects LPG, propane, hydrogen, smoke. Analog output, 5V. For gas alarms.",true,true
+rb-sns-g02,MQ-135 Air Quality Sensor,electronics,sensors,149,📦,,,"Detects NH3, NOx, alcohol, benzene, CO2. Analog output. For air quality monitors.",true,true
+rb-sns-g03,MQ-7 Carbon Monoxide Sensor,electronics,sensors,199,📦,,,"Highly sensitive CO sensor. 20-2000ppm range. Analog output with heater control.",true,true
+rb-sns-g04,CCS811 CO2 & TVOC Sensor,electronics,sensors,699,📦,,,"Digital eCO2 and TVOC sensor, I2C. 400-8192ppm CO2, indoor air quality.",true,true
+rb-sns-g05,Rain/Water Drop Sensor,electronics,sensors,99,📦,,,"Conductive rain detection sensor with analog and digital output. 5V.",true,true
+rb-sns-g06,Soil Moisture Sensor,electronics,sensors,99,📦,,,"Resistive soil moisture probe with analog output. For plant watering automation.",true,true
+rb-mtr-d01,DC Geared Motor 6V 60RPM,electronics,motors,249,📦,,,"Metal gear DC motor, 6V, 60RPM, high torque. For robot arms and heavy-load robots.",true,true
+rb-mtr-d02,DC Geared Motor 6V 120RPM,electronics,motors,249,📦,,,"6V 120RPM gear motor. Good balance of speed and torque for wheeled robots.",true,true
+rb-mtr-d03,DC Geared Motor 12V 200RPM,electronics,motors,399,📦,,,"12V 200RPM high-speed gear motor for robotics carts and conveyor projects.",true,true
+rb-mtr-d04,BO Motor (Battery Operated) 3V 150RPM,electronics,motors,129,📦,,,"Lightweight BO motor ideal for mini line-follower and sumo robots.",true,true
+rb-mtr-d05,N20 Micro Metal Gear Motor 6V 100RPM,electronics,motors,349,📦,,,"Tiny N20 micro metal gear motor, 6V, 100RPM. For compact robot platforms.",true,true
+rb-mtr-s01,SG90 Micro Servo 9g,electronics,motors,149,📦,,,"9g micro servo, 180 deg rotation, 1.8kg.cm torque. Ideal for small arms and fins.",true,true
+rb-mtr-s02,MG996R Metal Gear Servo,electronics,motors,349,📦,,,"Metal gear servo, 180 deg, 9.4-11kg.cm torque. For robotic arms and steering.",true,true
+rb-mtr-s03,MG90S Metal Gear Micro Servo,electronics,motors,199,📦,,,"Metal gear mini servo, 180 deg, 2.2kg.cm. Stronger than SG90 in same size.",true,true
+rb-mtr-s04,DS3218 270 deg Digital Servo,electronics,motors,799,📦,,,"High-torque digital servo, 270 deg rotation, 20kg.cm. For industrial-grade arms.",true,true
+rb-mtr-s05,360 deg Continuous Rotation Servo,electronics,motors,249,📦,,,"Continuous rotation servo with speed and direction control via PWM.",true,true
+rb-mtr-st01,28BYJ-48 Stepper Motor + ULN2003 Driver,electronics,motors,199,📦,,,"5V unipolar stepper with driver board. 512 steps/rev, 1:64 reduction for precision.",true,true
+rb-mtr-st02,NEMA 17 Stepper Motor 40Ncm,electronics,motors,699,📦,,,"NEMA 17 bipolar stepper, 1.8 deg per step, 40Ncm torque. Standard for 3D printers.",true,true
+rb-mtr-st03,NEMA 17 Stepper Motor 59Ncm,electronics,motors,899,📦,,,"High-torque NEMA 17, 59Ncm. For CNC machines and heavier 3D printer axes.",true,true
+rb-mtr-st04,NEMA 23 Stepper Motor 130Ncm,electronics,motors,1899,📦,,,"NEMA 23 bipolar stepper, 1.8 deg/step, 130Ncm. For CNC mills and lathes.",true,true
+rb-mtr-dr01,L298N Dual H-Bridge Motor Driver,electronics,motors,149,📦,,,"Classic L298N driver module. 2 DC motors or 1 stepper, up to 2A per channel, 7-46V.",true,true
+rb-mtr-dr02,L293D Motor Driver IC,electronics,motors,79,📦,,,"Quad half-H-bridge IC, 600mA per channel, 4.5-36V. DIP-16 package for breadboard.",true,true
+rb-mtr-dr03,A4988 Stepper Motor Driver,electronics,motors,149,📦,,,"A4988 microstepping driver up to 1/16 step. 35V, 2A. Standard for 3D printers.",true,true
+rb-mtr-dr04,DRV8825 Stepper Motor Driver,electronics,motors,199,📦,,,"Up to 1/32 microstepping, 45V, 2.5A. Quieter than A4988, ideal for CNC.",true,true
+rb-mtr-dr05,TB6612FNG Dual Motor Driver,electronics,motors,199,📦,,,"Dual H-bridge driver, 1.2A continuous per channel. Smaller and more efficient than L298N.",true,true
+rb-mtr-dr06,BTS7960 43A High-Power Motor Driver,electronics,motors,499,📦,,,"High-current half-bridge driver module, 43A peak. For heavy-duty DC motors.",true,true
+rb-cmp-p01,Resistor Kit 600pcs (30 values),electronics,components,199,📦,,,"600-piece resistor assortment, 1 Ohm - 1M Ohm, 1/4W 5% tolerance. Sorted in compartment box.",true,true
+rb-cmp-p02,Capacitor Kit 300pcs (30 values),electronics,components,249,📦,,,"Electrolytic and ceramic capacitor assortment from 1pF to 1000uF.",true,true
+rb-cmp-p03,LED Assortment Kit 100pcs (5 colours),electronics,components,99,📦,,,"5mm LEDs: red, green, blue, yellow, white, 20 pcs each. Basic indicator LEDs.",true,true
+rb-cmp-p04,Push Button Tactile Switch Pack (20pcs),electronics,components,79,📦,,,"6x6mm through-hole tactile switches. 4-pin. For Arduino shields and PCBs.",true,true
+rb-cmp-p05,Potentiometer 10K Linear (5pcs),electronics,components,99,📦,,,"10k Ohm single-turn rotary potentiometer, B10K. 3-pin, panel or PCB mount.",true,true
+rb-cmp-p06,Zener Diode Kit (5V 12V 24V assorted),electronics,components,149,📦,,,"Assorted zener diodes for voltage regulation and protection circuits.",true,true
+rb-cmp-i01,NE555 Timer IC,electronics,components,29,📦,,,"Classic 555 timer in DIP-8. For oscillators, pulse generation, and timing circuits.",true,true
+rb-cmp-i02,LM741 Op-Amp IC,electronics,components,39,📦,,,"General-purpose single op-amp in DIP-8. Amplification, comparators, filters.",true,true
+rb-cmp-i03,74HC595 Shift Register IC,electronics,components,49,📦,,,"8-bit serial-to-parallel shift register. Expand Arduino outputs using 3 pins.",true,true
+rb-cmp-i04,PCF8574 I2C GPIO Expander,electronics,components,99,📦,,,"8-bit I/O expander for I2C bus. Add 8 GPIO pins via just two wires.",true,true
+rb-cmp-i05,AMS1117 3.3V Voltage Regulator,electronics,components,39,📦,,,"SOT-223 LDO regulator, 800mA, 3.3V output. Popular on ESP and RPi projects.",true,true
+rb-cmp-i06,ESP-01 ESP8266 Wi-Fi Module,electronics,components,249,📦,,,"Tiny ESP8266 Wi-Fi module with 2 GPIO. Add Wi-Fi to any Arduino via serial.",true,true
+rb-cmp-i07,HC-05 Bluetooth Module,electronics,components,349,📦,,,"Classic HC-05 Bluetooth 2.0 serial module. Master/slave mode via AT commands.",true,true
+rb-cmp-i08,nRF24L01+ 2.4GHz RF Module,electronics,components,199,📦,,,"2.4GHz SPI radio module, 100m+ range, 250kbps-2Mbps. Pair for wireless comm.",true,true
+rb-cmp-c01,Jumper Wire Kit M-M/M-F/F-F (120pcs),electronics,components,149,📦,,,"40pcs each male-male, male-female, female-female jumper wires, 20cm.",true,true
+rb-cmp-c02,Breadboard 830 Tie Points,electronics,components,199,📦,,,"Full-size solderless breadboard, 830 tie-points, with binding posts.",true,true
+rb-cmp-c03,Mini Breadboard 400 Tie Points,electronics,components,99,📦,,,"Half-size 400 tie-point breadboard. Ideal for compact circuit prototyping.",true,true
+rb-cmp-c04,USB-A to USB-B Cable 1m,electronics,components,99,📦,,,"Standard USB cable for Arduino Uno/Mega programming and power.",true,true
+rb-cmp-c05,USB-A to Micro USB Cable 1m,electronics,components,79,📦,,,"Micro USB cable for Arduino Nano, Pro Mini adapter, and RPi power.",true,true
+rb-cmp-c06,Dupont Connector Kit with Crimping Tool,electronics,components,349,📦,,,"Male/female Dupont housings, crimp pins, and crimping tool. Make custom cables.",true,true
+rb-cmp-c07,XT60 Connector Pair (Male + Female),electronics,components,99,📦,,,"High-current XT60 connector pair rated 60A. Standard for LiPo battery packs.",true,true
+rb-cmp-c08,18650 Battery Holder 2-Cell,electronics,components,79,📦,,,"2x18650 lithium cell battery holder with leads. 7.4V nominal output.",true,true
+rb-tl-sl01,Soldering Iron 25W,electronics,tools,399,📦,,,"Basic 25W pencil soldering iron. 400 deg C tip temperature. For PCB and wire work.",true,true
+rb-tl-sl02,Soldering Iron Station 60W,electronics,tools,1499,📦,,,"Adjustable 60W soldering station with digital temperature control 200-480 deg C.",true,true
+rb-tl-sl03,Solder Wire 60/40 250g,electronics,tools,299,📦,,,"60/40 tin-lead solder, 0.8mm diameter, rosin flux core. 250g spool.",true,true
+rb-tl-sl04,Desoldering Pump / Solder Sucker,electronics,tools,199,📦,,,"Spring-loaded desoldering pump for removing excess solder from PCB joints.",true,true
+rb-tl-sl05,Flux Paste 50g,electronics,tools,149,📦,,,"Water-washable flux paste in a jar. Improves solder flow and reduces oxidation.",true,true
+rb-tl-sl06,PCB Helping Hands with Magnifier,electronics,tools,399,📦,,,"Third-hand tool with alligator clips and 5x magnifying glass for PCB work.",true,true
+rb-tl-ms01,Digital Multimeter,electronics,tools,799,📦,,,"Auto-ranging digital multimeter, DC/AC voltage, current, resistance, continuity.",true,true
+rb-tl-ms02,USB Logic Analyser 8-Channel,electronics,tools,1499,📦,,,"8-channel 24MHz USB logic analyser. Works with Sigrok/PulseView. I2C/SPI/UART decode.",true,true
+rb-tl-ms03,Oscilloscope DSO138 DIY Kit,electronics,tools,1999,📦,,,"DIY 200kHz digital oscilloscope kit with 2.4-inch LCD. Single-channel, 1Msps.",true,true
+rb-tl-ms04,LCR Meter Component Tester,electronics,tools,999,📦,,,"Auto-detect transistors, resistors, capacitors, inductors, diodes on a graphic LCD.",true,true
+rb-tl-ms05,Bench Power Supply 30V 5A,electronics,tools,3499,📦,,,"Variable bench PSU, 0-30V 0-5A, dual display, over-current protection.",true,true
+rb-tl-ht01,Precision Screwdriver Set 25pcs,electronics,tools,499,📦,,,"25-piece magnetic screwdriver set with Phillips, flat, Torx, hex bits.",true,true
+rb-tl-ht02,Wire Stripper & Cutter,electronics,tools,299,📦,,,"Adjustable wire stripper for 10-24 AWG wire with built-in cutter.",true,true
+rb-tl-ht03,Needle-Nose Pliers,electronics,tools,199,📦,,,"Long-nose ESD-safe pliers for bending component leads and handling SMD parts.",true,true
+rb-tl-ht04,Diagonal Flush Cutters,electronics,tools,149,📦,,,"Micro flush cutter for clean component lead trimming after soldering.",true,true
+rb-tl-ht05,Anti-Static ESD Wrist Strap,electronics,tools,99,📦,,,"ESD wrist strap with 1M Ohm resistor and alligator clip for static-safe PCB work.",true,true
+rb-tl-ht06,Hot Glue Gun 20W with Sticks,electronics,tools,299,📦,,,"Low-temperature mini glue gun with 10 glue sticks. For enclosure and wire tack.",true,true
+rb-drn-f01,F450 Quadcopter Frame 450mm,drone,drone,799,📦,,,"Classic F450 glass-fibre quad frame with PCB bottom plate for power distribution.",true,true
+rb-drn-f02,Q250 Racing Frame 250mm,drone,drone,999,📦,,,"Compact 250mm carbon-fibre FPV racing frame. Low profile, strong arm design.",true,true
+rb-drn-f03,S500 Hexacopter Frame 500mm,drone,drone,1499,📦,,,"S500 glass-fibre hexacopter frame, retractable landing gear, PCB power plate.",true,true
+rb-drn-f04,X500 V2 Quadcopter Frame 500mm,drone,drone,2499,📦,,,"All-carbon X500 V2 frame compatible with Holybro Pixhawk stacks.",true,true
+rb-drn-c01,Survey Mapping Drone S1000,drone,drone,85000,📦,,,"Fixed-wing VTOL mapping drone. 60-min flight time, RTK GPS, 1km range.",true,true
+rb-drn-c02,FPV Racing Drone 5-Inch,drone,drone,18000,📦,,,"Ready-to-fly 5-inch FPV racer with F7 FC, 45A ESC, and digital FPV system.",true,true
+rb-drn-c03,Agricultural Spray Drone 10L,drone,drone,250000,📦,,,"10L tank hexacopter for precision crop spraying. 15-min per 10 acres coverage.",true,true
+rb-drn-p01,A2212 1000KV Brushless Motor,drone,drone,599,📦,,,"2212 1000KV brushless outrunner for 450-class quads. 250W, fits 10-inch props.",true,true
+rb-drn-p02,A2212 2200KV Brushless Motor,drone,drone,599,📦,,,"2212 2200KV brushless motor for 250mm racers and 330-class quads.",true,true
+rb-drn-p03,30A Brushless ESC,drone,drone,399,📦,,,"30A UBEC ESC with BEC output, compatible with most 2-4S LiPo packs.",true,true
+rb-drn-p04,FlySky FS-i6X 10CH Transmitter + Receiver,drone,drone,3499,📦,,,"10-channel 2.4GHz digital transmitter with FS-iA10B receiver for RC aircraft.",true,true
+rb-drn-p05,Flight Controller F405 Wing,drone,drone,2999,📦,,,"F405-based FC with OSD, barometer, and BEC. For fixed-wing and quad builds.",true,true
+rb-drn-p06,LiPo Battery 3S 2200mAh 25C,drone,drone,1299,📦,,,"3S 11.1V 2200mAh 25C LiPo. Standard battery for 450-class quadcopters.",true,true
+rb-drn-p07,LiPo Battery 4S 1500mAh 50C,drone,drone,1499,📦,,,"4S 14.8V 1500mAh 50C LiPo. For 5-inch FPV racing drones.",true,true
+rb-drn-p08,1045 Propeller Set (2CW + 2CCW),drone,drone,199,📦,,,"10-inch 4.5-pitch carbon propellers for 450-class frames. One set of 4.",true,true
+rb-drn-p09,5045 Tri-Blade FPV Propeller Set,drone,drone,249,📦,,,"5-inch 3-blade FPV racing propellers. One set of 4 (2CW + 2CCW).",true,true
+rb-drn-p10,GPS Module M8N with Compass,drone,drone,1499,📦,,,"u-blox M8N GPS + HMC5883L compass on a pole mount for ArduPilot/PX4.",true,true
+rb-prt-b01,Breadboard 830 Tie Points,proto,prototyping,199,📦,,,"Full-size 830-point solderless breadboard with binding posts. Standard for prototyping.",true,true
+rb-prt-b02,Double-Sided PCB 5x7cm (5pcs),proto,prototyping,99,📦,,,"5-pack of 5x7cm double-sided perf boards. 2.54mm hole pitch for DIP components.",true,true
+rb-prt-b03,Double-Sided PCB 10x15cm (2pcs),proto,prototyping,149,📦,,,"2-pack of 10x15cm double-sided universal PCBs. Ideal for larger project boards.",true,true
+rb-prt-b04,SMD Prototype PCB 5x7cm (5pcs),proto,prototyping,129,📦,,,"5-pack of SMD-capable PCBs with 0805 pads and SOT-23 footprints.",true,true
+rb-prt-k01,Arduino Starter Kit with Components,proto,prototyping,1499,📦,,,"Arduino Uno R3, breadboard, jumper wires, LEDs, resistors, sensors - complete starter box.",true,true
+rb-prt-k02,ESP32 IoT Development Kit,proto,prototyping,999,📦,,,"ESP32 dev board, DHT22, relay, OLED, jumper wires - for IoT and Wi-Fi projects.",true,true
+rb-prt-k03,Raspberry Pi Pico Starter Kit,proto,prototyping,799,📦,,,"RPi Pico W, breadboard, LEDs, buttons, resistors, micro USB cable, and guide.",true,true
+rb-prt-k04,Robot Car Chassis Kit (4WD),proto,prototyping,1299,📦,,,"4-wheel drive chassis with DC motors, wheels, encoders, and motor driver module.",true,true
+rb-prt-k05,Line Follower Robot Kit,proto,prototyping,1499,📦,,,"Complete line-follower kit with IR sensors, L298N, Arduino Uno, and chassis.",true,true
+rb-prt-e01,ABS Project Box 100x60x25mm,proto,prototyping,149,📦,,,"Black ABS enclosure for small electronics projects. Screw-top lid, 100x60x25mm.",true,true
+rb-prt-e02,ABS Project Box 150x80x35mm,proto,prototyping,199,📦,,,"Medium ABS project enclosure with flanged lid, 150x80x35mm.",true,true
+rb-prt-e03,DIN Rail Enclosure 100mm,proto,prototyping,299,📦,,,"Snap-on ABS DIN rail enclosure for panel mounting. Fits standard rail.",true,true
+rb-prt-e04,Raspberry Pi 4 Acrylic Case,proto,prototyping,299,📦,,,"Clear acrylic layered case for RPi 4 with GPIO access, 4 standoffs, fan mount.",true,true
+rb-prt-e05,Arduino Uno Acrylic Case,proto,prototyping,149,📦,,,"Clear acrylic case for Arduino Uno with USB and power cutouts.",true,true
