@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kyzer Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -377,6 +378,8 @@ html.dark .toggle-slider{background:#444}
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
           <input type="text" class="search-input" placeholder="Search products…" oninput="renderProducts(this.value)" style="flex:1;min-width:200px;max-width:320px">
           <div id="prod-cat-filters" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+          <button class="btn btn-ghost btn-sm" onclick="downloadImportTemplate()" title="Download Excel template">⬇ Template</button>
+          <button class="btn btn-ghost btn-sm" onclick="openImportModal()" title="Bulk import from Excel/CSV">⬆ Import Excel</button>
           <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
         </div>
         <div id="products-grid"></div>
@@ -495,6 +498,64 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
     </div>
     <div class="modal-body" id="om-body"></div>
     <div class="modal-footer" id="om-footer"></div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div id="import-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeImportModal()">
+  <div class="modal-box" style="max-width:760px;width:95vw">
+    <div class="modal-header">
+      <h3 class="modal-title">Bulk Import Products</h3>
+      <button class="modal-close" onclick="closeImportModal()">✕</button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:18px">
+      <!-- Drop zone -->
+      <div id="import-dropzone" style="border:2px dashed var(--border);border-radius:12px;padding:36px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s"
+        onclick="document.getElementById('import-file').click()"
+        ondragover="event.preventDefault();this.style.borderColor='var(--orange)';this.style.background='var(--orange-soft)'"
+        ondragleave="this.style.borderColor='var(--border)';this.style.background=''"
+        ondrop="handleImportDrop(event)">
+        <div style="font-size:32px;margin-bottom:8px">📂</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Drop your Excel or CSV file here</div>
+        <div style="font-size:12px;color:var(--muted)">Supports .xlsx, .xls, .csv — or <span style="color:var(--orange);text-decoration:underline">browse</span></div>
+        <input type="file" id="import-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImportFile(this.files[0])">
+      </div>
+
+      <!-- Column map hint -->
+      <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.7">
+        <span style="color:var(--orange);font-weight:600">Required columns:</span> id, name, category, subcategory, price<br>
+        <span style="color:var(--orange);font-weight:600">Optional columns:</span> emoji, badge, image, description, visible, inStock
+      </div>
+
+      <!-- Preview table -->
+      <div id="import-preview" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span id="import-preview-count" style="font-size:13px;font-weight:600;color:var(--text)"></span>
+          <div style="display:flex;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer">
+              <input type="checkbox" id="import-overwrite" style="accent-color:var(--orange)"> Overwrite existing products with same ID
+            </label>
+          </div>
+        </div>
+        <div style="overflow-x:auto;border-radius:10px;border:1px solid var(--border);max-height:280px;overflow-y:auto">
+          <table id="import-table" style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="position:sticky;top:0;background:var(--surface2);z-index:1">
+              <tr id="import-table-head"></tr>
+            </thead>
+            <tbody id="import-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="import-error" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;font-size:13px;color:#b91c1c"></div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+        <button class="btn btn-primary" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Import products</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1205,6 +1266,159 @@ function loadPhotosForm() {
 
 function addPhoto() { siteData.hero_photos=(siteData.hero_photos||[]); siteData.hero_photos.push(''); saveLocal(); loadPhotosForm(); }
 function removePhoto(i) { siteData.hero_photos.splice(i,1); saveLocal(); loadPhotosForm(); }
+
+// ─── BULK IMPORT ──────────────────────────────────────────────
+let _importRows = [];
+
+const IMPORT_COLS = ['id','name','category','subcategory','price','emoji','badge','image','description','visible','inStock'];
+
+function openImportModal() {
+  _importRows = [];
+  $('import-file').value = '';
+  $('import-preview').style.display = 'none';
+  $('import-error').style.display = 'none';
+  $('import-confirm-btn').style.display = 'none';
+  $('import-dropzone').style.borderColor = '';
+  $('import-dropzone').style.background = '';
+  $('import-modal').style.display = 'flex';
+}
+
+function closeImportModal() { $('import-modal').style.display = 'none'; }
+
+function handleImportDrop(e) {
+  e.preventDefault();
+  $('import-dropzone').style.borderColor = '';
+  $('import-dropzone').style.background = '';
+  const file = e.dataTransfer.files[0];
+  if (file) handleImportFile(file);
+}
+
+function handleImportFile(file) {
+  if (!file) return;
+  $('import-error').style.display = 'none';
+  $('import-preview').style.display = 'none';
+  $('import-confirm-btn').style.display = 'none';
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      let rows;
+      if (file.name.endsWith('.csv')) {
+        rows = parseCSV(ev.target.result);
+      } else {
+        if (!window.XLSX) { showImportError('SheetJS not loaded. Please refresh the page.'); return; }
+        const wb = XLSX.read(ev.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      }
+      if (!rows || rows.length === 0) { showImportError('No data rows found in the file.'); return; }
+      // Normalize keys to lowercase
+      rows = rows.map(r => {
+        const out = {};
+        for (const k in r) out[k.trim().toLowerCase()] = r[k];
+        return out;
+      });
+      if (!rows[0].hasOwnProperty('id') || !rows[0].hasOwnProperty('name')) {
+        showImportError('Missing required columns: "id" and "name" must be present.');
+        return;
+      }
+      _importRows = rows;
+      renderImportPreview(rows);
+    } catch(err) {
+      showImportError('Failed to parse file: ' + err.message);
+    }
+  };
+  if (file.name.endsWith('.csv')) reader.readAsText(file);
+  else reader.readAsArrayBuffer(file);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+  return lines.slice(1).map(line => {
+    const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g,''));
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = vals[i] ?? '');
+    return obj;
+  });
+}
+
+function renderImportPreview(rows) {
+  const allKeys = [...new Set(rows.flatMap(r => Object.keys(r)))];
+  const showKeys = IMPORT_COLS.filter(c => allKeys.includes(c));
+
+  const thead = $('import-table-head');
+  const tbody = $('import-table-body');
+  const thStyle = 'padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap';
+  const tdStyle = 'padding:7px 12px;border-bottom:1px solid var(--border);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+
+  thead.innerHTML = showKeys.map(k => `<th style="${thStyle}">${k}</th>`).join('');
+  tbody.innerHTML = rows.slice(0, 50).map(r =>
+    `<tr style="transition:background .15s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+      ${showKeys.map(k => `<td style="${tdStyle}" title="${esc(String(r[k]||''))}">${esc(String(r[k]||'').slice(0,40))}</td>`).join('')}
+    </tr>`
+  ).join('');
+
+  $('import-preview-count').textContent = `${rows.length} product${rows.length!==1?'s':''} ready to import${rows.length>50?' (showing first 50)':''}`;
+  $('import-preview').style.display = 'block';
+  $('import-confirm-btn').style.display = '';
+  $('import-dropzone').style.borderColor = 'var(--orange)';
+}
+
+function showImportError(msg) {
+  const el = $('import-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function confirmImport() {
+  if (!_importRows.length) return;
+  const overwrite = $('import-overwrite').checked;
+  let added = 0, updated = 0, skipped = 0;
+
+  _importRows.forEach(row => {
+    const id = String(row.id||'').trim();
+    if (!id) { skipped++; return; }
+    const product = {
+      id,
+      name: String(row.name||id),
+      category: String(row.category||''),
+      subcategory: String(row.subcategory||''),
+      price: parseFloat(row.price)||0,
+      emoji: String(row.emoji||'📦'),
+      badge: String(row.badge||''),
+      image: String(row.image||''),
+      description: String(row.description||''),
+      visible: String(row.visible||'true').toLowerCase()!=='false',
+      inStock: String(row.instock||row.inStock||'true').toLowerCase()!=='false',
+    };
+    const idx = (siteData.products||[]).findIndex(p => p.id === id);
+    if (idx >= 0) {
+      if (overwrite) { siteData.products[idx] = {...siteData.products[idx], ...product}; updated++; }
+      else skipped++;
+    } else {
+      siteData.products = [...(siteData.products||[]), product];
+      added++;
+    }
+  });
+
+  saveLocal();
+  closeImportModal();
+  renderProducts();
+  toast(`Import done: ${added} added, ${updated} updated, ${skipped} skipped.`);
+}
+
+function downloadImportTemplate() {
+  if (!window.XLSX) { toast('SheetJS not loaded — refresh and try again.'); return; }
+  const template = [
+    { id:'e-example', name:'Example Product', category:'electronics', subcategory:'arduino', price:499,
+      emoji:'📦', badge:'HOT', image:'https://...', description:'Short description', visible:'true', inStock:'true' }
+  ];
+  const ws = XLSX.utils.json_to_sheet(template, { header: IMPORT_COLS });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Products');
+  XLSX.writeFile(wb, 'kyzer-products-template.xlsx');
+}
 
 // ─── SETTINGS ─────────────────────────────────────────────────
 function saveSbCreds() {
