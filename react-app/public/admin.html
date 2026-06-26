@@ -1326,29 +1326,86 @@ function deleteProduct(id) {
 
 function openProductModal(id) {
   const p = id ? siteData.products.find(x=>x.id===id) : null;
+  const imgVal = esc(p?.image||'');
   showOrderModal(p ? 'Edit Product' : 'Add Product', `
+    <!-- Image upload area -->
+    <div class="form-group">
+      <label class="form-label">Product Photo</label>
+      <div id="pm-img-wrap" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+        <div id="pm-img-preview" style="width:120px;height:100px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:28px">
+          ${imgVal ? `<img src="${imgVal}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : (esc(p?.emoji||'📦'))}
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:180px">
+          <input class="form-input" id="pm-image" placeholder="Paste image URL…" value="${imgVal}" oninput="pmImageUrlChanged(this.value)" style="font-size:12px">
+          <div style="display:flex;gap:8px">
+            <label style="cursor:pointer;flex:1">
+              <span class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;display:flex">📁 Upload file</span>
+              <input type="file" accept="image/*" style="display:none" onchange="pmUploadFile(this)">
+            </label>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Paste a URL or upload a photo.<br>Uploaded images are stored locally.</div>
+        </div>
+      </div>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="pm-name" value="${esc(p?.name||'')}"></div>
       <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="pm-emoji" value="${esc(p?.emoji||'')}" style="width:80px"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="pm-cat" value="${esc(p?.category||'')}"></div>
-      <div class="form-group"><label class="form-label">Price (numbers only)</label><input class="form-input" id="pm-price" value="${esc(p?.price||'')}"></div>
+      <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
     </div>
-    <div class="form-group"><label class="form-label">Description (short)</label><input class="form-input" id="pm-desc" value="${esc(p?.description||'')}"></div>
-    <div class="form-group"><label class="form-label">Details (long)</label><textarea class="form-textarea" id="pm-details">${esc(p?.details||'')}</textarea></div>
-    <div class="form-group"><label class="form-label">Badge text</label><input class="form-input" id="pm-badge" value="${esc(p?.badge||'')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Subcategory</label><input class="form-input" id="pm-subcat" value="${esc(p?.subcategory||'')}"></div>
+      <div class="form-group"><label class="form-label">Badge</label>
+        <select class="form-input" id="pm-badge">
+          ${['','HOT','NEW','SALE','LIMITED'].map(b=>`<option value="${b}" ${(p?.badge||'')==b?'selected':''}>${b||'None'}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="pm-desc" rows="2">${esc(p?.description||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Details (long, optional)</label><textarea class="form-textarea" id="pm-details" rows="3">${esc(p?.details||'')}</textarea></div>
   `, `<button class="btn btn-primary" onclick="saveProduct('${esc(id||'')}')">Save product</button><button class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>`);
+}
+
+function pmImageUrlChanged(url) {
+  const preview = $('pm-img-preview');
+  if (!url) { preview.innerHTML = $('pm-emoji')?.value || '📦'; return; }
+  preview.innerHTML = `<img src="${esc(url)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='❌'">`;
+}
+
+function pmUploadFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Image too large — keep under 2MB or use a URL instead.'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    $('pm-image').value = dataUrl;
+    $('pm-img-preview').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
 }
 
 function saveProduct(id) {
   const name = $('pm-name').value.trim();
   if (!name) { toast('Name required', false); return; }
+  const fields = {
+    name:        $('pm-name').value,
+    emoji:       $('pm-emoji').value,
+    category:    $('pm-cat').value,
+    subcategory: $('pm-subcat').value,
+    price:       parseFloat($('pm-price').value)||0,
+    description: $('pm-desc').value,
+    details:     $('pm-details').value,
+    badge:       $('pm-badge').value,
+    image:       $('pm-image').value.trim(),
+  };
   if (id) {
     const p = siteData.products.find(x=>x.id===id);
-    if (p) { p.name=$('pm-name').value; p.emoji=$('pm-emoji').value; p.category=$('pm-cat').value; p.price=$('pm-price').value; p.description=$('pm-desc').value; p.details=$('pm-details').value; p.badge=$('pm-badge').value; }
+    if (p) Object.assign(p, fields);
   } else {
-    siteData.products.push({ id:'P-'+Date.now(), name:$('pm-name').value, emoji:$('pm-emoji').value, category:$('pm-cat').value, price:$('pm-price').value, description:$('pm-desc').value, details:$('pm-details').value, badge:$('pm-badge').value, visible:true });
+    siteData.products.push({ id:'P-'+Date.now(), visible:true, inStock:true, ...fields });
   }
   saveLocal(); closeOrderModal(); renderProducts();
   toast('Saved locally. Publish to go live.');
