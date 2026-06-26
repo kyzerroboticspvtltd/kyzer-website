@@ -380,6 +380,7 @@ html.dark .toggle-slider{background:#444}
           <div id="prod-cat-filters" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
           <button class="btn btn-ghost btn-sm" onclick="downloadImportTemplate()" title="Download Excel template">⬇ Template</button>
           <button class="btn btn-ghost btn-sm" onclick="openImportModal()" title="Bulk import from Excel/CSV">⬆ Import Excel</button>
+          <button class="btn btn-ghost btn-sm" onclick="syncGoogleSheet()" title="Sync products from Google Sheets" id="sync-sheets-btn">🔄 Sync Sheets</button>
           <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
         </div>
         <div id="products-grid"></div>
@@ -452,6 +453,13 @@ html.dark .toggle-slider{background:#444}
       <!-- SETTINGS -->
       <div class="tab" id="tab-settings">
         <div style="max-width:600px;display:flex;flex-direction:column;gap:20px">
+          <div class="table-wrap" style="padding:24px">
+            <h3 style="font-size:15px;margin-bottom:16px">Google Sheets Sync</h3>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Paste your Google Sheet URL. The sheet must be set to <strong>"Anyone with the link can view"</strong>. The Products tab "🔄 Sync Sheets" button will fetch it directly.</p>
+            <div class="form-group"><label class="form-label">Google Sheet URL</label><input class="form-input" id="gs-url" placeholder="https://docs.google.com/spreadsheets/d/…/edit…"></div>
+            <button class="btn btn-ghost" onclick="saveGsUrl()">Save</button>
+          </div>
+
           <div class="table-wrap" style="padding:24px">
             <h3 style="font-size:15px;margin-bottom:16px">Supabase Credentials</h3>
             <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Public anon key only — used for real-time polling. The service key never touches this browser.</p>
@@ -686,7 +694,11 @@ function nav(name) {
   if (name === 'contact') loadContactForm();
   if (name === 'quote') loadQuoteForm();
   if (name === 'photos') loadPhotosForm();
-  if (name === 'settings') { $('sb-url').value = localStorage.getItem('kyzer_supabase_url')||''; $('sb-key').value = localStorage.getItem('kyzer_supabase_key')||''; }
+  if (name === 'settings') {
+    $('sb-url').value = localStorage.getItem('kyzer_supabase_url')||'';
+    $('sb-key').value = localStorage.getItem('kyzer_supabase_key')||'';
+    $('gs-url').value = localStorage.getItem('kyzer_gsheet_url')||'';
+  }
 }
 
 // ─── SHOP ORDERS ──────────────────────────────────────────────
@@ -1280,6 +1292,7 @@ function openImportModal() {
   $('import-confirm-btn').style.display = 'none';
   $('import-dropzone').style.borderColor = '';
   $('import-dropzone').style.background = '';
+  $('import-dropzone').style.display = '';
   $('import-modal').style.display = 'flex';
 }
 
@@ -1418,6 +1431,67 @@ function downloadImportTemplate() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Products');
   XLSX.writeFile(wb, 'kyzer-products-template.xlsx');
+}
+
+// ─── GOOGLE SHEETS SYNC ───────────────────────────────────────
+const DEFAULT_GSHEET_URL = 'https://docs.google.com/spreadsheets/d/11mvgKpp1_kb3yGfn76gSwuvN6BkeK64RqtOvKcnwugU/edit?gid=520140328#gid=520140328';
+
+function saveGsUrl() {
+  localStorage.setItem('kyzer_gsheet_url', $('gs-url').value.trim());
+  toast('Google Sheet URL saved.');
+}
+
+function sheetUrlToCsvUrl(url) {
+  // Extract spreadsheet ID and gid from any Google Sheets URL form
+  const idMatch = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (!idMatch) return null;
+  const id = idMatch[1];
+  const gidMatch = url.match(/[?&#]gid=(\d+)/);
+  const gid = gidMatch ? gidMatch[1] : '0';
+  return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
+}
+
+async function syncGoogleSheet() {
+  const savedUrl = localStorage.getItem('kyzer_gsheet_url') || DEFAULT_GSHEET_URL;
+  const csvUrl = sheetUrlToCsvUrl(savedUrl);
+  if (!csvUrl) {
+    toast('Invalid Google Sheet URL. Set it in Settings tab.');
+    return;
+  }
+
+  const btn = $('sync-sheets-btn');
+  btn.textContent = '⏳ Fetching…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(csvUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status} — make sure the sheet is set to "Anyone with the link can view"`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (!rows || rows.length === 0) throw new Error('Sheet appears empty or has no data rows.');
+
+    // Normalize keys
+    const normalized = rows.map(r => {
+      const out = {};
+      for (const k in r) out[k.trim().toLowerCase()] = r[k];
+      return out;
+    });
+
+    if (!normalized[0].hasOwnProperty('id') && !normalized[0].hasOwnProperty('name')) {
+      throw new Error('Sheet must have at least "id" and "name" columns.');
+    }
+
+    // Open import modal with fetched data
+    openImportModal();
+    _importRows = normalized;
+    renderImportPreview(normalized);
+    $('import-dropzone').style.display = 'none'; // hide the dropzone, data already loaded
+  } catch(err) {
+    toast('Sync failed: ' + err.message);
+  } finally {
+    btn.textContent = '🔄 Sync Sheets';
+    btn.disabled = false;
+  }
 }
 
 // ─── SETTINGS ─────────────────────────────────────────────────
