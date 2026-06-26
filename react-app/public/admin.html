@@ -715,8 +715,8 @@ function saveCat(i) {
   cats[i].desc  = document.getElementById('cat-desc-'+i).value.trim();
   cats[i].photo = document.getElementById('cat-photo-'+i).value.trim();
   siteData.categories = cats;
-  saveAll();
-  showToast('Category saved — click Publish to go live');
+  saveLocal();
+  toast('Category saved — click Publish to go live');
 }
 
 function doLogout() {
