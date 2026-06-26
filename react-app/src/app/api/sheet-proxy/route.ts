@@ -17,19 +17,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing url param' }, { status: 400 });
   }
 
-  let target: URL;
-  try {
-    target = new URL(raw);
-  } catch {
-    return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+  // Extract spreadsheet ID and optional gid from any Google Sheets URL form
+  const idMatch = raw.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (!idMatch) {
+    return NextResponse.json({ error: 'Could not find spreadsheet ID in URL: ' + raw }, { status: 400 });
   }
+  const spreadsheetId = idMatch[1];
+  const gidMatch = raw.match(/[?&#]gid=(\d+)/);
+  const gid = gidMatch ? gidMatch[1] : null;
 
-  if (target.hostname !== ALLOWED_HOST) {
-    return NextResponse.json({ error: 'Only Google Sheets URLs allowed' }, { status: 400 });
-  }
-
-  // Force CSV export format regardless of what was passed
-  target.searchParams.set('format', 'csv');
+  // Build a clean export URL
+  const exportUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv${gid ? '&gid=' + gid : ''}`;
+  const target = new URL(exportUrl);
 
   try {
     const upstream = await fetch(target.toString(), {

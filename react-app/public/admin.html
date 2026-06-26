@@ -1713,16 +1713,15 @@ function parseSheetRows(text) {
 
 async function syncGoogleSheet() {
   const savedUrl = localStorage.getItem('kyzer_gsheet_url') || DEFAULT_GSHEET_URL;
-  const csvUrl = sheetUrlToCsvUrl(savedUrl);
-  if (!csvUrl) { toast('Invalid Google Sheet URL. Set it in Settings tab.'); return; }
+  if (!savedUrl || !savedUrl.includes('/spreadsheets/d/')) { toast('Invalid Google Sheet URL. Set it in Settings tab.'); return; }
 
   const btn = $('sync-sheets-btn');
   btn.textContent = '⏳ Fetching…';
   btn.disabled = true;
 
   try {
-    // Fetch via server-side proxy to avoid CORS restrictions on Google Sheets
-    const proxyUrl = '/api/sheet-proxy?url=' + encodeURIComponent(csvUrl);
+    // Pass raw sheets URL — proxy builds the clean export URL server-side
+    const proxyUrl = '/api/sheet-proxy?url=' + encodeURIComponent(savedUrl);
     const res = await fetch(proxyUrl, {
       headers: { Authorization: 'Bearer ' + TOKEN }
     });
