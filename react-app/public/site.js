@@ -150,10 +150,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // Default categories used before Supabase data loads
   const DEFAULT_CATS = [
-    { id: 'drone',   name: 'Drones',             desc: 'Survey, FPV & agricultural platforms' },
-    { id: 'print',   name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures' },
-    { id: 'proto',   name: 'Prototyping',        desc: 'PCB, enclosures & rapid development' },
-    { id: '3dprint', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components' },
+    { id: 'drone',   name: 'Drones',             desc: 'Survey, FPV & agricultural platforms',          photo: 'https://images.unsplash.com/photo-1527977966861-8dfc86d96f3f?w=600&q=80&auto=format&fit=crop' },
+    { id: 'print',   name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures',  photo: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80&auto=format&fit=crop' },
+    { id: 'proto',   name: 'Prototyping',        desc: 'PCB, enclosures & rapid development',           photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop' },
+    { id: '3dprint', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components',  photo: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80&auto=format&fit=crop' },
   ];
 
   const CAT_PAGES = {
@@ -1941,8 +1941,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
              <button class="prod-buy-btn" onclick="event.stopPropagation();_cardEnquire(this)">Order →</button>`
           : `<button class="prod-cart-btn" onclick="event.stopPropagation();_cardAddToCart(this)">+ Cart</button>
              <button class="prod-buy-btn" onclick="event.stopPropagation();_cardBuyNow(this)">Buy Now →</button>`;
+        const _CAT_NORM = { drones:'drone','3d-printing':'print',prototyping:'proto','printers-supplies':'3dprint',printing:'print',print:'print',proto:'proto',drone:'drone',electronics:'electronics','3dprint':'3dprint' };
+        const _normCat = _CAT_NORM[p.category] || p.category || '';
         return `
-        <div class="prod-card" data-cat="${p.category}" data-subcat="${p.subcat||''}" data-frame-type="${p.frameType||''}" data-material="${p.material||''}" data-wheelbase="${p.wheelbase||''}" onclick="openProduct(this)" data-product='${pd}'>
+        <div class="prod-card" data-cat="${_normCat}" data-subcat="${p.subcat||''}" data-frame-type="${p.frameType||''}" data-material="${p.material||''}" data-wheelbase="${p.wheelbase||''}" onclick="openProduct(this)" data-product='${pd}'>
           <div class="prod-img">${cardImg}</div>
           <div class="prod-body">
             <span class="prod-badge ${p.badgeType}">${p.badge}</span>
