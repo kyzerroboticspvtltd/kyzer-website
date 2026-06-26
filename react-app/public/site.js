@@ -150,22 +150,22 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // Default categories used before Supabase data loads
   const DEFAULT_CATS = [
-    { id: 'drone',   name: 'Drones',             desc: 'Survey, FPV & agricultural platforms',          photo: 'https://images.unsplash.com/photo-1527977966861-8dfc86d96f3f?w=600&q=80&auto=format&fit=crop' },
-    { id: 'print',   name: 'Print Services',     desc: 'Custom FDM prints, nylon parts & enclosures',  photo: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80&auto=format&fit=crop' },
-    { id: 'proto',   name: 'Prototyping',        desc: 'PCB, enclosures & rapid development',           photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop' },
-    { id: '3dprint', name: 'Printers & Supplies', desc: '3D printers, filaments & upgrade components',  photo: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80&auto=format&fit=crop' },
+    { id: 'electronics', name: 'Electronics',           desc: 'Arduino, ESP32, Raspberry Pi, sensors & motors',      photo: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&auto=format&fit=crop' },
+    { id: 'drone',       name: 'Drones',                desc: 'Survey, FPV & agricultural platforms',                photo: 'https://images.unsplash.com/photo-1527977966861-8dfc86d96f3f?w=600&q=80&auto=format&fit=crop' },
+    { id: 'proto',       name: 'Prototyping',           desc: 'PCB design, CNC machining & rapid prototyping',       photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop' },
+    { id: '3dprint',     name: '3D Print Accessories',  desc: '3D printers, filaments & upgrade components',         photo: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80&auto=format&fit=crop' },
   ];
 
   const CAT_PAGES = {
+    electronics: '/shop/electronics',
     drone:       '/shop/drones',
     printing:    '/shop/printing',
     print:       '/shop/printing',
     proto:       '/shop/prototyping',
-    '3dprint':   '/shop/printing',
-    electronics: '/shop/electronics',
+    '3dprint':   '/shop/printers-supplies',
   };
 
-  const PRINT_IDS = ['print', '3dprint'];
+  const PRINT_IDS = ['print'];
 
   function mergePrintCats(list) {
     const printIdx = list.findIndex(c => PRINT_IDS.includes(c.id));
@@ -219,7 +219,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       const cat = el.id.replace('catCount-', '');
       let n;
       if (cat === 'printing') {
-        n = document.querySelectorAll('.prod-card[data-cat="print"], .prod-card[data-cat="proto"], .prod-card[data-cat="3dprint"]').length;
+        n = document.querySelectorAll('.prod-card[data-cat="print"], .prod-card[data-cat="3dprint"]').length;
       } else {
         n = document.querySelectorAll(`.prod-card[data-cat="${cat}"]`).length;
       }
