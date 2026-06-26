@@ -1172,10 +1172,23 @@ function saveLocal() { localStorage.setItem('kyzer_site_data', JSON.stringify(si
 
 async function doPublish() {
   try {
+    // Strip base64 data URLs before sending to keep payload under the 1MB API limit.
+    // Base64 images are kept in localStorage for local display only.
+    function stripBase64(val) {
+      if (typeof val === 'string' && val.startsWith('data:')) return '';
+      if (Array.isArray(val)) return val.map(stripBase64);
+      if (val && typeof val === 'object') {
+        const out = {};
+        for (const k of Object.keys(val)) out[k] = stripBase64(val[k]);
+        return out;
+      }
+      return val;
+    }
+    const publishPayload = stripBase64(siteData);
     const r = await fetch('/api/publish', {
       method: 'POST',
       headers: apiHeaders(),
-      body: JSON.stringify({ payload: siteData }),
+      body: JSON.stringify({ payload: publishPayload }),
     });
     const d = await r.json().catch(()=>({}));
     if (d.ok) toast('Site published!');
