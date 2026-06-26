@@ -1919,17 +1919,19 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const savedCats = JSON.parse(localStorage.getItem('kyzer_categories') || 'null');
     renderCategoryTiles(savedCats);
 
-    // Products
+    // Products — only replace static cards if Supabase returned real visible products
     const savedProducts = localStorage.getItem('kyzer_products');
     if (savedProducts) {
-      const arr = JSON.parse(savedProducts).filter(p => p.visible);
+      const arr = JSON.parse(savedProducts).filter(p => p.visible !== false);
+      // Guard: never wipe the static cards with an empty list
+      if (arr.length === 0) return;
       document.getElementById('productsGrid').innerHTML = arr.map(p => {
         const pd = JSON.stringify({
           id: p.id, emoji: p.emoji, badge: p.badge, badgeType: p.badgeType || '',
           name: p.name, price: p.price, description: p.description,
           details: p.details || '', specs: p.specs || [],
         }).replace(/'/g, '&#39;');
-        const firstPhoto = (p.photos && p.photos.length > 0) ? p.photos[0] : (p.photo || null);
+        const firstPhoto = (p.photos && p.photos.length > 0) ? p.photos[0] : (p.photo || p.image || null);
         const cardImg = firstPhoto ? `<img src="${firstPhoto}" alt="${p.name}">` : p.emoji;
         const _cnp = parseNumericPrice(p.price);
         const _isFrom = p.price && String(p.price).toLowerCase().startsWith('from');

@@ -1184,7 +1184,16 @@ async function doPublish() {
       }
       return val;
     }
-    const publishPayload = stripBase64(siteData);
+    // Normalise products: default visible=true, map image->photo
+    const normalisedSiteData = JSON.parse(JSON.stringify(siteData));
+    if (normalisedSiteData.products) {
+      normalisedSiteData.products = normalisedSiteData.products.map(p => ({
+        ...p,
+        visible: p.visible !== false,  // default true
+        photo: p.photo || p.image || '', // unify image->photo
+      }));
+    }
+    const publishPayload = stripBase64(normalisedSiteData);
     const r = await fetch('/api/publish', {
       method: 'POST',
       headers: apiHeaders(),
