@@ -228,7 +228,7 @@ export default function CompleteDronesPage() {
             <div style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Browse carbon fiber and glass fiber frames for DIY and custom builds.</div>
           </div>
           <Link href="/shop/drone-frames"
-            style={{ padding: '10px 20px', background: '#111', color: '#fff', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            style={{ padding: '10px 20px', background: '#FF8C35', color: '#111', borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
             View Drone Frames →
           </Link>
         </div>
