@@ -1603,13 +1603,61 @@ function sheetUrlToCsvUrl(url) {
   return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
 }
 
+// Parse a single CSV line respecting quoted commas
+function parseCSVLine(line) {
+  const res = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') inQ = !inQ;
+    else if (c === ',' && !inQ) { res.push(cur); cur = ''; }
+    else cur += c;
+  }
+  res.push(cur); return res;
+}
+
+// Smart parser — handles flat CSVs and messy sheets with mixed section headers/blanks
+function parseSheetRows(text) {
+  const lines = text.split(/\r?\n/);
+  const productIdRe = /^[a-zA-Z][a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+/;
+
+  // Try standard flat format: look for a row with "id" and "name" headers in first 5 lines
+  for (let i = 0; i < Math.min(5, lines.length); i++) {
+    const cols = parseCSVLine(lines[i]).map(c => c.trim().toLowerCase());
+    if (cols.includes('id') && cols.includes('name')) {
+      const headers = cols;
+      const idIdx = headers.indexOf('id'), nameIdx = headers.indexOf('name');
+      return lines.slice(i + 1)
+        .map(l => parseCSVLine(l))
+        .filter(r => r.length > nameIdx && (r[idIdx]||'').trim() && (r[nameIdx]||'').trim())
+        .map(r => {
+          const obj = {}; headers.forEach((h,idx) => obj[h] = (r[idx]||'').trim());
+          const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[₹,\s]/g,''))||0;
+          return { id:obj['id'], name:obj['name'], category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:obj['emoji']||'📦', badge:obj['badge']||'', image:obj['image']||'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true };
+        });
+    }
+  }
+
+  // Irregular format — scan every line, detect product rows by ID pattern, re-read headers when found
+  let headers = ['id','name','price','description','button','visible','category','subcategory','type'];
+  const products = [];
+  for (const line of lines) {
+    const cols = parseCSVLine(line);
+    if (!cols.length || !cols[0].trim()) continue;
+    const first = cols[0].trim();
+    const low = cols.map(c => c.trim().toLowerCase());
+    if ((low[0]==='id'||low[0]==='id ') && low.some(c=>c.startsWith('name'))) { headers=low; continue; }
+    if (!productIdRe.test(first)) continue;
+    const obj = {}; headers.forEach((h,idx) => obj[h] = (cols[idx]||'').trim());
+    const price = parseFloat((obj['price (rs)']||obj['price']||'0').replace(/[₹,\s]/g,''))||0;
+    products.push({ id:first, name:obj['name']||'', category:obj['category']||'', subcategory:obj['subcategory']||obj['subcat']||'', price, emoji:'📦', badge:'', image:'', description:obj['description']||'', visible:!['no','false'].includes((obj['visible']||'yes').toLowerCase()), inStock:true });
+  }
+  return products;
+}
+
 async function syncGoogleSheet() {
   const savedUrl = localStorage.getItem('kyzer_gsheet_url') || DEFAULT_GSHEET_URL;
   const csvUrl = sheetUrlToCsvUrl(savedUrl);
-  if (!csvUrl) {
-    toast('Invalid Google Sheet URL. Set it in Settings tab.');
-    return;
-  }
+  if (!csvUrl) { toast('Invalid Google Sheet URL. Set it in Settings tab.'); return; }
 
   const btn = $('sync-sheets-btn');
   btn.textContent = '⏳ Fetching…';
@@ -1617,27 +1665,14 @@ async function syncGoogleSheet() {
 
   try {
     const res = await fetch(csvUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status} — make sure the sheet is set to "Anyone with the link can view"`);
+    if (!res.ok) throw new Error(`HTTP ${res.status} — make sure the sheet is "Anyone with the link can view"`);
     const text = await res.text();
-    const rows = parseCSV(text);
-    if (!rows || rows.length === 0) throw new Error('Sheet appears empty or has no data rows.');
-
-    // Normalize keys
-    const normalized = rows.map(r => {
-      const out = {};
-      for (const k in r) out[k.trim().toLowerCase()] = r[k];
-      return out;
-    });
-
-    if (!normalized[0].hasOwnProperty('id') && !normalized[0].hasOwnProperty('name')) {
-      throw new Error('Sheet must have at least "id" and "name" columns.');
-    }
-
-    // Open import modal with fetched data
+    const products = parseSheetRows(text);
+    if (!products.length) throw new Error('No product rows found. Check the sheet format or sharing settings.');
     openImportModal();
-    _importRows = normalized;
-    renderImportPreview(normalized);
-    $('import-dropzone').style.display = 'none'; // hide the dropzone, data already loaded
+    _importRows = products;
+    renderImportPreview(products);
+    $('import-dropzone').style.display = 'none';
   } catch(err) {
     toast('Sync failed: ' + err.message);
   } finally {
