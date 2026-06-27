@@ -9,10 +9,16 @@ export async function GET(req: NextRequest) {
   const key = process.env.SUPABASE_SERVICE_KEY!
   const sb = createClient(url, key)
 
-  const [shopRes, printRes, custRes] = await Promise.all([
+  const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const since7d  = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+
+  const [shopRes, printRes, custRes, visitsTotal, visitsToday, visitsWeek] = await Promise.all([
     sb.from('orders').select('id, status, data, submitted_at').order('submitted_at', { ascending: false }).limit(50),
     sb.from('print_orders').select('id, status, submitted_at, name, email, material, price').order('submitted_at', { ascending: false }).limit(20),
     sb.from('customers').select('id', { count: 'exact', head: true }),
+    sb.from('cs_visits').select('id', { count: 'exact', head: true }),
+    sb.from('cs_visits').select('id', { count: 'exact', head: true }).gte('visited_at', since24h),
+    sb.from('cs_visits').select('id', { count: 'exact', head: true }).gte('visited_at', since7d),
   ])
 
   const shopOrders = shopRes.data ?? []
@@ -37,5 +43,10 @@ export async function GET(req: NextRequest) {
     printOrders: printOrders.length,
     customers: custRes.count ?? 0,
     recentOrders,
+    csVisits: {
+      total: visitsTotal.count ?? 0,
+      today: visitsToday.count ?? 0,
+      week:  visitsWeek.count  ?? 0,
+    },
   })
 }
