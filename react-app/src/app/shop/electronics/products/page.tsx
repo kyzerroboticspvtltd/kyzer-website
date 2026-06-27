@@ -16,6 +16,7 @@ interface ElecProduct {
   badgeType: string;
   emoji: string;
   photos?: string[];
+  image?: string;
   visible: boolean;
   category: string;
   btnMode?: string;

@@ -15,6 +15,7 @@ interface Drone {
   badgeType: string;
   emoji: string;
   photos?: string[];
+  image?: string;
   visible: boolean;
   subcat: string;
   category: string;
