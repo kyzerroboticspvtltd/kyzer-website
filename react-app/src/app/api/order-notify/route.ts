@@ -90,42 +90,72 @@ export async function POST(req: NextRequest) {
       console.error('Admin email failed (order saved):', mailErr);
     }
 
-    // Customer confirmation (non-fatal â€” order is already saved)
+    // Customer confirmation (non-fatal — order is already saved)
+    const custItemRows = invoiceData.items.map(i =>
+      `<tr style=”border-bottom:1px solid #f0f0f0;”>
+        <td style=”padding:9px 10px;”>${esc(i.name)}</td>
+        <td style=”padding:9px 10px;text-align:center;”>×${i.qty}</td>
+        <td style=”padding:9px 10px;text-align:right;”>₹${(i.price * i.qty).toLocaleString('en-IN')}</td>
+      </tr>`
+    ).join('');
+    const orderTotal = invoiceData.total > 0
+      ? `₹${invoiceData.total.toLocaleString('en-IN')}`
+      : invoiceData.items.reduce((s, i) => s + i.price * i.qty, 0) > 0
+        ? `₹${invoiceData.items.reduce((s, i) => s + i.price * i.qty, 0).toLocaleString('en-IN')}`
+        : 'As per invoice';
     try {
       await sendMail({
         to:          o.email,
-        subject:     `Order received â€” Kyzer Robotics (#${esc(o.id || '')})`,
+        subject:     `Order Confirmed — Kyzer Robotics (#${esc(o.id || '')})`,
         attachments: attachment ? [attachment] : undefined,
-        html: `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;">
-          <div style="background:#FF8C35;padding:24px 28px;border-radius:12px 12px 0 0;">
-            <h2 style="color:#111;margin:0;font-size:22px;">Order Received âœ“</h2>
+        html: `<div style=”font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:auto;background:#f9f9f9;padding:24px;”>
+          <!-- Header -->
+          <div style=”background:#111;padding:20px 28px;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;”>
+            <span style=”font-size:28px;”>✅</span>
+            <div>
+              <div style=”color:#FF8C35;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;”>Kyzer Robotics</div>
+              <div style=”color:#fff;font-size:20px;font-weight:700;margin-top:2px;”>Order Confirmed!</div>
+            </div>
           </div>
-          <div style="background:#fff;border:1px solid #eee;border-top:none;padding:24px 28px;border-radius:0 0 12px 12px;">
-            <p style="font-size:15px;">Hi <strong>${esc(o.name)}</strong>, we've received your order!</p>
-            <p style="color:#555;font-size:14px;">Our team will confirm availability and arrange delivery shortly.</p>
+          <!-- Body -->
+          <div style=”background:#fff;border:1px solid #e8e8e8;border-top:none;padding:28px;border-radius:0 0 12px 12px;”>
+            <p style=”font-size:15px;margin:0 0 6px;”>Hi <strong>${esc(String(o.name || ''))}</strong>,</p>
+            <p style=”color:#555;font-size:14px;margin:0 0 20px;”>Thank you for your order! We've received it and will process it shortly.</p>
 
-            <div style="background:#fff8f3;border:1px solid #ffe0c0;border-radius:8px;padding:14px 16px;margin:20px 0;">
-              <p style="margin:0;font-size:13px;color:#c06000;"><strong>Order ID:</strong> ${esc(o.id || 'â€”')}</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Payment:</strong> Cash on Delivery</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#c06000;"><strong>Ship to:</strong> ${esc(o.shippingFull) || 'â€”'}</p>
+            <!-- Order details box -->
+            <div style=”background:#fff8f0;border:1px solid #ffd9a8;border-radius:8px;padding:16px 18px;margin-bottom:24px;”>
+              <div style=”display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;”>
+                <div><span style=”font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;”>Order ID</span><br><strong style=”color:#111;font-size:14px;”>${esc(String(o.id || '—'))}</strong></div>
+                <div><span style=”font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;”>Payment</span><br><strong style=”color:#111;font-size:14px;”>Cash on Delivery</strong></div>
+                <div><span style=”font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;”>Date</span><br><strong style=”color:#111;font-size:14px;”>${invoiceData.date}</strong></div>
+              </div>
             </div>
 
-            <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
-              <tr style="background:#f8f8f8;font-weight:600;">
-                <td style="padding:8px 10px;">Item</td>
-                <td style="padding:8px 10px;text-align:center;">Qty</td>
-              </tr>
-              ${(o.items || []).map((i: { name: string; qty: number }) =>
-                `<tr style="border-bottom:1px solid #f0f0f0;">
-                  <td style="padding:8px 10px;">${esc(i.name)}</td>
-                  <td style="padding:8px 10px;text-align:center;">Ã—${Number(i.qty) || 1}</td>
-                </tr>`
-              ).join('')}
-            </table>
+            <!-- Ship to -->
+            <p style=”font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px;”>Shipping To</p>
+            <p style=”font-size:14px;margin:0 0 24px;color:#333;”>${esc(String(o.shippingFull || '—'))}</p>
 
-            <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
-            <p style="font-size:12px;color:#aaa;">Questions? WhatsApp us at <a href="${waLink}" style="color:#FF8C35;">${waDisplay}</a> or reply to this email.</p>
-            <p style="font-size:12px;color:#aaa;">Kyzer Robotics Pvt. Ltd. Â· Pune, Maharashtra Â· kyzerrobotics.com</p>
+            <!-- Items table -->
+            <table style=”width:100%;border-collapse:collapse;font-size:13px;margin-bottom:4px;”>
+              <tr style=”background:#f5f5f5;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;”>
+                <td style=”padding:9px 10px;”>Item</td>
+                <td style=”padding:9px 10px;text-align:center;”>Qty</td>
+                <td style=”padding:9px 10px;text-align:right;”>Amount</td>
+              </tr>
+              ${custItemRows}
+            </table>
+            <!-- Total -->
+            <div style=”background:#f5f5f5;border-radius:0 0 8px 8px;padding:10px 10px;text-align:right;”>
+              <span style=”font-size:13px;color:#555;”>Order Total: </span>
+              <strong style=”font-size:16px;color:#111;”>${orderTotal}</strong>
+              <span style=”font-size:11px;color:#aaa;margin-left:6px;”>Incl. GST</span>
+            </div>
+
+            ${attachment ? `<p style=”font-size:13px;color:#555;margin:20px 0 0;”>📎 Your <strong>invoice PDF</strong> is attached to this email.</p>` : ''}
+
+            <hr style=”border:none;border-top:1px solid #eee;margin:24px 0 16px;”>
+            <p style=”font-size:12px;color:#aaa;margin:0;”>Questions? WhatsApp us at <a href=”${waLink}” style=”color:#FF8C35;text-decoration:none;”>${waDisplay}</a> or reply to this email.</p>
+            <p style=”font-size:12px;color:#aaa;margin:6px 0 0;”>Kyzer Robotics Pvt. Ltd. · Pune, Maharashtra · <a href=”https://kyzerrobotics.com” style=”color:#FF8C35;text-decoration:none;”>kyzerrobotics.com</a></p>
           </div>
         </div>`,
       });
