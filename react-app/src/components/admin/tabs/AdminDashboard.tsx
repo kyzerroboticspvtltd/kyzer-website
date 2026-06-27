@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { TrendingUp, ShoppingBag, Users, Printer } from 'lucide-react'
+import { TrendingUp, ShoppingBag, Users, Printer, Eye } from 'lucide-react'
 
 interface Stats {
   totalRevenue: number
@@ -10,6 +10,7 @@ interface Stats {
   printOrders: number
   customers: number
   recentOrders: RecentOrder[]
+  csVisits?: { total: number; today: number; week: number }
 }
 
 interface RecentOrder {
@@ -64,6 +65,7 @@ export function AdminDashboard({ token }: { token: string }) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)}
       </div>
+      <Skeleton className="h-28 rounded-2xl" />
       <Skeleton className="h-72 rounded-2xl" />
     </div>
   )
@@ -81,6 +83,33 @@ export function AdminDashboard({ token }: { token: string }) {
         <KpiCard label="Shop Orders" value={stats?.shopOrders ?? '—'} icon={<ShoppingBag className="w-4 h-4" />} />
         <KpiCard label="3D Orders" value={stats?.printOrders ?? '—'} icon={<Printer className="w-4 h-4" />} />
         <KpiCard label="Customers" value={stats?.customers ?? '—'} icon={<Users className="w-4 h-4" />} />
+      </div>
+
+      {/* Coming Soon Visitors */}
+      <div className="bg-white rounded-2xl border border-black/[0.07] p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-8 h-8 rounded-xl bg-[#f4f4f2] flex items-center justify-center text-gray-500">
+            <Eye className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-[13px] font-semibold text-[#111]">Coming Soon — Visitor Traffic</p>
+            <p className="text-[11px] text-gray-400">Unique sessions that landed on the coming soon page</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-3 bg-[#f8f8f6] rounded-xl">
+            <p className="font-['Bebas_Neue',sans-serif] text-[32px] leading-none text-[#111]">{stats?.csVisits?.today ?? 0}</p>
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-1">Today</p>
+          </div>
+          <div className="text-center p-3 bg-[#f8f8f6] rounded-xl">
+            <p className="font-['Bebas_Neue',sans-serif] text-[32px] leading-none text-[#111]">{stats?.csVisits?.week ?? 0}</p>
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-1">Last 7 days</p>
+          </div>
+          <div className="text-center p-3 bg-[#FF8C35]/8 border border-[#FF8C35]/20 rounded-xl">
+            <p className="font-['Bebas_Neue',sans-serif] text-[32px] leading-none text-[#111]">{stats?.csVisits?.total ?? 0}</p>
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-1">All Time</p>
+          </div>
+        </div>
       </div>
 
       {/* Recent orders */}

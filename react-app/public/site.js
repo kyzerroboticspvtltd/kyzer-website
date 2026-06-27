@@ -2138,6 +2138,20 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
 
   // ── COMING SOON ──
   let _csTimerStarted = false;
+  function _csTrackVisit() {
+    try {
+      const key = 'kyzer_cs_sid';
+      let sid = sessionStorage.getItem(key);
+      if (sid) return; // already tracked this browser session
+      sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem(key, sid);
+      fetch('/api/cs-visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sid, referrer: document.referrer.slice(0, 500) }),
+      }).catch(() => {});
+    } catch (_) {}
+  }
   function checkComingSoon() {
     const cs = JSON.parse(localStorage.getItem('kyzer_coming_soon') || 'null');
     if (!cs || !cs.enabled) return;
@@ -2146,6 +2160,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (!overlay || overlay.classList.contains('active')) return;
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    _csTrackVisit();
 
     if (cs.headline) document.getElementById('csHeadline').textContent = cs.headline;
     if (cs.tagline)  document.getElementById('csTagline').textContent  = cs.tagline;
