@@ -719,7 +719,22 @@ function saveCat(i) {
   toast('Category saved — click Publish to go live');
 }
 
-var PM_SUBCAT_MAP={electronics:["arduino","sensors","motors","modules","batteries","displays","sbc"],drone:["fpv","survey","agricultural","hobby","components","frame"],proto:["service","pcb","cnc"],"3dprint":["filament","printer","accessories"]};function pmUpdateSubcatOptions(v){var c=(document.getElementById("pm-cat")||{}).value||"electronics";var s=document.getElementById("pm-subcat");if(!s)return;var o=PM_SUBCAT_MAP[c]||[];var val=v!==undefined?v:s.value;s.innerHTML=o.map(function(x){return"<option value=""+x+"""+(val===x?" selected":"")+">"+x+"</option>";}).join("");}
+var PM_SUBCAT_MAP={
+  electronics:['arduino','sensors','motors','modules','batteries','displays','sbc'],
+  drone:['fpv','survey','agricultural','hobby','components','frame'],
+  proto:['service','pcb','cnc'],
+  '3dprint':['filament','printer','accessories']
+};
+function pmUpdateSubcatOptions(v){
+  var c=(document.getElementById('pm-cat')||{}).value||'electronics';
+  var s=document.getElementById('pm-subcat');
+  if(!s)return;
+  var o=PM_SUBCAT_MAP[c]||[];
+  var val=v!==undefined?v:s.value;
+  s.innerHTML=o.map(function(x){
+    return '<option value="'+x+'"'+(val===x?' selected':'')+'>'+x+'</option>';
+  }).join('');
+}
 function doLogout() {
   TOKEN = '';
   localStorage.removeItem('kyzer_admin_token');
@@ -1345,7 +1360,7 @@ function openProductModal(id) {
     <div class="form-row">
       <div class="form-group"><label class="form-label">Category</label>
         <select class="form-input" id="pm-cat" onchange="pmUpdateSubcatOptions()">
-          ${["electronics","drone","proto","3dprint"].map(c=>`<option value="${c}" ${(p?.category||"")==c?"selected":"">${c}</option>`).join("")}
+          ${["electronics","drone","proto","3dprint"].map(c=>`<option value="${c}" ${(p?.category||"")==c?"selected":""}>${c}</option>`).join("")}
         </select></div>
       <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
     </div>
