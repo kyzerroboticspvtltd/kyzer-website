@@ -186,7 +186,13 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   function renderCategoryTiles(cats) {
-    const raw  = cats && cats.length ? cats : DEFAULT_CATS;
+    const raw  = (cats && cats.length ? cats : DEFAULT_CATS).map(cat => {
+      if (!cat.photo) {
+        const def = DEFAULT_CATS.find(d => d.id === cat.id);
+        if (def) return { ...cat, photo: def.photo };
+      }
+      return cat;
+    });
     const list = mergePrintCats(raw);
     const tilesEl = document.getElementById('catTilesContainer');
     const tabsEl  = document.getElementById('catFilterTabs');
