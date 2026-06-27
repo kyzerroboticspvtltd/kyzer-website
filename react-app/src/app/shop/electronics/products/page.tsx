@@ -213,7 +213,7 @@ export default function ElectronicsProductsPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
             {filtered.map(p => {
-              const photo = p.photos?.[0];
+              const photo = p.photos?.[0] || p.image;
               const priceNum = parseFloat(p.price);
               return (
                 <div key={p.id} onClick={() => openModal(p)}
@@ -278,7 +278,7 @@ export default function ElectronicsProductsPage() {
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }}>✕</button>
             </div>
             <div style={{ height: 200, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16, overflow: 'hidden' }}>
-              <img src={selected.photos?.[0] || svgPlaceholder(subcatLabel[selected.subcat] || 'Electronics')} alt="" style={{ width: '100%', height: '100%', objectFit: selected.photos?.[0] ? 'contain' : 'cover' }} />
+              <img src={selected.photos?.[0] || selected.image || svgPlaceholder(subcatLabel[selected.subcat] || 'Electronics')} alt="" style={{ width: '100%', height: '100%', objectFit: (selected.photos?.[0] || selected.image) ? 'contain' : 'cover', padding: (selected.photos?.[0] || selected.image) ? 16 : 0 }} />
             </div>
             <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: 1, margin: '0 0 8px' }}>{selected.name}</h2>
             <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>{selected.details}</p>

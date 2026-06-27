@@ -719,6 +719,7 @@ function saveCat(i) {
   toast('Category saved — click Publish to go live');
 }
 
+var PM_SUBCAT_MAP={electronics:["arduino","sensors","motors","modules","batteries","displays","sbc"],drone:["fpv","survey","agricultural","hobby","components","frame"],proto:["service","pcb","cnc"],"3dprint":["filament","printer","accessories"]};function pmUpdateSubcatOptions(v){var c=(document.getElementById("pm-cat")||{}).value||"electronics";var s=document.getElementById("pm-subcat");if(!s)return;var o=PM_SUBCAT_MAP[c]||[];var val=v!==undefined?v:s.value;s.innerHTML=o.map(function(x){return"<option value=""+x+"""+(val===x?" selected":"")+">"+x+"</option>";}).join("");}
 function doLogout() {
   TOKEN = '';
   localStorage.removeItem('kyzer_admin_token');
@@ -1279,6 +1280,7 @@ function renderProducts(search='') {
         <div class="prod-actions">
           <button class="btn btn-ghost btn-sm" onclick="openProductModal('${id}')">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">Delete</button>
+          <button class="btn btn-primary btn-sm" onclick="doPublish()">Publish</button>
         </div>
       </div>
     </div>`;
@@ -1329,11 +1331,15 @@ function openProductModal(id) {
       <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="pm-emoji" value="${esc(p?.emoji||'')}" style="width:80px"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="pm-cat" value="${esc(p?.category||'')}"></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-input" id="pm-cat" onchange="pmUpdateSubcatOptions()">
+          ${["electronics","drone","proto","3dprint"].map(c=>`<option value="${c}" ${(p?.category||"")==c?"selected":"">${c}</option>`).join("")}
+        </select></div>
       <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Subcategory</label><input class="form-input" id="pm-subcat" value="${esc(p?.subcategory||'')}"></div>
+      <div class="form-group"><label class="form-label">Subcategory</label>
+        <select class="form-input" id="pm-subcat"></select></div>
       <div class="form-group"><label class="form-label">Badge</label>
         <select class="form-input" id="pm-badge">
           ${['','HOT','NEW','SALE','LIMITED'].map(b=>`<option value="${b}" ${(p?.badge||'')==b?'selected':''}>${b||'None'}</option>`).join('')}
@@ -1343,6 +1349,7 @@ function openProductModal(id) {
     <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="pm-desc" rows="2">${esc(p?.description||'')}</textarea></div>
     <div class="form-group"><label class="form-label">Details (long, optional)</label><textarea class="form-textarea" id="pm-details" rows="3">${esc(p?.details||'')}</textarea></div>
   `, `<button class="btn btn-primary" onclick="saveProduct('${esc(id||'')}')">Save product</button><button class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>`);
+  setTimeout(function(){ pmUpdateSubcatOptions(p&&(p.subcategory||p.subcat)||''); }, 30);
 }
 
 function pmImageUrlChanged(url) {
@@ -1372,6 +1379,7 @@ function saveProduct(id) {
     emoji:       $('pm-emoji').value,
     category:    $('pm-cat').value,
     subcategory: $('pm-subcat').value,
+    subcat: $('pm-subcat').value,
     price:       parseFloat($('pm-price').value)||0,
     description: $('pm-desc').value,
     details:     $('pm-details').value,

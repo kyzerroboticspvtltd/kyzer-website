@@ -167,7 +167,7 @@ export default function CompleteDronesPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
             {filtered.map(d => {
-              const photo = d.photos?.[0];
+              const photo = d.photos?.[0] || d.image;
               const priceNum = parseFloat(d.price);
               return (
                 <div key={d.id} onClick={() => setSelected(d)}
@@ -247,7 +247,7 @@ export default function CompleteDronesPage() {
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }}>✕</button>
             </div>
             <div style={{ height: 220, background: '#f4f4f2', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, marginBottom: 16, overflow: 'hidden' }}>
-              {selected.photos?.[0] ? <img src={selected.photos[0]} alt={selected.name} style={{ height: '100%', objectFit: 'contain' }} /> : <span style={{ fontSize: 72 }}>{selected.emoji}</span>}
+              {(selected.photos?.[0] || selected.image) ? <img src={selected.photos?.[0] || selected.image} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16 }} /> : <span style={{ fontSize: 72 }}>{selected.emoji}</span>}
             </div>
             <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: 1, margin: '0 0 8px' }}>{selected.name}</h2>
             <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>{selected.details}</p>
