@@ -726,6 +726,18 @@ function doLogout() {
   location.reload();
 }
 
+// Hash-based auto-login: /admin#p=PASSWORD
+(function() {
+  const hash = location.hash;
+  if (hash.startsWith('#p=')) {
+    const pass = decodeURIComponent(hash.slice(3));
+    const inp = document.getElementById('loginPass');
+    if (inp) { inp.value = pass; }
+    history.replaceState(null, '', location.pathname); // remove from URL
+    setTimeout(doLogin, 100);
+  }
+})();
+
 // Auto-login with stored token
 (async function() {
   const stored = localStorage.getItem('kyzer_admin_token');
