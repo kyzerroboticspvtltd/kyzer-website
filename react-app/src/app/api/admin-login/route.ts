@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
 
     const ts = String(Math.floor(Date.now() / 1000));
     const token = `${ts}.${sign(ts)}`;
-    return NextResponse.json({ ok: true, token });
+    const res = NextResponse.json({ ok: true, token });
+    // Allow admin to bypass the coming-soon middleware
+    res.cookies.set('__kcs_admin', '1', { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
+    return res;
   } catch {
     return NextResponse.json({ ok: false, error: 'Bad request' }, { status: 400 });
   }
