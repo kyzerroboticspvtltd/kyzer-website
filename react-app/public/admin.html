@@ -634,7 +634,7 @@ function toggleTheme() {
 })();
 
 // ─── LOGIN ────────────────────────────────────────────────────
-async function doLogin() {
+window.doLogin = async function() {
   const pass = $('loginPass').value.trim();
   const err = $('loginErr');
   err.style.display = 'none';
