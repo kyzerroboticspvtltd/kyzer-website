@@ -1166,6 +1166,21 @@ function loadAll() {
       saveLocal();
     }
   }
+  // Seed categories — fill empty or missing photos from defaults
+  if (!siteData.categories || siteData.categories.length === 0) {
+    siteData.categories = DEFAULT_CAT_SEED.map(c => ({...c}));
+    saveLocal();
+  } else {
+    let catChanged = false;
+    siteData.categories = siteData.categories.map(cat => {
+      if (!cat.photo) {
+        const def = DEFAULT_CAT_SEED.find(d => d.id === cat.id);
+        if (def) { catChanged = true; return {...cat, photo: def.photo}; }
+      }
+      return cat;
+    });
+    if (catChanged) saveLocal();
+  }
 }
 
 function saveLocal() { localStorage.setItem('kyzer_site_data', JSON.stringify(siteData)); }
