@@ -1,10 +1,4 @@
-import { Resend } from 'resend';
-
-let _resend: Resend | null = null;
-function getResend() {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY || 'placeholder');
-  return _resend;
-}
+import nodemailer from 'nodemailer';
 
 interface Attachment {
   filename: string;
@@ -12,7 +6,26 @@ interface Attachment {
   contentType: string;
 }
 
-export function sendMail({
+function getTransporter() {
+  // Prefer Titan business email if configured, fall back to Gmail
+  const useTitan = !!(process.env.TITAN_HOST && process.env.TITAN_USER && process.env.TITAN_PASS);
+  return nodemailer.createTransport({
+    host:   useTitan ? process.env.TITAN_HOST! : 'smtp.gmail.com',
+    port:   parseInt(useTitan ? (process.env.TITAN_PORT || '587') : '587'),
+    secure: false,
+    auth: {
+      user: useTitan ? process.env.TITAN_USER! : (process.env.GMAIL_USER || ''),
+      pass: useTitan ? process.env.TITAN_PASS! : (process.env.GMAIL_PASS || ''),
+    },
+  });
+}
+
+const FROM_ADDRESS = () => {
+  const user = process.env.TITAN_USER || process.env.GMAIL_USER || 'info@kyzerrobotics.com';
+  return `Kyzer Robotics <${user}>`;
+};
+
+export async function sendMail({
   to,
   subject,
   html,
@@ -25,18 +38,20 @@ export function sendMail({
   attachments?: Attachment[];
   replyTo?: string;
 }) {
-  return getResend().emails.send({
-    from: `Kyzer Robotics <${process.env.GMAIL_USER || 'info@kyzerrobotics.com'}>`,
-    replyTo: replyTo || NOTIFY_EMAIL() || undefined,
+  const transporter = getTransporter();
+  return transporter.sendMail({
+    from:       FROM_ADDRESS(),
+    replyTo:    replyTo || NOTIFY_EMAIL() || FROM_ADDRESS(),
     to,
     subject,
     html,
     attachments: attachments?.map(a => ({
-      filename: a.filename,
-      content: a.content,
+      filename:    a.filename,
+      content:     a.content,
+      contentType: a.contentType,
     })),
   });
 }
 
-export const NOTIFY_EMAIL = () => process.env.NOTIFY_EMAIL || process.env.GMAIL_USER || '';
+export const NOTIFY_EMAIL = () => process.env.NOTIFY_EMAIL || process.env.TITAN_USER || process.env.GMAIL_USER || '';
 export const NOTIFY_PHONE = () => process.env.NOTIFY_PHONE || '';
