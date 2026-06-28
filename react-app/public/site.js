@@ -3119,3 +3119,18 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     document.getElementById('privacyOverlay').classList.remove('open');
     document.body.style.overflow = '';
   }
+
+// Analytics tracking
+(function() {
+  try {
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        page: location.pathname,
+        referrer: document.referrer || ''
+      }),
+      keepalive: true
+    });
+  } catch(e) {}
+})();

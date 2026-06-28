@@ -202,6 +202,7 @@ html.dark .toggle-slider{background:#444}
     <img src="/logo.png" alt="Kyzer" class="login-logo">
     <h1>Kyzer Admin</h1>
     <p>Sign in to manage your store</p>
+    <input type="email" id="loginEmail" class="login-input" placeholder="Admin email" onkeydown="if(event.key==='Enter')doLogin()">
     <input type="password" id="loginPass" class="login-input" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" onclick="doLogin()">Sign in</button>
     <div class="login-err" id="loginErr"></div>
@@ -241,6 +242,9 @@ html.dark .toggle-slider{background:#444}
       <button class="nav-item" id="nl-contact" onclick="nav('contact')">📬 Contact</button>
       <button class="nav-item" id="nl-quote" onclick="nav('quote')">💰 Quote Pricing</button>
       <button class="nav-item" id="nl-photos" onclick="nav('photos')">🖼️ Photos</button>
+
+      <div class="nav-section">INSIGHTS</div>
+      <button class="nav-item" id="nl-analytics" onclick="nav('analytics')">📊 Analytics</button>
 
       <div class="nav-section">SYSTEM</div>
       <button class="nav-item" id="nl-settings" onclick="nav('settings')">⚙️ Settings</button>
@@ -501,6 +505,60 @@ CREATE POLICY "read_print" ON print_orders FOR SELECT USING (true);</textarea>
         </div>
       </div>
 
+      <!-- ANALYTICS -->
+      <div class="tab" id="tab-analytics">
+        <div id="analytics-loading" style="padding:40px;text-align:center;color:var(--muted)">Loading analytics...</div>
+        <div id="analytics-content" style="display:none">
+          <!-- Period cards -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px">
+            <div class="table-wrap" style="padding:20px;text-align:center">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Today</div>
+              <div id="an-today" style="font-size:32px;font-weight:700;color:var(--accent)">-</div>
+            </div>
+            <div class="table-wrap" style="padding:20px;text-align:center">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Yesterday</div>
+              <div id="an-yesterday" style="font-size:32px;font-weight:700">-</div>
+            </div>
+            <div class="table-wrap" style="padding:20px;text-align:center">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Last 7 Days</div>
+              <div id="an-7d" style="font-size:32px;font-weight:700">-</div>
+            </div>
+            <div class="table-wrap" style="padding:20px;text-align:center">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Last 30 Days</div>
+              <div id="an-30d" style="font-size:32px;font-weight:700">-</div>
+            </div>
+            <div class="table-wrap" style="padding:20px;text-align:center">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">All Time</div>
+              <div id="an-total" style="font-size:32px;font-weight:700">-</div>
+            </div>
+          </div>
+
+          <!-- Daily chart + Devices row -->
+          <div style="display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:24px">
+            <div class="table-wrap" style="padding:20px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:16px">Daily Visits (Last 30 Days)</div>
+              <div id="an-chart" style="display:flex;align-items:flex-end;gap:4px;height:120px"></div>
+              <div id="an-chart-labels" style="display:flex;gap:4px;margin-top:6px;overflow:hidden"></div>
+            </div>
+            <div class="table-wrap" style="padding:20px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:16px">Devices</div>
+              <div id="an-devices"></div>
+            </div>
+          </div>
+
+          <!-- Pages + Referrers row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="table-wrap" style="padding:20px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:16px">Top Pages (30d)</div>
+              <div id="an-pages"></div>
+            </div>
+            <div class="table-wrap" style="padding:20px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:16px">Top Referrers (30d)</div>
+              <div id="an-referrers"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /adminPanel -->
@@ -635,14 +693,16 @@ function toggleTheme() {
 
 // ─── LOGIN ────────────────────────────────────────────────────
 window.doLogin = async function() {
+  const email = $('loginEmail').value.trim();
   const pass = $('loginPass').value.trim();
   const err = $('loginErr');
+  if (!email) { err.textContent = 'Enter your email.'; err.style.display = 'block'; return; }
   err.style.display = 'none';
   if (!pass) { err.textContent = 'Enter your password.'; err.style.display = 'block'; return; }
   try {
-    const r = await fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:pass}) });
+    const r = await fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:email,password:pass}) });
     const d = await r.json().catch(()=>({}));
-    if (!r.ok || !d.ok || !d.token) { err.textContent = 'Incorrect password.'; err.style.display = 'block'; $('loginPass').value=''; return; }
+    if (!r.ok || !d.ok || !d.token) { err.textContent = 'Invalid email or password.'; err.style.display = 'block'; $('loginPass').value=''; return; }
     TOKEN = d.token;
     localStorage.setItem('kyzer_admin_token', TOKEN);
     $('loginScreen').style.display = 'none';
@@ -720,11 +780,12 @@ function saveCat(i) {
 }
 
 var PM_SUBCAT_MAP={
-  electronics:['arduino','sensors','motors','modules','batteries','displays','sbc'],
+  electronics:['arduino','sensors','motors','modules','batteries','displays','raspberry-pi'],
   drone:['fpv','survey','agricultural','hobby','components','frame'],
   proto:['service','pcb','cnc'],
   '3dprint':['filament','printer','accessories']
 };
+var PM_SUBCAT_LABEL={'raspberry-pi':'Raspberry Pi','arduino':'Arduino','sensors':'Sensors','motors':'Motors','modules':'Modules','batteries':'Batteries','displays':'Displays','fpv':'FPV','survey':'Survey','agricultural':'Agricultural','hobby':'Hobby','components':'Components','frame':'Frames','service':'Service','pcb':'PCB','cnc':'CNC','filament':'Filament','printer':'Printer','accessories':'Accessories'};
 function pmUpdateSubcatOptions(v){
   var c=(document.getElementById('pm-cat')||{}).value||'electronics';
   var s=document.getElementById('pm-subcat');
@@ -732,7 +793,8 @@ function pmUpdateSubcatOptions(v){
   var o=PM_SUBCAT_MAP[c]||[];
   var val=v!==undefined?v:s.value;
   s.innerHTML=o.map(function(x){
-    return '<option value="'+x+'"'+(val===x?' selected':'')+'>'+x+'</option>';
+    var lbl=PM_SUBCAT_LABEL[x]||x;
+    return '<option value="'+x+'"'+(val===x?' selected':'')+'>'+lbl+'</option>';
   }).join('');
 }
 function doLogout() {
@@ -799,6 +861,7 @@ function nav(name) {
   if (name === 'contact') loadContactForm();
   if (name === 'quote') loadQuoteForm();
   if (name === 'photos') loadPhotosForm();
+  if (name === 'analytics') loadAnalytics();
   if (name === 'settings') {
     $('sb-url').value = localStorage.getItem('kyzer_supabase_url')||'';
     $('sb-key').value = localStorage.getItem('kyzer_supabase_key')||'';
@@ -1147,7 +1210,7 @@ const SEED_PRODUCTS = [
   { id:'e-nano',       name:'Arduino Nano',                emoji:'🔷', category:'electronics', subcategory:'arduino',           subcat:'arduino',           price:299, badge:'',    image:'https://images.unsplash.com/photo-1603732551658-5fabbafa84eb?w=600&q=80&auto=format&fit=crop', description:'Compact and powerful. All the Arduino goodness in a tiny breadboard-friendly form.', visible:true },
   { id:'e-esp32',      name:'ESP32 Dev Board',             emoji:'📡', category:'electronics', subcategory:'modules',           subcat:'modules',           price:349, badge:'HOT', image:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&auto=format&fit=crop', description:'Dual-core WiFi + Bluetooth powerhouse. The go-to chip for IoT projects.', visible:true },
   { id:'e-esp8266',    name:'ESP8266 NodeMCU',             emoji:'📶', category:'electronics', subcategory:'modules',           subcat:'modules',           price:199, badge:'',    image:'https://images.unsplash.com/photo-1553406926-ba6e4e9ce89e?w=600&q=80&auto=format&fit=crop', description:'The WiFi module that changed everything. Budget IoT with built-in USB.', visible:true },
-  { id:'e-rpi4',       name:'Raspberry Pi 4B (4GB)',       emoji:'🍓', category:'electronics', subcategory:'arduino',           subcat:'sbc',               price:6499, badge:'NEW', image:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&q=80&auto=format&fit=crop', description:'Full Linux SBC with 4GB RAM. Powers robots, AI projects and media centres.', visible:true },
+  { id:'e-rpi4',       name:'Raspberry Pi 4B (4GB)',       emoji:'🍓', category:'electronics', subcategory:'arduino',           subcat:'raspberry-pi',               price:6499, badge:'NEW', image:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&q=80&auto=format&fit=crop', description:'Full Linux SBC with 4GB RAM. Powers robots, AI projects and media centres.', visible:true },
   { id:'e-ultrasonic', name:'HC-SR04 Ultrasonic Sensor',   emoji:'📏', category:'electronics', subcategory:'sensors',           subcat:'sensors',           price:89, badge:'',    image:'https://images.unsplash.com/photo-1581092160607-ee67df0c4a6b?w=600&q=80&auto=format&fit=crop', description:'Accurate distance sensing from 2cm to 400cm. Robotics staple.', visible:true },
   { id:'e-servo',      name:'SG90 Micro Servo',            emoji:'⚙️', category:'electronics', subcategory:'motors',            subcat:'motors',            price:79, badge:'',    image:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80&auto=format&fit=crop', description:'Lightweight 9g servo for small robotic arms, pan-tilt mounts and RC projects.', visible:true },
   // DRONES — complete (subcat anything but 'frame')
@@ -1385,17 +1448,23 @@ function pmImageUrlChanged(url) {
   preview.innerHTML = `<img src="${esc(url)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='❌'">`;
 }
 
-function pmUploadFile(input) {
+async function pmUploadFile(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { toast('Image too large — keep under 2MB or use a URL instead.'); return; }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
-    $('pm-image').value = dataUrl;
-    $('pm-img-preview').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover">`;
-  };
-  reader.readAsDataURL(file);
+  if (file.size > 5 * 1024 * 1024) { toast('Image too large — keep under 5MB.', false); return; }
+  toast('Uploading image…');
+  try {
+    const form = new FormData();
+    form.append('file', file);
+    // apiHeaders() returns Authorization header — strip Content-Type so browser sets multipart boundary
+    const headers = { 'Authorization': 'Bearer ' + TOKEN };
+    const res = await fetch('/api/upload-image', { method: 'POST', headers, body: form });
+    const d = await res.json();
+    if (!d.ok) { toast('Upload failed: ' + (d.error || 'unknown'), false); return; }
+    $('pm-image').value = d.url;
+    $('pm-img-preview').innerHTML = '<img src="' + d.url + '" style="width:100%;height:100%;object-fit:cover">';
+    toast('Image uploaded!');
+  } catch(e) { toast('Upload error: ' + e.message, false); }
 }
 
 function saveProduct(id) {
@@ -1764,6 +1833,77 @@ function saveSbCreds() {
   toast('Supabase credentials saved.');
 }
 
+
+async function loadAnalytics() {
+  document.getElementById('analytics-loading').style.display = 'block';
+  document.getElementById('analytics-content').style.display = 'none';
+  try {
+    const res = await fetch('/api/admin-analytics', { headers: apiHeaders() });
+    const d = await res.json();
+    if (!res.ok) { document.getElementById('analytics-loading').textContent = 'Failed to load analytics.'; return; }
+
+    // Period cards
+    document.getElementById('an-today').textContent = d.today;
+    document.getElementById('an-yesterday').textContent = d.yesterday;
+    document.getElementById('an-7d').textContent = d.last7;
+    document.getElementById('an-30d').textContent = d.last30;
+    document.getElementById('an-total').textContent = d.total;
+
+    // Daily bar chart
+    var chartEl = document.getElementById('an-chart');
+    var labelsEl = document.getElementById('an-chart-labels');
+    var maxVal = Math.max(...d.daily.map(function(x){return x.count;}), 1);
+    chartEl.innerHTML = d.daily.map(function(x) {
+      var pct = Math.round((x.count / maxVal) * 100);
+      var dateLabel = x.date.slice(5); // MM-DD
+      return '<div title="' + x.date + ': ' + x.count + ' visits" style="flex:1;min-width:4px;background:var(--accent);opacity:0.85;height:' + pct + '%;border-radius:2px 2px 0 0;cursor:default"></div>';
+    }).join('');
+    // Show first and last date labels
+    if (d.daily.length > 0) {
+      labelsEl.innerHTML = '<span style="font-size:10px;color:var(--muted);flex:1">' + d.daily[0].date.slice(5) + '</span>' +
+        '<span style="font-size:10px;color:var(--muted)">' + d.daily[d.daily.length-1].date.slice(5) + '</span>';
+    }
+
+    // Devices
+    var devEl = document.getElementById('an-devices');
+    var devTotal = d.devices.reduce(function(s,x){return s+x.count;},0) || 1;
+    devEl.innerHTML = d.devices.map(function(x) {
+      var pct = Math.round(x.count/devTotal*100);
+      var icon = x.device==='mobile'?'📱':x.device==='tablet'?'📟':'🖥️';
+      return '<div style="margin-bottom:12px">' +
+        '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">' +
+          '<span>' + icon + ' ' + x.device + '</span>' +
+          '<span style="color:var(--muted)">' + pct + '% (' + x.count + ')</span>' +
+        '</div>' +
+        '<div style="background:var(--border);border-radius:4px;height:6px">' +
+          '<div style="background:var(--accent);height:6px;border-radius:4px;width:' + pct + '%"></div>' +
+        '</div></div>';
+    }).join('');
+
+    // Top pages
+    var pagesEl = document.getElementById('an-pages');
+    pagesEl.innerHTML = d.topPages.length ? d.topPages.map(function(x) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">' +
+        '<span style="font-family:monospace;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + x.page + '">' + x.page + '</span>' +
+        '<span style="font-weight:600;color:var(--accent);flex-shrink:0;margin-left:8px">' + x.count + '</span>' +
+      '</div>';
+    }).join('') : '<div style="color:var(--muted);font-size:12px">No page data yet. Will populate as visitors arrive.</div>';
+
+    // Referrers
+    var refEl = document.getElementById('an-referrers');
+    refEl.innerHTML = d.topReferrers.length ? d.topReferrers.map(function(x) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">' +
+        '<span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + x.source + '">' + (x.source || 'Direct') + '</span>' +
+        '<span style="font-weight:600;color:var(--accent);flex-shrink:0;margin-left:8px">' + x.count + '</span>' +
+      '</div>';
+    }).join('') : '<div style="color:var(--muted);font-size:12px">No referrer data yet.</div>';
+
+    document.getElementById('analytics-loading').style.display = 'none';
+    document.getElementById('analytics-content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('analytics-loading').textContent = 'Error loading analytics.';
+  }
+}
 </script>
 </body>
 </html>

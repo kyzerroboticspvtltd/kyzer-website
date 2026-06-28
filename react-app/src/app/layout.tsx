@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Footer from "./_components/Footer";
-import ChatBot from "./_components/ChatBot";
+import ConditionalShell from "./_components/ConditionalShell";
 import PageTransition from "./_components/PageTransition";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -186,8 +185,7 @@ export default function RootLayout({
       <body>
         <PageTransition />
         {children}
-        <Footer />
-        <ChatBot />
+        <ConditionalShell />
       </body>
     </html>
   );

@@ -3,33 +3,6 @@ import Script from "next/script";
 
 const PAGE_HTML = `<div id="mainSite">
 
-<!-- COMING SOON OVERLAY -->
-<div id="comingSoonOverlay">
-  <img src="logo.png" class="cs-logo" alt="Kyzer Robotics">
-  <div class="cs-brand">Kyzer Robotics</div>
-  <div class="cs-headline" id="csHeadline">Coming Soon</div>
-  <p class="cs-tagline" id="csTagline">Precision drones, custom 3D printing &amp; rapid prototyping — launching June 2, 2026.</p>
-  <div class="cs-countdown" id="csCountdown">
-    <div class="cs-unit"><span class="cs-num" id="csDays">00</span><span class="cs-lbl">Days</span></div>
-    <div class="cs-sep">:</div>
-    <div class="cs-unit"><span class="cs-num" id="csHours">00</span><span class="cs-lbl">Hours</span></div>
-    <div class="cs-sep">:</div>
-    <div class="cs-unit"><span class="cs-num" id="csMins">00</span><span class="cs-lbl">Minutes</span></div>
-    <div class="cs-sep">:</div>
-    <div class="cs-unit"><span class="cs-num" id="csSecs">00</span><span class="cs-lbl">Seconds</span></div>
-  </div>
-  <div class="cs-notify-wrap">
-    <input type="email" id="csEmail" placeholder="Your email — get notified on launch">
-    <button onclick="csSignup()">Notify me →</button>
-  </div>
-  <div class="cs-notify-msg" id="csSignupMsg">✓ You're on the list! We'll reach out on launch day.</div>
-  <div class="cs-social">
-    <a href="https://wa.me/919049695264" target="_blank" rel="noopener">WhatsApp</a>
-    <span>·</span>
-    <a href="https://www.instagram.com/kyzer.robotics" target="_blank" rel="noopener">Instagram</a>
-  </div>
-</div>
-
 <!-- ANNOUNCEMENT BAR -->
 <div id="announcementBar">
   <span>⚡ Free same-day quote on orders over ₹999 &nbsp;·&nbsp; <a href="https://wa.me/919049695264" target="_blank" rel="noopener">Chat on WhatsApp →</a></span>
