@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ProductCard } from '@/components/shop/ProductCard'
 import { ShopFilters, FilterSidebar } from '@/components/shop/ShopFilters'
-import { getCategoryBySlug, getProductsByCategory } from '@/data/products'
+import { getCategoryBySlug, getProductsByCategory, type Product } from '@/data/products'
 import { ChevronRight } from 'lucide-react'
 import { use } from 'react'
 
@@ -18,7 +18,18 @@ export default function CategoryPage({ params }: PageProps) {
   const category = getCategoryBySlug(slug)
   if (!category) notFound()
 
-  const allProducts = getProductsByCategory(slug)
+  const [allProducts, setAllProducts] = useState<Product[]>(getProductsByCategory(slug))
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok && Array.isArray(d.products)) {
+          setAllProducts(d.products.filter((p: Product) => p.category === slug))
+        }
+      })
+      .catch(() => {})
+  }, [slug])
 
   const [activeSubcat, setActiveSubcat] = useState('all')
   const [search, setSearch] = useState('')

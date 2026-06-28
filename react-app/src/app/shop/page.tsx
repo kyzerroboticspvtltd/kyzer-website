@@ -1,17 +1,21 @@
 import Link from 'next/link'
 import { CategoryCard } from '@/components/shop/CategoryCard'
 import { ProductCard } from '@/components/shop/ProductCard'
-import { CATEGORIES, PRODUCTS, getFeaturedProducts, getProductsByCategory } from '@/data/products'
+import { CATEGORIES } from '@/data/products'
+import { getMergedProducts } from '@/lib/getProducts'
 import { ArrowRight, Zap } from 'lucide-react'
 import type { Metadata } from 'next'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Shop — Kyzer Robotics',
   description: 'Electronics, drones, 3D printing, prototyping and more. Built for makers, engineers and hobbyists.',
 }
 
-export default function ShopPage() {
-  const featured = getFeaturedProducts()
+export default async function ShopPage() {
+  const products = await getMergedProducts()
+  const featured = products.filter(p => p.featured && p.inStock)
 
   return (
     <div className="min-h-screen bg-[#f8f8f6] font-[\'DM_Sans\',sans-serif]">
@@ -54,7 +58,7 @@ export default function ShopPage() {
             <CategoryCard
               key={cat.id}
               category={cat}
-              productCount={getProductsByCategory(cat.slug).length}
+              productCount={products.filter(p => p.category === cat.slug).length}
             />
           ))}
         </div>
@@ -80,8 +84,8 @@ export default function ShopPage() {
       {/* All categories grid */}
       <section className="px-4 sm:px-8 lg:px-16 py-12 max-w-7xl mx-auto">
         {CATEGORIES.map(cat => {
-          const products = getProductsByCategory(cat.slug).slice(0, 4)
-          if (products.length === 0) return null
+          const catProducts = products.filter(p => p.category === cat.slug).slice(0, 4)
+          if (catProducts.length === 0) return null
           return (
             <div key={cat.id} className="mb-14">
               <div className="flex items-center justify-between mb-5">
@@ -97,7 +101,7 @@ export default function ShopPage() {
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {products.map(product => (
+                {catProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
