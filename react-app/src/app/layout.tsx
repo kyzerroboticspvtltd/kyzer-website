@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ConditionalShell from "./_components/ConditionalShell";
 import PageTransition from "./_components/PageTransition";
+import { Analytics } from "@vercel/analytics/next";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -186,6 +187,7 @@ export default function RootLayout({
         <PageTransition />
         {children}
         <ConditionalShell />
+        <Analytics />
       </body>
     </html>
   );
