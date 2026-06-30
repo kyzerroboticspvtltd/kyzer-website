@@ -178,85 +178,50 @@ export default function AddressPage() {
       addr = sel;
     }
 
+    // COD is Pune-only — block outside pincode range 411001–411067
+    if (paymentMethod === 'cod') {
+      const pin = parseInt(addr.pincode, 10);
+      if (pin < 411001 || pin > 411067) {
+        setError('Cash on Delivery is only available for Pune (pincode 411001–411067). Please go back and choose Online Payment.');
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
-      const checkoutData = JSON.parse(sessionStorage.getItem('kyzer_checkout') || '{}');
       const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
       const delivery = subtotal >= 999 ? 0 : 99;
       const grandTotal = subtotal + delivery;
 
-      if (paymentMethod === 'online') {
-        // Verify the payment that was completed on the payment page
-        const verifyRes = await fetch('/api/verify-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            razorpay_order_id: checkoutData.razorpay_order_id,
-            razorpay_payment_id: checkoutData.razorpay_payment_id,
-            razorpay_signature: checkoutData.razorpay_signature,
-            orderId: checkoutData.orderId,
-          }),
-        });
-        if (!verifyRes.ok) throw new Error('Payment verification failed');
+      // COD order
+      const orderId = 'SHOP-' + Date.now();
+      const tokenRes = await fetch('/api/checkout-token');
+      const tokenData = await tokenRes.json();
 
-        const tokenRes = await fetch('/api/checkout-token');
-        const tokenData = await tokenRes.json();
-
-        const notifyRes = await fetch('/api/order-notify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            checkoutToken: tokenData?.token,
-            orderData: {
-              id: checkoutData.orderId,
-              name: addr.name,
-              email: addr.email,
-              phone: addr.phone,
-              shippingFull: addrString(addr),
-              address: addrString(addr),
-              items: cart,
-              total: grandTotal,
-              paymentMethod: 'online',
-              paymentId: checkoutData.razorpay_payment_id,
-              status: 'new',
-            },
-          }),
-        });
-        if (!notifyRes.ok) throw new Error('Order notification failed');
-        clearOrder();
-        sessionStorage.setItem('kyzer_last_order', checkoutData.orderId);
-        window.location.href = `/order-confirmation/${checkoutData.orderId}`;
-      } else {
-        // COD order
-        const orderId = 'SHOP-' + Date.now();
-        const tokenRes = await fetch('/api/checkout-token');
-        const tokenData = await tokenRes.json();
-
-        const notifyRes = await fetch('/api/order-notify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            checkoutToken: tokenData?.token,
-            orderData: {
-              id: orderId,
-              name: addr.name,
-              email: addr.email,
-              phone: addr.phone,
-              shippingFull: addrString(addr),
-              address: addrString(addr),
-              items: cart,
-              total: grandTotal,
-              paymentMethod: 'cod',
-              status: 'new',
-            },
-          }),
-        });
-        if (!notifyRes.ok) throw new Error('Order failed');
-        clearOrder();
-        sessionStorage.setItem('kyzer_last_order', orderId);
-        window.location.href = `/order-confirmation/${orderId}`;
-      }
+      const notifyRes = await fetch('/api/order-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          checkoutToken: tokenData?.token,
+          orderData: {
+            id: orderId,
+            name: addr.name,
+            email: addr.email,
+            phone: addr.phone,
+            shippingFull: addrString(addr),
+            address: addrString(addr),
+            items: cart,
+            total: grandTotal,
+            paymentMethod: 'cod',
+            status: 'new',
+          },
+        }),
+      });
+      if (!notifyRes.ok) throw new Error('Order failed');
+      clearOrder();
+      sessionStorage.setItem('kyzer_last_order', orderId);
+      window.location.href = `/order-confirmation/${orderId}`;
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Something went wrong';
       setError(msg + '. Please try again or contact support.');
@@ -286,7 +251,7 @@ export default function AddressPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout/payment" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Payment</a>
+          <a href="/checkout/review" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Review</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
