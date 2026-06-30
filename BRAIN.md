@@ -12,7 +12,7 @@
 | Styling | Tailwind CSS + DaisyUI |
 | Hosting | Vercel (`kyzer1/kyzer-website`) — root dir: `react-app/` |
 | Database | Supabase (orders, customers, OTPs, quotes) |
-| Payments | Razorpay |
+| Payments | Cashfree (sandbox test keys added 2026-06-30; switch CASHFREE_ENV=production for live) |
 | Auth | HMAC HS256 JWT for admin; email OTP for customers |
 | Domain | kyzerrobotics.com |
 
@@ -30,10 +30,14 @@ Kyzer website/
 │   │   │       ├── publish/          ← writes products to Supabase
 │   │   │       ├── sheet-proxy/      ← server-side Google Sheets CSV fetch
 │   │   │       ├── sheet-sync/       ← receives Apps Script webhook → Supabase
-│   │   │       ├── create-razorpay-order/
-│   │   │       ├── verify-payment/
+│   │   │       ├── create-cashfree-order/  ← creates Cashfree order, stores amount in pending_payments
+│   │   │       ├── verify-cashfree-payment/ ← verifies payment, saves order, sends invoice email+PDF
 │   │   │       ├── send-email-otp / verify-email-otp
 │   │   │       └── ... (orders, quotes, support, etc.)
+│   │   ├── checkout/
+│   │   │   ├── review/page.tsx      ← Review order + payment method + Pay button (single step)
+│   │   │   ├── success/page.tsx     ← post-Cashfree redirect; calls verify endpoint
+│   │   │   └── address/             ← shipping address (COD flow)
 │   │   ├── data/
 │   │   │   └── products.ts  ← THE MASTER PRODUCT LIST for the live shop (21 products)
 │   │   └── lib/
@@ -98,8 +102,8 @@ Kyzer website/
 | `POST /api/publish` | Bearer JWT | Publishes localStorage products to Supabase |
 | `GET /api/sheet-proxy?url=` | Bearer JWT | Proxies Google Sheets CSV (bypasses CORS) |
 | `POST /api/sheet-sync` | SHEET_SYNC_SECRET | Apps Script webhook → upserts products to Supabase |
-| `POST /api/create-razorpay-order` | — | Creates Razorpay order |
-| `POST /api/verify-payment` | — | Verifies Razorpay signature |
+| `POST /api/create-cashfree-order` | — | Creates Cashfree order; server-calculates amount from Supabase prices; stores in `pending_payments` |
+| `POST /api/verify-cashfree-payment` | — | Verifies via Cashfree API, saves order to Supabase, sends PDF invoice email |
 | `POST /api/send-email-otp` | — | Sends OTP to customer email |
 | `POST /api/verify-email-otp` | — | Verifies OTP, issues customer session |
 | `GET /api/admin-orders` | Bearer JWT | Lists shop orders from Supabase |
@@ -129,6 +133,29 @@ vercel --prod --yes   # deploy to production
 
 ---
 
+## Payment Flow (Cashfree)
+
+### Online checkout (shop cart / 3D print quote)
+1. User clicks Pay → `site.js` or `/checkout/review` (payment method toggle + Pay button) calls `POST /api/create-cashfree-order`
+2. Server calculates price from Supabase (not client), stores amount in `pending_payments` table
+3. Server returns `payment_session_id` → client saves `kyzer_pending_order` to localStorage
+4. Cashfree SDK redirects user to hosted checkout (`mode: 'production'`, `redirectTarget: '_self'`)
+5. After payment, Cashfree redirects to `/checkout/success?order_id={order_id}`
+6. Success page reads `kyzer_pending_order` from localStorage, calls `POST /api/verify-cashfree-payment`
+7. Verify endpoint: checks Cashfree order status = PAID, fetches server amount from `pending_payments`, saves order to Supabase, sends admin + customer emails with PDF invoice
+
+### Env vars (Vercel)
+| Var | Value |
+|-----|-------|
+| `CASHFREE_APP_ID` | test or production App ID |
+| `CASHFREE_SECRET_KEY` | test or production secret |
+| `CASHFREE_ENV` | `sandbox` (test) or `production` (live) |
+
+### Supabase table reuse
+`pending_payments.razorpay_order_id` column stores the Cashfree order ID (column name kept to avoid migration).
+
+---
+
 ## Known Gotchas
 
 1. **Never use PowerShell `Get-Content`/`Set-Content` on admin.html** — PowerShell 5.1 re-encodes UTF-8 as Windows-1252, corrupting ₹ and emoji. Always use Node.js `fs.readFileSync/writeFileSync` with `'utf8'`.
@@ -152,3 +179,12 @@ vercel --prod --yes   # deploy to production
 | 2026-06-26 | Added Excel/CSV bulk import with SheetJS |
 | 2026-06-26 | Added "Sync Sheets" button connecting admin to Google Sheets |
 | 2026-06-26 | Uploaded all 194 products to Google Drive spreadsheet |
+| 2026-06-30 | Fixed Upstash Redis BOM bug (invisible ﻿ in env var URL) |
+| 2026-06-30 | Fixed evalsha crash — store Redis client separately, not extracted from Ratelimit instance |
+| 2026-06-30 | Removed firebase-admin (caused ERR_REQUIRE_ESM on verify-email-otp) |
+| 2026-06-30 | Replaced Razorpay with Cashfree — new routes: create-cashfree-order, verify-cashfree-payment |
+| 2026-06-30 | Added /checkout/success page for post-Cashfree redirect verification |
+| 2026-06-30 | Updated /checkout/payment page to use Cashfree redirect flow |
+| 2026-06-30 | Collapsed two-step checkout (review + payment) into single /checkout/review page with inline payment method + Pay button |
+| 2026-06-30 | Fixed mobile nav: backdrop-filter creating containing block, logo sizing, hamburger null guard |
+| 2026-06-30 | Added pdfkit to serverExternalPackages + outputFileTracingIncludes for Vercel PDF support |
