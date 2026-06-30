@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const TEAM = [
   {
-    name: 'Ayaan Shaikh',
+    name: 'Ayaan Chougle',
     role: 'Founder & CEO',
     emoji: '👨‍💻',
     bio: 'Robotics engineer and entrepreneur. Leads product development, drone engineering, and business strategy at Kyzer Robotics. Passionate about making advanced robotics accessible to students and startups.',
