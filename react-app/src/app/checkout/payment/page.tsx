@@ -98,7 +98,7 @@ export default function PaymentPage() {
 
   function loadCashfree(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (window.Cashfree) { resolve(); return; }
+      if (typeof window.Cashfree !== 'undefined') { resolve(); return; }
       const s = document.createElement('script');
       s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
       s.onload = () => resolve();
