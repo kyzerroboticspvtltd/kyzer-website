@@ -54,7 +54,7 @@ function StepBar({ current }: { current: number }) {
 
 declare global {
   interface Window {
-    Razorpay: new (options: Record<string, unknown>) => { open(): void };
+    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): void };
   }
 }
 
@@ -66,6 +66,7 @@ export default function PaymentPage() {
   const [error, setError] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [userPhone, setUserPhone] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('kyzer_auth_token');
@@ -74,10 +75,11 @@ export default function PaymentPage() {
       window.location.href = '/login?redirect=/checkout/payment';
       return;
     }
-    let customer: { name?: string; email?: string } = {};
+    let customer: { name?: string; email?: string; phone?: string } = {};
     try { customer = JSON.parse(raw); } catch { /* ignore */ }
     setUserName(customer.name || '');
     setUserEmail(customer.email || '');
+    setUserPhone(customer.phone || '');
     try {
       const cartRaw = localStorage.getItem('kyzer_cart');
       if (cartRaw) setCart(JSON.parse(cartRaw));
@@ -94,6 +96,17 @@ export default function PaymentPage() {
   const delivery = subtotal >= 999 ? 0 : 99;
   const grandTotal = subtotal + delivery;
 
+  function loadCashfree(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (window.Cashfree) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Cashfree SDK load failed'));
+      document.head.appendChild(s);
+    });
+  }
+
   async function handleContinue() {
     setError('');
 
@@ -105,55 +118,49 @@ export default function PaymentPage() {
       return;
     }
 
-    // Online: run Razorpay now, store result, then go to address
     setLoading(true);
-    const orderId = 'SHOP-' + Date.now();
-
     try {
-      const res = await fetch('/api/create-razorpay-order', {
+      // Build cart items for server-side price calculation
+      const cartItems = cart.map(item => ({ id: item.id, qty: item.qty }));
+
+      const res = await fetch('/api/create-cashfree-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: grandTotal * 100, orderId }),
+        body: JSON.stringify({
+          cartItems,
+          name: userName,
+          email: userEmail,
+          phone: userPhone,
+        }),
       });
-      const orderData = await res.json();
-      if (!orderData.id) throw new Error('Could not create payment order');
-
-      if (!window.Razorpay) {
-        await new Promise<void>((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error('Razorpay load failed'));
-          document.body.appendChild(script);
-        });
+      const data = await res.json();
+      if (!data.ok || !data.payment_session_id) {
+        throw new Error(data.error || 'Could not create payment order');
       }
 
-      const rzp = new window.Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: grandTotal * 100,
-        currency: 'INR',
-        name: 'Kyzer Robotics',
-        description: 'Order ' + orderId,
-        order_id: orderData.id,
-        prefill: { name: userName, email: userEmail },
-        theme: { color: '#FF8C35' },
-        handler: function (response: Record<string, string>) {
-          try {
-            sessionStorage.setItem('kyzer_checkout', JSON.stringify({
-              paymentMethod: 'online',
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              orderId,
-            }));
-          } catch { /* ignore */ }
-          window.location.href = '/checkout/address';
-        },
-        modal: { ondismiss: () => setLoading(false) },
-      });
-      rzp.open();
-    } catch {
-      setError('Could not initiate payment. Please try again.');
+      // Save order data so /checkout/success can send the confirmation email
+      const orderData = {
+        id: data.order_id,
+        name: userName,
+        email: userEmail,
+        phone: userPhone,
+        items: cart.map(item => ({
+          name: item.name,
+          qty: item.qty,
+          price: parsePrice(item.price),
+        })),
+        total: data.amount,
+        subtotal,
+        delivery,
+      };
+      localStorage.setItem('kyzer_pending_order', JSON.stringify(orderData));
+
+      await loadCashfree();
+      const cf = window.Cashfree({ mode: 'production' });
+      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Could not initiate payment. Please try again.';
+      setError(msg);
       setLoading(false);
     }
   }
@@ -168,7 +175,7 @@ export default function PaymentPage() {
           <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
             KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
           </a>
-          <a href="/checkout/review" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Back to Review</a>
+          <a href="/checkout/review" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>Back to Review</a>
         </nav>
 
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px 16px' }}>
@@ -184,7 +191,7 @@ export default function PaymentPage() {
           {/* Order total */}
           <div style={{ background: '#fff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', padding: '16px 20px', marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 14, color: '#555' }}>Order Total ({cart.length} item{cart.length !== 1 ? 's' : ''})</span>
-            <span style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>₹{grandTotal.toLocaleString('en-IN')}</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>&#x20B9;{grandTotal.toLocaleString('en-IN')}</span>
           </div>
 
           {/* Method toggle */}
@@ -200,7 +207,7 @@ export default function PaymentPage() {
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: 14, fontWeight: 600, color: method === 'online' ? '#FF8C35' : '#333' }}>💳 Pay Online</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: method === 'online' ? '#FF8C35' : '#333' }}>&#x1F4B3; Pay Online</div>
                 <div style={{ fontSize: 11, color: '#888', marginTop: 3 }}>Card, UPI, Netbanking</div>
               </button>
 
@@ -213,7 +220,7 @@ export default function PaymentPage() {
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: 14, fontWeight: 600, color: method === 'cod' ? '#FF8C35' : '#333' }}>📦 Cash on Delivery</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: method === 'cod' ? '#FF8C35' : '#333' }}>&#x1F4E6; Cash on Delivery</div>
                 <div style={{ fontSize: 11, color: '#888', marginTop: 3 }}>Pune area only</div>
               </button>
             </div>
@@ -225,7 +232,7 @@ export default function PaymentPage() {
             )}
             {method === 'online' && (
               <div style={{ background: '#fff7ed', borderRadius: 8, border: '1px solid #ffd8a8', padding: '12px 14px', fontSize: 13, color: '#7c4a00', marginBottom: 16 }}>
-                <strong>Next:</strong> You will be taken to <strong>Razorpay</strong> to complete payment securely. Then enter your delivery address.
+                <strong>Next:</strong> You will be taken to <strong>Cashfree</strong> to complete payment securely. Then enter your delivery address.
               </div>
             )}
 
@@ -234,7 +241,7 @@ export default function PaymentPage() {
               disabled={loading}
               style={{ width: '100%', padding: '13px', background: loading ? '#ccc' : '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: "'DM Sans', sans-serif" }}
             >
-              {loading ? 'Opening payment…' : method === 'cod' ? 'Continue to Address →' : `Pay ₹${grandTotal.toLocaleString('en-IN')} →`}
+              {loading ? 'Opening payment...' : method === 'cod' ? 'Continue to Address' : `Pay ₹${grandTotal.toLocaleString('en-IN')}`}
             </button>
           </div>
 
