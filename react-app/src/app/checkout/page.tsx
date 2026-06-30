@@ -92,9 +92,9 @@ export default function CheckoutPage() {
 
   function handleProceed() {
     if (isLoggedIn) {
-      window.location.href = '/checkout/review';
+      window.location.href = '/checkout/order';
     } else {
-      window.location.href = '/login?redirect=/checkout/review';
+      window.location.href = '/login?redirect=/checkout/order';
     }
   }
 
