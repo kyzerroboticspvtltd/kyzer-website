@@ -83,7 +83,6 @@ export default function OrderPage() {
   const [activeAddr, setActiveAddr] = useState<Address | null>(null);
   const [editingAddr, setEditingAddr] = useState(false);
   const [form, setForm] = useState(emptyForm());
-  const [saveToProfile, setSaveToProfile] = useState(true);
   const [payMethod, setPayMethod] = useState<'online' | 'cod'>('online');
   const [userId, setUserId] = useState('');
   const [userName, setUserName] = useState('');
@@ -151,7 +150,7 @@ export default function OrderPage() {
       if (!form.state) { setError('State is required.'); return; }
       if (!/^\d{6}$/.test(form.pincode)) { setError('Pincode must be 6 digits.'); return; }
       addr = { ...form, id: 'addr-' + Date.now(), isDefault: false };
-      if (saveToProfile && userId) {
+      if (userId) {
         const updated = [...savedAddresses, addr];
         await supabase.from('customers').upsert({ id: userId, address: updated }, { onConflict: 'id' });
       }
@@ -382,20 +381,16 @@ export default function OrderPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#555', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={saveToProfile} onChange={e => setSaveToProfile(e.target.checked)} />
-                      Save to my profile
-                    </label>
-                    {savedAddresses.length > 0 && (
+                  {savedAddresses.length > 0 && (
+                    <div style={{ marginTop: 14 }}>
                       <button
                         onClick={() => { setEditingAddr(false); }}
                         style={{ background: 'none', border: 'none', color: '#FF8C35', fontSize: 13, cursor: 'pointer', padding: 0, fontWeight: 600 }}
                       >
                         ← Use saved address
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
