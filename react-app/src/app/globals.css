@@ -1234,13 +1234,13 @@
     .cursor, .cursor-ring { display: none; }
 
     /* ── Nav ── */
-    nav { padding: 0.6rem 1.25rem; min-height: 56px; gap: 0.5rem; }
+    nav { padding: 0.6rem 1.25rem; min-height: 56px; gap: 0.5rem; backdrop-filter: none; background: rgb(248,248,246); }
     .nav-logo-img { height: 44px; }
     .nav-links { display: none; }
     .nav-links.open {
       display: flex; flex-direction: column;
       position: fixed; inset: 0;
-      background: rgba(248,248,246,0.99);
+      background: rgb(248,248,246);
       padding: 72px 1.25rem 2rem;
       z-index: 998; overflow-y: auto;
       gap: 0;
