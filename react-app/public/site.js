@@ -580,102 +580,39 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       return;
     }
 
-    // ── Try Razorpay online payment ──
-    const rzpKeyId = window.__RZP_KEY__ || localStorage.getItem('kyzer_razorpay_key_id') || '';
+    // ── Cashfree online payment ──
+    try {
+      btn.textContent = 'Preparing payment…';
+      const createRes = await fetch('/api/create-cashfree-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cartItems: cart.map(i => ({ id: i.id, qty: i.qty || 1 })),
+          name, email, phone,
+          currency: 'INR',
+          receipt: orderId,
+        }),
+      });
+      const createData = await createRes.json();
+      if (!createData.ok) throw new Error(createData.error || 'Order creation failed');
 
-    if (!rzpKeyId || typeof Razorpay === 'undefined') {
-      // Auto-fallback: ask user to switch to COD
-      if (confirm('Online payment is not configured yet.\n\nSwitch to Cash on Delivery instead?')) {
-        selectPayMethod('cod');
-        btn.textContent = 'Place Order →';
-        btn.disabled = false;
-      } else {
-        btn.textContent = 'Place Order →';
-        btn.disabled = false;
-      }
-      return;
-    }
+      // Save orderData to localStorage — retrieved after Cashfree redirects back
+      localStorage.setItem('kyzer_pending_order', JSON.stringify({
+        ...orderData, cfOrderId: createData.order_id, type: 'shop',
+      }));
 
-    if (rzpKeyId && typeof Razorpay !== 'undefined') {
-      try {
-        // 1. Create Razorpay order
-        const createRes = await fetch('/api/create-razorpay-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cartItems: cart.map(i => ({ id: i.id, qty: i.qty || 1 })),
-            currency: 'INR',
-            receipt: orderId,
-            notes: { customer: name, email },
-          }),
-        });
-        const createData = await createRes.json();
-        if (!createData.ok) throw new Error(createData.error || 'Order creation failed');
-
-        // 2. Open Razorpay modal
-        btn.textContent = 'Pay now →';
-        btn.disabled = false;
-
-        const rzpOptions = {
-          key:         rzpKeyId,
-          amount:      createData.order.amount,
-          currency:    'INR',
-          name:        'Kyzer Robotics',
-          description: `Order ${orderId}`,
-          image:       'https://kyzerrobotics.com/logo.png',
-          order_id:    createData.order.id,
-          prefill: { name, email, contact: phone },
-          theme: { color: '#FF8C35' },
-          config: {
-            display: {
-              hide: [],
-              preferences: { show_default_blocks: true },
-            },
-          },
-          handler: async function (response) {
-            btn.textContent = 'Verifying…';
-            btn.disabled = true;
-            try {
-              // 3. Verify signature
-              const verRes = await fetch('/api/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  razorpay_order_id:   response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature:  response.razorpay_signature,
-                  orderData,
-                }),
-              });
-              const verData = await verRes.json();
-              if (!verData.ok) throw new Error(verData.error || 'Verification failed');
-
-              orderData.paymentId = response.razorpay_payment_id;
-              orderData.status    = 'paid';
-              _finaliseOrder(orderData, shippingFull, btn);
-            } catch (verErr) {
-              alert('Payment received but verification failed — please contact us with Payment ID: ' + response.razorpay_payment_id);
-              btn.textContent = 'Pay now →';
-              btn.disabled = false;
-            }
-          },
-          modal: {
-            ondismiss: function () {
-              btn.textContent = 'Pay now →';
-              btn.disabled = false;
-            },
-          },
-        };
-        const rzp = new Razorpay(rzpOptions);
-        rzp.open();
-        return;
-      } catch (err) {
-        console.error('Razorpay init error:', err);
-        btn.textContent = 'Place Order →';
-        btn.disabled = false;
-        alert('Payment failed to initialise. Please check your internet connection and try again.\n\nError: ' + err.message);
-        return;
-      }
+      await _loadCashfree();
+      const cashfree = Cashfree({ mode: 'production' });
+      cashfree.checkout({
+        paymentSessionId: createData.payment_session_id,
+        redirectTarget: '_self',
+      });
+      // Page will redirect — no further code runs here
+    } catch (err) {
+      console.error('Cashfree init error:', err);
+      btn.textContent = 'Place Order →';
+      btn.disabled = false;
+      alert('Payment failed to initialise. Please check your internet connection and try again.\n\nError: ' + err.message);
     }
   }
 
@@ -774,7 +711,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     doc.setFont('helvetica','normal').setFontSize(7).setTextColor('#111');
     doc.text('Invoice #: '+o.id, L+6, 165)
        .text('Date: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}), L+6, 175)
-       .text('Payment: '+(o.paymentId ? 'Online (Razorpay)' : (o.paymentMethod==='cod'?'Cash on Delivery':'Pending')), L+6, 185);
+       .text('Payment: '+(o.paymentId ? 'Online (Cashfree)' : (o.paymentMethod==='cod'?'Cash on Delivery':'Pending')), L+6, 185);
     if (o.paymentId) doc.text('Ref: '+o.paymentId, L+6, 195);
 
     doc.setFont('helvetica','bold').setFontSize(7.5).setTextColor('#333').text('Bill To', L+cw+6, 153);
@@ -1360,7 +1297,10 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     payBtn.textContent = 'Opening payment…';
     payBtn.disabled = true;
     try {
-      const res = await fetch('/api/create-razorpay-order', {
+      const name  = document.getElementById('qfName').value.trim();
+      const email = document.getElementById('qfEmail').value.trim();
+      const phone = document.getElementById('qfPhone').value.trim();
+      const res = await fetch('/api/create-cashfree-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1373,30 +1313,30 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
             qty: quoteState.qty, rush: quoteState.rush || false,
             delivery: quoteState.delivery,
           },
+          name, email, phone,
           currency: 'INR', receipt: 'PRINT-' + Date.now()
         })
       });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || 'Could not create order');
-      await _loadRazorpay();
-      const name  = document.getElementById('qfName').value.trim();
-      const email = document.getElementById('qfEmail').value.trim();
-      const phone = document.getElementById('qfPhone').value.trim();
-      const rzp = new window.Razorpay({
-        key: rzpKey, amount: json.order.amount, currency: json.order.currency,
-        name: 'Kyzer Robotics', description: '3D Print Order',
-        image: './logo.png', order_id: json.order.id,
-        prefill: { name, email, contact: phone },
-        theme: { color: '#FF8C35' },
-        handler: async (response) => { await _qcoVerifyPayment(response); },
+
+      // Save quote order data — retrieved after redirect
+      const qOrder = _buildQcoOrder('paid');
+      localStorage.setItem('kyzer_pending_order', JSON.stringify({
+        ...qOrder, cfOrderId: json.order_id, type: 'quote',
+        items: [{ name: `3D Print · ${qOrder.material} · ${qOrder.quality}`, qty: qOrder.quantity, price: json.amount }],
+        total: json.amount,
+        shippingFull: [qOrder.shipping?.addr1, qOrder.shipping?.city, qOrder.shipping?.state, qOrder.shipping?.pincode].filter(Boolean).join(', '),
+        email, name, phone,
+      }));
+
+      await _loadCashfree();
+      const cashfree = Cashfree({ mode: 'production' });
+      cashfree.checkout({
+        paymentSessionId: json.payment_session_id,
+        redirectTarget: '_self',
       });
-      rzp.on('payment.failed', () => {
-        payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
-        payBtn.disabled = false;
-      });
-      rzp.open();
-      payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
-      payBtn.disabled = false;
+      // Page will redirect
     } catch(e) {
       payBtn.textContent = '💳 Pay ' + document.getElementById('bTotal').textContent + ' Now →';
       payBtn.disabled = false;
@@ -1404,35 +1344,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     }
   }
 
-  async function _qcoVerifyPayment(rzpResp) {
-    const order = _buildQcoOrder('paid');
-    order.razorpayOrderId   = rzpResp.razorpay_order_id;
-    order.razorpayPaymentId = rzpResp.razorpay_payment_id;
-    const total = parseInt(document.getElementById('bTotal').textContent.replace(/[₹,\s]/g,'')) || 0;
-    try {
-      const res = await fetch('/api/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          razorpay_order_id:   rzpResp.razorpay_order_id,
-          razorpay_payment_id: rzpResp.razorpay_payment_id,
-          razorpay_signature:  rzpResp.razorpay_signature,
-          orderData: { ...order,
-            items: [{ name: `3D Print · ${order.material} · ${order.quality}`, qty: order.quantity, price: total }],
-            total, shippingFull: [order.shipping.addr1, order.shipping.city, order.shipping.state, order.shipping.pincode].filter(Boolean).join(', ')
-          }
-        })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        _saveQcoOrder(order);
-        _showQcoSuccess('✓ Payment successful! Order confirmed — check your email for confirmation.');
-      } else { throw new Error(data.error); }
-    } catch(e) {
-      _saveQcoOrder(order);
-      _showQcoSuccess('✓ Payment received (ref: ' + rzpResp.razorpay_payment_id + '). Order confirmed!');
-    }
-  }
 
   async function qcoSubmitWithoutPayment() {
     const btn = document.getElementById('qcoPayLaterBtn');
@@ -1504,11 +1415,11 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     if (l) l.style.display = 'none';
   }
 
-  function _loadRazorpay() {
+  function _loadCashfree() {
     return new Promise((resolve, reject) => {
-      if (window.Razorpay) { resolve(); return; }
+      if (window.Cashfree) { resolve(); return; }
       const s = document.createElement('script');
-      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
       s.onload = resolve; s.onerror = reject;
       document.head.appendChild(s);
     });
@@ -2363,9 +2274,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
   function loadCheckoutPayment() {
     renderCheckoutSummary();
-    // Default to online if Razorpay key available, else COD
-    const hasKey = !!(window.__RZP_KEY__ || localStorage.getItem('kyzer_razorpay_key_id'));
-    selectPayMethod(hasKey ? 'online' : 'cod');
+    selectPayMethod('online');
   }
 
   function selectPayMethod(mode) {
@@ -2385,7 +2294,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
       codBtn.style.borderColor = 'var(--border)';
       codBtn.style.color = 'var(--muted)';
       if (badges) badges.style.display = 'flex';
-      if (note) note.textContent = 'Card, UPI, Netbanking & Wallets — secured by Razorpay.';
+      if (note) note.textContent = 'Card, UPI, Netbanking & Wallets — secured by Cashfree.';
       if (submitBtn) submitBtn.textContent = 'Pay Online →';
     } else {
       codBtn.style.background = 'var(--orange)';
