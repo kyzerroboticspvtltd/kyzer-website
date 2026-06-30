@@ -60,14 +60,15 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Get payment ID from Cashfree
+    // Get successful payment ID from Cashfree
     let paymentId = order_id;
     try {
       const pmtRes = await fetch(`${CF_BASE}/orders/${order_id}/payments`, { headers: cfHeaders() });
       if (pmtRes.ok) {
         const pmts = await pmtRes.json();
-        if (Array.isArray(pmts) && pmts[0]?.cf_payment_id) {
-          paymentId = String(pmts[0].cf_payment_id);
+        if (Array.isArray(pmts)) {
+          const successPmt = pmts.find((p: Record<string, unknown>) => p.payment_status === 'SUCCESS') ?? pmts[0];
+          if (successPmt?.cf_payment_id) paymentId = String(successPmt.cf_payment_id);
         }
       }
     } catch { /* non-fatal */ }

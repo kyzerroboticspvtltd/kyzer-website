@@ -100,7 +100,8 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = `KYZER-${Date.now()}`;
-    const returnUrl = `https://kyzerrobotics.com/checkout/success?order_id=${orderId}`;
+    // {order_id} is a Cashfree template variable — replaced with the actual order ID on redirect
+    const returnUrl = 'https://kyzerrobotics.com/checkout/success?order_id={order_id}';
 
     const cfRes = await fetch(`${CF_BASE}/orders`, {
       method: 'POST',
