@@ -132,8 +132,18 @@ export default function OrderPage() {
   const delivery = subtotal >= 999 ? 0 : 99;
   const grandTotal = subtotal + delivery;
 
+  // Check if current pincode (saved addr or form) qualifies for COD
+  const currentPincode = editingAddr ? form.pincode : (activeAddr?.pincode || '');
+  const pinNum = parseInt(currentPincode, 10);
+  const codAvailable = currentPincode.length === 6 && pinNum >= 411001 && pinNum <= 411067;
+
   function field(key: keyof typeof form, val: string) {
     setForm(prev => ({ ...prev, [key]: val }));
+    // auto-switch away from COD if pincode becomes non-Pune
+    if (key === 'pincode' && val.length === 6) {
+      const p = parseInt(val, 10);
+      if (p < 411001 || p > 411067) setPayMethod('online');
+    }
   }
 
   async function handlePlaceOrder() {
@@ -433,13 +443,18 @@ export default function OrderPage() {
               </div>
 
               <div
-                onClick={() => setPayMethod('cod')}
-                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 8, border: `2px solid ${payMethod === 'cod' ? '#FF8C35' : '#e0e0e0'}`, background: payMethod === 'cod' ? '#fff8f3' : '#fafafa', cursor: 'pointer' }}
+                onClick={() => codAvailable && setPayMethod('cod')}
+                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 8, border: `2px solid ${payMethod === 'cod' ? '#FF8C35' : '#e0e0e0'}`, background: payMethod === 'cod' ? '#fff8f3' : (!codAvailable && currentPincode.length === 6 ? '#fff5f5' : '#fafafa'), cursor: codAvailable ? 'pointer' : 'not-allowed', opacity: (!codAvailable && currentPincode.length === 6) ? 0.7 : 1 }}
               >
                 <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${payMethod === 'cod' ? '#FF8C35' : '#ccc'}`, background: payMethod === 'cod' ? '#FF8C35' : 'transparent', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>Cash on Delivery</div>
-                  <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>Pune area only (pincode 411001–411067)</div>
+                  {currentPincode.length === 6 && !codAvailable
+                    ? <div style={{ fontSize: 12, color: '#c0392b', marginTop: 2 }}>Not available for pincode {currentPincode} — Pune only (411001–411067)</div>
+                    : currentPincode.length === 6 && codAvailable
+                    ? <div style={{ fontSize: 12, color: '#27ae60', marginTop: 2 }}>✓ Available for your pincode</div>
+                    : <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>Pune area only (pincode 411001–411067)</div>
+                  }
                 </div>
               </div>
             </div>
