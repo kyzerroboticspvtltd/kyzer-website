@@ -4,25 +4,21 @@ import { Redis } from '@upstash/redis';
 
 // ── Upstash Redis (production) ────────────────────────────────────────────────
 // Falls back to in-memory when env vars are absent (local dev).
-let upstash: Ratelimit | null = null;
+let redisClient: Redis | null = null;
 
-function getUpstash(): Ratelimit | null {
-  if (upstash) return upstash;
-  // Strip BOM character that may be prepended by some editors/env var tools
+function getRedis(): Redis | null {
+  if (redisClient) return redisClient;
+  // Strip BOM (﻿) that some env var tools prepend to values
   const url = process.env.UPSTASH_REDIS_REST_URL?.replace(/^﻿/, '').trim();
   const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
   if (!url || !token) return null;
   try {
-    upstash = new Ratelimit({
-      redis: new Redis({ url, token }),
-      limiter: Ratelimit.slidingWindow(1, '1 s'),
-      prefix: 'kyzer:rl',
-    });
+    redisClient = new Redis({ url, token });
   } catch (err) {
     console.error('Upstash init error, rate limiting will use in-memory fallback:', err);
     return null;
   }
-  return upstash;
+  return redisClient;
 }
 
 // ── In-memory fallback (dev / cold-start without Redis) ───────────────────────
@@ -55,15 +51,15 @@ export async function rateLimit(
   limit: number,
   windowMs: number,
 ): Promise<{ ok: boolean; retryAfterSecs: number }> {
-  const rl = getUpstash();
-  if (rl) {
+  const redis = getRedis();
+  if (redis) {
     try {
-      const perCallRl = new Ratelimit({
-        redis: (rl as unknown as { redis: Redis }).redis,
+      const rl = new Ratelimit({
+        redis,
         limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
         prefix: 'kyzer:rl',
       });
-      const { success, reset } = await perCallRl.limit(key);
+      const { success, reset } = await rl.limit(key);
       const retryAfterSecs = success ? 0 : Math.ceil((reset - Date.now()) / 1000);
       return { ok: success, retryAfterSecs };
     } catch (err) {
