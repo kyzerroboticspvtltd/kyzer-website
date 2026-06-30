@@ -1282,11 +1282,6 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
   }
 
   async function qcoPay() {
-    const rzpKey = window.__RZP_KEY__ || '';
-    if (!rzpKey) {
-      alert('Payment not configured yet. Use "Submit without payment" for now.');
-      return;
-    }
     const rawTotal = document.getElementById('bTotal').textContent.replace(/[₹,\s]/g, '');
     const amount   = parseInt(rawTotal);
     if (!amount || amount < 1) {
