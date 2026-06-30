@@ -1239,11 +1239,10 @@
     .nav-links { display: none; }
     .nav-links.open {
       display: flex; flex-direction: column;
-      position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
-      background: rgba(248,248,246,0.98);
-      backdrop-filter: blur(16px);
-      padding: 0.5rem 1.25rem 2rem;
-      z-index: 999; overflow-y: auto;
+      position: fixed; inset: 0;
+      background: rgba(248,248,246,0.99);
+      padding: 72px 1.25rem 2rem;
+      z-index: 998; overflow-y: auto;
       gap: 0;
     }
     .nav-links.open a {
