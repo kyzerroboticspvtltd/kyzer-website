@@ -39,7 +39,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['razorpay', 'nodemailer', 'jsonwebtoken'],
+  serverExternalPackages: ['razorpay', 'nodemailer', 'jsonwebtoken', 'pdfkit'],
+  outputFileTracingIncludes: {
+    '/api/order-notify': ['./node_modules/pdfkit/js/data/**/*'],
+  },
   async headers() {
     return [
       {

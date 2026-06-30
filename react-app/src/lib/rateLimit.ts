@@ -8,8 +8,9 @@ let upstash: Ratelimit | null = null;
 
 function getUpstash(): Ratelimit | null {
   if (upstash) return upstash;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  // Strip BOM character that may be prepended by some editors/env var tools
+  const url = process.env.UPSTASH_REDIS_REST_URL?.replace(/^﻿/, '').trim();
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
   if (!url || !token) return null;
   try {
     upstash = new Ratelimit({
