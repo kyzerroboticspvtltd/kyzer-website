@@ -1712,7 +1712,7 @@ window.GOOGLE_CLIENT_ID = '957884556895-vr9saiqht9n2djo77j5hp8auk61cj7cd.apps.go
     const txt = (id) => { const el = document.getElementById(id); return el ? el.textContent : '—'; };
     document.getElementById('cs-material').textContent  = quoteState.matName || '—';
     document.getElementById('cs-quality').textContent   = quoteState.qualName || '—';
-    document.getElementById('cs-infill').textContent    = txt('infillVal') + '%';
+    document.getElementById('cs-infill').textContent    = txt('infillVal');
     document.getElementById('cs-colour').textContent    = quoteState.colorName || '—';
     document.getElementById('cs-qty').textContent       = quoteState.qty;
     document.getElementById('cs-delivery').textContent  = del;
