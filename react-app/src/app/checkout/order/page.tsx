@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import ShopHeader from '@/components/ShopHeader';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap';
@@ -259,26 +260,7 @@ export default function OrderPage() {
       <link href={FONT_URL} rel="stylesheet" />
       <div style={{ minHeight: '100vh', background: '#f5f5f5', fontFamily: "'DM Sans', sans-serif" }}>
 
-        {/* Nav */}
-        <nav style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 32px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <a href="/" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
-            KYZER <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.18em', color: '#111', verticalAlign: 'middle' }}>ROBOTICS</span>
-          </a>
-          <div style={{ fontSize: 13, color: '#888' }}>
-            Welcome, <strong style={{ color: '#222' }}>{userName}</strong>
-          </div>
-        </nav>
-
-        {/* Breadcrumb */}
-        <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '10px 32px' }}>
-          <span style={{ fontSize: 13, color: '#888' }}>
-            <a href="/" style={{ color: '#FF8C35', textDecoration: 'none' }}>Home</a>
-            {' → '}
-            <a href="/checkout" style={{ color: '#FF8C35', textDecoration: 'none' }}>Cart</a>
-            {' → '}
-            <span style={{ color: '#444', fontWeight: 500 }}>Checkout</span>
-          </span>
-        </div>
+        <ShopHeader cartCount={cart.reduce((s, i) => s + i.qty, 0)} cartSubtotal={subtotal} />
 
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px 20px', display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
 

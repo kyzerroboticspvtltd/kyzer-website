@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ShopHeader from '@/components/ShopHeader';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
@@ -103,14 +104,8 @@ export default function CheckoutPage() {
   return (
     <>
       <link href={FONT_URL} rel="stylesheet" />
-      <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', sans-serif" }}>
-        {/* Nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: 90, borderBottom: '0.5px solid rgba(0,0,0,0.09)', background: '#f8f8f6' }}>
-          <a href="/" className="logo-anim" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#FF8C35', textDecoration: 'none', letterSpacing: '0.03em' }}>
-            KYZER <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', verticalAlign: 'middle', color: '#111' }}>ROBOTICS</span>
-          </a>
-          <a href="/" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>← Continue Shopping</a>
-        </nav>
+      <div style={{ minHeight: '100vh', background: '#f5f5f5', fontFamily: "'DM Sans', sans-serif" }}>
+        <ShopHeader cartCount={cart.reduce((s, i) => s + i.qty, 0)} cartSubtotal={cart.reduce((s, i) => s + (parseFloat(String(i.price).replace(/[^0-9.]/g, '')) || 0) * i.qty, 0)} />
 
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px' }}>
           <StepBar current={0} />
