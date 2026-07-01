@@ -20,7 +20,7 @@ function parsePrice(p: string | number): number {
   return parseFloat(String(p).replace(/[^0-9.]/g, '')) || 0;
 }
 
-const STEPS = ['Cart', 'Review', 'Payment', 'Address'];
+const STEPS = ['Cart', 'Checkout'];
 
 function StepBar({ current }: { current: number }) {
   return (

@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Order &amp; payment information</strong> — items purchased, order value, and payment status. Card and
-          UPI details are processed directly by our payment gateway (Razorpay) and are <strong>never stored on our
+          UPI details are processed directly by our payment gateway (Cashfree) and are <strong>never stored on our
           servers</strong>.
         </li>
         <li>
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
         providers needed to run our business:
       </p>
       <ul>
-        <li><strong>Razorpay</strong> — payment processing.</li>
+        <li><strong>Cashfree</strong> — payment processing.</li>
         <li><strong>Courier &amp; logistics partners</strong> — to deliver your order.</li>
         <li><strong>Email &amp; database providers</strong> (e.g. Google, Supabase) — to send notifications and store order records securely.</li>
       </ul>

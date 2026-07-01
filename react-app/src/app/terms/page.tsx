@@ -47,7 +47,7 @@ export default function TermsPage() {
 
       <h2>4. Pricing &amp; Payment</h2>
       <ul>
-        <li>Payments are processed securely through <strong>Razorpay</strong>. We also offer Cash on Delivery (COD) where available.</li>
+        <li>Payments are processed securely through <strong>Cashfree</strong>. We also offer Cash on Delivery (COD) where available.</li>
         <li>We do not store your card, UPI, or banking details.</li>
         <li>Your order is confirmed only after successful payment (or COD confirmation).</li>
       </ul>

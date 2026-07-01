@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react'
 const LINKS = [
   { label: 'Supabase Dashboard', url: 'https://supabase.com/dashboard', desc: 'Database, Auth, Storage' },
   { label: 'Vercel Dashboard', url: 'https://vercel.com/kyzer1/kyzer-website', desc: 'Deployments, env vars, logs' },
-  { label: 'Razorpay Dashboard', url: 'https://dashboard.razorpay.com', desc: 'Payments, refunds, settlements' },
+  { label: 'Cashfree Dashboard', url: 'https://merchant.cashfree.com', desc: 'Payments, refunds, settlements' },
   { label: 'Upstash Console', url: 'https://console.upstash.com', desc: 'Redis rate limiting' },
   { label: 'Firebase Console', url: 'https://console.firebase.google.com', desc: 'Auth users, phone OTP' },
   { label: 'Resend Dashboard', url: 'https://resend.com', desc: 'Email logs, API keys' },

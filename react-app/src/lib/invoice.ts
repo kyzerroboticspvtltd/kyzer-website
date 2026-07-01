@@ -268,7 +268,7 @@ export function shopOrderToInvoice(o: Record<string, unknown>, paid: boolean): I
     },
     items,
     total,
-    paymentMethod: paid ? 'Online (Razorpay)' : 'Cash on Delivery',
+    paymentMethod: paid ? 'Online (Cashfree)' : 'Cash on Delivery',
     paymentId:     String(o.paymentId || ''),
     isProforma:    !paid,
   };

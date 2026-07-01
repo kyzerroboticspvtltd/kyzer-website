@@ -48,7 +48,7 @@ export default function PricingPage() {
 
       <h2>Payment Methods</h2>
       <ul>
-        <li>Online payments — UPI, debit/credit cards, net banking, and wallets — are processed securely via <strong>Razorpay</strong>.</li>
+        <li>Online payments — UPI, debit/credit cards, net banking, and wallets — are processed securely via <strong>Cashfree</strong>.</li>
         <li>Cash on Delivery (COD) may be available on eligible orders and can carry a small handling fee.</li>
         <li>We do not store your card or UPI details on our servers.</li>
       </ul>

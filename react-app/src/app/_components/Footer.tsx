@@ -8,7 +8,7 @@ export default function Footer() {
       <div style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', padding: '20px 24px' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '12px 32px', alignItems: 'center', justifyContent: 'center' }}>
           {[
-            { icon: '🔒', label: 'Secure Payments', sub: 'Razorpay' },
+            { icon: '🔒', label: 'Secure Payments', sub: 'Cashfree' },
             { icon: '🚚', label: 'Pan-India Shipping', sub: 'Blue Dart · Delhivery' },
             { icon: '⚡', label: '48hr Turnaround', sub: 'Pune workshop' },
             { icon: '✅', label: 'Genuine Parts', sub: '100% authentic' },
@@ -170,7 +170,7 @@ export default function Footer() {
             {['UPI', 'VISA', 'Mastercard', 'RuPay'].map(m => (
               <span key={m} style={{ fontSize: 10, fontWeight: 700, color: '#888', background: '#fff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 4, padding: '3px 7px' }}>{m}</span>
             ))}
-            <span style={{ fontSize: 10, fontWeight: 700, color: '#FF8C35', background: '#fff', border: '1px solid rgba(255,140,53,0.3)', borderRadius: 4, padding: '3px 7px' }}>🔒 Razorpay</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#FF8C35', background: '#fff', border: '1px solid rgba(255,140,53,0.3)', borderRadius: 4, padding: '3px 7px' }}>🔒 Cashfree</span>
           </div>
         </div>
       </div>

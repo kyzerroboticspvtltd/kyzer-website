@@ -1181,7 +1181,7 @@ const PAGE_HTML = `<div id="mainSite">
             ✓ Order placed!
           </div>
           <span class="qco-back-link" onclick="qcoGoStep(2)">← Back to review</span>
-          <div class="qv2-note" style="margin-top:14px;">Payments secured by Razorpay · Or email <a href="mailto:info@kyzerrobotics.com" style="color:#FF8C35;">info@kyzerrobotics.com</a></div>
+          <div class="qv2-note" style="margin-top:14px;">Payments secured by Cashfree · Or email <a href="mailto:info@kyzerrobotics.com" style="color:#FF8C35;">info@kyzerrobotics.com</a></div>
         </div>
 
       </div>
@@ -1388,10 +1388,10 @@ const PAGE_HTML = `<div id="mainSite">
                 📦 Cash on Delivery
               </button>
             </div>
-            <div id="payMethodNote" style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Card, UPI, Netbanking &amp; Wallets — secured by Razorpay.</div>
+            <div id="payMethodNote" style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Card, UPI, Netbanking &amp; Wallets — secured by Cashfree.</div>
           </div>
           <div id="payOnlineBadges" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-            <div class="trust-badge"><span>🔒</span> Secured by Razorpay</div>
+            <div class="trust-badge"><span>🔒</span> Secured by Cashfree</div>
             <div class="trust-badge"><span>💳</span> Card / UPI</div>
             <div class="trust-badge"><span>🏦</span> Netbanking</div>
             <div class="trust-badge"><span>👛</span> Wallets</div>
@@ -1473,7 +1473,7 @@ const PAGE_HTML = `<div id="mainSite">
         <li>Name, email address, and phone number</li>
         <li>Shipping address and delivery instructions</li>
         <li>Project files (STL, OBJ, or similar) submitted for 3D print quotes</li>
-        <li>Payment confirmation details (we do not store card numbers — payments are processed by Razorpay)</li>
+        <li>Payment confirmation details (we do not store card numbers — payments are processed by Cashfree)</li>
       </ul>
 
       <h4 style="margin:18px 0 6px;font-size:14px;">How we use your information</h4>
@@ -1550,10 +1550,8 @@ const PAGE_HTML = `<div id="mainSite">
 `;
 
 export default function HomePage() {
-  const rzpKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '';
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: `window.__RZP_KEY__=${JSON.stringify(rzpKey)};` }} />
       <script type="importmap" dangerouslySetInnerHTML={{ __html: '{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"}}' }} />
       <script type="module" dangerouslySetInnerHTML={{ __html: `
 import * as THREE from 'three';
@@ -1565,7 +1563,6 @@ window._STLLoader = STLLoader;
 window._OBJLoader = OBJLoader;
 window._OrbitControls = OrbitControls;
 ` }} />
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="afterInteractive" />
       <div dangerouslySetInnerHTML={{ __html: PAGE_HTML }} />
       <Script src="/site.js" strategy="afterInteractive" />
