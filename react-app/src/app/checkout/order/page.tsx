@@ -205,7 +205,10 @@ export default function OrderPage() {
         }));
 
         await loadCashfree();
-        window.Cashfree({ mode: 'production' }).checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+        const cfMode = data.mode || 'production';
+        const cf = window.Cashfree({ mode: cfMode });
+        const result = await cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+        if (result?.error) throw new Error(result.error.message || 'Payment checkout failed');
       } else {
         // COD
         const orderId = 'SHOP-' + Date.now();

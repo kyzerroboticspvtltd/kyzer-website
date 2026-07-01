@@ -101,8 +101,10 @@ export default function ReviewPage() {
       }));
 
       await loadCashfree();
-      const cf = window.Cashfree({ mode: 'production' });
-      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      const cfMode = data.mode || 'production';
+      const cf = window.Cashfree({ mode: cfMode });
+      const result = await cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      if (result?.error) throw new Error(result.error.message || 'Payment checkout failed');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Could not initiate payment. Please try again.');
       setLoading(false);
