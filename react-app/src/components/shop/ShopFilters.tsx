@@ -16,6 +16,11 @@ interface ShopFiltersProps {
   sort: string
   onSortChange: (val: string) => void
   totalCount: number
+  maxPrice?: number
+  priceRange?: [number, number]
+  onPriceRangeChange?: (r: [number, number]) => void
+  inStockOnly?: boolean
+  onInStockChange?: (v: boolean) => void
 }
 
 const SORT_OPTIONS = [
@@ -25,23 +30,56 @@ const SORT_OPTIONS = [
   { value: 'name-asc', label: 'Name: A–Z' },
 ]
 
-function FilterPanel({ subcategories, activeSubcat, onSubcatChange }: Pick<ShopFiltersProps, 'subcategories' | 'activeSubcat' | 'onSubcatChange'>) {
+function FilterPanel({ subcategories, activeSubcat, onSubcatChange, maxPrice, priceRange, onPriceRangeChange, inStockOnly, onInStockChange }: Pick<ShopFiltersProps, 'subcategories' | 'activeSubcat' | 'onSubcatChange' | 'maxPrice' | 'priceRange' | 'onPriceRangeChange' | 'inStockOnly' | 'onInStockChange'>) {
   return (
-    <div className="space-y-2">
-      <p className="text-[11px] font-mono text-gray-400 tracking-widest uppercase mb-3">Category</p>
-      {[{ id: 'all', name: 'All', slug: 'all' }, ...subcategories].map(sub => (
-        <button
-          key={sub.slug}
-          onClick={() => onSubcatChange(sub.slug)}
-          className={`w-full text-left px-3 py-2 rounded-xl text-[13px] transition-all ${
-            activeSubcat === sub.slug
-              ? 'bg-[#FF8C35] text-white font-semibold'
-              : 'text-gray-600 hover:bg-[#f4f4f2] hover:text-[#111]'
-          }`}
-        >
-          {sub.name}
-        </button>
-      ))}
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <p className="text-[11px] font-mono text-gray-400 tracking-widest uppercase">Category</p>
+        {[{ id: 'all', name: 'All', slug: 'all' }, ...subcategories].map(sub => (
+          <button
+            key={sub.slug}
+            onClick={() => onSubcatChange(sub.slug)}
+            className={`w-full text-left px-3 py-2 rounded-xl text-[13px] transition-all ${
+              activeSubcat === sub.slug
+                ? 'bg-[#FF8C35] text-white font-semibold'
+                : 'text-gray-600 hover:bg-[#f4f4f2] hover:text-[#111]'
+            }`}
+          >
+            {sub.name}
+          </button>
+        ))}
+      </div>
+
+      {onInStockChange && (
+        <div>
+          <p className="text-[11px] font-mono text-gray-400 tracking-widest uppercase mb-2">Availability</p>
+          <label className="flex items-center gap-2 cursor-pointer text-[13px] text-gray-600 hover:text-[#111]">
+            <input type="checkbox" checked={inStockOnly} onChange={e => onInStockChange(e.target.checked)} className="accent-[#FF8C35] w-4 h-4" />
+            In Stock Only
+          </label>
+        </div>
+      )}
+
+      {onPriceRangeChange && maxPrice && maxPrice > 0 && (
+        <div>
+          <p className="text-[11px] font-mono text-gray-400 tracking-widest uppercase mb-2">Price Range</p>
+          <div className="space-y-2">
+            <input
+              type="range"
+              min={0}
+              max={maxPrice}
+              step={100}
+              value={priceRange?.[1] ?? maxPrice}
+              onChange={e => onPriceRangeChange([priceRange?.[0] ?? 0, Number(e.target.value)])}
+              className="w-full accent-[#FF8C35]"
+            />
+            <div className="flex justify-between text-[12px] text-gray-400">
+              <span>₹0</span>
+              <span className="text-[#FF8C35] font-semibold">Up to ₹{(priceRange?.[1] ?? maxPrice).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -55,6 +93,11 @@ export function ShopFilters({
   sort,
   onSortChange,
   totalCount,
+  maxPrice,
+  priceRange,
+  onPriceRangeChange,
+  inStockOnly,
+  onInStockChange,
 }: ShopFiltersProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -100,7 +143,7 @@ export function ShopFilters({
               <SheetTitle className="font-mono text-[13px] tracking-widest text-[#FF8C35] uppercase">Filters</SheetTitle>
             </SheetHeader>
             <div className="mt-6">
-              <FilterPanel subcategories={subcategories} activeSubcat={activeSubcat} onSubcatChange={(slug) => { onSubcatChange(slug); setMobileOpen(false) }} />
+              <FilterPanel subcategories={subcategories} activeSubcat={activeSubcat} onSubcatChange={(slug) => { onSubcatChange(slug); setMobileOpen(false) }} maxPrice={maxPrice} priceRange={priceRange} onPriceRangeChange={onPriceRangeChange} inStockOnly={inStockOnly} onInStockChange={onInStockChange} />
             </div>
           </SheetContent>
         </Sheet>
@@ -115,11 +158,11 @@ export function ShopFilters({
   )
 }
 
-export function FilterSidebar({ subcategories, activeSubcat, onSubcatChange }: Pick<ShopFiltersProps, 'subcategories' | 'activeSubcat' | 'onSubcatChange'>) {
+export function FilterSidebar({ subcategories, activeSubcat, onSubcatChange, maxPrice, priceRange, onPriceRangeChange, inStockOnly, onInStockChange }: Pick<ShopFiltersProps, 'subcategories' | 'activeSubcat' | 'onSubcatChange' | 'maxPrice' | 'priceRange' | 'onPriceRangeChange' | 'inStockOnly' | 'onInStockChange'>) {
   return (
     <aside className="hidden lg:block w-52 shrink-0">
       <div className="sticky top-28">
-        <FilterPanel subcategories={subcategories} activeSubcat={activeSubcat} onSubcatChange={onSubcatChange} />
+        <FilterPanel subcategories={subcategories} activeSubcat={activeSubcat} onSubcatChange={onSubcatChange} maxPrice={maxPrice} priceRange={priceRange} onPriceRangeChange={onPriceRangeChange} inStockOnly={inStockOnly} onInStockChange={onInStockChange} />
       </div>
     </aside>
   )

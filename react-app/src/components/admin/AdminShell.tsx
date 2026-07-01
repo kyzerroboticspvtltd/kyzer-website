@@ -10,13 +10,14 @@ import { AdminCustomers } from './tabs/AdminCustomers'
 import { AdminProducts } from './tabs/AdminProducts'
 import { AdminTickets } from './tabs/AdminTickets'
 import { AdminSettings } from './tabs/AdminSettings'
+import AdminReviews from './tabs/AdminReviews'
 import {
   LayoutDashboard, ShoppingBag, Printer, MessageSquare,
   Users, Package, Ticket, Settings, LogOut, Menu, X,
-  ChevronRight,
+  ChevronRight, Star,
 } from 'lucide-react'
 
-type Tab = 'dashboard' | 'shoporders' | 'orders' | 'quotes' | 'customers' | 'products' | 'tickets' | 'settings'
+type Tab = 'dashboard' | 'shoporders' | 'orders' | 'quotes' | 'customers' | 'products' | 'tickets' | 'reviews' | 'settings'
 
 interface NavItem {
   id: Tab
@@ -34,6 +35,7 @@ const NAV: NavItem[] = [
   { id: 'customers',  label: 'Customers',       icon: <Users className="w-4 h-4" /> },
   { id: 'products',   label: 'Products',        icon: <Package className="w-4 h-4" />,         section: 'CATALOG' },
   { id: 'tickets',    label: 'Support Tickets', icon: <Ticket className="w-4 h-4" />,          section: 'SUPPORT' },
+  { id: 'reviews',    label: 'Reviews',         icon: <Star className="w-4 h-4" /> },
   { id: 'settings',   label: 'Settings',        icon: <Settings className="w-4 h-4" />,        section: 'SYSTEM' },
 ]
 
@@ -133,6 +135,7 @@ export function AdminShell({ token, onLogout }: { token: string; onLogout: () =>
           {tab === 'customers'  && <AdminCustomers token={token} />}
           {tab === 'products'   && <AdminProducts />}
           {tab === 'tickets'    && <AdminTickets token={token} />}
+          {tab === 'reviews'    && <AdminReviews token={token} />}
           {tab === 'settings'   && <AdminSettings />}
         </div>
       </main>

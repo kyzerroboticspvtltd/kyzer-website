@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { type Product, CATEGORIES } from '@/data/products'
 import Link from 'next/link'
 import { ShoppingCart, Zap, ChevronRight, Check, Star, Share2, Heart, ArrowLeft } from 'lucide-react'
@@ -23,12 +23,91 @@ function addToCart(product: { id: string; name: string; price: number; emoji: st
   } catch { return false }
 }
 
+interface Review { id: string; name: string; rating: number; review: string; created_at: string }
+
+function StarRow({ rating, interactive, onRate }: { rating: number; interactive?: boolean; onRate?: (r: number) => void }) {
+  const [hovered, setHovered] = useState(0)
+  return (
+    <div style={{ display: 'flex', gap: 2 }}>
+      {[1,2,3,4,5].map(i => (
+        <Star
+          key={i}
+          size={interactive ? 22 : 14}
+          fill={(hovered || rating) >= i ? '#FF8C35' : 'none'}
+          stroke="#FF8C35"
+          style={{ cursor: interactive ? 'pointer' : 'default', transition: 'transform 0.1s', transform: interactive && hovered === i ? 'scale(1.2)' : 'none' }}
+          onMouseEnter={() => interactive && setHovered(i)}
+          onMouseLeave={() => interactive && setHovered(0)}
+          onClick={() => interactive && onRate?.(i)}
+        />
+      ))}
+    </div>
+  )
+}
+
 export default function ProductPageClient({ product, related }: { product: Product; related: Product[] }) {
   const category = CATEGORIES.find(c => c.id === product.category)
 
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const [wishlisted, setWishlisted] = useState(false)
+  const [wishlistLoading, setWishlistLoading] = useState(false)
+
+  // Reviews
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [reviewsLoaded, setReviewsLoaded] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewRating, setReviewRating] = useState(0)
+  const [reviewText, setReviewText] = useState('')
+  const [reviewName, setReviewName] = useState('')
+  const [reviewEmail, setReviewEmail] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [reviewSuccess, setReviewSuccess] = useState(false)
+
+  const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0
+
+  useEffect(() => {
+    // Load wishlist state
+    const token = localStorage.getItem('kyzer_auth_token')
+    if (token) {
+      fetch('/api/wishlist', { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(d => { if (d.items?.includes(product.id)) setWishlisted(true) })
+        .catch(() => {})
+    }
+    // Load reviews
+    fetch(`/api/reviews?product_id=${encodeURIComponent(product.id)}`)
+      .then(r => r.json())
+      .then(d => { setReviews(d.reviews || []); setReviewsLoaded(true) })
+      .catch(() => setReviewsLoaded(true))
+    // Pre-fill name/email from saved customer
+    try {
+      const c = JSON.parse(localStorage.getItem('kyzer_current_customer') || '{}')
+      if (c.name) setReviewName(c.name)
+      if (c.email) setReviewEmail(c.email)
+    } catch {}
+  }, [product.id])
+
+  async function toggleWishlist() {
+    const token = localStorage.getItem('kyzer_auth_token')
+    if (!token) { window.location.href = `/login?redirect=/shop/product/${product.slug}`; return }
+    setWishlistLoading(true)
+    try {
+      const r = await fetch('/api/wishlist', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: product.id }) })
+      const d = await r.json()
+      if (d.ok) setWishlisted(d.action === 'added')
+    } catch {} finally { setWishlistLoading(false) }
+  }
+
+  async function submitReview() {
+    if (!reviewRating || !reviewName.trim() || !reviewEmail.trim()) return
+    setReviewSubmitting(true)
+    try {
+      const r = await fetch('/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: product.id, name: reviewName.trim(), email: reviewEmail.trim(), rating: reviewRating, review: reviewText.trim() }) })
+      const d = await r.json()
+      if (d.ok) { setReviewSuccess(true); setShowReviewForm(false) }
+    } catch {} finally { setReviewSubmitting(false) }
+  }
 
   const priceDisplay = product.price > 0
     ? `₹${product.price.toLocaleString('en-IN')}`
@@ -54,17 +133,12 @@ export default function ProductPageClient({ product, related }: { product: Produ
   }
 
   function handleBuyNow() {
-    if (product.price === 0) {
-      handleAddToCart()
-      return
-    }
+    if (product.price === 0) { handleAddToCart(); return }
     for (let i = 0; i < qty; i++) addToCart(product)
     window.location.href = '/checkout'
   }
 
-  const badgeColor: Record<string, string> = {
-    HOT: '#FF8C35', NEW: '#2ecc71', SALE: '#e74c3c', LIMITED: '#9b59b6'
-  }
+  const badgeColor: Record<string, string> = { HOT: '#FF8C35', NEW: '#2ecc71', SALE: '#e74c3c', LIMITED: '#9b59b6' }
 
   return (
     <>
@@ -86,7 +160,6 @@ export default function ProductPageClient({ product, related }: { product: Produ
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 16px' }}>
 
-          {/* Back */}
           <Link href={`/shop/${product.category}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#666', textDecoration: 'none', marginBottom: 24 }}>
             <ArrowLeft size={14} /> Back to {category?.name}
           </Link>
@@ -96,89 +169,55 @@ export default function ProductPageClient({ product, related }: { product: Produ
 
             {/* Left: image */}
             <div>
-              <div style={{
-                background: '#fff', borderRadius: 20, border: '1px solid rgba(0,0,0,0.08)',
-                aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 120, position: 'relative', overflow: 'hidden',
-              }}>
+              <div style={{ background: '#fff', borderRadius: 20, border: '1px solid rgba(0,0,0,0.08)', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120, position: 'relative', overflow: 'hidden' }}>
                 {product.image
                   ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <span>{product.emoji}</span>
-                }
+                  : <span>{product.emoji}</span>}
                 {product.badge && (
-                  <div style={{
-                    position: 'absolute', top: 16, left: 16,
-                    background: badgeColor[product.badge] || '#FF8C35',
-                    color: '#fff', fontSize: 11, fontWeight: 700,
-                    padding: '4px 10px', borderRadius: 6, letterSpacing: '0.05em',
-                  }}>
+                  <div style={{ position: 'absolute', top: 16, left: 16, background: badgeColor[product.badge] || '#FF8C35', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 6 }}>
                     {product.badge}
                   </div>
                 )}
                 {!product.inStock && (
-                  <div style={{
-                    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#fff', fontSize: 18, fontWeight: 700, letterSpacing: '0.1em',
-                  }}>
-                    OUT OF STOCK
-                  </div>
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18, fontWeight: 700 }}>OUT OF STOCK</div>
                 )}
               </div>
 
-              {/* Share / Wishlist */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
                 <button
-                  onClick={() => { setWishlisted(!wishlisted) }}
-                  style={{
-                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    padding: '10px', borderRadius: 10, border: `1px solid ${wishlisted ? '#FF8C35' : 'rgba(0,0,0,0.1)'}`,
-                    background: wishlisted ? '#fff7f0' : '#fff', cursor: 'pointer', fontSize: 13,
-                    color: wishlisted ? '#FF8C35' : '#555', fontWeight: 500,
-                  }}
+                  onClick={toggleWishlist}
+                  disabled={wishlistLoading}
+                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', borderRadius: 10, border: `1px solid ${wishlisted ? '#FF8C35' : 'rgba(0,0,0,0.1)'}`, background: wishlisted ? '#fff7f0' : '#fff', cursor: 'pointer', fontSize: 13, color: wishlisted ? '#FF8C35' : '#555', fontWeight: 500, opacity: wishlistLoading ? 0.6 : 1 }}
                 >
                   <Heart size={15} fill={wishlisted ? '#FF8C35' : 'none'} stroke={wishlisted ? '#FF8C35' : '#555'} />
                   {wishlisted ? 'Saved' : 'Wishlist'}
                 </button>
                 <button
                   onClick={() => { navigator.share?.({ title: product.name, url: window.location.href }) || navigator.clipboard.writeText(window.location.href) }}
-                  style={{
-                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    padding: '10px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.1)',
-                    background: '#fff', cursor: 'pointer', fontSize: 13, color: '#555', fontWeight: 500,
-                  }}
+                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.1)', background: '#fff', cursor: 'pointer', fontSize: 13, color: '#555', fontWeight: 500 }}
                 >
-                  <Share2 size={15} />
-                  Share
+                  <Share2 size={15} /> Share
                 </button>
               </div>
             </div>
 
             {/* Right: details */}
             <div>
-              {/* Category pill */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <span style={{ fontSize: 12, background: '#f0f0ed', color: '#666', padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>
-                  {category?.emoji} {category?.name}
-                </span>
+                <span style={{ fontSize: 12, background: '#f0f0ed', color: '#666', padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>{category?.emoji} {category?.name}</span>
                 {product.inStock
                   ? <span style={{ fontSize: 12, color: '#2ecc71', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}><Check size={12} /> In Stock</span>
-                  : <span style={{ fontSize: 12, color: '#e74c3c', fontWeight: 600 }}>Out of Stock</span>
-                }
+                  : <span style={{ fontSize: 12, color: '#e74c3c', fontWeight: 600 }}>Out of Stock</span>}
               </div>
 
-              <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, color: '#111', margin: '0 0 12px', lineHeight: 1.1, letterSpacing: '0.02em' }}>
-                {product.name}
-              </h1>
+              <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, color: '#111', margin: '0 0 12px', lineHeight: 1.1, letterSpacing: '0.02em' }}>{product.name}</h1>
 
-              {/* Rating placeholder */}
+              {/* Live rating */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <div style={{ display: 'flex', gap: 2 }}>
-                  {[1,2,3,4,5].map(i => (
-                    <Star key={i} size={14} fill={i <= 4 ? '#FF8C35' : 'none'} stroke="#FF8C35" />
-                  ))}
-                </div>
-                <span style={{ fontSize: 13, color: '#888' }}>4.0 · Be the first to review</span>
+                <StarRow rating={Math.round(avgRating)} />
+                <span style={{ fontSize: 13, color: '#888' }}>
+                  {reviews.length > 0 ? `${avgRating.toFixed(1)} · ${reviews.length} review${reviews.length !== 1 ? 's' : ''}` : 'No reviews yet'}
+                </span>
               </div>
 
               <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: 24 }}>{product.shortDesc}</p>
@@ -186,21 +225,11 @@ export default function ProductPageClient({ product, related }: { product: Produ
               {/* Price */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 44, color: product.price > 0 ? '#111' : '#FF8C35', letterSpacing: '0.02em' }}>
-                    {priceDisplay}
-                  </span>
-                  {originalDisplay && (
-                    <span style={{ fontSize: 18, color: '#aaa', textDecoration: 'line-through' }}>{originalDisplay}</span>
-                  )}
-                  {discount && (
-                    <span style={{ fontSize: 13, background: '#e8f8ef', color: '#2ecc71', padding: '3px 8px', borderRadius: 6, fontWeight: 700 }}>
-                      {discount}% OFF
-                    </span>
-                  )}
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 44, color: product.price > 0 ? '#111' : '#FF8C35', letterSpacing: '0.02em' }}>{priceDisplay}</span>
+                  {originalDisplay && <span style={{ fontSize: 18, color: '#aaa', textDecoration: 'line-through' }}>{originalDisplay}</span>}
+                  {discount && <span style={{ fontSize: 13, background: '#e8f8ef', color: '#2ecc71', padding: '3px 8px', borderRadius: 6, fontWeight: 700 }}>{discount}% OFF</span>}
                 </div>
-                {product.price > 0 && (
-                  <p style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>Inclusive of all taxes · Free shipping above ₹999</p>
-                )}
+                {product.price > 0 && <p style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>Inclusive of all taxes · Free shipping above ₹999</p>}
               </div>
 
               {/* Quantity */}
@@ -219,45 +248,15 @@ export default function ProductPageClient({ product, related }: { product: Produ
               <div style={{ display: 'flex', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
                 {product.inStock || product.price === 0 ? (
                   <>
-                    <button
-                      onClick={handleAddToCart}
-                      style={{
-                        flex: 1, minWidth: 140, padding: '14px 20px', borderRadius: 12,
-                        border: '2px solid #111', background: added ? '#111' : '#fff',
-                        color: added ? '#FF8C35' : '#111', fontSize: 14, fontWeight: 700,
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      {product.price === 0
-                        ? <><Zap size={16} /> WhatsApp Enquiry</>
-                        : added
-                          ? <><Check size={16} /> Added!</>
-                          : <><ShoppingCart size={16} /> Add to Cart</>
-                      }
+                    <button onClick={handleAddToCart} style={{ flex: 1, minWidth: 140, padding: '14px 20px', borderRadius: 12, border: '2px solid #111', background: added ? '#111' : '#fff', color: added ? '#FF8C35' : '#111', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}>
+                      {product.price === 0 ? <><Zap size={16} /> WhatsApp Enquiry</> : added ? <><Check size={16} /> Added!</> : <><ShoppingCart size={16} /> Add to Cart</>}
                     </button>
                     {product.price > 0 && (
-                      <button
-                        onClick={handleBuyNow}
-                        style={{
-                          flex: 1, minWidth: 140, padding: '14px 20px', borderRadius: 12,
-                          border: 'none', background: '#FF8C35', color: '#fff',
-                          fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                        }}
-                      >
-                        Buy Now →
-                      </button>
+                      <button onClick={handleBuyNow} style={{ flex: 1, minWidth: 140, padding: '14px 20px', borderRadius: 12, border: 'none', background: '#FF8C35', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Buy Now →</button>
                     )}
                   </>
                 ) : (
-                  <button
-                    onClick={() => window.open(`https://wa.me/919049695264?text=${encodeURIComponent(`Hi, please notify me when ${product.name} is back in stock.`)}`, '_blank')}
-                    style={{
-                      flex: 1, padding: '14px 20px', borderRadius: 12,
-                      border: '2px solid #FF8C35', background: '#fff',
-                      color: '#FF8C35', fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                    }}
-                  >
+                  <button onClick={() => window.open(`https://wa.me/919049695264?text=${encodeURIComponent(`Hi, please notify me when ${product.name} is back in stock.`)}`, '_blank')} style={{ flex: 1, padding: '14px 20px', borderRadius: 12, border: '2px solid #FF8C35', background: '#fff', color: '#FF8C35', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                     Notify When Available
                   </button>
                 )}
@@ -280,11 +279,7 @@ export default function ProductPageClient({ product, related }: { product: Produ
 
               {/* Trust strip */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-                {[
-                  { icon: '🚚', label: 'Fast Delivery', sub: 'Pan India shipping' },
-                  { icon: '✅', label: 'Genuine Parts', sub: '100% authentic' },
-                  { icon: '💬', label: 'Expert Support', sub: 'WhatsApp help' },
-                ].map(t => (
+                {[{ icon: '🚚', label: 'Fast Delivery', sub: 'Pan India' }, { icon: '✅', label: 'Genuine Parts', sub: '100% authentic' }, { icon: '💬', label: 'Expert Support', sub: 'WhatsApp help' }].map(t => (
                   <div key={t.label} style={{ background: '#fff', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', padding: '12px', textAlign: 'center' }}>
                     <div style={{ fontSize: 22, marginBottom: 4 }}>{t.icon}</div>
                     <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{t.label}</div>
@@ -295,27 +290,95 @@ export default function ProductPageClient({ product, related }: { product: Produ
             </div>
           </div>
 
+          {/* Reviews Section */}
+          <div style={{ marginTop: 56, background: '#fff', borderRadius: 20, border: '1px solid rgba(0,0,0,0.08)', padding: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: '#111', margin: 0, letterSpacing: '0.04em' }}>Customer Reviews</h2>
+                {reviews.length > 0 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                    <StarRow rating={Math.round(avgRating)} />
+                    <span style={{ fontSize: 14, color: '#555' }}>{avgRating.toFixed(1)} out of 5 ({reviews.length} reviews)</span>
+                  </div>
+                )}
+              </div>
+              {!showReviewForm && !reviewSuccess && (
+                <button onClick={() => setShowReviewForm(true)} style={{ padding: '10px 20px', background: '#FF8C35', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                  Write a Review
+                </button>
+              )}
+            </div>
+
+            {/* Review form */}
+            {showReviewForm && (
+              <div style={{ background: '#f8f8f6', borderRadius: 14, padding: 24, marginBottom: 24 }}>
+                <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: '#111', marginBottom: 16 }}>Your Review</h3>
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: '#333', display: 'block', marginBottom: 8 }}>Rating *</label>
+                  <StarRow rating={reviewRating} interactive onRate={setReviewRating} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 4 }}>Name *</label>
+                    <input value={reviewName} onChange={e => setReviewName(e.target.value)} placeholder="Your name" style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: 14, fontFamily: "'DM Sans', sans-serif", boxSizing: 'border-box' }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 4 }}>Email *</label>
+                    <input value={reviewEmail} onChange={e => setReviewEmail(e.target.value)} placeholder="your@email.com" type="email" style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: 14, fontFamily: "'DM Sans', sans-serif", boxSizing: 'border-box' }} />
+                  </div>
+                </div>
+                <textarea value={reviewText} onChange={e => setReviewText(e.target.value)} placeholder="Share your experience with this product..." rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: 14, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', marginBottom: 12, boxSizing: 'border-box' }} />
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button onClick={submitReview} disabled={reviewSubmitting || !reviewRating || !reviewName.trim() || !reviewEmail.trim()} style={{ padding: '10px 24px', background: '#FF8C35', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', opacity: (!reviewRating || !reviewName.trim() || !reviewEmail.trim()) ? 0.5 : 1 }}>
+                    {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                  <button onClick={() => setShowReviewForm(false)} style={{ padding: '10px 20px', background: '#fff', color: '#666', border: '1px solid #ddd', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                </div>
+              </div>
+            )}
+
+            {reviewSuccess && (
+              <div style={{ background: '#e8f8ef', border: '1px solid #b2f0c8', borderRadius: 10, padding: 16, marginBottom: 20, fontSize: 14, color: '#1a7a40' }}>
+                Thanks for your review! It will appear after moderation.
+              </div>
+            )}
+
+            {/* Review list */}
+            {reviewsLoaded && reviews.length === 0 && !showReviewForm && (
+              <div style={{ textAlign: 'center', padding: '32px 0', color: '#aaa', fontSize: 14 }}>No reviews yet. Be the first to review this product!</div>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {reviews.map(r => (
+                <div key={r.id} style={{ padding: '16px 0', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                    <div style={{ width: 32, height: 32, background: '#FF8C35', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{r.name[0]?.toUpperCase()}</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{r.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <StarRow rating={r.rating} />
+                        <span style={{ fontSize: 11, color: '#aaa' }}>{new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {r.review && <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: '0 0 0 42px' }}>{r.review}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Related products */}
           {related.length > 0 && (
-            <div style={{ marginTop: 64 }}>
-              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>
-                Related Products
-              </h2>
+            <div style={{ marginTop: 48 }}>
+              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: '#111', marginBottom: 24, letterSpacing: '0.04em' }}>Related Products</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
                 {related.map(p => (
                   <Link key={p.slug} href={`/shop/product/${p.slug}`} style={{ textDecoration: 'none' }}>
-                    <div style={{
-                      background: '#fff', borderRadius: 16, border: '1px solid rgba(0,0,0,0.08)',
-                      padding: 20, transition: 'box-shadow 0.2s', cursor: 'pointer',
-                    }}
+                    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid rgba(0,0,0,0.08)', padding: 20, transition: 'box-shadow 0.2s', cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
-                      onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
-                    >
+                      onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
                       <div style={{ fontSize: 48, textAlign: 'center', marginBottom: 12 }}>{p.emoji}</div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#111', marginBottom: 6 }}>{p.name}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: p.price > 0 ? '#111' : '#FF8C35' }}>
-                        {p.price > 0 ? `₹${p.price.toLocaleString('en-IN')}` : 'Enquire'}
-                      </div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: p.price > 0 ? '#111' : '#FF8C35' }}>{p.price > 0 ? `₹${p.price.toLocaleString('en-IN')}` : 'Enquire'}</div>
                     </div>
                   </Link>
                 ))}

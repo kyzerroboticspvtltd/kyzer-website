@@ -34,11 +34,22 @@ export default function CategoryPage({ params }: PageProps) {
   const [activeSubcat, setActiveSubcat] = useState('all')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('default')
+  const [inStockOnly, setInStockOnly] = useState(false)
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 999999])
+
+  const maxPrice = useMemo(() => {
+    const prices = allProducts.map(p => p.price).filter(p => p > 0)
+    return prices.length > 0 ? Math.max(...prices) : 0
+  }, [allProducts])
+
+  useEffect(() => { setPriceRange([0, maxPrice || 999999]) }, [maxPrice])
 
   const filtered = useMemo(() => {
     let list = [...allProducts]
 
     if (activeSubcat !== 'all') list = list.filter(p => p.subcategory === activeSubcat)
+    if (inStockOnly) list = list.filter(p => p.inStock)
+    if (maxPrice > 0) list = list.filter(p => p.price === 0 || (p.price >= priceRange[0] && p.price <= priceRange[1]))
     if (search.trim()) {
       const q = search.toLowerCase()
       list = list.filter(p =>
@@ -56,7 +67,7 @@ export default function CategoryPage({ params }: PageProps) {
     }
 
     return list
-  }, [allProducts, activeSubcat, search, sort])
+  }, [allProducts, activeSubcat, search, sort, inStockOnly, priceRange, maxPrice])
 
   return (
     <div className="min-h-screen bg-[#f8f8f6]">
@@ -92,6 +103,11 @@ export default function CategoryPage({ params }: PageProps) {
             subcategories={category.subcategories}
             activeSubcat={activeSubcat}
             onSubcatChange={setActiveSubcat}
+            maxPrice={maxPrice}
+            priceRange={priceRange}
+            onPriceRangeChange={setPriceRange}
+            inStockOnly={inStockOnly}
+            onInStockChange={setInStockOnly}
           />
 
           {/* Product grid */}
@@ -105,6 +121,11 @@ export default function CategoryPage({ params }: PageProps) {
               sort={sort}
               onSortChange={setSort}
               totalCount={filtered.length}
+              maxPrice={maxPrice}
+              priceRange={priceRange}
+              onPriceRangeChange={setPriceRange}
+              inStockOnly={inStockOnly}
+              onInStockChange={setInStockOnly}
             />
 
             {filtered.length === 0 ? (
