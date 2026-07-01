@@ -54,7 +54,7 @@ function StepBar({ current }: { current: number }) {
 
 declare global {
   interface Window {
-    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): void };
+    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): Promise<{ error?: { message?: string } }> };
   }
 }
 
@@ -156,8 +156,12 @@ export default function PaymentPage() {
       localStorage.setItem('kyzer_pending_order', JSON.stringify(orderData));
 
       await loadCashfree();
-      const cf = window.Cashfree({ mode: 'production' });
-      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      const cfMode = data.mode || 'production';
+      const cf = window.Cashfree({ mode: cfMode });
+      const result = await cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      if (result?.error) {
+        throw new Error(result.error.message || 'Payment checkout failed');
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Could not initiate payment. Please try again.';
       setError(msg);

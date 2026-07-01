@@ -141,6 +141,7 @@ export async function POST(req: NextRequest) {
       payment_session_id: cfData.payment_session_id,
       order_id:           orderId,
       amount,
+      mode:               process.env.CASHFREE_ENV === 'sandbox' ? 'sandbox' : 'production',
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to create payment order.';
