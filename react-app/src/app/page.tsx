@@ -97,9 +97,9 @@ const PAGE_HTML = `<div id="mainSite">
 
   <!-- Left: text content -->
   <div class="hero-left">
-    <div class="hero-tag">// KYZER ROBOTICS PVT. LTD. — PUNE, INDIA</div>
+    <div class="hero-tag">KYZER ROBOTICS — PUNE, INDIA</div>
     <h1>Innovate.<br>Automate.<br><span class="accent">Elevate.</span></h1>
-    <p class="hero-sub">Intelligent robotic solutions and advanced 3D printing for a smarter tomorrow — built for hobbyists, startups, and industrial teams across India.</p>
+    <p class="hero-sub">Intelligent robotic solutions and advanced 3D printing, engineered for hobbyists, startups, and industrial teams across India.</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">
         Shop products <span>→</span>
@@ -125,32 +125,32 @@ const PAGE_HTML = `<div id="mainSite">
   </div>
 
 
-  <div class="scroll-hint">SCROLL</div>
+
 </section>
 
 <!-- MARQUEE STRIP -->
 <div class="marquee-strip" aria-hidden="true">
   <div class="marquee-inner">
-    <span class="marquee-item"><span class="marquee-dot"></span>DRONE BUILDS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>FDM 3D PRINTING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>RAPID PROTOTYPING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>CARBON FIBRE PARTS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>NYLON ENGINEERING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>FPV RACING DRONES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>AGRICULTURAL DRONES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>PCB ENCLOSURES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>ROBOTICS KITS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>PRODUCT DEV SPRINTS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>DRONE BUILDS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>FDM 3D PRINTING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>RAPID PROTOTYPING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>CARBON FIBRE PARTS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>NYLON ENGINEERING</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>FPV RACING DRONES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>AGRICULTURAL DRONES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>PCB ENCLOSURES</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>ROBOTICS KITS</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>PRODUCT DEV SPRINTS</span>
+    <span class="marquee-item">DRONE BUILDS</span>
+    <span class="marquee-item">FDM 3D PRINTING</span>
+    <span class="marquee-item">RAPID PROTOTYPING</span>
+    <span class="marquee-item">CARBON FIBRE PARTS</span>
+    <span class="marquee-item">NYLON ENGINEERING</span>
+    <span class="marquee-item">FPV RACING DRONES</span>
+    <span class="marquee-item">AGRICULTURAL DRONES</span>
+    <span class="marquee-item">PCB ENCLOSURES</span>
+    <span class="marquee-item">ROBOTICS KITS</span>
+    <span class="marquee-item">PRODUCT DEV SPRINTS</span>
+    <span class="marquee-item">DRONE BUILDS</span>
+    <span class="marquee-item">FDM 3D PRINTING</span>
+    <span class="marquee-item">RAPID PROTOTYPING</span>
+    <span class="marquee-item">CARBON FIBRE PARTS</span>
+    <span class="marquee-item">NYLON ENGINEERING</span>
+    <span class="marquee-item">FPV RACING DRONES</span>
+    <span class="marquee-item">AGRICULTURAL DRONES</span>
+    <span class="marquee-item">PCB ENCLOSURES</span>
+    <span class="marquee-item">ROBOTICS KITS</span>
+    <span class="marquee-item">PRODUCT DEV SPRINTS</span>
   </div>
 </div>
 
@@ -158,7 +158,7 @@ const PAGE_HTML = `<div id="mainSite">
 <section id="about">
   <div class="about-wrap">
     <div class="about-text reveal">
-      <div class="sec-label">// 00 — ABOUT US</div>
+      <div class="sec-label">ABOUT US</div>
       <h2>Built by makers,<br>for makers.</h2>
       <p>Kyzer Robotics is a Pune-based technology company founded by engineers passionate about drones and advanced manufacturing. We design, build, and deliver custom robotic solutions — from FPV racing drones to agricultural survey systems and precision 3D-printed parts.</p>
       <p>Whether you're a startup needing a rapid prototype, a college team building a competition UAV, or an industrial client looking for automation — we bring engineering precision and maker enthusiasm to every project.</p>
@@ -187,7 +187,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- SERVICES -->
 <section id="services">
   <div class="reveal">
-    <div class="sec-label">// 01 — SERVICES</div>
+    <div class="sec-label">SERVICES</div>
     <div class="sec-title">What we build</div>
     <div class="sec-sub">Intelligent automation, advanced 3D printing, and custom robotic solutions — all under one roof in Pune.</div>
   </div>
@@ -223,7 +223,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- HOW IT WORKS -->
 <section id="process">
   <div class="reveal">
-    <div class="sec-label">// 02 — PROCESS</div>
+    <div class="sec-label">PROCESS</div>
     <div class="sec-title">How it works</div>
     <div class="sec-sub">From enquiry to delivery — a simple, transparent process built around your timeline.</div>
   </div>
@@ -256,7 +256,7 @@ const PAGE_HTML = `<div id="mainSite">
 <section id="products">
   <div class="products-header reveal">
     <div>
-      <div class="sec-label">// 03 — PRODUCTS</div>
+      <div class="sec-label">PRODUCTS</div>
       <div class="sec-title">Shop</div>
     </div>
     <div class="filter-tabs" id="catFilterTabs" style="display:none;"></div>
@@ -265,7 +265,7 @@ const PAGE_HTML = `<div id="mainSite">
 
   <!-- Print subcategory picker (shown when 3D Printing tile is clicked) -->
   <div class="drone-subcat-picker" id="printSubcatPicker" style="display:none;">
-    <div class="dsp-label">// SELECT CATEGORY</div>
+    <div class="dsp-label">SELECT CATEGORY</div>
     <div class="dsp-grid">
       <a class="dsp-card" href="/shop/3d-printing">
         <div class="dsp-name">3D Print Services</div>
@@ -287,7 +287,7 @@ const PAGE_HTML = `<div id="mainSite">
 
   <!-- Drone subcategory picker (shown when Drones tile is clicked) -->
   <div class="drone-subcat-picker" id="droneSubcatPicker" style="display:none;">
-    <div class="dsp-label">// SELECT CATEGORY</div>
+    <div class="dsp-label">SELECT CATEGORY</div>
     <div class="dsp-grid">
       <a class="dsp-card" href="/shop/drone-frames">
         <div class="dsp-name">Drone Frames</div>
@@ -611,7 +611,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="reveal">
-    <div class="sec-label">// 04 — TESTIMONIALS</div>
+    <div class="sec-label">TESTIMONIALS</div>
     <div class="sec-title">What clients say</div>
   </div>
   <div class="testi-carousel-wrapper reveal">
@@ -704,7 +704,7 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- CONTACT -->
 <section id="contact">
   <div class="reveal">
-    <div class="sec-label">// 05 — CONTACT</div>
+    <div class="sec-label">CONTACT</div>
     <div class="sec-title">Let's build<br>something.</div>
   </div>
   <div class="contact-layout reveal">
@@ -755,7 +755,7 @@ const PAGE_HTML = `<div id="mainSite">
 <section id="newsletter">
   <div class="newsletter-inner reveal">
     <div class="nl-left">
-      <div class="sec-label" style="margin-bottom:0.5rem;">// STAY UPDATED</div>
+      <div class="sec-label" style="margin-bottom:0.5rem;">STAY UPDATED</div>
       <div class="sec-title" style="font-size:clamp(28px,4vw,44px);margin-bottom:0.75rem;">Build updates.<br>No spam.</div>
       <p>Get early access to new products, 3D print material drops, and project showcases — straight to your inbox.</p>
       <form class="nl-form" onsubmit="submitNewsletter(event)">
