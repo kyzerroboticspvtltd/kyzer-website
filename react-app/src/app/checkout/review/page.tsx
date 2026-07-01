@@ -21,7 +21,7 @@ function parsePrice(p: string | number): number {
 
 declare global {
   interface Window {
-    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): void };
+    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): Promise<{ error?: { message?: string } }> };
   }
 }
 
