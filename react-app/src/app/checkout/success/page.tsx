@@ -19,7 +19,6 @@ function SuccessContent() {
 
     const raw = localStorage.getItem('kyzer_pending_order');
     const orderData = raw ? JSON.parse(raw) : {};
-    localStorage.removeItem('kyzer_pending_order');
 
     fetch('/api/verify-cashfree-payment', {
       method: 'POST',
@@ -29,6 +28,9 @@ function SuccessContent() {
       .then(r => r.json())
       .then(d => {
         if (d.ok) {
+          // Clear cart and pending order only on confirmed success
+          localStorage.removeItem('kyzer_pending_order');
+          localStorage.removeItem('kyzer_cart');
           setPaymentId(d.paymentId || orderId);
           setState('success');
         } else {
