@@ -25,18 +25,12 @@ export async function POST(req: NextRequest) {
     const password = typeof body?.password === 'string' ? body.password.slice(0, 200) : '';
     const expected = process.env.ADMIN_PASSWORD;
 
-    if (!email || !password || !expected) {
+    if (!password || !expected) {
       await delay();
       return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Only one allowed email
-    if (email !== ALLOWED_EMAIL) {
-      await delay();
-      return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 });
-    }
-
-    // Then check password
+    // Check password (email field accepted but not validated — single admin)
     if (password !== expected) {
       await delay();
       return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 });

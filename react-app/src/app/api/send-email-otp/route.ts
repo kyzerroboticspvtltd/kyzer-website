@@ -19,14 +19,12 @@ function signSession(email: string, otp: string, iat: number): string {
 function getTitanTransport() {
   return nodemailer.createTransport({
     host: 'smtp.titan.email',
-    port: 587,
-    secure: false,
-    requireTLS: true,
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.TITAN_USER || 'info@kyzerrobotics.com',
       pass: (process.env.TITAN_PASS || '').replace(/^﻿/, '').trim(),
     },
-    authMethod: 'LOGIN',
     tls: { rejectUnauthorized: false },
     connectionTimeout: 10000,
     greetingTimeout: 10000,
