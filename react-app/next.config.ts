@@ -11,10 +11,10 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com",
       // Fonts: own origin + Google Fonts static assets + data URIs (Firebase SDK inlines fonts)
       "font-src 'self' https://fonts.gstatic.com data:",
-      // Images: own origin + data URIs + blob URLs + Supabase storage + Google profile pics
-      "img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com https://www.gstatic.com https://images.unsplash.com",
-      // XHR/fetch: own origin + Supabase + Cashfree + Firebase Auth + Google APIs
-      "connect-src 'self' https://*.supabase.co https://api.cashfree.com https://sandbox.cashfree.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com",
+      // Images: own origin + data URIs + blob URLs + Supabase storage + Google profile pics + Cashfree assets
+      "img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com https://www.gstatic.com https://images.unsplash.com https://*.cashfree.com",
+      // XHR/fetch: own origin + Supabase + Cashfree (all subdomains) + Firebase Auth + Google APIs
+      "connect-src 'self' https://*.supabase.co https://*.cashfree.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com",
       // Frames: Cashfree + Instagram + Google sign-in popup
       "frame-src https://*.cashfree.com https://www.instagram.com https://kyzer-website.firebaseapp.com https://accounts.google.com",
       // Disallow plugins and mixed content
