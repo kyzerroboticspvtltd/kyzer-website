@@ -259,8 +259,14 @@ const PAGE_HTML = `<div id="mainSite">
       <div class="sec-label">PRODUCTS</div>
       <div class="sec-title">Shop</div>
     </div>
+    <div class="shop-search-wrap">
+      <svg class="shop-search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M15 15l3.5 3.5"/></svg>
+      <input type="text" id="shopSearchInput" class="shop-search-input" placeholder="Search products..." oninput="filterShopSearch(this.value)" autocomplete="off">
+      <button class="shop-search-clear" id="shopSearchClear" onclick="clearShopSearch()" style="display:none;" aria-label="Clear search">×</button>
+    </div>
     <div class="filter-tabs" id="catFilterTabs" style="display:none;"></div>
   </div>
+  <div id="shopSearchEmpty" style="display:none;" class="shop-search-empty">No products match your search.</div>
   <div class="cat-tiles reveal" id="catTilesContainer"></div>
 
   <!-- Print subcategory picker (shown when 3D Printing tile is clicked) -->

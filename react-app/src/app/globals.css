@@ -328,7 +328,29 @@
   #productsGrid.cat-open { display: grid; }
   .products-header {
     display: flex; justify-content: space-between; align-items: flex-end;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+  }
+  .shop-search-wrap {
+    position: relative; display: flex; align-items: center;
+    background: #fff; border: 1px solid rgba(0,0,0,0.13); border-radius: 10px;
+    padding: 0 14px; height: 42px; min-width: 260px; max-width: 340px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: border-color 0.2s;
+  }
+  .shop-search-wrap:focus-within { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(255,140,53,0.15); }
+  .shop-search-icon { width: 16px; height: 16px; color: #aaa; flex-shrink: 0; margin-right: 8px; }
+  .shop-search-input {
+    border: none; outline: none; background: transparent; font-size: 14px;
+    color: #111; width: 100%; font-family: inherit;
+  }
+  .shop-search-input::placeholder { color: #aaa; }
+  .shop-search-clear {
+    background: none; border: none; cursor: pointer; font-size: 18px;
+    color: #aaa; padding: 0 0 0 6px; line-height: 1; flex-shrink: 0;
+  }
+  .shop-search-clear:hover { color: #333; }
+  .shop-search-empty {
+    text-align: center; color: #888; font-size: 15px;
+    padding: 2.5rem 0;
   }
   .filter-tabs { display: flex; gap: 8px; }
   .tab {
