@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { cartItems, quoteParams, name, email, phone } = body;
+    const { cartItems, quoteParams, name, email, phone, address } = body;
 
     let amount: number;
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
@@ -115,6 +115,19 @@ export async function POST(req: NextRequest) {
           customer_name:  (name || 'Customer').slice(0, 100),
           customer_email: email || 'customer@kyzerrobotics.com',
           customer_phone: (phone || '9999999999').replace(/\D/g, '').slice(-10) || '9999999999',
+          ...(address ? {
+            customer_bank_account_number: undefined,
+            customer_shipping_address: {
+              name:       (name || '').slice(0, 100),
+              address:    (address.addr1 || '').slice(0, 200),
+              city:       (address.city || '').slice(0, 50),
+              state:      (address.state || '').slice(0, 50),
+              pincode:    (address.pincode || '').slice(0, 10),
+              country:    'India',
+              phone:      (phone || '').replace(/\D/g, '').slice(-10),
+              email:      email || '',
+            },
+          } : {}),
         },
         order_meta: { return_url: returnUrl },
       }),

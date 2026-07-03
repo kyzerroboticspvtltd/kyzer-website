@@ -215,7 +215,7 @@ export default function OrderPage() {
         const res = await fetch('/api/create-cashfree-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cartItems, name: addr.name, email: addr.email || userEmail, phone: addr.phone || userPhone }),
+          body: JSON.stringify({ cartItems, name: addr.name, email: addr.email || userEmail, phone: addr.phone || userPhone, address: addr }),
         });
         const data = await res.json();
         if (!data.ok || !data.payment_session_id) throw new Error(data.error || 'Could not create payment order');
