@@ -8,7 +8,7 @@ function sign(ts: string): string {
   return crypto.createHmac('sha256', secret).update(ts).digest('hex');
 }
 
-const ALLOWED_EMAIL = 'kyzerroboticspvtltd@gmail.com';
+const ALLOWED_EMAIL = (process.env.ADMIN_EMAIL || 'kyzerroboticspvtltd@gmail.com').toLowerCase().trim();
 
 export async function POST(req: NextRequest) {
   const rl = await rateLimit(`login:${getIp(req)}`, 5, 15 * 60 * 1000);
