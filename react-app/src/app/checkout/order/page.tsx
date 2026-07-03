@@ -209,8 +209,6 @@ export default function OrderPage() {
         const cf = window.Cashfree({ mode: cfMode });
         const result = await cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
         if (result?.error) throw new Error(result.error.message || 'Payment checkout failed');
-        // _self redirects the page; if we somehow reach here, redirect manually
-        window.location.href = `/checkout/success?order_id=${data.order_id}`;
       } else {
         // COD
         const orderId = 'SHOP-' + Date.now();
