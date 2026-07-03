@@ -122,6 +122,15 @@ export async function POST(req: NextRequest) {
 
     if (!cfRes.ok) {
       const cfErr = await cfRes.json().catch(() => ({}));
+      const appId = process.env.CASHFREE_APP_ID || '';
+      console.error('Cashfree auth debug:', {
+        status: cfRes.status,
+        error: cfErr,
+        env: process.env.CASHFREE_ENV,
+        appIdLen: appId.length,
+        appIdStart: appId.slice(0, 6),
+        base: CF_BASE,
+      });
       throw new Error(cfErr.message || `Cashfree API error ${cfRes.status}`);
     }
 
