@@ -34,6 +34,11 @@ function SuccessContent() {
           setPaymentId(d.paymentId || orderId);
           setState('success');
         } else {
+          // ACTIVE / PENDING means user cancelled or closed payment — send back to checkout
+          if (d.status === 'ACTIVE' || d.status === 'PENDING') {
+            window.location.href = '/checkout/order';
+            return;
+          }
           setErrorMsg(d.error || 'Payment could not be verified.');
           setState('failed');
         }

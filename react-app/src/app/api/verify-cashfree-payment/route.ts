@@ -55,8 +55,8 @@ export async function POST(req: NextRequest) {
     if (cfOrder.order_status !== 'PAID') {
       return NextResponse.json({
         ok: false,
-        error: `Payment not completed (status: ${cfOrder.order_status}).`,
         status: cfOrder.order_status,
+        error: `Payment not completed (status: ${cfOrder.order_status}).`,
       }, { status: 400 });
     }
 
