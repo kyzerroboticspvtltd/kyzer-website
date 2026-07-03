@@ -113,13 +113,30 @@ export default function OrderPage() {
         if (cartRaw) setCart(JSON.parse(cartRaw));
       } catch { /* ignore */ }
 
+      // Load saved address — try Supabase first, fall back to localStorage
+      let loadedFromSupabase = false;
       if (customer.id) {
-        const { data: cust } = await supabase.from('customers').select('address').eq('id', customer.id).single();
-        if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
-          const addrs = cust.address as Address[];
-          setSavedAddresses(addrs);
-          const def = addrs.find(a => a.isDefault) || addrs[0];
-          setActiveAddr(def);
+        try {
+          const { data: cust } = await supabase.from('customers').select('address').eq('id', customer.id).single();
+          if (cust && Array.isArray(cust.address) && cust.address.length > 0) {
+            const addrs = cust.address as Address[];
+            setSavedAddresses(addrs);
+            const def = addrs.find(a => a.isDefault) || addrs[0];
+            setActiveAddr(def);
+            loadedFromSupabase = true;
+          }
+        } catch { /* non-fatal */ }
+      }
+
+      if (!loadedFromSupabase) {
+        // Try localStorage fallback (same device, same browser)
+        const savedLocal = localStorage.getItem('kyzer_last_address');
+        if (savedLocal) {
+          try {
+            const addr = JSON.parse(savedLocal) as Omit<Address, 'id' | 'isDefault'>;
+            setForm(addr);
+            setEditingAddr(true);
+          } catch { /* ignore */ }
         } else {
           setEditingAddr(true);
           setForm(prev => ({ ...prev, name: customer.name || '', phone: customer.phone || '', email: customer.email || '' }));
@@ -139,7 +156,12 @@ export default function OrderPage() {
   const codAvailable = currentPincode.length === 6 && pinNum >= 411001 && pinNum <= 411067;
 
   function field(key: keyof typeof form, val: string) {
-    setForm(prev => ({ ...prev, [key]: val }));
+    setForm(prev => {
+      const next = { ...prev, [key]: val };
+      // Persist address to localStorage on every keystroke so it survives page refreshes
+      try { localStorage.setItem('kyzer_last_address', JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
     // auto-switch away from COD if pincode becomes non-Pune
     if (key === 'pincode' && val.length === 6) {
       const p = parseInt(val, 10);
@@ -160,10 +182,16 @@ export default function OrderPage() {
       if (!form.city.trim()) { setError('City is required.'); return; }
       if (!form.state) { setError('State is required.'); return; }
       if (!/^\d{6}$/.test(form.pincode)) { setError('Pincode must be 6 digits.'); return; }
-      addr = { ...form, id: 'addr-' + Date.now(), isDefault: false };
+      const isFirst = savedAddresses.length === 0;
+      addr = { ...form, id: 'addr-' + Date.now(), isDefault: isFirst };
+      // Save to localStorage always (fastest, works offline)
+      try { localStorage.setItem('kyzer_last_address', JSON.stringify(form)); } catch { /* ignore */ }
+      // Save to Supabase so address appears on any device
       if (userId) {
         const updated = [...savedAddresses, addr];
-        await supabase.from('customers').upsert({ id: userId, address: updated }, { onConflict: 'id' });
+        try {
+          await supabase.from('customers').upsert({ id: userId, address: updated }, { onConflict: 'id' });
+        } catch { /* non-fatal — localStorage already saved it */ }
       }
     } else {
       if (!activeAddr) { setError('Please select or add a delivery address.'); return; }
