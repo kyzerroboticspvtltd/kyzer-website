@@ -7,16 +7,29 @@ interface Attachment {
 }
 
 function getTransporter() {
-  // Prefer Titan business email if configured, fall back to Gmail
-  const useTitan = !!(process.env.TITAN_HOST && process.env.TITAN_USER && process.env.TITAN_PASS);
+  const titanUser = process.env.TITAN_USER;
+  const titanPass = (process.env.TITAN_PASS || '').replace(/^﻿/, '').trim();
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPass = process.env.GMAIL_PASS;
+
+  if (titanUser && titanPass) {
+    return nodemailer.createTransport({
+      host: 'smtp.titan.email',
+      port: 465,
+      secure: true,
+      auth: { user: titanUser, pass: titanPass },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+    } as Parameters<typeof nodemailer.createTransport>[0]);
+  }
+
+  // Gmail fallback — set GMAIL_USER + GMAIL_PASS (app password) in Vercel env
   return nodemailer.createTransport({
-    host:   useTitan ? process.env.TITAN_HOST! : 'smtp.gmail.com',
-    port:   parseInt(useTitan ? (process.env.TITAN_PORT || '587') : '587'),
-    secure: false,
-    auth: {
-      user: useTitan ? process.env.TITAN_USER! : (process.env.GMAIL_USER || ''),
-      pass: useTitan ? process.env.TITAN_PASS! : (process.env.GMAIL_PASS || ''),
-    },
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: { user: gmailUser || '', pass: gmailPass || '' },
   });
 }
 

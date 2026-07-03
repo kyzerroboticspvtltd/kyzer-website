@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mailer';
 import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 const OTP_SECRET = process.env.OTP_SECRET || 'kyzer-otp-secret-change-me';
@@ -14,22 +14,6 @@ function signSession(email: string, otp: string, iat: number): string {
   const payload = `${email}:${otp}:${iat}`;
   const sig = crypto.createHmac('sha256', OTP_SECRET).update(payload).digest('hex');
   return Buffer.from(`${payload}:${sig}`).toString('base64url');
-}
-
-function getTitanTransport() {
-  return nodemailer.createTransport({
-    host: 'smtp.titan.email',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.TITAN_USER || 'info@kyzerrobotics.com',
-      pass: (process.env.TITAN_PASS || '').replace(/^﻿/, '').trim(),
-    },
-    tls: { rejectUnauthorized: false },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any);
 }
 
 export async function POST(req: NextRequest) {
@@ -46,9 +30,7 @@ export async function POST(req: NextRequest) {
   const session = signSession(email.toLowerCase(), otp, iat);
 
   try {
-    const transporter = getTitanTransport();
-    const info = await transporter.sendMail({
-      from: `Kyzer Robotics <info@kyzerrobotics.com>`,
+    await sendMail({
       to: email,
       subject: `Your Kyzer Robotics login code: ${otp}`,
       html: `
@@ -66,10 +48,9 @@ export async function POST(req: NextRequest) {
         </div>
       `,
     });
-    console.log('Titan OTP sent:', info.messageId);
     return NextResponse.json({ ok: true, session });
   } catch (err) {
-    console.error('Titan OTP send error:', err);
+    console.error('OTP send error:', err);
     return NextResponse.json({ ok: false, error: 'Failed to send email. Please try again.' }, { status: 500 });
   }
 }
