@@ -9,7 +9,7 @@ import { saveOrder } from '@/lib/orders';
 const CF_BASE = process.env.CASHFREE_ENV === 'sandbox'
   ? 'https://sandbox.cashfree.com/pg'
   : 'https://api.cashfree.com/pg';
-const CF_VERSION = '2023-08-01';
+const CF_VERSION = '2025-01-01';
 
 function cfHeaders() {
   return {

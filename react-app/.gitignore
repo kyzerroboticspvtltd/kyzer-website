@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.claude/skills/cashfree-skills/
+.cursor/cashfree-skills/
+.gemini/skills/cashfree-skills/

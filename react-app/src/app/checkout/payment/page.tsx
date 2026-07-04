@@ -58,6 +58,27 @@ declare global {
   }
 }
 
+let _cfInstance: ReturnType<Window['Cashfree']> | null = null;
+
+function initCashfree(mode: string): Promise<ReturnType<Window['Cashfree']>> {
+  return new Promise((resolve, reject) => {
+    if (_cfInstance) { resolve(_cfInstance); return; }
+    if (typeof window.Cashfree !== 'undefined') {
+      _cfInstance = window.Cashfree({ mode });
+      resolve(_cfInstance);
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+    s.onload = () => {
+      _cfInstance = window.Cashfree({ mode });
+      resolve(_cfInstance);
+    };
+    s.onerror = () => reject(new Error('Cashfree SDK load failed'));
+    document.head.appendChild(s);
+  });
+}
+
 export default function PaymentPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [method, setMethod] = useState<'online' | 'cod'>('online');
@@ -95,27 +116,6 @@ export default function PaymentPage() {
   const subtotal = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
   const delivery = subtotal >= 999 ? 0 : 99;
   const grandTotal = subtotal + delivery;
-
-  let _cfInstance: ReturnType<Window['Cashfree']> | null = null;
-
-  function initCashfree(mode: string): Promise<ReturnType<Window['Cashfree']>> {
-    return new Promise((resolve, reject) => {
-      if (_cfInstance) { resolve(_cfInstance); return; }
-      if (typeof window.Cashfree !== 'undefined') {
-        _cfInstance = window.Cashfree({ mode });
-        resolve(_cfInstance);
-        return;
-      }
-      const s = document.createElement('script');
-      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-      s.onload = () => {
-        _cfInstance = window.Cashfree({ mode });
-        resolve(_cfInstance);
-      };
-      s.onerror = () => reject(new Error('Cashfree SDK load failed'));
-      document.head.appendChild(s);
-    });
-  }
 
   async function handleContinue() {
     setError('');
