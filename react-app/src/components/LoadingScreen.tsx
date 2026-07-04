@@ -2,14 +2,18 @@
 
 export default function LoadingScreen({ text = 'Loading' }: { text?: string }) {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#f8f8f6',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      gap: 18,
-      fontFamily: "'DM Sans', system-ui, sans-serif",
-    }}>
+    <div
+      onClick={e => e.stopPropagation()}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: '#f8f8f6',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 18,
+        fontFamily: "'DM Sans', system-ui, sans-serif",
+        cursor: 'default',
+      }}
+    >
       {/* Logo */}
       <div style={{ marginBottom: 8, textAlign: 'center' }}>
         <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: '#FF8C35', letterSpacing: '0.06em' }}>KYZER</span>
