@@ -104,7 +104,7 @@ export default function ReviewPage() {
       await loadCashfree();
       const cfMode = data.mode || 'production';
       const cf = window.Cashfree({ mode: cfMode });
-      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_modal' });
+      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Could not initiate payment. Please try again.');
       setLoading(false);

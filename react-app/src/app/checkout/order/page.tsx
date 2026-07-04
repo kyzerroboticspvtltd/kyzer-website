@@ -240,7 +240,7 @@ export default function OrderPage() {
         const cfMode = data.mode || 'production';
         const cf = window.Cashfree({ mode: cfMode });
         // Drop checkout — opens Cashfree's hosted UI in a modal overlay
-        cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_modal' });
+        cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
       } else {
         // COD
         const orderId = 'SHOP-' + Date.now();
