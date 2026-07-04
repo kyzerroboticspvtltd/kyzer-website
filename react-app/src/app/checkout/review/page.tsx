@@ -101,6 +101,7 @@ export default function ReviewPage() {
         delivery,
       }));
 
+      setLoading(false);
       await loadCashfree();
       const cfMode = data.mode || 'production';
       const cf = window.Cashfree({ mode: cfMode });

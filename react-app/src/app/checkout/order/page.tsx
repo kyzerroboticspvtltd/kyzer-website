@@ -233,6 +233,9 @@ export default function OrderPage() {
           delivery,
         }));
 
+        // Load SDK and redirect — keep setLoading(false) so page stays mounted
+        // Cashfree needs the page in DOM to redirect with _self
+        setLoading(false);
         await loadCashfree();
         const cfMode = data.mode || 'production';
         const cf = window.Cashfree({ mode: cfMode });
