@@ -101,10 +101,10 @@ export default function ReviewPage() {
         delivery,
       }));
 
-      const cfBase = data.mode === 'sandbox'
-        ? 'https://sandbox.cashfree.com/order'
-        : 'https://payments.cashfree.com/order';
-      window.location.href = `${cfBase}/#${data.payment_session_id}`;
+      await loadCashfree();
+      const cfMode = data.mode || 'production';
+      const cf = window.Cashfree({ mode: cfMode });
+      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Could not initiate payment. Please try again.');
       setLoading(false);

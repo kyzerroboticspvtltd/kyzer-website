@@ -233,11 +233,10 @@ export default function OrderPage() {
           delivery,
         }));
 
-        // Redirect directly to Cashfree hosted payment page — no SDK needed
-        const cfBase = data.mode === 'sandbox'
-          ? 'https://sandbox.cashfree.com/order'
-          : 'https://payments.cashfree.com/order';
-        window.location.href = `${cfBase}/#${data.payment_session_id}`;
+        await loadCashfree();
+        const cfMode = data.mode || 'production';
+        const cf = window.Cashfree({ mode: cfMode });
+        cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
       } else {
         // COD
         const orderId = 'SHOP-' + Date.now();
@@ -273,7 +272,6 @@ export default function OrderPage() {
   }
 
   if (pageLoading) return <LoadingScreen text="Loading checkout" />;
-  if (loading) return <LoadingScreen text="Placing order" />;
 
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 13px', borderRadius: 6, border: '1px solid #ddd',
