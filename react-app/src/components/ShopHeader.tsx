@@ -200,7 +200,6 @@ export default function ShopHeader({ cartCount = 0, cartSubtotal = 0 }: ShopHead
         <div className="sh-topbar">
           <div className="sh-topbar-left">
             <a href="tel:+919049695264">📞 +91 90496 95264</a>
-            <a href="mailto:info@kyzerrobotics.com">✉ Customer Support</a>
           </div>
           <div className="sh-topbar-right">
             {userName && <span className="sh-welcome">Welcome {userName}</span>}
