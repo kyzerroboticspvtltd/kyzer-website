@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import ShopHeader from '@/components/ShopHeader';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const FONT_URL =
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap';
@@ -271,13 +272,8 @@ export default function OrderPage() {
     }
   }
 
-  if (pageLoading) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans', sans-serif" }}>
-        <span style={{ color: '#888' }}>Loading…</span>
-      </div>
-    );
-  }
+  if (pageLoading) return <LoadingScreen text="Loading checkout" />;
+  if (loading) return <LoadingScreen text="Placing order" />;
 
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 13px', borderRadius: 6, border: '1px solid #ddd',

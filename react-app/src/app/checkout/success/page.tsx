@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import LoadingScreen from '@/components/LoadingScreen';
 
 function SuccessContent() {
   const params = useSearchParams();
@@ -50,13 +51,7 @@ function SuccessContent() {
   }, [orderId]);
 
   if (state === 'verifying') {
-    return (
-      <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-        <div style={{ width: 48, height: 48, border: '3px solid #FF8C35', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 20px' }} />
-        <p style={{ fontSize: 18, color: '#555' }}>Verifying your payment...</p>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
+    return <LoadingScreen text="Verifying payment" />;
   }
 
   if (state === 'success') {
