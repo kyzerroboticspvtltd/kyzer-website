@@ -158,10 +158,7 @@ export default function PaymentPage() {
       await loadCashfree();
       const cfMode = data.mode || 'production';
       const cf = window.Cashfree({ mode: cfMode });
-      const result = await cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
-      if (result?.error) {
-        throw new Error(result.error.message || 'Payment checkout failed');
-      }
+      cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_modal' });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Could not initiate payment. Please try again.';
       setError(msg);
