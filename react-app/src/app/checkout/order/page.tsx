@@ -66,12 +66,22 @@ function clearOrder() {
   } catch { /* ignore */ }
 }
 
-function loadCashfree(): Promise<void> {
+let _cfInstance: ReturnType<Window['Cashfree']> | null = null;
+
+function initCashfree(mode: string): Promise<ReturnType<Window['Cashfree']>> {
   return new Promise((resolve, reject) => {
-    if (typeof window.Cashfree !== 'undefined') { resolve(); return; }
+    if (_cfInstance) { resolve(_cfInstance); return; }
+    if (typeof window.Cashfree !== 'undefined') {
+      _cfInstance = window.Cashfree({ mode });
+      resolve(_cfInstance);
+      return;
+    }
     const s = document.createElement('script');
     s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-    s.onload = () => resolve();
+    s.onload = () => {
+      _cfInstance = window.Cashfree({ mode });
+      resolve(_cfInstance);
+    };
     s.onerror = () => reject(new Error('Cashfree SDK load failed'));
     document.head.appendChild(s);
   });
@@ -236,10 +246,8 @@ export default function OrderPage() {
           delivery,
         }));
 
-        await loadCashfree();
         const cfMode = data.mode || 'production';
-        const cf = window.Cashfree({ mode: cfMode });
-        // Drop checkout — opens Cashfree's hosted UI in a modal overlay
+        const cf = await initCashfree(cfMode);
         cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
       } else {
         // COD
