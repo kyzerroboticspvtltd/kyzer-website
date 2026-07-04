@@ -11,7 +11,7 @@ const ALLOWED_QUAL_MULTS: Record<string, number> = { Standard: 1, Fine: 1.2, Ult
 const CF_BASE = process.env.CASHFREE_ENV === 'sandbox'
   ? 'https://sandbox.cashfree.com/pg'
   : 'https://api.cashfree.com/pg';
-const CF_VERSION = '2023-08-01';
+const CF_VERSION = '2025-01-01';
 
 function cfHeaders() {
   return {

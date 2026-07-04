@@ -43,7 +43,10 @@ interface Address {
 
 declare global {
   interface Window {
-    Cashfree: (opts: { mode: string }) => { checkout(opts: { paymentSessionId: string; redirectTarget: string }): Promise<{ error?: { message?: string } }> };
+    Cashfree: (opts: { mode: string }) => {
+      checkout(opts: { paymentSessionId: string; redirectTarget: string }): void;
+      create(component: string, opts?: Record<string, unknown>): { mount(selector: string): void };
+    };
   }
 }
 
@@ -236,7 +239,8 @@ export default function OrderPage() {
         await loadCashfree();
         const cfMode = data.mode || 'production';
         const cf = window.Cashfree({ mode: cfMode });
-        cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+        // Drop checkout — opens Cashfree's hosted UI in a modal overlay
+        cf.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_modal' });
       } else {
         // COD
         const orderId = 'SHOP-' + Date.now();
