@@ -1355,7 +1355,7 @@ function renderProdCard(p) {
       </span>
     </div>
     <div class="prod-body">
-      <div class="prod-subcat">${esc(p.subcategory||p.category||'')}</div>
+      <div class="prod-subcat">${esc(p.subcategory||p.category||'')}${p.inStock===false?' · <span style="color:#e74c3c;font-weight:700">Out of Stock</span>':''}</div>
       <div class="prod-name">${esc(p.name)}</div>
       <div class="prod-desc">${esc(p.description||'')}</div>
     </div>
@@ -1469,10 +1469,24 @@ function openProductModal(id) {
         </select>
       </div>
     </div>
+    <div class="form-group">
+      <label class="form-label">Availability</label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text)">
+        <label class="toggle">
+          <input type="checkbox" id="pm-instock" ${(p?.inStock !== false) ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="pm-instock-label">${(p?.inStock !== false) ? 'In Stock' : 'Out of Stock'}</span>
+      </label>
+    </div>
     <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="pm-desc" rows="2">${esc(p?.description||'')}</textarea></div>
     <div class="form-group"><label class="form-label">Details (long, optional)</label><textarea class="form-textarea" id="pm-details" rows="3">${esc(p?.details||'')}</textarea></div>
   `, `<button class="btn btn-primary" onclick="saveProduct('${esc(id||'')}')">Save product</button><button class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>`);
-  setTimeout(function(){ pmUpdateSubcatOptions(p&&(p.subcategory||p.subcat)||''); }, 30);
+  setTimeout(function(){
+    pmUpdateSubcatOptions(p&&(p.subcategory||p.subcat)||'');
+    const cb = $('pm-instock');
+    if (cb) cb.onchange = () => { $('pm-instock-label').textContent = cb.checked ? 'In Stock' : 'Out of Stock'; };
+  }, 30);
 }
 
 function pmImageUrlChanged(url) {
@@ -1514,6 +1528,7 @@ function saveProduct(id) {
     details:     $('pm-details').value,
     badge:       $('pm-badge').value,
     image:       $('pm-image').value.trim(),
+    inStock:     $('pm-instock').checked,
   };
   if (id) {
     const p = siteData.products.find(x=>x.id===id);
