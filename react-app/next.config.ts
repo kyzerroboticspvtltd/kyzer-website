@@ -20,7 +20,7 @@ const securityHeaders = [
       // Disallow plugins and mixed content
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://*.cashfree.com",
       "upgrade-insecure-requests",
     ].join('; '),
   },
