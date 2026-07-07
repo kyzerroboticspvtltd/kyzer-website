@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getBlogPostBySlug } from '@/lib/blogPosts'
 
-const POSTS: Record<string, {
+export const dynamic = 'force-dynamic'
+
+const STATIC_POSTS: Record<string, {
   title: string
   category: string
   date: string
@@ -112,13 +115,9 @@ const POSTS: Record<string, {
   },
 }
 
-export async function generateStaticParams() {
-  return Object.keys(POSTS).map(slug => ({ slug }))
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const post = POSTS[slug]
+  const post = await getBlogPostBySlug(slug, STATIC_POSTS)
   if (!post) return {}
   return {
     title: `${post.title} | Kyzer Robotics Blog`,
@@ -128,7 +127,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = POSTS[slug]
+  const post = await getBlogPostBySlug(slug, STATIC_POSTS)
   if (!post) notFound()
 
   const dateStr = new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -162,7 +161,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Content */}
         <div>
-          {post.content.map((block, i) => (
+          {(post.content || []).map((block, i) => (
             <div key={i} style={{ marginBottom: 36 }}>
               {block.heading && (
                 <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, fontWeight: 400, letterSpacing: '0.06em', color: '#FF8C35', marginBottom: 12 }}>

@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getAllBlogPosts, type BlogPost } from '@/lib/blogPosts'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Blog | Kyzer Robotics — Drones, 3D Printing, Robotics Insights',
   description: 'Engineering articles, guides, and project deep-dives from the Kyzer Robotics team in Pune. FPV builds, 3D printing tips, robotics tutorials, and more.',
 }
 
-const POSTS = [
+const STATIC_POSTS: BlogPost[] = [
   {
     slug: 'best-fpv-flight-controllers-2025',
     title: 'The Best FPV Flight Controllers in 2025: Compared',
@@ -63,7 +66,8 @@ const POSTS = [
   },
 ]
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const POSTS = await getAllBlogPosts(STATIC_POSTS);
   return (
     <main style={{ minHeight: '100vh', background: '#f8f8f6', color: '#111', paddingTop: '100px', fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px 100px' }}>

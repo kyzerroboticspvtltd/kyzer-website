@@ -106,6 +106,10 @@ export default function OrderPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -162,7 +166,34 @@ export default function OrderPage() {
 
   const subtotal = cart.reduce((sum, i) => sum + parsePrice(i.price) * i.qty, 0);
   const delivery = subtotal >= 999 ? 0 : 99;
-  const grandTotal = subtotal + delivery;
+  const discount = appliedCoupon?.discount || 0;
+  const grandTotal = Math.max(0, subtotal - discount) + delivery;
+
+  async function applyCoupon() {
+    setCouponError('');
+    if (!couponInput.trim()) return;
+    setCouponApplying(true);
+    try {
+      const res = await fetch('/api/validate-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
+      });
+      const d = await res.json();
+      if (!d.ok) { setCouponError(d.error || 'Invalid coupon.'); setAppliedCoupon(null); return; }
+      setAppliedCoupon({ code: couponInput.trim().toUpperCase(), discount: d.discount });
+    } catch {
+      setCouponError('Could not validate coupon. Please try again.');
+    } finally {
+      setCouponApplying(false);
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setCouponInput('');
+    setCouponError('');
+  }
 
   // Check if current pincode (saved addr or form) qualifies for COD
   const currentPincode = editingAddr ? form.pincode : (activeAddr?.pincode || '');
@@ -229,7 +260,7 @@ export default function OrderPage() {
         const res = await fetch('/api/create-cashfree-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cartItems, name: addr.name, email: addr.email || userEmail, phone: addr.phone || userPhone, address: addr }),
+          body: JSON.stringify({ cartItems, name: addr.name, email: addr.email || userEmail, phone: addr.phone || userPhone, address: addr, couponCode: appliedCoupon?.code }),
         });
         const data = await res.json();
         if (!data.ok || !data.payment_session_id) throw new Error(data.error || 'Could not create payment order');
@@ -244,6 +275,8 @@ export default function OrderPage() {
           total: data.amount,
           subtotal,
           delivery,
+          couponCode: data.couponValid ? appliedCoupon?.code : undefined,
+          discount: data.discount || 0,
         }));
 
         const cfMode = data.mode || 'production';
@@ -268,6 +301,8 @@ export default function OrderPage() {
               address: addrOneLine(addr),
               items: cart,
               total: grandTotal,
+              couponCode: appliedCoupon?.code,
+              discount,
               paymentMethod: 'cod',
               status: 'new',
             },
@@ -508,6 +543,30 @@ export default function OrderPage() {
                 ))}
               </div>
 
+              {/* Coupon */}
+              <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Coupon</div>
+                {appliedCoupon ? (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f0fff4', border: '1px solid #b2f0c8', borderRadius: 8, padding: '8px 12px' }}>
+                    <span style={{ fontSize: 13, color: '#1a7a40', fontWeight: 600 }}>{appliedCoupon.code} applied — ₹{appliedCoupon.discount.toLocaleString('en-IN')} off</span>
+                    <button onClick={removeCoupon} style={{ background: 'none', border: 'none', color: '#c0392b', fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>Remove</button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      value={couponInput}
+                      onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                      placeholder="Coupon code"
+                      style={{ flex: 1, padding: '9px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: 13, textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}
+                    />
+                    <button onClick={applyCoupon} disabled={couponApplying || !couponInput.trim()} style={{ padding: '9px 16px', borderRadius: 8, border: 'none', background: '#111', color: '#fff', fontSize: 13, fontWeight: 600, cursor: couponApplying ? 'not-allowed' : 'pointer' }}>
+                      {couponApplying ? '...' : 'Apply'}
+                    </button>
+                  </div>
+                )}
+                {couponError && <div style={{ fontSize: 12, color: '#c0392b', marginTop: 6 }}>{couponError}</div>}
+              </div>
+
               {/* Billing summary */}
               <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>Billing Summary</div>
@@ -516,6 +575,12 @@ export default function OrderPage() {
                     <span>Subtotal</span>
                     <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
+                  {discount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#27ae60' }}>
+                      <span>Coupon discount</span>
+                      <span>−₹{discount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#555' }}>
                     <span>Standard Shipping</span>
                     <span style={{ color: delivery === 0 ? '#27ae60' : '#555' }}>{delivery === 0 ? 'FREE' : `₹${delivery}`}</span>

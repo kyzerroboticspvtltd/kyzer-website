@@ -248,6 +248,10 @@ html.dark .toggle-slider{background:#444}
       <button class="nav-item" id="nl-contact" onclick="nav('contact')">📬 Contact</button>
       <button class="nav-item" id="nl-quote" onclick="nav('quote')">💰 Quote Pricing</button>
       <button class="nav-item" id="nl-photos" onclick="nav('photos')">🖼️ Photos</button>
+      <button class="nav-item" id="nl-blog" onclick="nav('blog')">📝 Blog</button>
+
+      <div class="nav-section">MARKETING</div>
+      <button class="nav-item" id="nl-coupons" onclick="nav('coupons')">🏷️ Coupons</button>
 
       <div class="nav-section">INSIGHTS</div>
       <button class="nav-item" id="nl-analytics" onclick="nav('analytics')">📊 Analytics</button>
@@ -468,9 +472,38 @@ html.dark .toggle-slider{background:#444}
         </div>
       </div>
 
+      <!-- BLOG -->
+      <div class="tab" id="tab-blog">
+        <div class="publish-bar"><p>Articles shown on /blog. New posts are added alongside the existing ones.</p><button class="btn btn-primary" onclick="doPublish()">Publish</button></div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <button class="btn btn-primary btn-sm" onclick="openBlogPostModal(null)">+ New post</button>
+        </div>
+        <div id="blog-list" class="table-wrap"></div>
+      </div>
+
+      <!-- COUPONS -->
+      <div class="tab" id="tab-coupons">
+        <div class="publish-bar"><p>Discount codes customers can apply at checkout.</p><button class="btn btn-primary" onclick="doPublish()">Publish</button></div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <button class="btn btn-primary btn-sm" onclick="openCouponModal(null)">+ New coupon</button>
+        </div>
+        <div id="coupons-list" class="table-wrap"></div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="tab" id="tab-settings">
         <div style="max-width:600px;display:flex;flex-direction:column;gap:20px">
+          <div class="table-wrap" style="padding:24px">
+            <h3 style="font-size:15px;margin-bottom:16px">Payment, Shipping & Tax</h3>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Controls how order totals are calculated at checkout. Publish after saving to apply.</p>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">GST rate (%)</label><input class="form-input" id="st-gst" type="number" step="0.1" min="0" placeholder="18"></div>
+              <div class="form-group"><label class="form-label">Delivery charge (₹)</label><input class="form-input" id="st-delivery" type="number" min="0" placeholder="99"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Free delivery above (₹)</label><input class="form-input" id="st-freeabove" type="number" min="0" placeholder="999" style="max-width:220px"></div>
+            <button class="btn btn-ghost" onclick="saveStoreSettings()">Save & mark for publish</button>
+          </div>
+
           <div class="table-wrap" style="padding:24px">
             <h3 style="font-size:15px;margin-bottom:16px">Google Sheets Sync</h3>
             <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Paste your Google Sheet URL. The sheet must be set to <strong>"Anyone with the link can view"</strong>. The Products tab "🔄 Sync Sheets" button will fetch it directly.</p>
@@ -867,11 +900,16 @@ function nav(name) {
   if (name === 'contact') loadContactForm();
   if (name === 'quote') loadQuoteForm();
   if (name === 'photos') loadPhotosForm();
+  if (name === 'blog') renderBlogPosts();
+  if (name === 'coupons') renderCoupons();
   if (name === 'analytics') loadAnalytics();
   if (name === 'settings') {
     $('sb-url').value = localStorage.getItem('kyzer_supabase_url')||'';
     $('sb-key').value = localStorage.getItem('kyzer_supabase_key')||'';
     $('gs-url').value = localStorage.getItem('kyzer_gsheet_url')||'';
+    $('st-gst').value = (siteData.settings && siteData.settings.gstRate != null) ? siteData.settings.gstRate : 18;
+    $('st-delivery').value = (siteData.settings && siteData.settings.deliveryCharge != null) ? siteData.settings.deliveryCharge : 99;
+    $('st-freeabove').value = (siteData.settings && siteData.settings.deliveryFreeAbove != null) ? siteData.settings.deliveryFreeAbove : 999;
   }
 }
 
@@ -1266,7 +1304,10 @@ function loadAll() {
 
   const raw = localStorage.getItem('kyzer_site_data');
   if (raw) try { siteData = JSON.parse(raw); } catch(e) {}
-  if (!siteData) siteData = { products:[], categories:[], hero:{}, services:[], contact:{}, links:{}, quote:{}, hero_photos:[] };
+  if (!siteData) siteData = { products:[], categories:[], hero:{}, services:[], contact:{}, links:{}, quote:{}, hero_photos:[], blogPosts:[], coupons:[], settings:{} };
+  if (!siteData.blogPosts) siteData.blogPosts = [];
+  if (!siteData.coupons) siteData.coupons = [];
+  if (!siteData.settings) siteData.settings = {};
   // Seed products from products.ts if the list is empty, or merge in any missing ones
   if (!siteData.products || siteData.products.length === 0) {
     siteData.products = SEED_PRODUCTS;
@@ -1556,6 +1597,201 @@ function saveProduct(id) {
   toast('Saved locally. Publish to go live.');
 }
 
+// ─── BLOG ─────────────────────────────────────────────────────
+function slugify(str) {
+  return String(str||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+
+// Turns a plain textarea into the {heading?, body} block array the blog page
+// renders. Lines starting with "## " become a heading for the block that
+// follows; blank lines separate body paragraphs.
+function parseBlogBody(raw) {
+  const lines = String(raw||'').split('\n');
+  const blocks = [];
+  let current = null;
+  let buf = [];
+  function flush() {
+    const body = buf.join('\n').trim();
+    if (body) blocks.push(current ? { heading: current, body } : { body });
+    buf = []; current = null;
+  }
+  for (const line of lines) {
+    if (/^##\s+/.test(line)) {
+      flush();
+      current = line.replace(/^##\s+/, '').trim();
+    } else if (line.trim() === '' && buf.length && buf[buf.length-1].trim() === '') {
+      // collapse multiple blank lines
+    } else {
+      buf.push(line);
+    }
+  }
+  flush();
+  return blocks;
+}
+
+function blocksToText(blocks) {
+  return (blocks||[]).map(b => (b.heading ? '## '+b.heading+'\n' : '') + b.body).join('\n\n');
+}
+
+function renderBlogPosts() {
+  const posts = siteData.blogPosts || [];
+  const wrap = $('blog-list');
+  if (!posts.length) { wrap.innerHTML = '<div class="empty-state">No blog posts added yet. Existing site articles are managed in code — new posts you add here show up alongside them.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody>
+    ${posts.map(p => `<tr>
+      <td><div style="font-weight:500">${p.emoji||'📝'} ${esc(p.title)}</div><div style="font-size:11px;color:var(--muted)">/blog/${esc(p.slug)}</div></td>
+      <td style="font-size:13px">${esc(p.category||'')}</td>
+      <td style="font-size:13px">${esc(p.date||'')}</td>
+      <td>${p.visible===false?'<span style="color:var(--muted)">Hidden</span>':'<span style="color:var(--green)">Published</span>'}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="openBlogPostModal('${esc(p.slug)}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBlogPost('${esc(p.slug)}')">Delete</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openBlogPostModal(slug) {
+  const p = slug ? (siteData.blogPosts||[]).find(x=>x.slug===slug) : null;
+  const body = `
+    <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="bp-title" value="${esc(p?.title||'')}" oninput="if(!$('bp-slug').dataset.touched) $('bp-slug').value = slugify(this.value)"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Slug</label><input class="form-input" id="bp-slug" value="${esc(p?.slug||'')}" oninput="this.dataset.touched='1'" ${p?'disabled':''}></div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="bp-emoji" value="${esc(p?.emoji||'📝')}" style="width:80px"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="bp-category" value="${esc(p?.category||'')}" placeholder="Robotics"></div>
+      <div class="form-group"><label class="form-label">Read time</label><input class="form-input" id="bp-readtime" value="${esc(p?.readTime||'5 min')}" style="width:110px"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Excerpt (shown on blog list)</label><textarea class="form-textarea" id="bp-excerpt" rows="2">${esc(p?.excerpt||'')}</textarea></div>
+    <div class="form-group">
+      <label class="form-label">Content</label>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:6px">Start a line with <code>## </code> to make it a section heading. Leave a blank line between paragraphs.</p>
+      <textarea class="form-textarea" id="bp-content" rows="10" style="font-family:'JetBrains Mono',monospace;font-size:12px">${esc(blocksToText(p?.content))}</textarea>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+        <label class="toggle"><input type="checkbox" id="bp-visible" ${(p?.visible!==false)?'checked':''}><span class="toggle-slider"></span></label>
+        Published (visible on the site)
+      </label>
+    </div>`;
+  showOrderModal(p ? 'Edit Post' : 'New Blog Post', body,
+    `<button class="btn btn-primary" onclick="saveBlogPost('${esc(slug||'')}')">Save post</button><button class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>`);
+}
+
+function saveBlogPost(existingSlug) {
+  const title = $('bp-title').value.trim();
+  const slug = $('bp-slug').value.trim() || slugify(title);
+  if (!title || !slug) { toast('Title required', false); return; }
+  if (!siteData.blogPosts) siteData.blogPosts = [];
+  const dupe = siteData.blogPosts.find(x => x.slug === slug && slug !== existingSlug);
+  if (dupe) { toast('A post with that slug already exists.', false); return; }
+  const fields = {
+    slug, title,
+    emoji: $('bp-emoji').value.trim() || '📝',
+    category: $('bp-category').value.trim(),
+    readTime: $('bp-readtime').value.trim() || '5 min',
+    excerpt: $('bp-excerpt').value.trim(),
+    content: parseBlogBody($('bp-content').value),
+    visible: $('bp-visible').checked,
+    date: (existingSlug && siteData.blogPosts.find(x=>x.slug===existingSlug)?.date) || new Date().toISOString().slice(0,10),
+  };
+  if (existingSlug) {
+    const idx = siteData.blogPosts.findIndex(x=>x.slug===existingSlug);
+    if (idx > -1) siteData.blogPosts[idx] = fields;
+  } else {
+    siteData.blogPosts.push(fields);
+  }
+  saveLocal(); closeOrderModal(); renderBlogPosts();
+  toast('Saved locally. Publish to go live.');
+}
+
+function deleteBlogPost(slug) {
+  if (!confirm('Delete this blog post?')) return;
+  siteData.blogPosts = (siteData.blogPosts||[]).filter(p=>p.slug!==slug);
+  saveLocal(); renderBlogPosts();
+  toast('Post deleted. Publish to go live.');
+}
+
+// ─── COUPONS ──────────────────────────────────────────────────
+function renderCoupons() {
+  const coupons = siteData.coupons || [];
+  const wrap = $('coupons-list');
+  if (!coupons.length) { wrap.innerHTML = '<div class="empty-state">No coupons yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Code</th><th>Discount</th><th>Min order</th><th>Expires</th><th>Status</th><th></th></tr></thead><tbody>
+    ${coupons.map(c => `<tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--orange)">${esc(c.code)}</span></td>
+      <td style="font-size:13px">${c.type==='percent' ? c.value+'% off' : '₹'+c.value+' off'}</td>
+      <td style="font-size:13px">${c.minOrder ? '₹'+c.minOrder : '—'}</td>
+      <td style="font-size:13px">${c.expiresAt ? fmtDate(c.expiresAt) : 'No expiry'}</td>
+      <td>${c.active===false?'<span style="color:var(--muted)">Inactive</span>':'<span style="color:var(--green)">Active</span>'}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="openCouponModal('${esc(c.code)}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCoupon('${esc(c.code)}')">Delete</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openCouponModal(code) {
+  const c = code ? (siteData.coupons||[]).find(x=>x.code===code) : null;
+  const body = `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Coupon Code</label><input class="form-input" id="cp-code" value="${esc(c?.code||'')}" style="text-transform:uppercase" ${c?'disabled':''} placeholder="WELCOME10"></div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-input" id="cp-type">
+          <option value="percent" ${(c?.type||'percent')==='percent'?'selected':''}>% Percent off</option>
+          <option value="flat" ${c?.type==='flat'?'selected':''}>₹ Flat amount off</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Value</label><input class="form-input" id="cp-value" type="number" min="0" value="${esc(c?.value||'')}" placeholder="10"></div>
+      <div class="form-group"><label class="form-label">Min order (₹, optional)</label><input class="form-input" id="cp-minorder" type="number" min="0" value="${esc(c?.minOrder||'')}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Expires on (optional)</label><input class="form-input" id="cp-expires" type="date" value="${esc((c?.expiresAt||'').slice(0,10))}"></div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+        <label class="toggle"><input type="checkbox" id="cp-active" ${(c?.active!==false)?'checked':''}><span class="toggle-slider"></span></label>
+        Active
+      </label>
+    </div>`;
+  showOrderModal(c ? 'Edit Coupon' : 'New Coupon', body,
+    `<button class="btn btn-primary" onclick="saveCoupon('${esc(code||'')}')">Save coupon</button><button class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>`);
+}
+
+function saveCoupon(existingCode) {
+  const code = $('cp-code').value.trim().toUpperCase();
+  const value = parseFloat($('cp-value').value);
+  if (!code || isNaN(value) || value <= 0) { toast('Code and a positive value are required', false); return; }
+  if (!siteData.coupons) siteData.coupons = [];
+  const dupe = siteData.coupons.find(x => x.code === code && code !== existingCode);
+  if (dupe) { toast('A coupon with that code already exists.', false); return; }
+  const fields = {
+    code,
+    type: $('cp-type').value,
+    value,
+    minOrder: parseFloat($('cp-minorder').value) || 0,
+    expiresAt: $('cp-expires').value || '',
+    active: $('cp-active').checked,
+  };
+  if (existingCode) {
+    const idx = siteData.coupons.findIndex(x=>x.code===existingCode);
+    if (idx > -1) siteData.coupons[idx] = fields;
+  } else {
+    siteData.coupons.push(fields);
+  }
+  saveLocal(); closeOrderModal(); renderCoupons();
+  toast('Saved locally. Publish to go live.');
+}
+
+function deleteCoupon(code) {
+  if (!confirm('Delete this coupon?')) return;
+  siteData.coupons = (siteData.coupons||[]).filter(c=>c.code!==code);
+  saveLocal(); renderCoupons();
+  toast('Coupon deleted. Publish to go live.');
+}
+
 // ─── HERO FORM ────────────────────────────────────────────────
 function loadHeroForm() {
   const h = siteData.hero || {};
@@ -1793,6 +2029,19 @@ const DEFAULT_GSHEET_URL = 'https://docs.google.com/spreadsheets/d/1-ueMlYR9yNfk
 function saveGsUrl() {
   localStorage.setItem('kyzer_gsheet_url', $('gs-url').value.trim());
   toast('Google Sheet URL saved.');
+}
+
+function saveStoreSettings() {
+  const gst = parseFloat($('st-gst').value);
+  const delivery = parseFloat($('st-delivery').value);
+  const freeAbove = parseFloat($('st-freeabove').value);
+  siteData.settings = {
+    gstRate: isNaN(gst) ? 18 : gst,
+    deliveryCharge: isNaN(delivery) ? 99 : delivery,
+    deliveryFreeAbove: isNaN(freeAbove) ? 999 : freeAbove,
+  };
+  saveLocal();
+  toast('Saved locally. Click Publish to go live.');
 }
 
 function sheetUrlToCsvUrl(url) {

@@ -3,10 +3,28 @@ import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
 import { createClient } from '@supabase/supabase-js';
 
-const GST_RATE = 0.18;
-const DELIVERY_FREE_ABOVE = 999;
-const DELIVERY_CHARGE = 99;
+const DEFAULT_GST_RATE = 0.18;
+const DEFAULT_DELIVERY_FREE_ABOVE = 999;
+const DEFAULT_DELIVERY_CHARGE = 99;
 const ALLOWED_QUAL_MULTS: Record<string, number> = { Standard: 1, Fine: 1.2, Ultra: 1.5 };
+
+interface StoreSettings {
+  gstRate?: number;
+  deliveryCharge?: number;
+  deliveryFreeAbove?: number;
+}
+
+async function getStoreSettings(sb: ReturnType<typeof getSupabase>): Promise<Required<StoreSettings>> {
+  const defaults = { gstRate: DEFAULT_GST_RATE, deliveryCharge: DEFAULT_DELIVERY_CHARGE, deliveryFreeAbove: DEFAULT_DELIVERY_FREE_ABOVE };
+  if (!sb) return defaults;
+  const { data } = await sb.from('site_data').select('settings').single();
+  const s: StoreSettings = data?.settings || {};
+  return {
+    gstRate: typeof s.gstRate === 'number' && s.gstRate >= 0 ? s.gstRate / 100 : defaults.gstRate,
+    deliveryCharge: typeof s.deliveryCharge === 'number' && s.deliveryCharge >= 0 ? s.deliveryCharge : defaults.deliveryCharge,
+    deliveryFreeAbove: typeof s.deliveryFreeAbove === 'number' && s.deliveryFreeAbove >= 0 ? s.deliveryFreeAbove : defaults.deliveryFreeAbove,
+  };
+}
 
 const CF_BASE = process.env.CASHFREE_ENV === 'sandbox'
   ? 'https://sandbox.cashfree.com/pg'
@@ -29,10 +47,28 @@ function getSupabase() {
   return createClient(url, key);
 }
 
-async function calcCartAmount(cartItems: { id: string; qty: number }[]): Promise<number> {
+interface Coupon {
+  code: string;
+  type: 'percent' | 'flat';
+  value: number;
+  minOrder?: number;
+  expiresAt?: string;
+  active?: boolean;
+}
+
+function applyCoupon(subtotal: number, coupon: Coupon | undefined): number {
+  if (!coupon) return subtotal;
+  if (coupon.active === false) return subtotal;
+  if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) return subtotal;
+  if (coupon.minOrder && subtotal < coupon.minOrder) return subtotal;
+  const discount = coupon.type === 'percent' ? subtotal * (coupon.value / 100) : coupon.value;
+  return Math.max(0, subtotal - discount);
+}
+
+async function calcCartAmount(cartItems: { id: string; qty: number }[], couponCode?: string): Promise<{ amount: number; discount: number; couponValid: boolean }> {
   const sb = getSupabase();
   if (!sb) throw new Error('Database not configured');
-  const { data } = await sb.from('site_data').select('products').single();
+  const { data } = await sb.from('site_data').select('products, coupons').single();
   const products: Record<string, unknown>[] = data?.products || [];
   let subtotal = 0;
   for (const item of cartItems) {
@@ -42,9 +78,20 @@ async function calcCartAmount(cartItems: { id: string; qty: number }[]): Promise
     if (!priceNum || isNaN(priceNum)) throw new Error('Product has no fixed price');
     subtotal += priceNum * Math.max(1, item.qty || 1);
   }
-  const gst = Math.round(subtotal * GST_RATE);
-  const delivery = subtotal >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
-  return subtotal + gst + delivery;
+
+  let couponValid = false;
+  let discountedSubtotal = subtotal;
+  if (couponCode) {
+    const coupons: Coupon[] = data?.coupons || [];
+    const coupon = coupons.find(c => c.code === couponCode.trim().toUpperCase());
+    discountedSubtotal = applyCoupon(subtotal, coupon);
+    couponValid = discountedSubtotal < subtotal;
+  }
+
+  const settings = await getStoreSettings(sb);
+  const gst = Math.round(discountedSubtotal * settings.gstRate);
+  const delivery = subtotal >= settings.deliveryFreeAbove ? 0 : settings.deliveryCharge;
+  return { amount: discountedSubtotal + gst + delivery, discount: subtotal - discountedSubtotal, couponValid };
 }
 
 async function calcQuoteAmount(params: Record<string, unknown>): Promise<number> {
@@ -88,11 +135,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { cartItems, quoteParams, name, email, phone, address } = body;
+    const { cartItems, quoteParams, name, email, phone, address, couponCode } = body;
 
     let amount: number;
+    let discount = 0;
+    let couponValid = false;
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
-      amount = await calcCartAmount(cartItems);
+      const result = await calcCartAmount(cartItems, couponCode);
+      amount = result.amount;
+      discount = result.discount;
+      couponValid = result.couponValid;
     } else if (quoteParams && typeof quoteParams === 'object') {
       amount = await calcQuoteAmount(quoteParams);
     } else {
@@ -163,6 +215,8 @@ export async function POST(req: NextRequest) {
       payment_session_id: cfData.payment_session_id,
       order_id:           orderId,
       amount,
+      discount,
+      couponValid,
       mode:               process.env.CASHFREE_ENV === 'sandbox' ? 'sandbox' : 'production',
     });
   } catch (err: unknown) {
