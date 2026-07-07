@@ -31,7 +31,7 @@ const CSS = `
     align-items: center; justify-content: center;
     gap: 18px;
     font-family: 'DM Sans', system-ui, sans-serif;
-    pointer-events: none;
+    cursor: default;
   }
   .kz-pt-overlay.kz-in  { animation: kzFadeIn  0.15s ease forwards; }
   .kz-pt-overlay.kz-out { animation: kzFadeOut 0.2s ease forwards; }
