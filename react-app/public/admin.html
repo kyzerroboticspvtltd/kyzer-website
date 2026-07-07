@@ -160,6 +160,12 @@ html.dark .toggle-slider{background:#444}
 .publish-bar p{font-size:13px;color:var(--muted)}
 
 /* ── PRODUCT CARDS ── */
+.prod-cat-section{margin-bottom:32px}
+.prod-cat-heading{display:flex;align-items:baseline;gap:10px;padding-bottom:8px;margin-bottom:16px;border-bottom:2px solid var(--border)}
+.prod-cat-heading h3{font-size:18px;font-weight:700;color:var(--text);text-transform:capitalize;margin:0}
+.prod-cat-count{font-size:12px;color:var(--muted)}
+.prod-subcat-block{margin-bottom:20px}
+.prod-subcat-heading{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .prod-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s;position:relative}
 .prod-card:hover{box-shadow:var(--shadow-lg);border-color:rgba(255,140,53,.35)}
@@ -1327,6 +1333,43 @@ function setProdCat(cat) {
   renderProducts(document.querySelector('#tab-products .search-input')?.value||'');
 }
 
+function renderProdCard(p) {
+  const id = esc(p.id||p.name);
+  const badgeHtml = p.badge ? `<span class="prod-badge ${esc(p.badge)}">${esc(p.badge)}</span>` : '';
+  const imgHtml = p.image
+    ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const emojiHtml = `<span class="prod-img-emoji" style="${p.image?'display:none':''}">${esc(p.emoji||'📦')}</span>`;
+  const priceHtml = p.price>0
+    ? `<span class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</span>`
+    : `<span class="prod-price unset">Price on request</span>`;
+  const isVisible = p.visible !== false;
+  return `<div class="prod-card${isVisible?'':' hidden-card'}" id="pcard-${id}">
+    <div class="prod-img">
+      ${imgHtml}${emojiHtml}${badgeHtml}
+      <span class="prod-vis-toggle">
+        <label class="toggle" title="${isVisible?'Visible':'Hidden'}">
+          <input type="checkbox" ${isVisible?'checked':''} onchange="toggleProduct('${id}')">
+          <span class="toggle-slider"></span>
+        </label>
+      </span>
+    </div>
+    <div class="prod-body">
+      <div class="prod-subcat">${esc(p.subcategory||p.category||'')}</div>
+      <div class="prod-name">${esc(p.name)}</div>
+      <div class="prod-desc">${esc(p.description||'')}</div>
+    </div>
+    <div class="prod-footer">
+      ${priceHtml}
+      <div class="prod-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openProductModal('${id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">Delete</button>
+        <button class="btn btn-primary btn-sm" onclick="doPublish()">Publish</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderProducts(search='') {
   renderProdCatFilters();
   const q = search.toLowerCase();
@@ -1339,42 +1382,32 @@ function renderProducts(search='') {
   if (!grid) return;
   if (!prods.length) { grid.innerHTML = '<div class="empty-state">No products found.</div>'; return; }
 
-  grid.innerHTML = `<div class="prod-grid">${prods.map(p => {
-    const id = esc(p.id||p.name);
-    const badgeHtml = p.badge ? `<span class="prod-badge ${esc(p.badge)}">${esc(p.badge)}</span>` : '';
-    const imgHtml = p.image
-      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      : '';
-    const emojiHtml = `<span class="prod-img-emoji" style="${p.image?'display:none':''}">${esc(p.emoji||'📦')}</span>`;
-    const priceHtml = p.price>0
-      ? `<span class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</span>`
-      : `<span class="prod-price unset">Price on request</span>`;
-    const isVisible = p.visible !== false;
-    return `<div class="prod-card${isVisible?'':' hidden-card'}" id="pcard-${id}">
-      <div class="prod-img">
-        ${imgHtml}${emojiHtml}${badgeHtml}
-        <span class="prod-vis-toggle">
-          <label class="toggle" title="${isVisible?'Visible':'Hidden'}">
-            <input type="checkbox" ${isVisible?'checked':''} onchange="toggleProduct('${id}')">
-            <span class="toggle-slider"></span>
-          </label>
-        </span>
-      </div>
-      <div class="prod-body">
-        <div class="prod-subcat">${esc(p.subcategory||p.category||'')}</div>
-        <div class="prod-name">${esc(p.name)}</div>
-        <div class="prod-desc">${esc(p.description||'')}</div>
-      </div>
-      <div class="prod-footer">
-        ${priceHtml}
-        <div class="prod-actions">
-          <button class="btn btn-ghost btn-sm" onclick="openProductModal('${id}')">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">Delete</button>
-          <button class="btn btn-primary btn-sm" onclick="doPublish()">Publish</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('')}</div>`;
+  // Group by category, then by subcategory, so products never render mixed
+  // together on one flat page — each category/subcategory gets its own section.
+  const byCat = new Map();
+  for (const p of prods) {
+    const cat = p.category || 'Uncategorised';
+    if (!byCat.has(cat)) byCat.set(cat, new Map());
+    const bySub = byCat.get(cat);
+    const sub = p.subcategory || 'General';
+    if (!bySub.has(sub)) bySub.set(sub, []);
+    bySub.get(sub).push(p);
+  }
+
+  let html = '';
+  for (const [cat, bySub] of byCat) {
+    const catCount = [...bySub.values()].reduce((s,arr)=>s+arr.length,0);
+    html += `<div class="prod-cat-section">
+      <div class="prod-cat-heading"><h3>${esc(cat)}</h3><span class="prod-cat-count">${catCount} product${catCount===1?'':'s'}</span></div>`;
+    for (const [sub, items] of bySub) {
+      html += `<div class="prod-subcat-block">
+        <div class="prod-subcat-heading">${esc(sub)}</div>
+        <div class="prod-grid">${items.map(renderProdCard).join('')}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  grid.innerHTML = html;
 }
 
 function toggleProduct(id) {
