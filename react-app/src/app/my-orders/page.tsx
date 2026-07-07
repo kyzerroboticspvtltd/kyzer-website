@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { courierTrackingUrl } from '@/lib/courierTracking';
 
 const FONT_URL = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap';
 
@@ -19,6 +20,8 @@ interface Order {
     paymentMethod?: string;
     shippingFull?: string;
     type?: string;
+    trackingNumber?: string;
+    courier?: string;
   };
 }
 
@@ -155,6 +158,19 @@ export default function MyOrdersPage() {
                             </div>
                           ))}
                         </div>
+
+                        {/* Tracking */}
+                        {d.trackingNumber && (
+                          <div style={{ background: '#fff7f0', border: '1px solid #ffd8a8', borderRadius: 8, padding: '12px 16px', fontSize: 13, marginBottom: 12 }}>
+                            <div style={{ color: '#888', fontSize: 11, marginBottom: 4 }}>{d.courier || 'Courier'} tracking number</div>
+                            <div style={{ fontWeight: 700, color: '#111', fontFamily: 'monospace', marginBottom: 6 }}>{d.trackingNumber}</div>
+                            {courierTrackingUrl(d.courier, d.trackingNumber) && (
+                              <a href={courierTrackingUrl(d.courier, d.trackingNumber)!} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#FF8C35', fontWeight: 600, textDecoration: 'none' }}>
+                                Track on {d.courier} →
+                              </a>
+                            )}
+                          </div>
+                        )}
 
                         {/* Summary */}
                         <div style={{ background: '#f8f8f6', borderRadius: 8, padding: '12px 16px', fontSize: 13, display: 'flex', flexDirection: 'column', gap: 6 }}>

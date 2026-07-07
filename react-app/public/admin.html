@@ -1143,7 +1143,18 @@ function openOrderModal(id, type) {
       <select class="status-select" id="modal-status-select">
         ${statusOptions.map(s=>`<option value="${s}" ${order.status===s?'selected':''}>${s}</option>`).join('')}
       </select>
-    </div>`;
+    </div>
+    ${type==='shop' ? `
+    <div class="form-row" style="margin-top:14px">
+      <div class="form-group"><label class="form-label">Courier</label>
+        <select class="form-input" id="modal-courier">
+          ${['','Delhivery','Blue Dart','DTDC','India Post','Ecom Express','Xpressbees','Other'].map(c=>`<option value="${c}" ${(order.courier||'')===c?'selected':''}>${c||'— Not set —'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Tracking Number</label>
+        <input class="form-input" id="modal-tracking" value="${esc(order.trackingNumber||'')}" placeholder="AWB / tracking number">
+      </div>
+    </div>` : ''}`;
 
   showOrderModal((type==='shop'?'Shop Order — ':'3D Order — ')+esc(order.id), body,
     `<button class="btn btn-primary" onclick="updateOrderStatus('${esc(order.id)}')">Update status</button>
@@ -1164,15 +1175,20 @@ async function updateOrderStatus(id) {
   const sel = $('modal-status-select');
   if (!sel) return;
   const status = sel.value;
+  const courierEl = $('modal-courier');
+  const trackingEl = $('modal-tracking');
+  const dataPatch = (currentOrderType === 'shop' && (courierEl || trackingEl))
+    ? { courier: courierEl ? courierEl.value : '', trackingNumber: trackingEl ? trackingEl.value.trim() : '' }
+    : undefined;
   try {
     const endpoint = currentOrderType === 'shop' ? '/api/order-update' : '/api/order-update';
     const r = await fetch(endpoint, {
       method: 'POST',
       headers: apiHeaders(),
-      body: JSON.stringify({ id, status, table: currentOrderType === 'shop' ? 'orders' : 'print_orders' }),
+      body: JSON.stringify({ id, status, dataPatch, table: currentOrderType === 'shop' ? 'orders' : 'print_orders' }),
     });
     if (r.ok) {
-      if (currentOrderType === 'shop') { const o = shopOrders.find(x=>x.id===id); if(o) o.status=status; renderShopOrders(); }
+      if (currentOrderType === 'shop') { const o = shopOrders.find(x=>x.id===id); if(o) { o.status=status; if(dataPatch) Object.assign(o, dataPatch); } renderShopOrders(); }
       else { const o = printOrders.find(x=>x.id===id); if(o) o.status=status; renderPrintOrders(); }
       closeOrderModal();
       toast('Status updated to ' + status);

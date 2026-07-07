@@ -106,6 +106,7 @@ export default function Footer() {
               ['About Us', '/about'],
               ['Portfolio', '/portfolio'],
               ['Blog', '/blog'],
+              ['Track Order', '/track-order'],
               ['Contact', '/contact'],
               ['Pricing', '/pricing'],
               ['Get a 3D Quote', '/get-a-quote'],
