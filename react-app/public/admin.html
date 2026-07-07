@@ -1456,7 +1456,7 @@ function openProductModal(id) {
     <div class="form-row">
       <div class="form-group"><label class="form-label">Category</label>
         <select class="form-input" id="pm-cat" onchange="pmUpdateSubcatOptions()">
-          ${["electronics","drone","proto","3dprint"].map(c=>`<option value="${c}" ${(p?.category||"")==c?"selected":""}>${c}</option>`).join("")}
+          ${[["electronics","Electronics"],["drone","Drones"],["print","3D Printing (Services)"],["proto","Prototyping"],["3dprint","Printers & Supplies"]].map(([c,label])=>`<option value="${c}" ${(p?.category||"")==c?"selected":""}>${label}</option>`).join("")}
         </select></div>
       <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" value="${esc(p?.price||'')}"></div>
     </div>
