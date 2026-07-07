@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from('orders')
     .select('id, status, data, submitted_at')
-    .filter('data->>email', 'eq', email)
+    .filter('data->>email', 'ilike', email)
     .filter('data->>type', 'in', '(shop,cod)')
     .order('submitted_at', { ascending: false })
     .limit(100);

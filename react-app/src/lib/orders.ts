@@ -35,12 +35,15 @@ export async function saveOrder(order: PersistableOrder, type: PersistableOrder[
   try {
     const id = order.id || `${(type || 'ord').toUpperCase()}-${Date.now()}`;
     const submittedAt = (order.submittedAt as string) || new Date().toISOString();
+    // Normalise email casing so it reliably matches the lowercase email stored
+    // in the customer's login JWT when "My Orders" looks up their history.
+    const email = typeof order.email === 'string' ? order.email.trim().toLowerCase() : order.email;
     const row = {
       id,
       status: order.status || 'new',
       // `type` is kept inside `data` to match the existing table schema used by
       // the public site and admin panel (which read row.data / row.submitted_at).
-      data: { ...order, id, type, submittedAt },
+      data: { ...order, id, type, submittedAt, email },
       submitted_at: submittedAt,
     };
     const r = await fetch(`${SB_URL}/rest/v1/orders`, {
