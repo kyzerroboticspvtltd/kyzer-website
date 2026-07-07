@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { addToLocalCart, buyNow } from '@/lib/shopCart';
+import { productSlug } from '@/lib/productSlug';
 
 interface Frame {
   id: string;
@@ -53,6 +55,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function DroneFramesPage() {
+  const router = useRouter();
   const [frames, setFrames]         = useState<Frame[]>([]);
   const [loading, setLoading]       = useState(true);
   const [fType, setFType]           = useState('all');
@@ -202,7 +205,7 @@ export default function DroneFramesPage() {
               const photo = f.photos?.[0] || f.image;
               const priceNum = parseFloat(f.price);
               return (
-                <div key={f.id} onClick={() => setSelected(f)}
+                <div key={f.id} onClick={() => router.push(`/shop/product/${productSlug(f)}`)}
                   style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s', position: 'relative' }}
                   onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
                   onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>

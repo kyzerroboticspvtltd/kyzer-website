@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { addToLocalCart, buyNow } from '@/lib/shopCart';
+import { productSlug } from '@/lib/productSlug';
 
 interface ElecProduct {
   id: string;
@@ -33,6 +35,7 @@ const SUBCATS = [
 ];
 
 export default function ElectronicsProductsPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<ElecProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [fSub, setFSub]         = useState('all');
@@ -84,8 +87,7 @@ export default function ElectronicsProductsPage() {
     });
 
   function openModal(p: ElecProduct) {
-    setSelected(p);
-    setModalQty(1);
+    router.push(`/shop/product/${productSlug(p)}`);
   }
 
   function handleAddToCart(p: ElecProduct, qty = 1) {

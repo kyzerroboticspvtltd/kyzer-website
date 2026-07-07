@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { addToLocalCart, buyNow } from '@/lib/shopCart';
+import { productSlug } from '@/lib/productSlug';
 
 interface PrintProduct {
   id: string;
@@ -47,6 +49,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function PrintingPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [fMat, setFMat]         = useState('all');
@@ -207,7 +210,7 @@ export default function PrintingPage() {
               const photo = p.photos?.[0] || p.image;
               const priceNum = parseFloat(p.price);
               return (
-                <div key={p.id} onClick={() => setSelected(p)}
+                <div key={p.id} onClick={() => router.push(`/shop/product/${productSlug(p)}`)}
                   style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s', position: 'relative' }}
                   onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
                   onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>

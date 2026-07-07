@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { productSlug } from '@/lib/productSlug';
 
 interface ProtoProduct {
   id: string;
@@ -33,6 +35,7 @@ const PROCESS_STEPS = [
 ];
 
 export default function PrototypingPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<ProtoProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [sort, setSort]         = useState('default');
@@ -149,7 +152,7 @@ export default function PrototypingPage() {
               const photo = p.photos?.[0] || p.image;
               const priceNum = parseFloat(p.price);
               return (
-                <div key={p.id} onClick={() => setSelected(p)}
+                <div key={p.id} onClick={() => router.push(`/shop/product/${productSlug(p)}`)}
                   style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s', position: 'relative' }}
                   onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
                   onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
