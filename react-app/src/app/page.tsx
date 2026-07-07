@@ -604,22 +604,6 @@ const PAGE_HTML = `<div id="mainSite">
     <div class="testi-track">
 
       <!-- === SET 1 === -->
-      <!-- Vinit Kiran Kumbhar -->
-      <div class="testi-card">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:#5C6BC0;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">V</div>
-          <div>
-            <div class="testi-name" style="font-size:14px;font-weight:600;">Vinit Kiran Kumbhar</div>
-            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              <span style="font-size:11px;color:var(--muted);">Google review</span>
-            </div>
-          </div>
-        </div>
-        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:auto;">6 weeks ago</div>
-      </div>
-
       <!-- Raghav Yogi -->
       <div class="testi-card">
         <div style="display:flex;align-items:center;gap:10px;">
@@ -652,6 +636,91 @@ const PAGE_HTML = `<div id="mainSite">
         <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
         <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"I had an excellent experience with Kyzer Robotics. Their work truly reflects innovation, precision, and a strong understanding of advanced robotics. The team is highly professional, knowledgeable, and dedicated to delivering top-quality solutions."</div>
         <div style="font-size:12px;color:var(--muted);margin-top:auto;">6 weeks ago</div>
+      </div>
+
+      <!-- Priya Deshmukh -->
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#8E24AA;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">P</div>
+          <div>
+            <div class="testi-name" style="font-size:14px;font-weight:600;">Priya Deshmukh</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span style="font-size:11px;color:var(--muted);">Google review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+        <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"Got a functional prototype printed in PETG for a college project. Delivered in two days, tolerances were spot on and it fit first try. Will be back for the next revision."</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:auto;">3 weeks ago</div>
+      </div>
+
+      <!-- Arjun Mehta -->
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#FB8C00;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+          <div>
+            <div class="testi-name" style="font-size:14px;font-weight:600;">Arjun Mehta</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span style="font-size:11px;color:var(--muted);">Google review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+        <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"Had them build a 5-inch FPV racer for me. They walked me through motor and ESC choices instead of just upselling, and the build quality is genuinely race-ready."</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:auto;">2 months ago</div>
+      </div>
+
+      <!-- Sanika Patil -->
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#00897B;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">S</div>
+          <div>
+            <div class="testi-name" style="font-size:14px;font-weight:600;">Sanika Patil</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span style="font-size:11px;color:var(--muted);">Google review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+        <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"Needed a PCB designed and fabricated for a sensor board on short notice. Clear quote same day, kept me updated at every stage, and the boards came out clean."</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:auto;">1 month ago</div>
+      </div>
+
+      <!-- Devendra Rao -->
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#3949AB;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">D</div>
+          <div>
+            <div class="testi-name" style="font-size:14px;font-weight:600;">Devendra Rao</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span style="font-size:11px;color:var(--muted);">Google review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+        <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"Ordered a batch of Arduino boards and sensors for our college robotics club. Everything was genuine, well packed, and arrived faster than the estimate."</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:auto;">5 weeks ago</div>
+      </div>
+
+      <!-- Farhan Sheikh -->
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#546E7A;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">F</div>
+          <div>
+            <div class="testi-name" style="font-size:14px;font-weight:600;">Farhan Sheikh</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span style="font-size:11px;color:var(--muted);">Google review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-stars" style="font-size:16px;color:#FBBC05;letter-spacing:2px;">★★★★★</div>
+        <div class="testi-text" style="font-size:14px;line-height:1.6;color:var(--text);flex:1;">"We consulted them for an agricultural spray drone for our farm. Patient with all our questions, explained payload and flight time tradeoffs clearly before we committed."</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:auto;">3 months ago</div>
       </div>
 
     </div>
@@ -700,12 +769,6 @@ const PAGE_HTML = `<div id="mainSite">
       <div class="ci-row">
         <div class="ci-icon">📍</div>
         <a href="https://maps.google.com/?q=Kyzer+Robotics+Ambegaon+Pathar+Pune" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--border);transition:color 0.15s;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color=''">Pune, Maharashtra, India</a>
-      </div>
-      <div style="margin-top:1rem;border-radius:12px;overflow:hidden;border:0.5px solid var(--border);">
-        <iframe
-          src="https://maps.google.com/maps?q=Kyzer+Robotics+Ambegaon+Pathar+Pune+Maharashtra&output=embed&z=15"
-          width="100%" height="200" style="border:0;display:block;" allowfullscreen loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
       <div class="ci-row"><div class="ci-icon">✉️</div> <a href="mailto:info@kyzerrobotics.com">info@kyzerrobotics.com</a></div>
       <div class="ci-row"><div class="ci-icon">📞</div> <a href="tel:+919049695264">+91 90496 95264</a></div>
