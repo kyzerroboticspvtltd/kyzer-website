@@ -190,18 +190,10 @@
     display: flex; flex-direction: column;
     position: relative; z-index: 1;
   }
-  .hero-grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,140,53,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,140,53,0.07) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-  }
   .hero-glow {
     position: absolute; top: -200px; right: -100px;
     width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(255,140,53,0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,140,53,0.12) 0%, transparent 70%);
     pointer-events: none;
   }
 
@@ -249,10 +241,16 @@
     font-family: inherit;
   }
   .btn-outline:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
-  .hero-stats {
-    display: flex; gap: 3rem; margin-top: 5rem;
-    padding-top: 2.5rem; border-top: 0.5px solid var(--border);
-    opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+  .stats-strip {
+    background: var(--bg2);
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .stats-strip-inner {
+    display: flex; gap: clamp(2rem, 6vw, 4rem);
+    max-width: 1100px; margin: 0 auto;
+    padding: 1.75rem clamp(1.5rem, 5vw, 3rem);
+    justify-content: center; flex-wrap: wrap;
   }
   .hero-stat-num {
     font-family: 'Bebas Neue', sans-serif;
@@ -315,10 +313,6 @@
     text-decoration: none; color: inherit; display: block; cursor: pointer;
   }
   .service-card:hover { border-color: rgba(255,140,53,0.5); transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.07); }
-  .sc-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; color: var(--orange); margin-bottom: 1rem;
-  }
   .service-card h3 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
   .service-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
@@ -1300,7 +1294,7 @@
     .hero-photos-left-fade { display: none; }
     .photo-col-b { display: none; }
     .scroll-hint { display: none; }
-    .hero-stats { flex-wrap: wrap; gap: 1.25rem; margin-top: 3rem; }
+    .stats-strip-inner { gap: 1.5rem; padding: 1.5rem 1.25rem; }
 
     /* ── Sections ── */
     section { padding: 3.5rem 1.25rem; }
@@ -1389,11 +1383,11 @@
     .hero-sub { font-size: 15px; margin: 1.25rem 0 2rem; }
     .btn-primary, .btn-outline { padding: 11px 18px; font-size: 14px; }
     .hero-btns { gap: 10px; }
-    .hero-stats {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1rem; margin-top: 2.5rem; padding-top: 1.5rem;
+    .stats-strip-inner {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem; padding: 1.25rem 1rem;
     }
-    .hero-stat-num { font-size: 32px; }
+    .hero-stat-num { font-size: 28px; }
     .hero-stat-label { font-size: 11px; }
 
     /* ── Sections ── */
@@ -1536,34 +1530,18 @@
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
     gap: 2.5rem 2rem;
     margin-top: 3.5rem;
-    position: relative;
   }
-  .process-steps::before {
-    content: '';
-    position: absolute;
-    top: 22px;
-    left: 0; right: 0;
-    height: 0.5px;
-    background: var(--border);
-    z-index: 0;
-  }
-  .process-step { position: relative; z-index: 1; }
-  .ps-num {
-    width: 44px; height: 44px;
-    background: var(--bg);
-    border: 0.5px solid var(--border);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px; color: var(--orange); font-weight: 600;
-    margin-bottom: 1.25rem;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .process-step:hover .ps-num { background: #fff3e8; border-color: var(--orange); }
+  .process-step { position: relative; }
   .ps-title { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+  .ps-title::before {
+    content: '';
+    display: block;
+    width: 28px; height: 2px;
+    background: var(--orange);
+    margin-bottom: 14px;
+  }
   .ps-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
   @media (max-width: 768px) {
-    .process-steps::before { display: none; }
     .process-steps { gap: 2rem; }
   }
 

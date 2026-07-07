@@ -92,14 +92,13 @@ const PAGE_HTML = `<div id="mainSite">
 
 <!-- HERO -->
 <section class="hero" id="home">
-  <div class="hero-grid-bg"></div>
   <div class="hero-glow"></div>
 
   <!-- Left: text content -->
   <div class="hero-left">
     <div class="hero-tag">KYZER ROBOTICS — PUNE, INDIA</div>
-    <h1>Innovate.<br>Automate.<br><span class="accent">Elevate.</span></h1>
-    <p class="hero-sub">Intelligent robotic solutions and advanced 3D printing, engineered for hobbyists, startups, and industrial teams across India.</p>
+    <h1>Build hardware<br>that <span class="accent">works.</span></h1>
+    <p class="hero-sub">Custom drones, electronics, and precision 3D printing — engineered for hobbyists, startups, and industrial teams across India.</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">
         Shop products <span>→</span>
@@ -108,25 +107,17 @@ const PAGE_HTML = `<div id="mainSite">
         Request a prototype
       </button>
     </div>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-num">10+</div>
-        <div class="hero-stat-label">Projects delivered</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">48hr</div>
-        <div class="hero-stat-label">Prototype turnaround</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">100%</div>
-        <div class="hero-stat-label">Custom builds</div>
-      </div>
-    </div>
   </div>
-
-
-
 </section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div><div class="hero-stat-num">10+</div><div class="hero-stat-label">Projects delivered</div></div>
+    <div><div class="hero-stat-num">48hr</div><div class="hero-stat-label">Prototype turnaround</div></div>
+    <div><div class="hero-stat-num">100%</div><div class="hero-stat-label">Custom builds</div></div>
+  </div>
+</div>
 
 <!-- MARQUEE STRIP -->
 <div class="marquee-strip" aria-hidden="true">
@@ -158,7 +149,6 @@ const PAGE_HTML = `<div id="mainSite">
 <section id="about">
   <div class="about-wrap">
     <div class="about-text reveal">
-      <div class="sec-label">ABOUT US</div>
       <h2>Built by makers,<br>for makers.</h2>
       <p>Kyzer Robotics is a Pune-based technology company founded by engineers passionate about drones and advanced manufacturing. We design, build, and deliver custom robotic solutions — from FPV racing drones to agricultural survey systems and precision 3D-printed parts.</p>
       <p>Whether you're a startup needing a rapid prototype, a college team building a competition UAV, or an industrial client looking for automation — we bring engineering precision and maker enthusiasm to every project.</p>
@@ -193,27 +183,22 @@ const PAGE_HTML = `<div id="mainSite">
   </div>
   <div class="services-grid reveal">
     <a class="service-card" href="/shop/complete-drones">
-      <div class="sc-num">01</div>
       <h3>Custom Drones</h3>
       <p>FPV racing, survey, and agricultural drones built to your spec — designed, assembled, and tested in Pune with full after-build support.</p>
     </a>
     <a class="service-card" href="/shop/3d-printing">
-      <div class="sc-num">02</div>
       <h3>3D Printing</h3>
       <p>FDM printing in PLA, PETG, ABS, TPU, and Nylon. Functional parts and production-ready prints with a 48-hour turnaround.</p>
     </a>
     <a class="service-card" href="/shop/prototyping">
-      <div class="sc-num">03</div>
       <h3>Rapid Prototyping</h3>
       <p>From sketch or CAD file to physical prototype in as fast as 48 hours — design verification, printing, and assembly all in-house.</p>
     </a>
     <a class="service-card" href="/get-a-quote">
-      <div class="sc-num">04</div>
       <h3>Automation & Robotics</h3>
       <p>Custom robotic platforms and smart control systems for industrial clients, startups, and college R&D teams.</p>
     </a>
     <a class="service-card" href="/get-a-quote">
-      <div class="sc-num">05</div>
       <h3>AI & Computer Vision</h3>
       <p>Embedded AI and computer vision integrated into drones, robots, and automation systems for real-world deployments.</p>
     </a>
@@ -223,28 +208,23 @@ const PAGE_HTML = `<div id="mainSite">
 <!-- HOW IT WORKS -->
 <section id="process">
   <div class="reveal">
-    <div class="sec-label">PROCESS</div>
     <div class="sec-title">How it works</div>
     <div class="sec-sub">From enquiry to delivery — a simple, transparent process built around your timeline.</div>
   </div>
   <div class="process-steps reveal">
     <div class="process-step">
-      <div class="ps-num">01</div>
       <div class="ps-title">Tell us what you need</div>
       <div class="ps-desc">Fill in the contact form or send us your CAD file, sketch, or idea via WhatsApp. No spec is too rough to start with.</div>
     </div>
     <div class="process-step">
-      <div class="ps-num">02</div>
       <div class="ps-title">Get a quote in hours</div>
       <div class="ps-desc">We review your project, check material and print settings, and send back a detailed price breakdown — usually same day.</div>
     </div>
     <div class="process-step">
-      <div class="ps-num">03</div>
       <div class="ps-title">We build & iterate</div>
       <div class="ps-desc">Production starts after confirmation. Track progress via WhatsApp and request adjustments before final delivery.</div>
     </div>
     <div class="process-step">
-      <div class="ps-num">04</div>
       <div class="ps-title">Delivery to your door</div>
       <div class="ps-desc">Parts are inspected, packed, and shipped with tracking — or available for pickup from our Pune workshop.</div>
     </div>
