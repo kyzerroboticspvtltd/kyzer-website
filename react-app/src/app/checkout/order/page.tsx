@@ -586,8 +586,8 @@ export default function OrderPage() {
                     <span style={{ color: delivery === 0 ? '#27ae60' : '#555' }}>{delivery === 0 ? 'FREE' : `₹${delivery}`}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#888' }}>
-                    <span>Total with GST</span>
-                    <span>₹{grandTotal.toLocaleString('en-IN')} <span style={{ fontSize: 11 }}>(Incl. GST)</span></span>
+                    <span>Order Total</span>
+                    <span>₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>

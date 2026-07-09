@@ -497,7 +497,7 @@ html.dark .toggle-slider{background:#444}
             <h3 style="font-size:15px;margin-bottom:16px">Payment, Shipping & Tax</h3>
             <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Controls how order totals are calculated at checkout. Publish after saving to apply.</p>
             <div class="form-row">
-              <div class="form-group"><label class="form-label">GST rate (%)</label><input class="form-input" id="st-gst" type="number" step="0.1" min="0" placeholder="18"></div>
+              <div class="form-group"><label class="form-label">GST rate (%)</label><input class="form-input" id="st-gst" type="number" step="0.1" min="0" placeholder="0" value="0"><div style="font-size:11px;color:var(--muted);margin-top:4px">Leave at 0 until you have a GSTIN — do not charge GST without one.</div></div>
               <div class="form-group"><label class="form-label">Delivery charge (₹)</label><input class="form-input" id="st-delivery" type="number" min="0" placeholder="99"></div>
             </div>
             <div class="form-group"><label class="form-label">Free delivery above (₹)</label><input class="form-input" id="st-freeabove" type="number" min="0" placeholder="999" style="max-width:220px"></div>
@@ -907,7 +907,7 @@ function nav(name) {
     $('sb-url').value = localStorage.getItem('kyzer_supabase_url')||'';
     $('sb-key').value = localStorage.getItem('kyzer_supabase_key')||'';
     $('gs-url').value = localStorage.getItem('kyzer_gsheet_url')||'';
-    $('st-gst').value = (siteData.settings && siteData.settings.gstRate != null) ? siteData.settings.gstRate : 18;
+    $('st-gst').value = (siteData.settings && siteData.settings.gstRate != null) ? siteData.settings.gstRate : 0;
     $('st-delivery').value = (siteData.settings && siteData.settings.deliveryCharge != null) ? siteData.settings.deliveryCharge : 99;
     $('st-freeabove').value = (siteData.settings && siteData.settings.deliveryFreeAbove != null) ? siteData.settings.deliveryFreeAbove : 999;
   }
@@ -2036,7 +2036,7 @@ function saveStoreSettings() {
   const delivery = parseFloat($('st-delivery').value);
   const freeAbove = parseFloat($('st-freeabove').value);
   siteData.settings = {
-    gstRate: isNaN(gst) ? 18 : gst,
+    gstRate: isNaN(gst) ? 0 : gst,
     deliveryCharge: isNaN(delivery) ? 99 : delivery,
     deliveryFreeAbove: isNaN(freeAbove) ? 999 : freeAbove,
   };

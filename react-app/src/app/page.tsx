@@ -842,7 +842,7 @@ const PAGE_HTML = `<div id="mainSite">
       <ul class="pdp-specs-list" id="pdpSpecs"></ul>
       <div id="pdpPriceWrap" style="display:none;">
         <div class="pdp-price" id="pdpPrice"></div>
-        <div class="pdp-price-note" id="pdpPriceNote">Incl. GST · excl. shipping</div>
+        <div class="pdp-price-note" id="pdpPriceNote">Excl. shipping</div>
         <div class="pdp-qty-row" id="pdpQtyRow">
           <span class="pdp-qty-label">Qty</span>
           <div class="pdp-qty-ctrl">
@@ -1111,7 +1111,7 @@ const PAGE_HTML = `<div id="mainSite">
 
           <button class="qv2-order-btn" onclick="orderNow()">Place order →</button>
           <button class="qv2-save-btn" onclick="saveQuote()">💾 Save / download quote</button>
-          <div class="qv2-note">Prices are estimates. Final quote confirmed after file review.<br>GST applicable as per government norms.</div>
+          <div class="qv2-note">Prices are estimates. Final quote confirmed after file review.</div>
         </div>
       </div>
     </div>

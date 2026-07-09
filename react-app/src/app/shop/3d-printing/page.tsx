@@ -232,7 +232,6 @@ export default function PrintingPage() {
                       <span style={{ fontWeight: 700, fontSize: 17, color: '#111' }}>
                         {priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : p.price || 'Quote on request'}
                       </span>
-                      <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', borderTop: '1px solid #e8e8e8' }}>
@@ -308,7 +307,7 @@ export default function PrintingPage() {
               <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 1 }}>
                 {parseFloat(selected.price) > 0 ? `₹${parseFloat(selected.price).toLocaleString('en-IN')}` : selected.price || 'Quote on request'}
               </span>
-              <span style={{ fontSize: 12, color: '#888' }}>Incl. GST</span>
+              <span style={{ fontSize: 12, color: '#888' }}>Excl. shipping</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               {selected.btnMode === 'enquire' ? (

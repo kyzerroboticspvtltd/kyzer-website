@@ -232,7 +232,6 @@ export default function DroneFramesPage() {
                       <span style={{ fontWeight: 700, fontSize: 17, color: '#111' }}>
                         {priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : f.price}
                       </span>
-                      <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
                     </div>
                   </div>
                   {/* Action footer — direct child of card so it spans full width */}
@@ -289,7 +288,7 @@ export default function DroneFramesPage() {
               <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 1 }}>
                 {parseFloat(selected.price) > 0 ? `₹${parseFloat(selected.price).toLocaleString('en-IN')}` : selected.price}
               </span>
-              <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
+              <span style={{ fontSize: 12, color: '#888' }}>Excl. shipping</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               {selected.btnMode === 'enquire' ? (

@@ -31,7 +31,7 @@ export default function TermsPage() {
           Product images, specifications, and descriptions are provided for guidance. Custom and hand-assembled items may
           vary slightly from images shown.
         </li>
-        <li>All prices are listed in Indian Rupees (₹) and are inclusive of applicable taxes (GST) unless stated otherwise.</li>
+        <li>All prices are listed in Indian Rupees (₹). We are not currently GST-registered, so no GST is charged on orders.</li>
         <li>We reserve the right to correct pricing errors and to modify or discontinue any product without notice.</li>
       </ul>
 

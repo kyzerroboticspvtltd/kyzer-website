@@ -110,7 +110,6 @@ function sendEmailsInBackground(o: OrderData, invoiceData: InvoiceData) {
             <div style="background:#f5f5f5;border-radius:0 0 8px 8px;padding:10px 10px;text-align:right;">
               <span style="font-size:13px;color:#555;">Order Total: </span>
               <strong style="font-size:16px;color:#111;">${orderTotal}</strong>
-              <span style="font-size:11px;color:#aaa;margin-left:6px;">Incl. GST</span>
             </div>
             ${attachment ? `<p style="font-size:13px;color:#555;margin:20px 0 0;">Your invoice PDF is attached to this email.</p>` : ''}
             <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px;">

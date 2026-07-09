@@ -3,7 +3,8 @@ import { getIp, rateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { BODY_LIMIT, rejectOversized } from '@/lib/sanitize';
 import { createClient } from '@supabase/supabase-js';
 
-const DEFAULT_GST_RATE = 0.18;
+// No GSTIN yet — do not charge or display GST until the business is registered.
+const DEFAULT_GST_RATE = 0;
 const DEFAULT_DELIVERY_FREE_ABOVE = 999;
 const DEFAULT_DELIVERY_CHARGE = 99;
 const ALLOWED_QUAL_MULTS: Record<string, number> = { Standard: 1, Fine: 1.2, Ultra: 1.5 };

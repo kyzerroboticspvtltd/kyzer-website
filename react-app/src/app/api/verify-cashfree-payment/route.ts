@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
               `<tr><td style="padding:8px;">${esc(i.name)}</td><td style="padding:8px;text-align:center;">×${Number(i.qty) || 1}</td><td style="padding:8px;text-align:right;">${fmt(Number(i.price || 0) * (Number(i.qty) || 1))}</td></tr>`
             ).join('')}
             <tr style="border-top:2px solid #eee;font-weight:700;font-size:15px;color:#FF8C35;">
-              <td colspan="2" style="padding:10px;">Total (incl. GST)</td>
+              <td colspan="2" style="padding:10px;">Total</td>
               <td style="padding:10px;text-align:right;">${fmt(authorisedTotal || 0)}</td>
             </tr>
           </table>
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
                 </tr>`
               ).join('')}
               <tr style="border-top:2px solid #eee;">
-                <td colspan="2" style="padding:10px;font-weight:700;font-size:15px;">Total (incl. GST)</td>
+                <td colspan="2" style="padding:10px;font-weight:700;font-size:15px;">Total</td>
                 <td style="padding:10px;font-weight:700;font-size:15px;text-align:right;color:#FF8C35;">${fmt(authorisedTotal || 0)}</td>
               </tr>
             </table>

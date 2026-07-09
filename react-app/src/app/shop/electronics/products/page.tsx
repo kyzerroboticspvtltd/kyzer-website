@@ -236,8 +236,7 @@ export default function ElectronicsProductsPage() {
                     <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 6, lineHeight: 1.3 }}>{p.name}</div>
                     <div style={{ fontSize: 13, color: '#666', marginBottom: 12, lineHeight: 1.5 }}>{p.description}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                      <span style={{ fontWeight: 700, fontSize: 17 }}>{priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : p.price}</span>
-                      <span style={{ fontSize: 11, color: '#888' }}>Incl. GST</span>
+                      <span style={{ fontWeight: 700, fontSize: 17 }}>{priceNum > 0 ? `₹${priceNum.toLocaleString('en-IN')}` : p.price}</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       <div style={{ display: 'flex', gap: 8 }}>
@@ -301,7 +300,7 @@ export default function ElectronicsProductsPage() {
                   </div>
                 )}
               </div>
-              <span style={{ fontSize: 12, color: '#888' }}>Incl. GST · excl. shipping</span>
+              <span style={{ fontSize: 12, color: '#888' }}>Excl. shipping</span>
             </div>
 
             {/* Quantity selector */}
