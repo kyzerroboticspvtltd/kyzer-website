@@ -1,9 +1,20 @@
 import type { MetadataRoute } from 'next';
-import { PRODUCTS, CATEGORIES } from '@/data/products';
+import { CATEGORIES } from '@/data/products';
+import { getMergedProducts } from '@/lib/getProducts';
+import { getAllBlogPosts, type BlogPost } from '@/lib/blogPosts';
 
 const BASE = 'https://kyzerrobotics.com';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+const STATIC_BLOG_POSTS: BlogPost[] = [
+  { slug: 'best-fpv-flight-controllers-2025', title: '', category: '', date: '2025-11-15', readTime: '', emoji: '', excerpt: '' },
+  { slug: '3d-printing-materials-comparison', title: '', category: '', date: '2025-10-22', readTime: '', emoji: '', excerpt: '' },
+  { slug: 'agricultural-drone-india-guide', title: '', category: '', date: '2025-09-30', readTime: '', emoji: '', excerpt: '' },
+  { slug: 'kicad-pcb-design-beginners', title: '', category: '', date: '2025-09-01', readTime: '', emoji: '', excerpt: '' },
+  { slug: 'ros2-raspberry-pi-robot', title: '', category: '', date: '2025-08-10', readTime: '', emoji: '', excerpt: '' },
+  { slug: 'industrial-automation-msme-india', title: '', category: '', date: '2025-07-18', readTime: '', emoji: '', excerpt: '' },
+];
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticRoutes: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] }[] = [
@@ -49,7 +60,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/shipping-policy', priority: 0.3, changeFrequency: 'yearly' },
   ];
 
-  const productRoutes: MetadataRoute.Sitemap = PRODUCTS.map(p => ({
+  const products = await getMergedProducts();
+  const productRoutes: MetadataRoute.Sitemap = products.map(p => ({
     url: `${BASE}/shop/product/${p.slug}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,
@@ -63,9 +75,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  const blogPosts = await getAllBlogPosts(STATIC_BLOG_POSTS);
+  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map(p => ({
+    url: `${BASE}/blog/${p.slug}`,
+    lastModified: p.date ? new Date(p.date) : now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
+
   return [
     ...staticRoutes.map(r => ({ url: `${BASE}${r.path}`, lastModified: now, changeFrequency: r.changeFrequency, priority: r.priority })),
     ...categoryRoutes,
     ...productRoutes,
+    ...blogRoutes,
   ];
 }
