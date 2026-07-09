@@ -396,6 +396,7 @@ html.dark .toggle-slider{background:#444}
           <button class="btn btn-ghost btn-sm" onclick="downloadImportTemplate()" title="Download Excel template">⬇ Template</button>
           <button class="btn btn-ghost btn-sm" onclick="openImportModal()" title="Bulk import from Excel/CSV">⬆ Import Excel</button>
           <button class="btn btn-ghost btn-sm" onclick="syncGoogleSheet()" title="Sync products from Google Sheets" id="sync-sheets-btn">🔄 Sync Sheets</button>
+          <button class="btn btn-ghost btn-sm" onclick="reloadProductsFromLive()" title="Discard local changes and reload the product list that's actually live on the site" id="reload-live-btn">⤓ Reload from live site</button>
           <button class="btn btn-primary btn-sm" onclick="openProductModal(null)">+ Add product</button>
         </div>
         <div id="products-grid"></div>
@@ -1375,6 +1376,31 @@ async function doPublish() {
 }
 
 // ─── PRODUCTS ─────────────────────────────────────────────────
+// Public anon key — safe to embed, same one the live site's client bundle uses for reads.
+const LIVE_SB_URL = 'https://alrgkykezmlcagovkkdl.supabase.co';
+const LIVE_SB_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscmdreWtlem1sY2Fnb3Zra2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjIxMjMsImV4cCI6MjA5NTE5ODEyM30.g_UjIRnjov6cUAkwjlifL2kDUzh1G7cpsThj6Ygq83U';
+
+async function reloadProductsFromLive() {
+  if (!confirm('This discards any unpublished local product changes and replaces them with what is actually live on the site right now. Continue?')) return;
+  const btn = $('reload-live-btn');
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch(`${LIVE_SB_URL}/rest/v1/site_data?id=eq.1&select=products`, {
+      headers: { apikey: LIVE_SB_ANON_KEY, Authorization: 'Bearer ' + LIVE_SB_ANON_KEY },
+    });
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows[0]) throw new Error('Unexpected response');
+    siteData.products = rows[0].products || [];
+    saveLocal();
+    renderProducts();
+    toast('Product list reloaded from the live site (' + siteData.products.length + ' products).');
+  } catch (e) {
+    toast('Reload failed: ' + e.message, false);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 let _prodCatFilter = 'all';
 
 function renderProdCatFilters() {
